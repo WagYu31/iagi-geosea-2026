@@ -8158,9 +8158,16 @@
             <p style="font-size: 0.74rem; color: #94A3B8; line-height: 1.5; margin: 0 0 10px 0;">
               Pasang perintah ini di menu <strong>cPanel &rarr; Cron Jobs</strong> server. Sistem akan otomatis berjalan setiap pagi pukul 08:00 WIB untuk mengirimkan email pengingat harian + Google Calendar ke pemilih yang belum memberikan suara hingga hari penutupan:
             </p>
-            <div style="display: flex; align-items: center; gap: 8px; background: #030811; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 8px; padding: 8px 12px;">
-              <code id="code-cron-command" style="font-size: 0.72rem; color: #FDE68A; font-family: monospace; word-break: break-all; flex: 1;">0 8 * * * /usr/local/bin/php /home/pitiagic/pemiluiagi.web.id/api/cron_daily_reminder.php >/dev/null 2>&1</code>
-              <button type="button" class="btn btn-subtle" onclick="copyCronCommand()" style="font-size: 0.7rem; padding: 4px 10px; flex-shrink: 0;">📋 Salin Perintah</button>
+            <div style="background: #020710; border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; padding: 12px 14px; margin-top: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.72rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Command Baris Cron:</span>
+                <button type="button" class="btn btn-subtle" onclick="copyCronCommand()" style="font-size: 0.72rem; padding: 5px 12px; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.4); color: #FDE68A; font-weight: 700; border-radius: 6px; cursor: pointer;">
+                  📋 Salin Perintah
+                </button>
+              </div>
+              <div style="background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 10px 12px; overflow-x: auto;">
+                <code id="code-cron-command" style="font-size: 0.78rem; color: #34D399; font-family: monospace; white-space: nowrap; display: block; font-weight: 600;">0 8 * * * /usr/local/bin/php /home/pitiagic/pemiluiagi.web.id/api/cron_daily_reminder.php >/dev/null 2>&1</code>
+              </div>
             </div>
           </div>
 
@@ -8811,7 +8818,7 @@
 
   <!-- Include Core Logic Scripts -->
   <script src="js/data.js?v=4.9.2"></script>
-  <script src="js/storage.js?v=5.0.0"></script>
+  <script src="js/storage.js?v=5.0.1"></script>
 
   <script>
     // =========================================================================
@@ -11157,6 +11164,17 @@
         const claimedNotVoted = dptList.filter(v => v && (v.claimed || v.token) && !v.voted).length;
         const unclaimedCount = Math.max(0, results.totalDPT - (effectiveVotedCount + claimedNotVoted));
 
+        // Auto-sync pemilih yang sudah mencoblos ke server backend agar cron server & status selalu konsisten
+        if (baseVotedCount > 0 && !window._votedNpasSynced) {
+          window._votedNpasSynced = true;
+          const votedNpas = dptList.filter(v => v && v.voted).map(v => v.npa);
+          fetch('api/vote_sync.php?action=sync_voted_npas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ voted_npas: votedNpas })
+          }).catch(() => {});
+        }
+
         const elMiniTotal = document.getElementById('dpt-mini-total');
         if (elMiniTotal) elMiniTotal.innerText = Number(results.totalDPT).toLocaleString('id-ID');
         const elMiniVoted = document.getElementById('dpt-mini-voted');
@@ -12845,6 +12863,11 @@
 
       // ================= CONTROLLER: PENGINGAT HARIAN DPT & GOOGLE CALENDAR =================
       function loadReminderStats() {
+        const dptList = (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') 
+          ? window.pemiluStorage.getDPT() 
+          : [];
+        const localVoted = dptList.filter(v => v && v.voted).length;
+
         fetch('api/vote_sync.php?action=get_reminder_status')
           .then(res => res.json())
           .then(data => {
@@ -12852,17 +12875,28 @@
               const daysLeftEl = document.getElementById('rem-lbl-days-left');
               if (daysLeftEl) daysLeftEl.innerText = data.days_left;
 
+              const totalDpt = Number(data.total_dpt || 2143);
               const totalDptEl = document.getElementById('rem-lbl-total-dpt');
-              if (totalDptEl) totalDptEl.innerText = Number(data.total_dpt).toLocaleString('id-ID');
+              if (totalDptEl) totalDptEl.innerText = totalDpt.toLocaleString('id-ID');
+
+              // Hitung jumlah Sudah Memilih secara akurat (prioritaskan DPT lokal 658 atau data server)
+              const serverVoted = Number(data.total_voted || 0);
+              const effectiveVoted = Math.max(localVoted, serverVoted);
+              const effectiveUnvoted = Math.max(0, totalDpt - effectiveVoted);
 
               const votedEl = document.getElementById('rem-lbl-total-voted');
-              if (votedEl) votedEl.innerText = Number(data.total_voted || data.total_ballots || 0).toLocaleString('id-ID');
+              if (votedEl) votedEl.innerText = effectiveVoted.toLocaleString('id-ID');
 
               const unvotedEl = document.getElementById('rem-lbl-total-unvoted');
-              if (unvotedEl) unvotedEl.innerText = Number(data.total_unvoted || 0).toLocaleString('id-ID');
+              if (unvotedEl) unvotedEl.innerText = effectiveUnvoted.toLocaleString('id-ID');
 
               const validEmailsEl = document.getElementById('rem-lbl-valid-emails');
-              if (validEmailsEl) validEmailsEl.innerText = Number(data.total_valid_emails_unvoted || 0).toLocaleString('id-ID');
+              if (validEmailsEl) {
+                const unvotedList = dptList.filter(v => v && !v.voted);
+                const localValidEmails = unvotedList.filter(v => v && v.email && v.email.includes('@')).length;
+                const finalValid = localValidEmails > 0 ? localValidEmails : (data.total_valid_emails_unvoted || effectiveUnvoted);
+                validEmailsEl.innerText = Number(finalValid).toLocaleString('id-ID');
+              }
             }
           })
           .catch(err => {
@@ -12883,10 +12917,13 @@
           testInput.value = currentSession.email;
         }
 
+        // Tampilkan statistik langsung dari DPT browser dulu sambil menunggu sync server
+        loadReminderStats();
+
         // Sinkronkan pemilih yang sudah memilih dari DPT browser ke server agar server mutakhir
         if (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') {
           const dpt = window.pemiluStorage.getDPT();
-          const votedNpas = dpt.filter(v => v.voted).map(v => v.npa);
+          const votedNpas = dpt.filter(v => v && v.voted).map(v => v.npa);
           if (votedNpas.length > 0) {
             fetch('api/vote_sync.php?action=sync_voted_npas', {
               method: 'POST',
@@ -12894,15 +12931,9 @@
               body: JSON.stringify({ voted_npas: votedNpas })
             }).then(() => {
               loadReminderStats();
-            }).catch(() => {
-              loadReminderStats();
-            });
-            return;
+            }).catch(() => {});
           }
         }
-
-        // Ambil status statistik live dari server
-        loadReminderStats();
       };
 
       window.closeDailyReminderModal = function() {
