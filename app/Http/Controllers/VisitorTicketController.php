@@ -623,6 +623,9 @@ class VisitorTicketController extends Controller
                     try {
                         $this->applySmtpSettings();
                         Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+                        try {
+                            $ticket->update(['email_sent_at' => now(), 'email_sent_count' => 1]);
+                        } catch (\Exception $e) {}
                     } catch (\Exception $e) {
                         Log::error("Failed to send visitor ticket email to {$ticket->visitor_email}: " . $e->getMessage());
                     }

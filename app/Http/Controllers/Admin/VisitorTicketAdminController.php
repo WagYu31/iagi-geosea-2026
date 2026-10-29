@@ -134,6 +134,15 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
+        // Email sent filter
+        if ($emailSent = $request->input('email_sent')) {
+            if ($emailSent === 'sent') {
+                $query->whereNotNull('email_sent_at');
+            } elseif ($emailSent === 'unsent') {
+                $query->whereNull('email_sent_at');
+            }
+        }
+
         return $query;
     }
 
@@ -160,6 +169,8 @@ class VisitorTicketAdminController extends Controller
             'nonExclusiveCount' => VisitorTicket::whereIn('visitor_type', ['non_exclusive', 'visitor'])->count(),
             'checkedInCount' => VisitorTicket::where('checked_in', true)->count(),
             'pendingVerificationCount' => VisitorTicket::where('status', 'pending')->count(),
+            'emailSentCount' => VisitorTicket::whereNotNull('email_sent_at')->count(),
+            'emailUnsentCount' => VisitorTicket::whereNull('email_sent_at')->where('status', 'active')->whereNotNull('visitor_email')->count(),
             'debtCount' => VisitorTicket::whereHas('payment', function ($pq) {
                 $pq->where('is_debt', true);
             })->count(),
@@ -190,6 +201,7 @@ class VisitorTicketAdminController extends Controller
                 'checked_in' => $request->input('checked_in', 'all'),
                 'status' => $request->input('status', 'all'),
                 'debt' => $request->input('debt', 'all'),
+                'email_sent' => $request->input('email_sent', 'all'),
             ],
             'occupiedUniqueCodes' => VisitorPayment::getOccupiedUniqueCodes(),
         ]);
@@ -336,6 +348,9 @@ class VisitorTicketAdminController extends Controller
                 try {
                     $this->applySmtpSettings();
                     Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+                    try {
+                        $ticket->update(['email_sent_at' => now(), 'email_sent_count' => 1]);
+                    } catch (\Exception $e) {}
                 } catch (\Exception $e) {
                     Log::error("Failed to send onsite visitor ticket email: " . $e->getMessage());
                 }
@@ -563,6 +578,9 @@ class VisitorTicketAdminController extends Controller
             try {
                 $this->applySmtpSettings();
                 Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+                try {
+                    $ticket->update(['email_sent_at' => now(), 'email_sent_count' => ($ticket->email_sent_count ?? 0) + 1]);
+                } catch (\Exception $e) {}
             } catch (\Exception $e) {
                 Log::error("Failed to send ticket email on quick activation: " . $e->getMessage());
             }
@@ -725,6 +743,9 @@ class VisitorTicketAdminController extends Controller
                 if (!empty($t->visitor_email)) {
                     try {
                         Mail::to($t->visitor_email)->send(new VisitorTicketIssued($t));
+                        try {
+                            $t->update(['email_sent_at' => now(), 'email_sent_count' => ($t->email_sent_count ?? 0) + 1]);
+                        } catch (\Exception $e) {}
                     } catch (\Exception $e) {
                         Log::error("Failed sending visitor ticket email on quick approval: " . $e->getMessage());
                     }
@@ -771,6 +792,16 @@ class VisitorTicketAdminController extends Controller
         try {
             $this->applySmtpSettings();
             Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+
+            try {
+                $ticket->update([
+                    'email_sent_at' => now(),
+                    'email_sent_count' => ($ticket->email_sent_count ?? 0) + 1,
+                ]);
+            } catch (\Exception $e) {
+                Log::warning("Could not update email_sent_at for ticket {$ticket->id}: " . $e->getMessage());
+            }
+
             return back()->with('success', "E-Tiket berhasil dikirim ke email: {$ticket->visitor_email}");
         } catch (\Exception $e) {
             Log::error("Manual resend email failed for {$ticket->visitor_email}: " . $e->getMessage());
@@ -1023,6 +1054,14 @@ class VisitorTicketAdminController extends Controller
         foreach ($tickets as $ticket) {
             try {
                 Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
+                try {
+                    $ticket->update([
+                        'email_sent_at' => now(),
+                        'email_sent_count' => ($ticket->email_sent_count ?? 0) + 1,
+                    ]);
+                } catch (\Exception $e) {
+                    // Fail silently if column not ready
+                }
                 $successCount++;
             } catch (\Exception $e) {
                 $failCount++;

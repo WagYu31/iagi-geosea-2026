@@ -432,6 +432,8 @@ export default function VisitorTicketsIndex({
     const [checkedInFilter, setCheckedInFilter] = useState(filters.checked_in || 'all');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const [debtFilter, setDebtFilter] = useState(filters.debt || 'all');
+    const [emailSentFilter, setEmailSentFilter] = useState(filters.email_sent || 'all');
+    const [sentTicketIds, setSentTicketIds] = useState([]);
 
     // Multi-select state
     const [selectedIds, setSelectedIds] = useState([]);
@@ -584,6 +586,7 @@ export default function VisitorTicketsIndex({
             checked_in: overrides.checked_in !== undefined ? overrides.checked_in : checkedInFilter,
             status: overrides.status !== undefined ? overrides.status : statusFilter,
             debt: overrides.debt !== undefined ? overrides.debt : debtFilter,
+            email_sent: overrides.email_sent !== undefined ? overrides.email_sent : emailSentFilter,
             page: overrides.page || 1,
         };
 
@@ -593,6 +596,7 @@ export default function VisitorTicketsIndex({
         if (params.checked_in === 'all') delete params.checked_in;
         if (params.status === 'all') delete params.status;
         if (params.debt === 'all') delete params.debt;
+        if (params.email_sent === 'all') delete params.email_sent;
         if (params.page === 1) delete params.page;
 
         router.get(route('admin.visitorTickets'), params, {
@@ -635,6 +639,11 @@ export default function VisitorTicketsIndex({
         navigateFilters({ debt: val, page: 1 });
     };
 
+    const handleEmailSentFilterChange = (val) => {
+        setEmailSentFilter(val);
+        navigateFilters({ email_sent: val, page: 1 });
+    };
+
     const handleResetFilters = () => {
         setSearchTerm('');
         setTypeFilter('all');
@@ -642,7 +651,8 @@ export default function VisitorTicketsIndex({
         setCheckedInFilter('all');
         setStatusFilter('all');
         setDebtFilter('all');
-        navigateFilters({ search: '', type: 'all', registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', page: 1 });
+        setEmailSentFilter('all');
+        navigateFilters({ search: '', type: 'all', registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', page: 1 });
     };
 
     const handlePageChange = (_, page) => {
@@ -653,6 +663,9 @@ export default function VisitorTicketsIndex({
     const handleStatCardClick = (statKey) => {
         if (statKey === 'all') {
             handleResetFilters();
+        } else if (statKey === 'email_sent') {
+            setEmailSentFilter('sent');
+            navigateFilters({ email_sent: 'sent', page: 1 });
         } else if (statKey === 'non_exclusive') {
             setTypeFilter('non_exclusive');
             navigateFilters({ type: 'non_exclusive', page: 1 });
@@ -1270,6 +1283,7 @@ export default function VisitorTicketsIndex({
 
     const statCards = [
         { key: 'all', label: 'Total Visitors', value: stats.totalVisitors || 0, icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
+        { key: 'email_sent', label: 'Email Tiket Terkirim', value: stats.emailSentCount || 0, icon: <EmailIcon />, color: '#0d9488', shadow: '#0f766e', bg: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)', badgeBg: '#14b8a6' },
         { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
         { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
         { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
@@ -1277,7 +1291,7 @@ export default function VisitorTicketsIndex({
         { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
 
-    const hasActiveFilters = searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all';
+    const hasActiveFilters = searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all';
 
     return (
         <SidebarLayout>
@@ -1690,7 +1704,8 @@ export default function VisitorTicketsIndex({
                             xs: 'repeat(1, 1fr)',
                             sm: 'repeat(2, 1fr)',
                             md: 'repeat(3, 1fr)',
-                            lg: 'repeat(6, 1fr)',
+                            lg: 'repeat(4, 1fr)',
+                            xl: 'repeat(7, 1fr)',
                         },
                         gap: 2,
                         mb: 3,
@@ -1699,6 +1714,7 @@ export default function VisitorTicketsIndex({
                     {statCards.map((s) => {
                         const isCardActive = 
                             (s.key === 'all' && !hasActiveFilters) ||
+                            (s.key === 'email_sent' && emailSentFilter === 'sent') ||
                             (s.key === 'non_exclusive' && typeFilter === 'non_exclusive') ||
                             (s.key === 'checked_in' && checkedInFilter === 'yes') ||
                             (s.key === 'pending' && statusFilter === 'pending') ||
@@ -1809,8 +1825,8 @@ export default function VisitorTicketsIndex({
                                 xs: '1fr',
                                 sm: 'repeat(2, 1fr)',
                                 md: 'repeat(3, 1fr)',
-                                lg: 'repeat(5, 1fr) auto',
-                                xl: '2fr 1.2fr 1fr 1fr 1.1fr auto',
+                                lg: 'repeat(4, 1fr)',
+                                xl: '2fr 1.1fr 0.95fr 0.95fr 0.95fr 0.95fr 1fr auto',
                             },
                             gap: 1.5,
                             alignItems: 'center',
@@ -1951,6 +1967,20 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="all">All Debt Statuses</MenuItem>
                                 <MenuItem value="debt" sx={{ color: '#b45309', fontWeight: 800 }}>⚠️ Debt Tagged ({stats.debtCount || 0})</MenuItem>
                                 <MenuItem value="no_debt" sx={{ color: '#15803d', fontWeight: 700 }}>✅ Fully Paid / Free</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Email Status</InputLabel>
+                            <Select
+                                value={emailSentFilter}
+                                label="Email Status"
+                                onChange={(e) => handleEmailSentFilterChange(e.target.value)}
+                                sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
+                            >
+                                <MenuItem value="all">All Email Status</MenuItem>
+                                <MenuItem value="sent" sx={{ color: '#0284c7', fontWeight: 700 }}>📨 Email Sent ({stats.emailSentCount || 0})</MenuItem>
+                                <MenuItem value="not_sent" sx={{ color: '#64748b', fontWeight: 700 }}>⏳ Not Sent Yet ({stats.emailNotSentCount || 0})</MenuItem>
                             </Select>
                         </FormControl>
 

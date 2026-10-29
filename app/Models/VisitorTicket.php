@@ -30,6 +30,8 @@ class VisitorTicket extends Model
         'card_printed',
         'card_printed_at',
         'card_printed_by_admin_id',
+        'email_sent_at',
+        'email_sent_count',
     ];
 
     protected $casts = [
@@ -39,6 +41,8 @@ class VisitorTicket extends Model
         'checked_in_at' => 'datetime',
         'card_printed' => 'boolean',
         'card_printed_at' => 'datetime',
+        'email_sent_at' => 'datetime',
+        'email_sent_count' => 'integer',
     ];
 
     protected $appends = [
