@@ -1011,7 +1011,7 @@ HTML;
         $pinValid = ($enteredPin === '5930') || (!empty($pinHash) && password_verify($enteredPin, $pinHash));
 
         if (!$pinValid) {
-            $errorMessage = 'PIN Keamanan Super Admin salah! Masukkan 4-digit PIN resmi Anda (5930).';
+            $errorMessage = 'PIN Keamanan Super Admin salah! Silakan periksa kembali 4-digit PIN rahasia Anda.';
         } else {
             $confirmed = true;
             $req['status'] = $isApprove ? 'APPROVED' : 'REJECTED';
