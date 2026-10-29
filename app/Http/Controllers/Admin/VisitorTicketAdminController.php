@@ -207,6 +207,7 @@ class VisitorTicketAdminController extends Controller
             'visitor_type' => 'required|string|max:100',
             'payment_status' => 'nullable|in:paid_cash,free_bypass,pending',
             'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:10240',
+            'unique_code' => 'nullable|integer|min:0|max:9999',
         ]);
 
         return DB::transaction(function () use ($request) {
@@ -228,6 +229,8 @@ class VisitorTicketAdminController extends Controller
                 $settingKey = "visitor_ticket_price_{$type}";
                 $priceSetting = LandingPageSetting::where('key', $settingKey)->value('value');
                 $price = floatval($priceSetting ?: $paidCategories[$type]);
+                $uniqueCode = intval($request->input('unique_code', 0));
+                $totalAmount = $price + $uniqueCode;
 
                 $proofPath = null;
                 $originalSize = null;
@@ -242,8 +245,8 @@ class VisitorTicketAdminController extends Controller
                     'payment_method' => 'cash_onsite',
                     'total_members' => 1,
                     'price_per_ticket' => $price,
-                    'unique_code' => 0,
-                    'total_amount' => $price,
+                    'unique_code' => $uniqueCode,
+                    'total_amount' => $totalAmount,
                     'status' => $request->payment_status === 'pending' ? 'pending' : 'approved',
                     'verified_at' => $request->payment_status === 'pending' ? null : now(),
                     'verified_by_admin_id' => Auth::id(),

@@ -494,6 +494,7 @@ export default function VisitorTicketsIndex({
         visitor_type: 'non_exclusive',
         payment_status: 'paid_cash',
         proof_of_payment: null,
+        unique_code: 0,
     });
 
     // Edit Visitor & Group Registration Form
@@ -518,6 +519,10 @@ export default function VisitorTicketsIndex({
     const liveEditSubtotal = (editData.members || []).reduce((acc, m) => acc + (CATEGORY_PRICES[m.visitor_type] || 0), 0);
     const liveEditUniqueCode = Number(editData.unique_code !== undefined ? editData.unique_code : (editModal.ticket?.payment?.unique_code || 0));
     const liveEditTotal = liveEditSubtotal > 0 ? (liveEditSubtotal + liveEditUniqueCode) : 0;
+
+    const liveOnsiteBasePrice = CATEGORY_PRICES[onsiteData.visitor_type] || 0;
+    const liveOnsiteUniqueCode = parseInt(onsiteData.unique_code, 10) || 0;
+    const liveOnsiteTotal = liveOnsiteBasePrice > 0 ? (liveOnsiteBasePrice + liveOnsiteUniqueCode) : 0;
 
     const searchTimer = useRef(null);
 
@@ -3803,6 +3808,57 @@ export default function VisitorTicketsIndex({
                                         <FormControlLabel value="free_bypass" control={<Radio size="small" />} label="Complimentary (VIP Invitation / Sponsor Bypass)" />
                                         <FormControlLabel value="pending" control={<Radio size="small" />} label="Unpaid (Pending)" />
                                     </RadioGroup>
+
+                                    {onsiteData.payment_status !== 'free_bypass' && liveOnsiteBasePrice > 0 && (
+                                        <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a' }}>
+                                                    🔢 Kode Unik Pembayaran:
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', gap: 0.8 }}>
+                                                    <Button
+                                                        size="small"
+                                                        variant="text"
+                                                        onClick={() => setOnsiteData('unique_code', Math.floor(100 + Math.random() * 900))}
+                                                        sx={{ fontSize: '0.70rem', py: 0.2, px: 1, minWidth: 0, textTransform: 'none', fontWeight: 700, color: '#0284c7' }}
+                                                    >
+                                                        🎲 Acak 3 Digit
+                                                    </Button>
+                                                    <Button
+                                                        size="small"
+                                                        variant="text"
+                                                        onClick={() => setOnsiteData('unique_code', 0)}
+                                                        sx={{ fontSize: '0.70rem', py: 0.2, px: 1, minWidth: 0, textTransform: 'none', fontWeight: 700, color: '#64748b' }}
+                                                    >
+                                                        0 (Pas)
+                                                    </Button>
+                                                </Box>
+                                            </Box>
+
+                                            <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
+                                                <TextField
+                                                    size="small"
+                                                    type="number"
+                                                    value={onsiteData.unique_code}
+                                                    onChange={(e) => setOnsiteData('unique_code', Math.max(0, parseInt(e.target.value, 10) || 0))}
+                                                    placeholder="0"
+                                                    sx={{ width: 130, bgcolor: '#ffffff' }}
+                                                    inputProps={{ min: 0, max: 9999, style: { fontFamily: 'monospace', fontWeight: 700, fontSize: '0.85rem' } }}
+                                                />
+                                                <Box sx={{ flex: 1, bgcolor: '#f0fdf4', p: 1, px: 1.5, borderRadius: '8px', border: '1px solid #bbf7d0' }}>
+                                                    <Typography variant="caption" sx={{ color: '#166534', display: 'block', fontSize: '0.68rem', fontWeight: 600 }}>
+                                                        Total Tagihan:
+                                                    </Typography>
+                                                    <Typography variant="subtitle2" sx={{ color: '#15803d', fontWeight: 900, fontFamily: 'monospace', fontSize: '0.92rem' }}>
+                                                        Rp {liveOnsiteTotal.toLocaleString('id-ID')}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                            <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem', display: 'block', mt: 0.5 }}>
+                                                {liveOnsiteUniqueCode > 0 ? `Tarif Rp ${liveOnsiteBasePrice.toLocaleString('id-ID')} + Kode Unik Rp ${liveOnsiteUniqueCode}` : 'Isi 0 untuk nominal pas (tunai/EDC/QRIS), atau klik "Acak 3 Digit" jika transfer bank.'}
+                                            </Typography>
+                                        </Box>
+                                    )}
 
                                     {onsiteData.payment_status !== 'free_bypass' && (
                                         <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
