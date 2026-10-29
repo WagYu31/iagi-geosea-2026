@@ -81,6 +81,8 @@ import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
 import BusinessIcon from '@mui/icons-material/Business';
 import SaveIcon from '@mui/icons-material/Save';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import DiscountIcon from '@mui/icons-material/Discount';
+import PercentIcon from '@mui/icons-material/Percent';
 
 const CATEGORY_META = {
     // 1. Participant
@@ -496,6 +498,9 @@ export default function VisitorTicketsIndex({
         payment_status: 'paid_cash',
         proof_of_payment: null,
         unique_code: 0,
+        discount_type: 'none', // 'none' | 'nominal' | 'percent'
+        discount_value: '',
+        discount_notes: '',
     });
 
     // Edit Visitor & Group Registration Form
@@ -523,7 +528,19 @@ export default function VisitorTicketsIndex({
 
     const liveOnsiteBasePrice = CATEGORY_PRICES[onsiteData.visitor_type] || 0;
     const liveOnsiteUniqueCode = parseInt(onsiteData.unique_code, 10) || 0;
-    const liveOnsiteTotal = liveOnsiteBasePrice > 0 ? (liveOnsiteBasePrice + liveOnsiteUniqueCode) : 0;
+
+    // Discount calculations (Rupiah or Percentage)
+    const liveDiscountType = onsiteData.discount_type || 'none';
+    const liveDiscountRawVal = parseFloat(onsiteData.discount_value) || 0;
+    let liveDiscountAmount = 0;
+    if (liveDiscountType === 'percent') {
+        const clampedPct = Math.min(100, Math.max(0, liveDiscountRawVal));
+        liveDiscountAmount = Math.round((liveOnsiteBasePrice * clampedPct) / 100);
+    } else if (liveDiscountType === 'nominal') {
+        liveDiscountAmount = Math.min(liveOnsiteBasePrice, Math.max(0, liveDiscountRawVal));
+    }
+    const livePriceAfterDiscount = Math.max(0, liveOnsiteBasePrice - liveDiscountAmount);
+    const liveOnsiteTotal = livePriceAfterDiscount > 0 ? (livePriceAfterDiscount + liveOnsiteUniqueCode) : 0;
 
     const getNextAvailableUniqueCode = useCallback((occupied = []) => {
         const occupiedSet = new Set((occupied || []).map(Number));
@@ -2394,6 +2411,24 @@ export default function VisitorTicketsIndex({
                                                                         />
                                                                     </Tooltip>
                                                                 )}
+                                                                {Number(t.payment.discount_amount || 0) > 0 && (
+                                                                    <Tooltip title={`Diskon: -Rp ${Number(t.payment.discount_amount).toLocaleString('id-ID')} (${t.payment.discount_type === 'percent' ? `${Number(t.payment.discount_value)}%` : 'Nominal'})${t.payment.discount_notes ? ` [${t.payment.discount_notes}]` : ''}`} arrow>
+                                                                        <Chip
+                                                                            label={`Diskon -${t.payment.discount_type === 'percent' ? `${Number(t.payment.discount_value)}%` : `Rp ${(Number(t.payment.discount_amount) / 1000).toLocaleString('id-ID')}k`}`}
+                                                                            size="small"
+                                                                            sx={{
+                                                                                height: 17,
+                                                                                fontSize: '0.58rem',
+                                                                                fontWeight: 900,
+                                                                                bgcolor: '#fef3c7',
+                                                                                color: '#b45309',
+                                                                                border: '1px solid #fde68a',
+                                                                                px: 0.2,
+                                                                                cursor: 'help',
+                                                                            }}
+                                                                        />
+                                                                    </Tooltip>
+                                                                )}
                                                             </Box>
                                                             <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.2, flexWrap: 'wrap' }}>
                                                                 <Tooltip title="Klik untuk ubah status pembayaran (Approved, Pending, Rejected)" arrow>
@@ -2904,6 +2939,9 @@ export default function VisitorTicketsIndex({
                                         </Typography>
                                         <Typography variant="caption" sx={{ color: detailModal.ticket.payment.is_debt ? '#78350f' : '#166534', fontWeight: 600, display: 'block' }}>
                                             Payment Code: <strong>{detailModal.ticket.payment.payment_code}</strong> &bull; Total: <strong>Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')}</strong>
+                                            {Number(detailModal.ticket.payment.discount_amount || 0) > 0 && (
+                                                <span> &bull; Diskon: <strong style={{ color: '#d97706' }}>-Rp {Number(detailModal.ticket.payment.discount_amount).toLocaleString('id-ID')} ({detailModal.ticket.payment.discount_type === 'percent' ? `${Number(detailModal.ticket.payment.discount_value)}%` : 'Nominal'}{detailModal.ticket.payment.discount_notes ? ` - ${detailModal.ticket.payment.discount_notes}` : ''})</strong></span>
+                                            )}
                                             {Number(detailModal.ticket.payment.unique_code || 0) > 0 && (
                                                 <span> &bull; Kode Unik: <strong style={{ color: '#1d4ed8' }}>+{detailModal.ticket.payment.unique_code}</strong></span>
                                             )} ({detailModal.ticket.payment.status.toUpperCase()})
@@ -3842,48 +3880,240 @@ export default function VisitorTicketsIndex({
                                     </RadioGroup>
 
                                     {onsiteData.payment_status !== 'free_bypass' && liveOnsiteBasePrice > 0 && (
-                                        <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
-                                            <Box sx={{ 
-                                                p: 1.8, 
-                                                borderRadius: '12px', 
-                                                bgcolor: '#f0fdf4', 
-                                                border: '1.5px solid #86efac', 
-                                                display: 'flex', 
-                                                justifyContent: 'space-between', 
-                                                alignItems: 'center', 
-                                                flexWrap: 'wrap', 
-                                                gap: 1.5 
-                                            }}>
-                                                <Box>
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.4 }}>
-                                                        <Typography variant="caption" sx={{ fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                                                            🔢 Kode Unik Pembayaran:
-                                                        </Typography>
-                                                        <Chip 
-                                                            icon={<CheckCircleIcon sx={{ fontSize: '13px !important', color: '#15803d !important' }} />}
-                                                            label={`+ Rp ${liveOnsiteUniqueCode}`} 
-                                                            size="small" 
-                                                            sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 900, fontFamily: 'monospace', fontSize: '0.78rem', height: 24, border: '1px solid #86efac' }} 
-                                                        />
-                                                    </Box>
-                                                    <Typography variant="caption" sx={{ color: '#15803d', fontSize: '0.70rem', display: 'block', fontWeight: 600 }}>
-                                                        🛡️ Terverifikasi unik otomatis oleh sistem (bebas duplikat)
+                                        <>
+                                            {/* FITUR DISKON (Rp atau %) */}
+                                            <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, flexWrap: 'wrap', gap: 1 }}>
+                                                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 0.6, fontSize: '0.78rem' }}>
+                                                        <DiscountIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
+                                                        Diskon Pembayaran:
                                                     </Typography>
+                                                    
+                                                    {/* Mode Selector: Tanpa Diskon / Rp / % */}
+                                                    <Box sx={{ display: 'inline-flex', bgcolor: '#f1f5f9', p: '3px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                                                        <Button
+                                                            size="small"
+                                                            onClick={() => {
+                                                                setOnsiteData(prev => ({ ...prev, discount_type: 'none', discount_value: '' }));
+                                                            }}
+                                                            sx={{
+                                                                py: 0.2, px: 1, minWidth: 0, fontSize: '0.70rem', textTransform: 'none', fontWeight: 700,
+                                                                bgcolor: onsiteData.discount_type === 'none' ? '#ffffff' : 'transparent',
+                                                                color: onsiteData.discount_type === 'none' ? '#334155' : '#64748b',
+                                                                boxShadow: onsiteData.discount_type === 'none' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                                                                borderRadius: '6px',
+                                                                '&:hover': { bgcolor: onsiteData.discount_type === 'none' ? '#ffffff' : '#e2e8f0' }
+                                                            }}
+                                                        >
+                                                            Tanpa Diskon
+                                                        </Button>
+                                                        <Button
+                                                            size="small"
+                                                            onClick={() => {
+                                                                setOnsiteData(prev => ({ ...prev, discount_type: 'nominal', discount_value: prev.discount_type === 'nominal' ? prev.discount_value : '' }));
+                                                            }}
+                                                            sx={{
+                                                                py: 0.2, px: 1, minWidth: 0, fontSize: '0.70rem', textTransform: 'none', fontWeight: 700,
+                                                                bgcolor: onsiteData.discount_type === 'nominal' ? '#0284c7' : 'transparent',
+                                                                color: onsiteData.discount_type === 'nominal' ? '#ffffff' : '#64748b',
+                                                                boxShadow: onsiteData.discount_type === 'nominal' ? '0 1px 3px rgba(2,132,199,0.3)' : 'none',
+                                                                borderRadius: '6px',
+                                                                '&:hover': { bgcolor: onsiteData.discount_type === 'nominal' ? '#0369a1' : '#e2e8f0' }
+                                                            }}
+                                                        >
+                                                            Rp (Nominal)
+                                                        </Button>
+                                                        <Button
+                                                            size="small"
+                                                            onClick={() => {
+                                                                setOnsiteData(prev => ({ ...prev, discount_type: 'percent', discount_value: prev.discount_type === 'percent' ? prev.discount_value : '' }));
+                                                            }}
+                                                            sx={{
+                                                                py: 0.2, px: 1, minWidth: 0, fontSize: '0.70rem', textTransform: 'none', fontWeight: 700,
+                                                                bgcolor: onsiteData.discount_type === 'percent' ? '#7c3aed' : 'transparent',
+                                                                color: onsiteData.discount_type === 'percent' ? '#ffffff' : '#64748b',
+                                                                boxShadow: onsiteData.discount_type === 'percent' ? '0 1px 3px rgba(124,58,237,0.3)' : 'none',
+                                                                borderRadius: '6px',
+                                                                '&:hover': { bgcolor: onsiteData.discount_type === 'percent' ? '#6d28d9' : '#e2e8f0' }
+                                                            }}
+                                                        >
+                                                            % (Persentase)
+                                                        </Button>
+                                                    </Box>
                                                 </Box>
 
-                                                <Box sx={{ textAlign: 'right' }}>
-                                                    <Typography variant="caption" sx={{ color: '#166534', display: 'block', fontSize: '0.68rem', fontWeight: 700 }}>
-                                                        TOTAL TAGIHAN:
-                                                    </Typography>
-                                                    <Typography variant="subtitle1" sx={{ color: '#094d42', fontWeight: 900, fontFamily: 'monospace', fontSize: '1.08rem', lineHeight: 1.2 }}>
-                                                        Rp {liveOnsiteTotal.toLocaleString('id-ID')}
-                                                    </Typography>
-                                                    <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.64rem', display: 'block' }}>
-                                                        (Rp {liveOnsiteBasePrice.toLocaleString('id-ID')} + Rp {liveOnsiteUniqueCode})
-                                                    </Typography>
+                                                {/* Input & Quick Chips if discount enabled */}
+                                                {onsiteData.discount_type !== 'none' && (
+                                                    <Box sx={{ 
+                                                        p: 1.5, 
+                                                        borderRadius: '10px', 
+                                                        bgcolor: onsiteData.discount_type === 'percent' ? '#f5f3ff' : '#f0f9ff', 
+                                                        border: `1.5px solid ${onsiteData.discount_type === 'percent' ? '#ddd6fe' : '#bae6fd'}`,
+                                                        mb: 1.5
+                                                    }}>
+                                                        <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'center', flexWrap: 'wrap' }}>
+                                                            <TextField
+                                                                size="small"
+                                                                type="number"
+                                                                placeholder={onsiteData.discount_type === 'percent' ? 'Contoh: 10' : 'Contoh: 250000'}
+                                                                value={onsiteData.discount_value}
+                                                                onChange={(e) => {
+                                                                    const val = e.target.value === '' ? '' : Math.max(0, parseFloat(e.target.value) || 0);
+                                                                    if (val === '') {
+                                                                        setOnsiteData('discount_value', '');
+                                                                    } else {
+                                                                        setOnsiteData('discount_value', onsiteData.discount_type === 'percent' ? Math.min(100, val) : Math.min(liveOnsiteBasePrice, val));
+                                                                    }
+                                                                }}
+                                                                InputProps={{
+                                                                    startAdornment: (
+                                                                        <InputAdornment position="start">
+                                                                            <Typography sx={{ 
+                                                                                fontSize: '0.80rem', 
+                                                                                fontWeight: 800, 
+                                                                                color: onsiteData.discount_type === 'percent' ? '#7c3aed' : '#0284c7' 
+                                                                            }}>
+                                                                                {onsiteData.discount_type === 'percent' ? '%' : 'Rp'}
+                                                                            </Typography>
+                                                                        </InputAdornment>
+                                                                    ),
+                                                                }}
+                                                                sx={{ width: { xs: '100%', sm: 160 }, bgcolor: '#ffffff' }}
+                                                                inputProps={{ 
+                                                                    min: 0, 
+                                                                    max: onsiteData.discount_type === 'percent' ? 100 : liveOnsiteBasePrice,
+                                                                    style: { fontFamily: 'monospace', fontWeight: 700, fontSize: '0.85rem' } 
+                                                                }}
+                                                            />
+
+                                                            {/* Quick Presets */}
+                                                            <Box sx={{ display: 'flex', gap: 0.6, flexWrap: 'wrap', alignItems: 'center' }}>
+                                                                <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem', fontWeight: 600 }}>
+                                                                    Quick:
+                                                                </Typography>
+                                                                {onsiteData.discount_type === 'percent' ? (
+                                                                    [10, 20, 25, 50, 100].map(pct => (
+                                                                        <Chip
+                                                                            key={pct}
+                                                                            label={`${pct}%`}
+                                                                            size="small"
+                                                                            onClick={() => setOnsiteData('discount_value', pct)}
+                                                                            sx={{
+                                                                                cursor: 'pointer',
+                                                                                fontWeight: 700,
+                                                                                fontSize: '0.70rem',
+                                                                                height: 24,
+                                                                                bgcolor: Number(onsiteData.discount_value) === pct ? '#7c3aed' : '#ffffff',
+                                                                                color: Number(onsiteData.discount_value) === pct ? '#ffffff' : '#6d28d9',
+                                                                                border: `1px solid ${Number(onsiteData.discount_value) === pct ? '#7c3aed' : '#ddd6fe'}`,
+                                                                                '&:hover': { bgcolor: '#ede9fe' }
+                                                                            }}
+                                                                        />
+                                                                    ))
+                                                                ) : (
+                                                                    [100000, 250000, 500000, 750000].filter(amt => amt <= liveOnsiteBasePrice).map(amt => (
+                                                                        <Chip
+                                                                            key={amt}
+                                                                            label={`Rp ${(amt / 1000).toLocaleString('id-ID')}k`}
+                                                                            size="small"
+                                                                            onClick={() => setOnsiteData('discount_value', amt)}
+                                                                            sx={{
+                                                                                cursor: 'pointer',
+                                                                                fontWeight: 700,
+                                                                                fontSize: '0.70rem',
+                                                                                height: 24,
+                                                                                bgcolor: Number(onsiteData.discount_value) === amt ? '#0284c7' : '#ffffff',
+                                                                                color: Number(onsiteData.discount_value) === amt ? '#ffffff' : '#0369a1',
+                                                                                border: `1px solid ${Number(onsiteData.discount_value) === amt ? '#0284c7' : '#bae6fd'}`,
+                                                                                '&:hover': { bgcolor: '#e0f2fe' }
+                                                                            }}
+                                                                        />
+                                                                    ))
+                                                                )}
+                                                            </Box>
+                                                        </Box>
+
+                                                        {/* Keterangan / Alasan Diskon */}
+                                                        <TextField
+                                                            size="small"
+                                                            fullWidth
+                                                            placeholder="Keterangan / Alasan Diskon (Opsional, cth: Mahasiswa Undangan, Kerjasama Kampus, dll)"
+                                                            value={onsiteData.discount_notes}
+                                                            onChange={(e) => setOnsiteData('discount_notes', e.target.value)}
+                                                            sx={{ mt: 1, bgcolor: '#ffffff' }}
+                                                            inputProps={{ style: { fontSize: '0.75rem', py: 0.8 } }}
+                                                        />
+
+                                                        {liveDiscountAmount > 0 && (
+                                                            <Box sx={{ mt: 1, pt: 0.8, borderTop: '1px dashed #cbd5e1', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
+                                                                <Typography variant="caption" sx={{ color: '#b45309', fontWeight: 800, fontSize: '0.74rem' }}>
+                                                                    ✂️ Potongan Diskon: - Rp {liveDiscountAmount.toLocaleString('id-ID')}
+                                                                </Typography>
+                                                                <Typography variant="caption" sx={{ color: '#047857', fontWeight: 800, fontSize: '0.74rem' }}>
+                                                                    Tarif Bersih: Rp {livePriceAfterDiscount.toLocaleString('id-ID')}
+                                                                </Typography>
+                                                            </Box>
+                                                        )}
+                                                    </Box>
+                                                )}
+                                            </Box>
+
+                                            {/* KODE UNIK PEMBAYARAN & TOTAL TAGIHAN */}
+                                            <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #cbd5e1' }}>
+                                                <Box sx={{ 
+                                                    p: 1.8, 
+                                                    borderRadius: '12px', 
+                                                    bgcolor: '#f0fdf4', 
+                                                    border: '1.5px solid #86efac', 
+                                                    display: 'flex', 
+                                                    justifyContent: 'space-between', 
+                                                    alignItems: 'center', 
+                                                    flexWrap: 'wrap', 
+                                                    gap: 1.5 
+                                                }}>
+                                                    <Box>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.4 }}>
+                                                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                                                🔢 Kode Unik Pembayaran:
+                                                            </Typography>
+                                                            {livePriceAfterDiscount > 0 ? (
+                                                                <Chip 
+                                                                    icon={<CheckCircleIcon sx={{ fontSize: '13px !important', color: '#15803d !important' }} />}
+                                                                    label={`+ Rp ${liveOnsiteUniqueCode}`} 
+                                                                    size="small" 
+                                                                    sx={{ bgcolor: '#dcfce7', color: '#15803d', fontWeight: 900, fontFamily: 'monospace', fontSize: '0.78rem', height: 24, border: '1px solid #86efac' }} 
+                                                                />
+                                                            ) : (
+                                                                <Chip 
+                                                                    label="Rp 0 (Gratis)" 
+                                                                    size="small" 
+                                                                    sx={{ bgcolor: '#f1f5f9', color: '#64748b', fontWeight: 800, fontSize: '0.72rem', height: 24 }} 
+                                                                />
+                                                            )}
+                                                        </Box>
+                                                        <Typography variant="caption" sx={{ color: '#15803d', fontSize: '0.70rem', display: 'block', fontWeight: 600 }}>
+                                                            {livePriceAfterDiscount > 0 
+                                                                ? '🛡️ Terverifikasi unik otomatis oleh sistem (bebas duplikat)'
+                                                                : '🎉 Tiket 100% Gratis karena diskon penuh'}
+                                                        </Typography>
+                                                    </Box>
+
+                                                    <Box sx={{ textAlign: 'right' }}>
+                                                        <Typography variant="caption" sx={{ color: '#166534', display: 'block', fontSize: '0.68rem', fontWeight: 700 }}>
+                                                            TOTAL TAGIHAN:
+                                                        </Typography>
+                                                        <Typography variant="subtitle1" sx={{ color: '#094d42', fontWeight: 900, fontFamily: 'monospace', fontSize: '1.08rem', lineHeight: 1.2 }}>
+                                                            Rp {liveOnsiteTotal.toLocaleString('id-ID')}
+                                                        </Typography>
+                                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.64rem', display: 'block' }}>
+                                                            {liveDiscountAmount > 0 
+                                                                ? `(Rp ${liveOnsiteBasePrice.toLocaleString('id-ID')} - Diskon Rp ${liveDiscountAmount.toLocaleString('id-ID')} + Rp ${liveOnsiteUniqueCode})`
+                                                                : `(Rp ${liveOnsiteBasePrice.toLocaleString('id-ID')} + Rp ${liveOnsiteUniqueCode})`}
+                                                        </Typography>
+                                                    </Box>
                                                 </Box>
                                             </Box>
-                                        </Box>
+                                        </>
                                     )}
 
                                     {onsiteData.payment_status !== 'free_bypass' && (

@@ -209,6 +209,9 @@ class VisitorTicketAdminController extends Controller
             'payment_status' => 'nullable|in:paid_cash,free_bypass,pending',
             'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:10240',
             'unique_code' => 'nullable|integer|min:0|max:9999',
+            'discount_type' => 'nullable|string|in:none,nominal,percent',
+            'discount_value' => 'nullable|numeric|min:0',
+            'discount_notes' => 'nullable|string|max:255',
         ]);
 
         return DB::transaction(function () use ($request) {
@@ -231,17 +234,41 @@ class VisitorTicketAdminController extends Controller
                 $priceSetting = LandingPageSetting::where('key', $settingKey)->value('value');
                 $price = floatval($priceSetting ?: $paidCategories[$type]);
 
-                // Ensure system-enforced unique code without duplicates
-                $uniqueCode = intval($request->input('unique_code', 0));
-                $isOccupied = ($uniqueCode > 0) && VisitorPayment::where('unique_code', $uniqueCode)
-                    ->where('status', '!=', 'rejected')
-                    ->exists();
+                // Discount Calculation (Rupiah or Percentage)
+                $discountType = $request->input('discount_type', 'none');
+                $discountValue = floatval($request->input('discount_value', 0));
+                $discountNotes = $request->input('discount_notes');
+                $discountAmount = 0;
 
-                if ($uniqueCode <= 0 || $isOccupied) {
-                    $uniqueCode = self::generateUniquePaymentCode();
+                if ($discountType === 'percent') {
+                    $clampedPercent = min(100, max(0, $discountValue));
+                    $discountAmount = round(($price * $clampedPercent) / 100, 2);
+                } elseif ($discountType === 'nominal') {
+                    $discountAmount = min($price, max(0, $discountValue));
+                } else {
+                    $discountType = 'none';
+                    $discountValue = 0;
+                    $discountAmount = 0;
                 }
 
-                $totalAmount = $price + $uniqueCode;
+                $discountedPrice = max(0, $price - $discountAmount);
+
+                if ($discountedPrice <= 0) {
+                    $uniqueCode = 0;
+                    $totalAmount = 0;
+                } else {
+                    // Ensure system-enforced unique code without duplicates
+                    $uniqueCode = intval($request->input('unique_code', 0));
+                    $isOccupied = ($uniqueCode > 0) && VisitorPayment::where('unique_code', $uniqueCode)
+                        ->where('status', '!=', 'rejected')
+                        ->exists();
+
+                    if ($uniqueCode <= 0 || $isOccupied) {
+                        $uniqueCode = self::generateUniquePaymentCode();
+                    }
+
+                    $totalAmount = $discountedPrice + $uniqueCode;
+                }
 
                 $proofPath = null;
                 $originalSize = null;
@@ -251,7 +278,16 @@ class VisitorTicketAdminController extends Controller
                     $proofPath = $file->store('visitor_proofs', 'public');
                 }
 
-                $payment = VisitorPayment::create([
+                $notes = 'Onsite registration by Admin: ' . (Auth::user()->name ?? 'Admin');
+                if ($discountAmount > 0) {
+                    $discountDesc = $discountType === 'percent' ? "{$discountValue}%" : ('Rp ' . number_format($discountValue, 0, ',', '.'));
+                    $notes .= " | Diskon: {$discountDesc} (-Rp " . number_format($discountAmount, 0, ',', '.') . ")";
+                    if (!empty($discountNotes)) {
+                        $notes .= " [Alasan: {$discountNotes}]";
+                    }
+                }
+
+                $paymentData = [
                     'payment_code' => 'ONSITE-' . date('ymd') . '-' . strtoupper(Str::random(6)),
                     'payment_method' => 'cash_onsite',
                     'total_members' => 1,
@@ -264,8 +300,17 @@ class VisitorTicketAdminController extends Controller
                     'proof_of_payment' => $proofPath,
                     'original_file_size_kb' => $originalSize,
                     'compressed_file_size_kb' => $originalSize,
-                    'notes' => 'Onsite registration by Admin: ' . (Auth::user()->name ?? 'Admin'),
-                ]);
+                    'notes' => $notes,
+                ];
+
+                if (\Illuminate\Support\Facades\Schema::hasColumn('visitor_payments', 'discount_type')) {
+                    $paymentData['discount_type'] = $discountType;
+                    $paymentData['discount_value'] = $discountValue;
+                    $paymentData['discount_amount'] = $discountAmount;
+                    $paymentData['discount_notes'] = $discountNotes;
+                }
+
+                $payment = VisitorPayment::create($paymentData);
 
                 $paymentId = $payment->id;
             }
@@ -1004,7 +1049,11 @@ class VisitorTicketAdminController extends Controller
             'Status',
             'Payment Method',
             'Payment Status',
-            'Amount (IDR)',
+            'Base Amount (IDR)',
+            'Discount (IDR)',
+            'Discount Notes',
+            'Unique Code',
+            'Total Amount (IDR)',
             'Checked In',
             'Checked In Time',
             'Card Printed',
@@ -1012,10 +1061,11 @@ class VisitorTicketAdminController extends Controller
         ]);
 
         foreach ($tickets as $t) {
+            $p = $t->payment;
             fputcsv($handle, [
                 $t->ticket_code,
-                $t->payment ? ($t->payment->receipt_no ?? '-') : '-',
-                $t->payment ? $t->payment->payment_code : '-',
+                $p ? ($p->receipt_no ?? '-') : '-',
+                $p ? $p->payment_code : '-',
                 $t->visitor_name,
                 $t->visitor_email,
                 $t->visitor_phone ?? '-',
@@ -1023,9 +1073,13 @@ class VisitorTicketAdminController extends Controller
                 $t->category_label ?? strtoupper($t->visitor_type),
                 $t->registration_source === 'admin_onsite' ? 'Onsite (Admin)' : 'Online Self',
                 strtoupper($t->status),
-                $t->payment ? strtoupper($t->payment->payment_method) : 'FREE',
-                $t->payment ? strtoupper($t->payment->status) : 'FREE',
-                $t->payment ? $t->payment->total_amount : 0,
+                $p ? strtoupper($p->payment_method) : 'FREE',
+                $p ? strtoupper($p->status) : 'FREE',
+                $t->price ?? 0,
+                $p ? ($p->discount_amount ?? 0) : 0,
+                $p ? ($p->discount_notes ?? '-') : '-',
+                $p ? ($p->unique_code ?? 0) : 0,
+                $p ? $p->total_amount : 0,
                 $t->checked_in ? 'YES' : 'NO',
                 $t->checked_in_at ? $t->checked_in_at->format('Y-m-d H:i:s') : '-',
                 $t->card_printed ? 'YES' : 'NO',

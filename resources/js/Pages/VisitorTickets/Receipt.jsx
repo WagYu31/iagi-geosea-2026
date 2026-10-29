@@ -453,6 +453,16 @@ export default function Receipt({
                                             );
                                         })}
                                         {/* Breakdown Rows */}
+                                        {Number(payment.discount_amount || 0) > 0 && (
+                                            <TableRow sx={{ bgcolor: '#fffbeb' }}>
+                                                <TableCell colSpan={4} align="right" sx={{ fontWeight: 700, color: '#b45309', fontSize: '0.76rem', py: 0.6 }}>
+                                                    Special Discount ({payment.discount_type === 'percent' ? `${Number(payment.discount_value)}%` : 'Nominal'}{payment.discount_notes ? ` - ${payment.discount_notes}` : ''}):
+                                                </TableCell>
+                                                <TableCell align="right" sx={{ fontWeight: 700, color: '#b45309', fontSize: '0.76rem', py: 0.6 }}>
+                                                    - IDR {Number(payment.discount_amount).toLocaleString('id-ID')}
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
                                         {Number(payment.unique_code || 0) > 0 && (
                                             <>
                                                 <TableRow sx={{ bgcolor: '#fafafa' }}>
