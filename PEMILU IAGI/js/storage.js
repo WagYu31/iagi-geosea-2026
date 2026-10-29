@@ -1699,9 +1699,40 @@ class PemiluStorage {
   // --- Audit Trail ---
   getAuditLogs() {
     try {
+      const serverCached = localStorage.getItem(STORAGE_KEYS.AUDIT + '_server');
+      if (serverCached) {
+        const parsed = JSON.parse(serverCached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
       return JSON.parse(localStorage.getItem(STORAGE_KEYS.AUDIT)) || [];
     } catch (e) {
       return [];
+    }
+  }
+
+  async fetchServerAuditLogs() {
+    try {
+      const resp = await fetch('api/vote_sync.php?action=get_audit_logs');
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      if (data && data.success && Array.isArray(data.logs)) {
+        localStorage.setItem(STORAGE_KEYS.AUDIT + '_server', JSON.stringify(data.logs));
+        return data;
+      }
+    } catch (e) {
+      console.warn('Gagal mengambil audit log server:', e);
+    }
+    return null;
+  }
+
+  async verifyCryptographicIntegrity() {
+    try {
+      const resp = await fetch('api/vote_sync.php?action=verify_integrity');
+      if (!resp.ok) return null;
+      return await resp.json();
+    } catch (e) {
+      console.warn('Gagal verifikasi integritas server:', e);
+      return null;
     }
   }
 
