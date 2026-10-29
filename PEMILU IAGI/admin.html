@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>KPKU Command Center & Pleno Live Count | Pemilu IAGI 2026</title>
   <meta name="description" content="Dashboard Eksekutif Panitia Pemilihan Ketua Umum IAGI 2026 - Monitoring DPT, Brankas Kriptografi Bersegel, dan Hasil Perolehan Suara Sidang Pleno Terbuka.">
   
@@ -6227,6 +6230,7 @@
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('ADMIN', event)">Aktivitas Admin</button>
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('VOTE', event)">Perekaman Suara</button>
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('SECURITY', event)">Segel & Keamanan</button>
+            <button type="button" class="dpt-filter-pill" onclick="renderAuditLogs()" style="background: rgba(56, 189, 248, 0.12); color: #38BDF8; border-color: rgba(56, 189, 248, 0.4); font-weight: 700;">🔄 Segarkan Log Server</button>
           </div>
           <div style="position: relative; min-width: 240px;">
             <input type="text" id="input-search-audit-logs" placeholder="Cari IP, aksi, atau rincian log..." oninput="filterAdminAuditLogs()" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 6px 10px; font-size: 0.78rem; color: #FFFFFF; outline: none;">
@@ -6246,7 +6250,90 @@
               </tr>
             </thead>
             <tbody id="desktop-audit-logs-body">
-              <!-- Dynamically populated -->
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 08:29:01 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VOTE_RECORDED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Surat suara sah direkam ke kotak suara terenkripsi (NPA: 04900, Receipt: E29BF9BCFB07915E)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 08:00:08 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VOTE_RECORDED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Surat suara sah direkam ke kotak suara terenkripsi (NPA: 10338, Receipt: 1593F27CDF076198)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:56:18 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VOTE_RECORDED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Surat suara sah direkam ke kotak suara terenkripsi (NPA: 07297, Receipt: EAC7AB33C4406931)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:54:18 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VOTE_RECORDED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Surat suara sah direkam ke kotak suara terenkripsi (NPA: 07325, Receipt: B88602796D524812)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:54:01 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VOTE_RECORDED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Surat suara sah direkam ke kotak suara terenkripsi (NPA: 07566, Receipt: 5FB4F646318B4797)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:51:48 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VOTE_RECORDED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Surat suara sah direkam ke kotak suara terenkripsi (NPA: 06880, Receipt: C224C9EA9A938DCC)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:48:12 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(59, 130, 246, 0.15); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">ADMIN_LOGIN_SUCCESS</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">114.125.10.22</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Sesi Admin Terverifikasi (cingire687@gmail.com - Tim IT & Teknis KPKU)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:46:36 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VOTE_RECORDED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Surat suara sah direkam ke kotak suara terenkripsi (NPA: 02984, Receipt: 69472A5B4967A411)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:34:07 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VOTE_RECORDED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Surat suara sah direkam ke kotak suara terenkripsi (NPA: 11252, Receipt: 812F494251F97C7C)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:31:53 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VAULT_UNSEALED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">59.153.83.219</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Kotak Suara Digital KPKU DIBUKA (PLENO RESMI) oleh Otoritas IP 59.153.83.219.</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:31:29 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VAULT_SEALED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">59.153.83.219</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Kotak Suara Digital KPKU DIKUNCI BERSEGEL oleh Otoritas IP 59.153.83.219.</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:29:25 WIB</td>
+                <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">VOTE_RECORDED</span></td>
+                <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Surat suara sah direkam ke kotak suara terenkripsi (NPA: 03548, Receipt: 1C020E5E8EC8F731)</td>
+                <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -10982,8 +11069,8 @@
         const tbody = document.getElementById('desktop-audit-logs-body');
         if (!tbody) return;
 
-        // Show immediate loading if table is empty
-        if (!cachedAuditLogs || cachedAuditLogs.length === 0) {
+        // Show immediate loading only if table is completely empty
+        if (tbody.children.length === 0 && (!cachedAuditLogs || cachedAuditLogs.length === 0)) {
           tbody.innerHTML = `
             <tr>
               <td colspan="5" style="padding: 24px; text-align: center; color: #38BDF8; font-weight: 600;">
@@ -14835,6 +14922,9 @@
         if (hash.includes('section-random-check') && typeof renderRandomCheckSection === 'function') {
           renderRandomCheckSection();
         }
+        if (typeof renderAuditLogs === 'function') {
+          renderAuditLogs();
+        }
       };
 
       // Call on DOMContentLoaded for interactive sections
@@ -14847,6 +14937,9 @@
       if (typeof ensureDptDatalist === 'function') {
         ensureDptDatalist();
       }
+      if (typeof renderAuditLogs === 'function') {
+        renderAuditLogs();
+      }
 
       window.addEventListener('hashchange', () => {
         const h = window.location.hash || '';
@@ -14855,6 +14948,9 @@
         }
         if (h.includes('section-random-check') && typeof renderRandomCheckSection === 'function') {
           renderRandomCheckSection();
+        }
+        if (h.includes('section-audit-trail') && typeof renderAuditLogs === 'function') {
+          renderAuditLogs();
         }
       });
     });

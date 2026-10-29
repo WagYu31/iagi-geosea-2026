@@ -30,3 +30,13 @@ Options -Indexes
     Header always set X-XSS-Protection "1; mode=block"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
+
+# Disable caching for dynamic dashboard files (Ensures audit logs & tally update instantly)
+<FilesMatch "^(admin\.html|hasil\.html)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </IfModule>
+</FilesMatch>
+
