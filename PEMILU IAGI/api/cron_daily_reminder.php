@@ -46,6 +46,23 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS
 define('CRON_SECRET_KEY', 'kpku_reminder_cron_secure_2026_wagyua');
 define('DEADLINE_WIB', '2026-11-03 23:59:00');
 
+// Proteksi Keamanan: Hanya izinkan eksekusi via CLI (cPanel Cron Job)
+// atau panggilan internal dari vote_sync.php (IN_VOTE_SYNC).
+// Akses publik/eksternal langsung dari browser diblokir 403 Forbidden!
+$isCli = (php_sapi_name() === 'cli');
+$isInternal = defined('IN_VOTE_SYNC');
+$secretKey = $_GET['key'] ?? ($_POST['key'] ?? '');
+
+if (!$isCli && !$isInternal && $secretKey !== CRON_SECRET_KEY) {
+    http_response_code(403);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'success' => false,
+        'error' => 'Akses ditolak (403 Forbidden). Script pengingat ini diproteksi ketat dan hanya dapat dieksekusi secara internal oleh sistem server atau Cron Job resmi.'
+    ]);
+    exit;
+}
+
 // Direktori Data Aman
 if (!function_exists('resolveSecureDataDir')) {
     function resolveSecureDataDir() {
