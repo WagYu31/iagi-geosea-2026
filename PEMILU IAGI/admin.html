@@ -8460,8 +8460,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=4.7.1"></script>
-  <script src="js/storage.js?v=4.7.1"></script>
+  <script src="js/data.js?v=4.8.2"></script>
+  <script src="js/storage.js?v=4.8.2"></script>
 
   <script>
     // =========================================================================
@@ -10345,6 +10345,9 @@
           if (topbarTitle) topbarTitle.innerText = 'Live Audit Trail Kriptografi (SHA-256)';
           if (topbarSubtitle) topbarSubtitle.innerText = 'Catatan Transaksi Kriptografi Immutable & Verifikasi LUBER Zero-Knowledge';
           if (history.replaceState) history.replaceState(null, '', '#section-audit-trail');
+          if (typeof renderAuditLogs === 'function') {
+            renderAuditLogs();
+          }
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
           // Ringkasan Pleno (Default overview)
@@ -10979,21 +10982,45 @@
         const tbody = document.getElementById('desktop-audit-logs-body');
         if (!tbody) return;
 
-        // Coba ambil log resmi dari server
+        // Show immediate loading if table is empty
+        if (!cachedAuditLogs || cachedAuditLogs.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="5" style="padding: 24px; text-align: center; color: #38BDF8; font-weight: 600;">
+                <span style="display: inline-block; animation: spin 1s infinite linear;">⚙️</span> Memuat log aktivitas & data integritas server...
+              </td>
+            </tr>
+          `;
+        }
+
         let logs = [];
-        if (window.pemiluStorage && typeof window.pemiluStorage.fetchServerAuditLogs === 'function') {
-          const srvData = await window.pemiluStorage.fetchServerAuditLogs();
-          if (srvData && Array.isArray(srvData.logs)) {
-            logs = srvData.logs;
-            // Update cards dari response server
-            const elInteg = document.getElementById('audit-stat-integrity');
-            if (elInteg) elInteg.innerText = srvData.integrity_status || 'VALID & UNTOUCHED';
-            const elTamp = document.getElementById('audit-stat-tampering');
-            if (elTamp) elTamp.innerText = `${srvData.manual_edits_detected || 0} (NIHIL / ZERO)`;
-            const elRecon = document.getElementById('audit-stat-reconciliation');
-            if (elRecon) elRecon.innerText = `${srvData.total_votes || 623} / ${srvData.total_voted_dpt || 623} (MATCH)`;
-            const elDisc = document.getElementById('audit-stat-discrepancy');
-            if (elDisc) elDisc.innerText = `Selisih: ${srvData.discrepancy || 0} (Zero Discrepancy)`;
+        try {
+          const resp = await fetch('api/vote_sync.php?action=get_audit_logs');
+          if (resp.ok) {
+            const srvData = await resp.json();
+            if (srvData && Array.isArray(srvData.logs) && srvData.logs.length > 0) {
+              logs = srvData.logs;
+              // Update KPI cards
+              const elInteg = document.getElementById('audit-stat-integrity');
+              if (elInteg) elInteg.innerText = srvData.integrity_status || 'VALID & UNTOUCHED';
+              const elTamp = document.getElementById('audit-stat-tampering');
+              if (elTamp) elTamp.innerText = `${srvData.manual_edits_detected || 0} (NIHIL / ZERO)`;
+              const elRecon = document.getElementById('audit-stat-reconciliation');
+              if (elRecon) elRecon.innerText = `${srvData.total_votes || 623} / ${srvData.total_voted_dpt || 623} (MATCH)`;
+              const elDisc = document.getElementById('audit-stat-discrepancy');
+              if (elDisc) elDisc.innerText = `Selisih: ${srvData.discrepancy || 0} (Zero Discrepancy)`;
+            }
+          }
+        } catch (err) {
+          console.warn('Gagal fetch get_audit_logs langsung:', err);
+        }
+
+        if (!logs || logs.length === 0) {
+          if (window.pemiluStorage && typeof window.pemiluStorage.fetchServerAuditLogs === 'function') {
+            const srvData = await window.pemiluStorage.fetchServerAuditLogs();
+            if (srvData && Array.isArray(srvData.logs)) {
+              logs = srvData.logs;
+            }
           }
         }
 
@@ -11006,6 +11033,7 @@
         cachedAuditLogs = logs;
         filterAdminAuditLogs();
       }
+      window.renderAuditLogs = renderAuditLogs;
 
       window.setAuditLogFilter = function(filterCat, event) {
         currentAuditFilter = filterCat;
