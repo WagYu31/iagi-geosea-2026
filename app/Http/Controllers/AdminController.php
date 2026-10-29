@@ -1552,12 +1552,12 @@ class AdminController extends Controller
     public function presentationScores()
     {
         $submissions = Submission::with([
-            'user:id,name,email',
-            'presentationScores.juri:id,name',
+            'user:id,name,email,affiliation',
+            'presentationScores.juri:id,name,email',
         ])
             ->whereHas('presentationScores')
             ->latest()
-            ->paginate(25);
+            ->paginate(50);
 
         return Inertia::render('Admin/PresentationScores', [
             'submissions' => $submissions,
