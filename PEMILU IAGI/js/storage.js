@@ -1389,9 +1389,6 @@ class PemiluStorage {
             lastLogin: "2026-10-28T17:02:00Z"
           }
         ];
-            lastLogin: null
-          }
-        ];
 
     seeds.forEach(acc => {
       delete acc.password;
