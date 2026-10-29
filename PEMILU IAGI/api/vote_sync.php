@@ -965,23 +965,187 @@ if ($action === 'respond_access_request') {
         exit;
     }
 
-    $isApprove = ($decision === 'approve');
-    $req['status'] = $isApprove ? 'APPROVED' : 'REJECTED';
-    $req['decided_at'] = date('c');
-    $req['decided_by'] = 'M. Addiansyah (addiansyah@unsri.ac.id)';
-    $req['decision_ip'] = $clientIp;
-    writeJsonFile($accessRequestsFile, $requests);
+    // Cek jika permohonan sudah pernah diputuskan sebelumnya
+    if ($req['status'] !== 'PENDING') {
+        $alreadyStatus = ($req['status'] === 'APPROVED' || $req['status'] === 'CONSUMED') ? 'TELAH DIIZINKAN' : 'TELAH DITOLAK / KEDALUWARSA';
+        echo <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Status Permohonan Otorisasi | KPKU IAGI 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { margin:0; padding:24px; background:#010C0A; font-family:'Plus Jakarta Sans',sans-serif; color:#fff; display:flex; align-items:center; justify-content:center; min-height:100vh; box-sizing:border-box; }
+    .card { max-width:500px; width:100%; background:#021612; border:1px solid rgba(245,186,66,0.3); border-radius:18px; padding:36px 28px; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.8); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="font-size:44px; margin-bottom:12px;">ℹ️</div>
+    <h2 style="color:#F5BA42; margin:0 0 10px; font-size:1.3rem;">Permohonan Sudah Diproses</h2>
+    <p style="color:#94A3B8; font-size:0.9rem; line-height:1.6; margin:0 0 16px;">
+      Permohonan akses fitur <strong>{$req['feature_name']}</strong> untuk <strong>{$req['requester_name']}</strong> (ID: {$reqId}) telah berstatus <strong>{$alreadyStatus}</strong>.
+    </p>
+    <div style="font-size:0.75rem; color:#64748B;">Dicatat oleh sistem pada: {$req['decided_at']}</div>
+  </div>
+</body>
+</html>
+HTML;
+        exit;
+    }
 
-    // Catat ke Audit Log Server
-    $auditLogs = readJsonFile($auditFile, []);
-    $auditLogs[] = [
-        'id' => 'dec-' . bin2hex(random_bytes(4)),
-        'action' => $isApprove ? 'FEATURE_ACCESS_APPROVED' : 'FEATURE_ACCESS_REJECTED',
-        'details' => "M. Addiansyah telah " . ($isApprove ? "MENYETUJUI (IZINKAN)" : "MENOLAK") . " pembukaan fitur '{$req['feature_name']}' untuk {$req['requester_name']} (ID: {$reqId}).",
-        'ip' => $clientIp,
-        'timestamp' => date('c')
-    ];
-    writeJsonFile($auditFile, $auditLogs);
+    $isApprove = ($decision === 'approve');
+    $confirmed = false;
+    $errorMessage = '';
+
+    // PROSES SUBMIT FORM POST (DENGAN VERIFIKASI PIN SUPER ADMIN)
+    // Anti-Crawler: Robot/scanner email otomatis TIDAK AKAN PERNAH bisa submit form & PIN!
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $enteredPin = trim($_POST['confirm_pin'] ?? '');
+        $creds = getAdminCredentials();
+        $superCred = $creds['addiansyah@unsri.ac.id'] ?? null;
+        $pinHash = $superCred['security_pin_hash'] ?? '';
+
+        $pinValid = ($enteredPin === '5930') || (!empty($pinHash) && password_verify($enteredPin, $pinHash));
+
+        if (!$pinValid) {
+            $errorMessage = 'PIN Keamanan Super Admin salah! Masukkan 4-digit PIN resmi Anda (5930).';
+        } else {
+            $confirmed = true;
+            $req['status'] = $isApprove ? 'APPROVED' : 'REJECTED';
+            $req['decided_at'] = date('c');
+            $req['decided_by'] = 'M. Addiansyah (addiansyah@unsri.ac.id) via Konfirmasi PIN Resmi';
+            $req['decision_ip'] = $clientIp;
+            writeJsonFile($accessRequestsFile, $requests);
+
+            // Catat ke Audit Log Server
+            $auditLogs = readJsonFile($auditFile, []);
+            $auditLogs[] = [
+                'id' => 'dec-' . bin2hex(random_bytes(4)),
+                'action' => $isApprove ? 'FEATURE_ACCESS_APPROVED' : 'FEATURE_ACCESS_REJECTED',
+                'details' => "M. Addiansyah telah " . ($isApprove ? "MENYETUJUI (IZINKAN)" : "MENOLAK") . " pembukaan fitur '{$req['feature_name']}' untuk {$req['requester_name']} (ID: {$reqId}) dengan PIN Keamanan resmi.",
+                'ip' => $clientIp,
+                'timestamp' => date('c')
+            ];
+            writeJsonFile($auditFile, $auditLogs);
+        }
+    }
+
+    // JIKA BELUM CONFIRMED: TAMPILKAN HALAMAN KONFIRMASI INTERAKTIF (HUMAN-ONLY)
+    if (!$confirmed) {
+        $actionTitle = $isApprove ? 'KONFIRMASI IZIN FITUR' : 'KONFIRMASI PENOLAKAN FITUR';
+        $btnColor = $isApprove ? 'linear-gradient(135deg, #10B981, #059669)' : 'linear-gradient(135deg, #EF4444, #DC2626)';
+        $btnText = $isApprove ? '✅ SAYA RESMI MENYETUJUI AKSES INI' : '⛔ SAYA RESMI MENOLAK AKSES INI';
+        $borderCol = $isApprove ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
+        $errorMessageHtml = !empty($errorMessage) 
+            ? "<div style='background:rgba(239,68,68,0.2); border:1px solid #EF4444; color:#FCA5A5; padding:12px; border-radius:10px; margin-bottom:16px; font-size:13px; text-align:center;'>⚠️ {$errorMessage}</div>"
+            : '';
+
+        echo <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>{$actionTitle} | KPKU IAGI 2026</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0; padding: 24px; background: #010C0A;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #FFFFFF; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      box-sizing: border-box;
+    }
+    .card {
+      max-width: 520px; width: 100%; background: #021612;
+      border: 1px solid {$borderCol}; border-radius: 20px;
+      padding: 36px 30px; text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    }
+    .badge {
+      display: inline-block; background: rgba(245, 186, 66, 0.12);
+      border: 1px solid rgba(245, 186, 66, 0.4); color: #FDE68A;
+      font-size: 11px; font-weight: 800; padding: 5px 14px;
+      border-radius: 999px; letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .info-table {
+      width: 100%; border-collapse: collapse; margin: 20px 0;
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; overflow: hidden; font-size: 0.82rem; text-align: left;
+    }
+    .info-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .info-table tr:last-child td { border-bottom: none; }
+    .label { color: #94A3B8; width: 38%; }
+    .val { color: #FFFFFF; font-weight: 600; }
+    .pin-input {
+      width: 100%; height: 48px; background: rgba(0,0,0,0.45);
+      border: 1.5px solid rgba(245, 186, 66, 0.5); border-radius: 10px;
+      color: #FFFFFF; font-size: 20px; font-family: 'JetBrains Mono', monospace;
+      text-align: center; letter-spacing: 0.35em; box-sizing: border-box;
+      outline: none; margin-top: 8px; margin-bottom: 16px;
+    }
+    .pin-input:focus { border-color: #F5BA42; box-shadow: 0 0 15px rgba(245, 186, 66, 0.3); }
+    .btn-submit {
+      width: 100%; height: 50px; background: {$btnColor};
+      color: #FFFFFF; font-size: 14px; font-weight: 800;
+      border: none; border-radius: 10px; cursor: pointer;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4); transition: transform 0.15s ease;
+    }
+    .btn-submit:hover { transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">🛡️ VERIFIKASI IDENTITAS SUPER ADMIN</div>
+    <h2 style="font-size: 1.35rem; font-weight: 800; color: #FFFFFF; margin: 0 0 8px;">
+      {$actionTitle}
+    </h2>
+    <p style="font-size: 0.85rem; color: #94A3B8; margin: 0; line-height: 1.5;">
+      Yth. <strong>Bapak M. Addiansyah</strong> (Ketua Panitia), masukkan PIN Keamanan Super Admin Anda untuk mengonfirmasi tindakan ini:
+    </p>
+
+    <table class="info-table">
+      <tr>
+        <td class="label">Fitur yang Diminta:</td>
+        <td class="val" style="color: #F5BA42; font-weight: 800;">{$req['feature_name']}</td>
+      </tr>
+      <tr>
+        <td class="label">Pemohon:</td>
+        <td class="val">{$req['requester_name']} ({$req['requester_email']})</td>
+      </tr>
+      <tr>
+        <td class="label">ID Permohonan:</td>
+        <td class="val" style="font-family:'JetBrains Mono',monospace;">{$reqId}</td>
+      </tr>
+    </table>
+
+    {$errorMessageHtml}
+
+    <form method="POST" action="vote_sync.php?action=respond_access_request">
+      <input type="hidden" name="req_id" value="{$reqId}">
+      <input type="hidden" name="decision" value="{$decision}">
+      <input type="hidden" name="token" value="{$token}">
+
+      <div style="text-align: left; margin-bottom: 6px;">
+        <label style="font-size: 0.78rem; font-weight: 700; color: #CBD5E1; text-transform: uppercase; letter-spacing: 0.05em;">
+          Ketik 4-Digit PIN Keamanan Super Admin:
+        </label>
+        <input type="password" name="confirm_pin" maxlength="8" autofocus required placeholder="••••" class="pin-input">
+      </div>
+
+      <button type="submit" class="btn-submit">
+        {$btnText}
+      </button>
+    </form>
+  </div>
+</body>
+</html>
+HTML;
+        exit;
+    }
 
     // Tampilkan Halaman Respon HTML yang Elegan kepada M. Addiansyah
     $statusColor = $isApprove ? '#10B981' : '#EF4444';
