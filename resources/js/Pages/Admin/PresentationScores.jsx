@@ -1211,7 +1211,7 @@ export default function PresentationScores({ submissions, availableJuris = [] })
                         <Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                 <Typography variant="h5" sx={{ fontWeight: 900, color: c.textPrimary, letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-                                    Presentation Scores ⚖️
+                                    Presentation Scores (JURI) ⚖️
                                 </Typography>
                                 <Chip 
                                     label="Live Rubric & Jury Panel" 
@@ -1220,7 +1220,7 @@ export default function PresentationScores({ submissions, availableJuris = [] })
                                 />
                             </Box>
                             <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.78rem', display: 'block', mt: 0.3 }}>
-                                Rekapitulasi penilaian juri oral & poster, manajemen penugasan juri, dan leaderboard juara
+                                Rekapitulasi penilaian presentasi oral & poster oleh Juri Panelis, penugasan juri, dan leaderboard juara
                             </Typography>
                         </Box>
                     </Box>

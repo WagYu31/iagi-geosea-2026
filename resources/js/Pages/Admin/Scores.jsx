@@ -525,7 +525,7 @@ export default function AdminScores({
                                     color: '#ffffff',
                                     mb: 0.8,
                                 }}>
-                                    Scores & Evaluation Rankings 📊
+                                    Scores (Reviewer) ⭐
                                 </Typography>
                                 <Typography variant="body1" sx={{
                                     color: 'rgba(255, 255, 255, 0.84)',
@@ -533,7 +533,7 @@ export default function AdminScores({
                                     maxWidth: 750,
                                     lineHeight: 1.5,
                                 }}>
-                                    Comprehensive evaluation dashboard tracking peer-review scores, reviewer consensus, rubric distributions, and final recommendation rankings for all scientific submissions.
+                                    Rekapitulasi penilaian naskah ilmiah oleh Peer Reviewer: originalitas, relevansi, metodologi, kejelasan, rekomendasi, dan catatan revisi naskah.
                                 </Typography>
                             </Box>
 
