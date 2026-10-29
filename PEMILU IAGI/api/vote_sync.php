@@ -1563,6 +1563,50 @@ if ($action === 'get_voted_list') {
     exit;
 }
 
+// ================= ACTION 2A: SYNC VOTED NPAS FROM AUTHORITATIVE DPT =================
+if ($action === 'sync_voted_npas') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $npasList = $payload['voted_npas'] ?? [];
+    if (!empty($npasList) && is_array($npasList)) {
+        $fpLock = @fopen($lockFile, 'c+');
+        if ($fpLock && @flock($fpLock, LOCK_EX)) {
+            $voters = readJsonFile($votersFile, []);
+            $changed = false;
+            foreach ($npasList as $npaItem) {
+                $npa = substr(preg_replace('/\D/', '', (string)$npaItem), 0, 5);
+                if (strlen($npa) === 5) {
+                    if (!isset($voters[$npa]) || empty($voters[$npa]['voted'])) {
+                        $voters[$npa] = [
+                            'npa' => $npa,
+                            'name' => $voters[$npa]['name'] ?? '',
+                            'claimed' => true,
+                            'voted' => true,
+                            'voted_at' => $voters[$npa]['voted_at'] ?? '29 Oktober 2026, 12:00:00 WIB',
+                            'receipt_hash' => $voters[$npa]['receipt_hash'] ?? 'VERIFIED_DPT_SYNC'
+                        ];
+                        $changed = true;
+                    }
+                }
+            }
+            if ($changed) {
+                writeJsonFile($votersFile, $voters);
+            }
+            flock($fpLock, LOCK_UN);
+            fclose($fpLock);
+        }
+    }
+    $voters = readJsonFile($votersFile, []);
+    $votedCount = 0;
+    foreach ($voters as $v) {
+        if (!empty($v['voted'])) $votedCount++;
+    }
+    echo json_encode(['success' => true, 'total_voted_on_server' => $votedCount]);
+    exit;
+}
+
 // ================= ACTION 2B: REGISTER CLAIMED TOKEN (HASH ONLY) =================
 if ($action === 'register_claim') {
     $rawInput = @file_get_contents('php://input');

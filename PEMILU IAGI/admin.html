@@ -12844,20 +12844,7 @@
       };
 
       // ================= CONTROLLER: PENGINGAT HARIAN DPT & GOOGLE CALENDAR =================
-      window.openDailyReminderModal = function() {
-        const modal = document.getElementById('modal-daily-reminder');
-        if (modal) modal.style.setProperty('display', 'flex', 'important');
-
-        // Isi default email test dengan email admin saat ini jika ada
-        const currentSession = (window.pemiluStorage && typeof window.pemiluStorage.getAdminSession === 'function') 
-          ? window.pemiluStorage.getAdminSession() 
-          : null;
-        const testInput = document.getElementById('input-reminder-test-email');
-        if (testInput && !testInput.value && currentSession && currentSession.email) {
-          testInput.value = currentSession.email;
-        }
-
-        // Ambil status statistik live dari server
+      function loadReminderStats() {
         fetch('api/vote_sync.php?action=get_reminder_status')
           .then(res => res.json())
           .then(data => {
@@ -12881,6 +12868,41 @@
           .catch(err => {
             console.warn('Gagal memuat status pengingat live:', err);
           });
+      }
+
+      window.openDailyReminderModal = function() {
+        const modal = document.getElementById('modal-daily-reminder');
+        if (modal) modal.style.setProperty('display', 'flex', 'important');
+
+        // Isi default email test dengan email admin saat ini jika ada
+        const currentSession = (window.pemiluStorage && typeof window.pemiluStorage.getAdminSession === 'function') 
+          ? window.pemiluStorage.getAdminSession() 
+          : null;
+        const testInput = document.getElementById('input-reminder-test-email');
+        if (testInput && !testInput.value && currentSession && currentSession.email) {
+          testInput.value = currentSession.email;
+        }
+
+        // Sinkronkan pemilih yang sudah memilih dari DPT browser ke server agar server mutakhir
+        if (window.pemiluStorage && typeof window.pemiluStorage.getDPT === 'function') {
+          const dpt = window.pemiluStorage.getDPT();
+          const votedNpas = dpt.filter(v => v.voted).map(v => v.npa);
+          if (votedNpas.length > 0) {
+            fetch('api/vote_sync.php?action=sync_voted_npas', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ voted_npas: votedNpas })
+            }).then(() => {
+              loadReminderStats();
+            }).catch(() => {
+              loadReminderStats();
+            });
+            return;
+          }
+        }
+
+        // Ambil status statistik live dari server
+        loadReminderStats();
       };
 
       window.closeDailyReminderModal = function() {
