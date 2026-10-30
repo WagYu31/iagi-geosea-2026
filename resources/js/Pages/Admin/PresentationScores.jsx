@@ -31,6 +31,8 @@ import StarIcon from '@mui/icons-material/Star';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 // Curated modern avatar gradients (21st.dev inspired)
 const AVATAR_GRADIENTS = [
@@ -60,31 +62,82 @@ function getInterpretation(score) {
     return { label: 'Unsatisfactory', color: '#dc2626', bg: '#fef2f2', border: '#fecaca' };
 }
 
-// Rubric Criteria definitions with weights
-const ORAL_CRITERIA = [
-    { label: 'Time Management', key: 'time_management', weight: 0.05, weightLabel: '5%' },
-    { label: 'Posture & Professionalism', key: 'posture_professionalism', weight: 0.10, weightLabel: '10%' },
-    { label: 'Communication Skills', key: 'communication_skills', weight: 0.15, weightLabel: '15%' },
-    { label: 'Scientific Substantiation', key: 'scientific_substantiation', weight: 0.15, weightLabel: '15%' },
-    { label: 'Technical Contribution', key: 'technical_contribution', weight: 0.10, weightLabel: '10%' },
-    { label: 'Logical Organization', key: 'logical_organization', weight: 0.10, weightLabel: '10%' },
-    { label: 'Visual Quality', key: 'visual_quality', weight: 0.05, weightLabel: '5%' },
-    { label: 'Originality & Innovation', key: 'originality_innovation', weight: 0.10, weightLabel: '10%' },
-    { label: 'Manuscript Substantiation', key: 'manuscript_substantiation', weight: 0.10, weightLabel: '10%' },
-    { label: 'Manuscript Writing', key: 'manuscript_writing', weight: 0.10, weightLabel: '10%' },
+// ─── Rubric Definitions with TasteSkill / 21st.dev Section Grouping ───
+const ORAL_SECTIONS = [
+    {
+        id: 'A',
+        title: 'Presentation Delivery',
+        weight: '30%',
+        color: '#0284c7',
+        items: [
+            { label: 'Time Management', key: 'time_management', weight: 0.05, weightLabel: '5%' },
+            { label: 'Posture & Professionalism', key: 'posture_professionalism', weight: 0.10, weightLabel: '10%' },
+            { label: 'Communication Skills', key: 'communication_skills', weight: 0.15, weightLabel: '15%' },
+        ]
+    },
+    {
+        id: 'B',
+        title: 'Presentation Content',
+        weight: '50%',
+        color: '#0d9488',
+        items: [
+            { label: 'Scientific Substantiation', key: 'scientific_substantiation', weight: 0.15, weightLabel: '15%' },
+            { label: 'Technical Contribution', key: 'technical_contribution', weight: 0.10, weightLabel: '10%' },
+            { label: 'Logical Organization', key: 'logical_organization', weight: 0.10, weightLabel: '10%' },
+            { label: 'Visual Quality', key: 'visual_quality', weight: 0.05, weightLabel: '5%' },
+            { label: 'Originality & Innovation', key: 'originality_innovation', weight: 0.10, weightLabel: '10%' },
+        ]
+    },
+    {
+        id: 'C',
+        title: 'Manuscript Quality',
+        weight: '20%',
+        color: '#d97706',
+        items: [
+            { label: 'Manuscript Substantiation', key: 'manuscript_substantiation', weight: 0.10, weightLabel: '10%' },
+            { label: 'Manuscript Writing', key: 'manuscript_writing', weight: 0.10, weightLabel: '10%' },
+        ]
+    }
 ];
 
-const POSTER_CRITERIA = [
-    { label: 'Scientific Substantiation', key: 'poster_scientific_substantiation', weight: 0.15, weightLabel: '15%' },
-    { label: 'Practical Usefulness', key: 'practical_usefulness', weight: 0.10, weightLabel: '10%' },
-    { label: 'Technical Contribution', key: 'poster_technical_contribution', weight: 0.10, weightLabel: '10%' },
-    { label: 'Organization & Visual Design', key: 'poster_organization_design', weight: 0.10, weightLabel: '10%' },
-    { label: 'Originality & Authenticity', key: 'poster_originality', weight: 0.10, weightLabel: '10%' },
-    { label: 'Presentation & Explanation', key: 'presentation_explanation', weight: 0.10, weightLabel: '10%' },
-    { label: 'Subject Knowledge', key: 'subject_knowledge', weight: 0.15, weightLabel: '15%' },
-    { label: 'Manuscript Substantiation', key: 'manuscript_substantiation', weight: 0.10, weightLabel: '10%' },
-    { label: 'Manuscript Writing', key: 'manuscript_writing', weight: 0.10, weightLabel: '10%' },
+const POSTER_SECTIONS = [
+    {
+        id: 'A',
+        title: 'Poster Quality',
+        weight: '55%',
+        color: '#0284c7',
+        items: [
+            { label: 'Scientific Substantiation', key: 'poster_scientific_substantiation', weight: 0.15, weightLabel: '15%' },
+            { label: 'Practical Usefulness', key: 'practical_usefulness', weight: 0.10, weightLabel: '10%' },
+            { label: 'Technical Contribution', key: 'poster_technical_contribution', weight: 0.10, weightLabel: '10%' },
+            { label: 'Organization & Visual Design', key: 'poster_organization_design', weight: 0.10, weightLabel: '10%' },
+            { label: 'Originality & Authenticity', key: 'poster_originality', weight: 0.10, weightLabel: '10%' },
+        ]
+    },
+    {
+        id: 'B',
+        title: 'Presenter Quality',
+        weight: '25%',
+        color: '#0d9488',
+        items: [
+            { label: 'Presentation & Explanation', key: 'presentation_explanation', weight: 0.10, weightLabel: '10%' },
+            { label: 'Subject Knowledge', key: 'subject_knowledge', weight: 0.15, weightLabel: '15%' },
+        ]
+    },
+    {
+        id: 'C',
+        title: 'Manuscript Quality',
+        weight: '20%',
+        color: '#d97706',
+        items: [
+            { label: 'Manuscript Substantiation', key: 'manuscript_substantiation', weight: 0.10, weightLabel: '10%' },
+            { label: 'Manuscript Writing', key: 'manuscript_writing', weight: 0.10, weightLabel: '10%' },
+        ]
+    }
 ];
+
+const ORAL_CRITERIA = ORAL_SECTIONS.flatMap(s => s.items);
+const POSTER_CRITERIA = POSTER_SECTIONS.flatMap(s => s.items);
 
 // Helper to calculate filled criteria, provisional score, and draft status
 function getScoreMetrics(score, isOral) {
@@ -125,178 +178,369 @@ function getScoreMetrics(score, isOral) {
     };
 }
 
-// Helper to render criterion breakdown inside expanded rows
+// ─── CriterionBreakdown (21st.dev & TasteSkill Design) ───
 function CriterionBreakdown({ score, isOral, isDark, bdr, isDraft, metrics }) {
-    const list = isOral ? ORAL_CRITERIA : POSTER_CRITERIA;
+    const sections = isOral ? ORAL_SECTIONS : POSTER_SECTIONS;
     const info = metrics || getScoreMetrics(score, isOral);
 
     return (
         <Box sx={{
-            mt: 2, 
-            p: 2.2, 
-            borderRadius: '12px',
-            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
-            border: `1px solid ${isDraft ? '#fde68a' : bdr}`,
-            boxShadow: isDraft ? '0 2px 10px rgba(245, 158, 11, 0.08)' : '0 2px 6px rgba(0,0,0,0.02)'
+            mt: 2.5, 
+            p: { xs: 2, sm: 2.8 }, 
+            borderRadius: '16px',
+            bgcolor: isDark ? 'rgba(15, 23, 42, 0.65)' : '#ffffff',
+            backdropFilter: isDark ? 'blur(12px)' : 'none',
+            border: `1px solid ${isDark ? (isDraft ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255, 255, 255, 0.08)') : (isDraft ? '#fcd34d' : bdr)}`,
+            boxShadow: isDark 
+                ? '0 8px 30px rgba(0,0,0,0.35)' 
+                : isDraft 
+                ? '0 4px 20px rgba(245, 158, 11, 0.08)' 
+                : '0 2px 10px rgba(0,0,0,0.03)'
         }}>
-            {/* Draft Notice Banner */}
+            {/* Header Strip */}
+            <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
+                mb: 2.5, 
+                pb: 1.8, 
+                borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`,
+                flexWrap: 'wrap', 
+                gap: 1.5 
+            }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                    <Box sx={{
+                        width: 34,
+                        height: 34,
+                        borderRadius: '10px',
+                        bgcolor: isDraft 
+                            ? (isDark ? 'rgba(245, 158, 11, 0.15)' : '#fef3c7') 
+                            : (isDark ? 'rgba(13, 148, 136, 0.15)' : '#ecfdf5'),
+                        color: isDraft ? '#f59e0b' : '#0d9488',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: `1px solid ${isDraft ? (isDark ? 'rgba(245, 158, 11, 0.3)' : '#fde68a') : (isDark ? 'rgba(13, 148, 136, 0.3)' : '#a7f3d0')}`
+                    }}>
+                        <AutoAwesomeIcon sx={{ fontSize: 18 }} />
+                    </Box>
+                    <Box>
+                        <Typography sx={{ fontWeight: 900, color: isDark ? '#f8fafc' : '#0f172a', fontSize: '0.86rem', letterSpacing: '-0.01em' }}>
+                            Rincian Lembar Rubrik Penilaian ({isOral ? 'Oral Presentation' : 'Poster Presentation'})
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: '0.72rem', display: 'block' }}>
+                            {isDraft ? 'Mode pratinjau draft evaluasi juri • Data belum disubmit resmi' : 'Evaluasi resmi telah difinalisasi'}
+                        </Typography>
+                    </Box>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Chip 
+                        label={isOral ? '10 Parameter Penilaian' : '9 Parameter Penilaian'} 
+                        size="small" 
+                        sx={{ 
+                            height: 22, 
+                            fontSize: '0.66rem', 
+                            fontWeight: 800, 
+                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', 
+                            color: isDark ? '#cbd5e1' : '#475569',
+                            borderRadius: '6px'
+                        }} 
+                    />
+                    {isDraft && (
+                        <Chip 
+                            label="DRAFT" 
+                            size="small" 
+                            sx={{ 
+                                height: 22, 
+                                fontSize: '0.64rem', 
+                                fontWeight: 900, 
+                                bgcolor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#fef3c7', 
+                                color: isDark ? '#fbbf24' : '#b45309',
+                                border: `1px solid ${isDark ? 'rgba(245, 158, 11, 0.35)' : '#f59e0b'}`,
+                                borderRadius: '6px'
+                            }} 
+                        />
+                    )}
+                </Box>
+            </Box>
+
+            {/* TasteSkill / 21st.dev Draft Notice Banner */}
             {isDraft && (
                 <Box sx={{
-                    mb: 2,
-                    p: 1.5,
-                    borderRadius: '10px',
-                    bgcolor: info.filledCount > 0 ? '#fffbeb' : '#f8fafc',
-                    border: `1px solid ${info.filledCount > 0 ? '#fde68a' : '#e2e8f0'}`,
+                    mb: 3,
+                    p: 2,
+                    borderRadius: '14px',
+                    bgcolor: isDark 
+                        ? (info.filledCount > 0 ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255, 255, 255, 0.02)') 
+                        : (info.filledCount > 0 ? '#fffbeb' : '#f8fafc'),
+                    border: `1px solid ${isDark 
+                        ? (info.filledCount > 0 ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255, 255, 255, 0.08)') 
+                        : (info.filledCount > 0 ? '#fde68a' : '#e2e8f0')}`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     flexWrap: 'wrap',
-                    gap: 1.2
+                    gap: 1.8
                 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Chip 
-                            label={info.filledCount > 0 ? "DRAFT EVALUASI" : "DRAFT KOSONG"} 
-                            size="small" 
-                            sx={{ bgcolor: info.filledCount > 0 ? '#f59e0b' : '#64748b', color: '#ffffff', fontWeight: 900, fontSize: '0.66rem', height: 22 }} 
-                        />
-                        <Typography sx={{ fontSize: '0.78rem', color: info.filledCount > 0 ? '#78350f' : '#475569', fontWeight: 600 }}>
-                            {info.filledCount > 0
-                                ? <>Penilaian ini <strong>masih berstatus draft</strong> dan belum difinalisasi oleh Juri. Rincian di bawah mencerminkan isian sementara.</>
-                                : <>Juri telah membuka form penilaian ini dan menekan <strong>Simpan Draft</strong>, tetapi <strong>belum menginput nilai kriteria (0 terisi)</strong>.</>
-                            }
-                        </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, minWidth: 280, flex: 1 }}>
+                        <Box sx={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: '10px',
+                            bgcolor: info.filledCount > 0 
+                                ? (isDark ? 'rgba(245, 158, 11, 0.2)' : '#fef3c7') 
+                                : (isDark ? 'rgba(255, 255, 255, 0.05)' : '#e2e8f0'),
+                            color: info.filledCount > 0 ? '#f59e0b' : '#94a3b8',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0
+                        }}>
+                            {info.filledCount > 0 ? <AutoAwesomeIcon sx={{ fontSize: 19 }} /> : <InfoOutlinedIcon sx={{ fontSize: 19 }} />}
+                        </Box>
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.3 }}>
+                                <Chip 
+                                    label={info.filledCount > 0 ? "DRAFT EVALUASI" : "DRAFT KOSONG"} 
+                                    size="small" 
+                                    sx={{ 
+                                        bgcolor: info.filledCount > 0 ? '#f59e0b' : '#64748b', 
+                                        color: '#ffffff', 
+                                        fontWeight: 900, 
+                                        fontSize: '0.62rem', 
+                                        height: 20,
+                                        borderRadius: '5px'
+                                    }} 
+                                />
+                                <Typography sx={{ fontWeight: 800, fontSize: '0.82rem', color: isDark ? (info.filledCount > 0 ? '#fbbf24' : '#e2e8f0') : (info.filledCount > 0 ? '#92400e' : '#334155') }}>
+                                    {info.filledCount > 0 ? 'Penilaian Draft Sedang Berlangsung' : 'Draft Tersimpan (Belum Diinput Nilai)'}
+                                </Typography>
+                            </Box>
+                            <Typography sx={{ fontSize: '0.74rem', color: isDark ? '#94a3b8' : '#64748b', lineHeight: 1.4 }}>
+                                {info.filledCount > 0
+                                    ? <>Juri telah mengisi <strong>{info.filledCount} dari {info.totalCount} kriteria</strong>. Parameter yang belum dinilai masih kosong.</>
+                                    : <>Juri telah membuka formulir penilaian ini dan menekan <strong>Simpan Draft</strong>, namun belum memilih nilai untuk kriteria rubrik.</>
+                                }
+                            </Typography>
+                        </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                         <Chip 
-                            label={`Progres: ${info.filledCount}/${info.totalCount} Kriteria Terisi (${info.weightFilledPercent}% Bobot)`} 
+                            label={`Progres: ${info.filledCount}/${info.totalCount} Terisi (${info.weightFilledPercent}% Bobot)`} 
                             size="small" 
-                            sx={{ bgcolor: '#ffffff', color: info.filledCount > 0 ? '#92400e' : '#64748b', fontWeight: 800, fontSize: '0.70rem', border: `1px solid ${info.filledCount > 0 ? '#fcd34d' : '#cbd5e1'}` }} 
+                            sx={{ 
+                                bgcolor: isDark ? 'rgba(255, 255, 255, 0.06)' : '#ffffff', 
+                                color: isDark ? '#e2e8f0' : '#0f172a', 
+                                fontWeight: 800, 
+                                fontSize: '0.70rem', 
+                                border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : '#cbd5e1'}`,
+                                borderRadius: '6px'
+                            }} 
                         />
                         {info.provisionalScore && (
                             <Chip 
                                 label={`Estimasi Sementara: ~${info.provisionalScore}`} 
                                 size="small" 
-                                sx={{ bgcolor: '#fef3c7', color: '#b45309', fontWeight: 900, fontSize: '0.72rem', border: '1px solid #f59e0b' }} 
+                                sx={{ 
+                                    bgcolor: isDark ? 'rgba(245, 158, 11, 0.2)' : '#fef3c7', 
+                                    color: isDark ? '#fbbf24' : '#b45309', 
+                                    fontWeight: 900, 
+                                    fontSize: '0.72rem', 
+                                    border: `1px solid ${isDark ? 'rgba(245, 158, 11, 0.35)' : '#f59e0b'}`,
+                                    borderRadius: '6px'
+                                }} 
                             />
                         )}
                     </Box>
                 </Box>
             )}
 
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5, pb: 1, borderBottom: `1px solid ${bdr}` }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <AutoAwesomeIcon sx={{ fontSize: 16, color: isDraft ? '#f59e0b' : '#0d9488' }} />
-                    <Typography sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                        Rincian Skor Rubrik Penilaian ({isOral ? 'Oral Presentation' : 'Poster Presentation'})
-                        {isDraft && ' — DRAFT'}
-                    </Typography>
-                </Box>
-                <Chip 
-                    label={isOral ? '10 Parameter Penilaian' : '9 Parameter Penilaian'} 
-                    size="small" 
-                    sx={{ height: 20, fontSize: '0.65rem', fontWeight: 800, bgcolor: isDraft ? '#fef3c7' : '#f1f5f9', color: isDraft ? '#92400e' : '#475569' }} 
-                />
-            </Box>
+            {/* Rubric Criteria Grouped by Sections (A, B, C) */}
+            <Stack spacing={3}>
+                {sections.map(section => {
+                    const sectionFilled = section.items.filter(it => {
+                        const v = score[it.key];
+                        return v !== null && v !== undefined && v !== '' && !isNaN(v) && parseFloat(v) > 0;
+                    }).length;
 
-            <Grid container spacing={1.5}>
-                {list.map(c => {
-                    const val = score[c.key];
-                    const hasVal = val !== null && val !== undefined && val !== '' && !isNaN(val) && parseFloat(val) > 0;
-                    const numVal = hasVal ? parseFloat(val) : 0;
                     return (
-                        <Grid item xs={12} sm={6} md={4} key={c.key}>
+                        <Box key={section.id}>
+                            {/* Section Sub-header */}
                             <Box sx={{ 
-                                p: 1.2, 
-                                borderRadius: '10px', 
-                                bgcolor: hasVal 
-                                    ? (isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc') 
-                                    : (isDark ? 'rgba(255,255,255,0.01)' : '#fafafa'), 
-                                border: hasVal ? '1px solid #e2e8f0' : '1px dashed #cbd5e1',
-                                opacity: hasVal ? 1 : 0.75
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'space-between', 
+                                mb: 1.5, 
+                                pb: 0.8,
+                                borderBottom: `1px dashed ${isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0'}`
                             }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.6 }}>
-                                    <Typography sx={{ fontSize: '0.74rem', fontWeight: 700, color: hasVal ? '#334155' : '#64748b', pr: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                        {c.label}
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                        {isDraft && (
-                                            <Chip 
-                                                label={hasVal ? 'Terisi' : 'Kosong'} 
-                                                size="small" 
-                                                sx={{ 
-                                                    height: 16, 
-                                                    fontSize: '0.58rem', 
-                                                    fontWeight: 800, 
-                                                    bgcolor: hasVal ? '#ecfdf5' : '#f1f5f9', 
-                                                    color: hasVal ? '#047857' : '#94a3b8' 
-                                                }} 
-                                            />
-                                        )}
-                                        <Chip 
-                                            label={c.weightLabel} 
-                                            size="small" 
-                                            sx={{ height: 18, fontSize: '0.62rem', fontWeight: 800, bgcolor: '#e2e8f0', color: '#475569', borderRadius: '4px' }} 
-                                        />
-                                    </Box>
-                                </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <LinearProgress 
-                                        variant="determinate" 
-                                        value={hasVal ? Math.min(100, (numVal / 10) * 100) : 0} 
+                                    <Chip 
+                                        label={`Bagian ${section.id}`} 
+                                        size="small" 
                                         sx={{ 
-                                            flex: 1, 
-                                            height: 5, 
-                                            borderRadius: 2, 
-                                            bgcolor: '#e2e8f0',
-                                            '& .MuiLinearProgress-bar': {
-                                                bgcolor: isDraft 
-                                                    ? (numVal >= 8 ? '#10b981' : numVal >= 6 ? '#f59e0b' : '#fb923c') 
-                                                    : (numVal >= 8 ? '#10b981' : numVal >= 6 ? '#3b82f6' : '#f59e0b'),
-                                                borderRadius: 2
-                                            }
+                                            height: 20, 
+                                            fontSize: '0.64rem', 
+                                            fontWeight: 900, 
+                                            bgcolor: section.color, 
+                                            color: '#ffffff',
+                                            borderRadius: '4px'
                                         }} 
                                     />
-                                    <Typography sx={{ 
-                                        fontSize: '0.82rem', 
-                                        fontWeight: 900, 
-                                        color: hasVal ? '#0f172a' : '#94a3b8', 
-                                        fontFamily: 'monospace', 
-                                        minWidth: 28, 
-                                        textAlign: 'right' 
-                                    }}>
-                                        {hasVal ? numVal.toFixed(1) : '—'}
+                                    <Typography sx={{ fontWeight: 800, fontSize: '0.80rem', color: isDark ? '#f8fafc' : '#0f172a' }}>
+                                        {section.title}
                                     </Typography>
                                 </Box>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Typography variant="caption" sx={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: '0.72rem', fontWeight: 600 }}>
+                                        {sectionFilled} / {section.items.length} Terisi
+                                    </Typography>
+                                    <Chip 
+                                        label={`Bobot ${section.weight}`} 
+                                        size="small" 
+                                        sx={{ 
+                                            height: 20, 
+                                            fontSize: '0.64rem', 
+                                            fontWeight: 800, 
+                                            bgcolor: isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9', 
+                                            color: isDark ? '#cbd5e1' : '#475569',
+                                            borderRadius: '4px'
+                                        }} 
+                                    />
+                                </Box>
                             </Box>
-                        </Grid>
+
+                            {/* Section Items Grid */}
+                            <Grid container spacing={1.5}>
+                                {section.items.map(c => {
+                                    const val = score[c.key];
+                                    const hasVal = val !== null && val !== undefined && val !== '' && !isNaN(val) && parseFloat(val) > 0;
+                                    const numVal = hasVal ? parseFloat(val) : 0;
+
+                                    return (
+                                        <Grid item xs={12} sm={6} md={section.items.length <= 2 ? 6 : 4} key={c.key}>
+                                            <Paper elevation={0} sx={{ 
+                                                p: 1.5, 
+                                                borderRadius: '12px', 
+                                                bgcolor: hasVal 
+                                                    ? (isDark ? 'rgba(255,255,255,0.04)' : '#ffffff') 
+                                                    : (isDark ? 'rgba(255,255,255,0.015)' : '#f8fafc'), 
+                                                border: `1px solid ${hasVal 
+                                                    ? (isDark ? 'rgba(255,255,255,0.1)' : '#cbd5e1') 
+                                                    : (isDark ? 'rgba(255,255,255,0.05)' : '#e2e8f0')}`,
+                                                borderStyle: hasVal ? 'solid' : 'dashed',
+                                                boxShadow: hasVal ? (isDark ? 'none' : '0 1px 3px rgba(0,0,0,0.03)') : 'none',
+                                                transition: 'all 0.15s ease',
+                                                '&:hover': {
+                                                    borderColor: hasVal ? '#0d9488' : (isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1')
+                                                }
+                                            }}>
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                                    <Typography sx={{ 
+                                                        fontSize: '0.78rem', 
+                                                        fontWeight: 700, 
+                                                        color: isDark ? (hasVal ? '#f8fafc' : '#94a3b8') : (hasVal ? '#0f172a' : '#64748b'), 
+                                                        pr: 1, 
+                                                        overflow: 'hidden', 
+                                                        textOverflow: 'ellipsis', 
+                                                        whiteSpace: 'nowrap' 
+                                                    }}>
+                                                        {c.label}
+                                                    </Typography>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                                                        <Chip 
+                                                            label={hasVal ? 'Terisi' : 'Kosong'} 
+                                                            size="small" 
+                                                            sx={{ 
+                                                                height: 18, 
+                                                                fontSize: '0.60rem', 
+                                                                fontWeight: 800, 
+                                                                bgcolor: hasVal 
+                                                                    ? (isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5') 
+                                                                    : (isDark ? 'rgba(255, 255, 255, 0.05)' : '#f1f5f9'), 
+                                                                color: hasVal 
+                                                                    ? '#10b981' 
+                                                                    : (isDark ? '#64748b' : '#94a3b8'),
+                                                                borderRadius: '4px'
+                                                            }} 
+                                                        />
+                                                        <Chip 
+                                                            label={c.weightLabel} 
+                                                            size="small" 
+                                                            sx={{ 
+                                                                height: 18, 
+                                                                fontSize: '0.62rem', 
+                                                                fontWeight: 800, 
+                                                                bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0', 
+                                                                color: isDark ? '#cbd5e1' : '#475569', 
+                                                                borderRadius: '4px' 
+                                                            }} 
+                                                        />
+                                                    </Box>
+                                                </Box>
+
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                                                    <LinearProgress 
+                                                        variant="determinate" 
+                                                        value={hasVal ? Math.min(100, (numVal / 10) * 100) : 0} 
+                                                        sx={{ 
+                                                            flex: 1, 
+                                                            height: 6, 
+                                                            borderRadius: 3, 
+                                                            bgcolor: isDark ? 'rgba(255, 255, 255, 0.06)' : '#e2e8f0',
+                                                            '& .MuiLinearProgress-bar': {
+                                                                bgcolor: numVal >= 8 ? '#10b981' : numVal >= 6 ? '#0284c7' : '#f59e0b',
+                                                                borderRadius: 3
+                                                            }
+                                                        }} 
+                                                    />
+                                                    <Typography sx={{ 
+                                                        fontSize: '0.92rem', 
+                                                        fontWeight: 900, 
+                                                        color: hasVal ? (isDark ? '#f8fafc' : '#0f172a') : (isDark ? '#64748b' : '#94a3b8'), 
+                                                        fontFamily: 'monospace', 
+                                                        minWidth: 32, 
+                                                        textAlign: 'right' 
+                                                    }}>
+                                                        {hasVal ? numVal.toFixed(1) : '—'}
+                                                    </Typography>
+                                                </Box>
+                                            </Paper>
+                                        </Grid>
+                                    );
+                                })}
+                            </Grid>
+                        </Box>
                     );
                 })}
-            </Grid>
+            </Stack>
 
+            {/* Notes Section */}
             {score.juri_notes ? (
-                <Box sx={{ 
-                    mt: 2, 
-                    p: 1.5, 
-                    borderRadius: '10px', 
+                <Paper elevation={0} sx={{ 
+                    mt: 3, 
+                    p: 2, 
+                    borderRadius: '12px', 
                     bgcolor: isDark ? 'rgba(245, 158, 11, 0.08)' : '#fffbeb', 
-                    border: '1px solid #fde68a',
+                    border: `1px solid ${isDark ? 'rgba(245, 158, 11, 0.25)' : '#fde68a'}`,
                     display: 'flex',
-                    gap: 1.2,
+                    gap: 1.5,
                     alignItems: 'flex-start'
                 }}>
-                    <FormatQuoteIcon sx={{ color: '#d97706', fontSize: 24, mt: -0.3, flexShrink: 0 }} />
+                    <FormatQuoteIcon sx={{ color: '#d97706', fontSize: 26, mt: -0.2, flexShrink: 0 }} />
                     <Box>
-                        <Typography sx={{ fontWeight: 800, color: '#92400e', fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.04em', mb: 0.2 }}>
-                            {isDraft ? 'Catatan Sementara Juri (Draft):' : 'Catatan & Masukan Juri:'}
+                        <Typography sx={{ fontWeight: 800, color: isDark ? '#fbbf24' : '#92400e', fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.04em', mb: 0.4 }}>
+                            {isDraft ? 'Catatan & Masukan Sementara Juri (Draft):' : 'Catatan & Masukan Juri:'}
                         </Typography>
-                        <Typography sx={{ fontSize: '0.78rem', fontStyle: 'italic', color: '#78350f', lineHeight: 1.45 }}>
+                        <Typography sx={{ fontSize: '0.82rem', fontStyle: 'italic', color: isDark ? '#fde68a' : '#78350f', lineHeight: 1.5 }}>
                             "{score.juri_notes}"
                         </Typography>
                     </Box>
-                </Box>
+                </Paper>
             ) : isDraft && (
-                <Box sx={{ mt: 1.5, px: 1 }}>
-                    <Typography variant="caption" sx={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.72rem' }}>
+                <Box sx={{ mt: 2.2, px: 0.5 }}>
+                    <Typography variant="caption" sx={{ color: isDark ? '#64748b' : '#94a3b8', fontStyle: 'italic', fontSize: '0.74rem' }}>
                         * Catatan tertulis juri belum diisi pada draft ini.
                     </Typography>
                 </Box>
@@ -305,6 +549,7 @@ function CriterionBreakdown({ score, isOral, isDark, bdr, isDraft, metrics }) {
     );
 }
 
+// ─── JuriScoreCard (21st.dev & TasteSkill Design) ───
 function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri }) {
     const [showDetail, setShowDetail] = useState(false);
     const metrics = getScoreMetrics(score, isOral);
@@ -325,60 +570,80 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
     return (
         <Paper elevation={0} sx={{
             p: 2.2, 
-            borderRadius: '14px',
-            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
-            border: `1px solid ${score.is_nominated_best ? '#f59e0b' : isDraft ? '#fcd34d' : bdr}`,
+            borderRadius: '16px',
+            bgcolor: isDark ? 'rgba(30, 41, 59, 0.45)' : '#ffffff',
+            backdropFilter: isDark ? 'blur(10px)' : 'none',
+            border: `1px solid ${score.is_nominated_best 
+                ? '#f59e0b' 
+                : isDraft 
+                ? (isDark ? 'rgba(245, 158, 11, 0.3)' : '#fcd34d') 
+                : (isDark ? 'rgba(255, 255, 255, 0.08)' : bdr)}`,
             boxShadow: score.is_nominated_best 
                 ? '0 4px 14px rgba(245, 158, 11, 0.15)' 
                 : isDraft 
-                ? '0 2px 10px rgba(245, 158, 11, 0.08)' 
+                ? (isDark ? '0 2px 10px rgba(0,0,0,0.2)' : '0 2px 10px rgba(245, 158, 11, 0.08)') 
                 : '0 1px 3px rgba(0,0,0,0.02)',
             transition: 'all 0.2s ease',
-            '&:hover': { boxShadow: '0 6px 16px rgba(0,0,0,0.05)' }
+            '&:hover': { 
+                boxShadow: isDark ? '0 6px 20px rgba(0,0,0,0.3)' : '0 6px 16px rgba(0,0,0,0.05)',
+                borderColor: isDark ? 'rgba(255,255,255,0.15)' : '#cbd5e1'
+            }
         }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5 }}>
+                {/* Left: Judge Profile */}
                 <Stack direction="row" spacing={1.5} alignItems="center">
                     <Avatar sx={{ 
-                        width: 42, 
-                        height: 42, 
-                        fontSize: '0.92rem', 
+                        width: 44, 
+                        height: 44, 
+                        fontSize: '0.94rem', 
                         background: avatarGrad, 
                         color: '#ffffff', 
-                        fontWeight: 800,
+                        fontWeight: 900,
                         border: hasScored 
                             ? '2px solid #10b981' 
                             : isDraft 
                             ? '2px solid #f59e0b' 
-                            : '1.5px solid #ffffff',
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                            : '2px solid rgba(255,255,255,0.2)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                     }}>
                         {(score.juri?.name || 'J').charAt(0).toUpperCase()}
                     </Avatar>
                     <Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, flexWrap: 'wrap' }}>
-                            <Typography sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.90rem' }}>
+                            <Typography sx={{ fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', fontSize: '0.92rem' }}>
                                 {score.juri?.name || 'Juri Panelis'}
                             </Typography>
                             {score.juri?.role && (
                                 <Chip 
                                     label={score.juri.role} 
                                     size="small" 
-                                    sx={{ height: 18, fontSize: '0.62rem', fontWeight: 800, bgcolor: '#f1f5f9', color: '#475569' }} 
+                                    sx={{ 
+                                        height: 18, 
+                                        fontSize: '0.62rem', 
+                                        fontWeight: 800, 
+                                        bgcolor: isDark ? 'rgba(255, 255, 255, 0.08)' : '#f1f5f9', 
+                                        color: isDark ? '#cbd5e1' : '#475569',
+                                        borderRadius: '5px'
+                                    }} 
                                 />
                             )}
                         </Box>
-                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.74rem', fontFamily: 'monospace', display: 'block' }}>
+                        <Typography variant="caption" sx={{ color: isDark ? '#94a3b8' : '#64748b', fontSize: '0.74rem', fontFamily: 'monospace', display: 'block', mt: 0.2 }}>
                             {score.juri?.email || '—'}
                             {score.juri?.affiliation && ` • ${score.juri.affiliation}`}
                         </Typography>
                         {isDraft && updatedTime && (
-                            <Typography variant="caption" sx={{ color: '#d97706', fontSize: '0.68rem', fontWeight: 600, display: 'block' }}>
-                                💾 Draft disimpan: {updatedTime}
-                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.3 }}>
+                                <AccessTimeIcon sx={{ fontSize: 13, color: isDark ? '#fbbf24' : '#d97706' }} />
+                                <Typography variant="caption" sx={{ color: isDark ? '#fbbf24' : '#d97706', fontSize: '0.68rem', fontWeight: 700 }}>
+                                    Draft disimpan: {updatedTime}
+                                </Typography>
+                            </Box>
                         )}
                     </Box>
                 </Stack>
 
+                {/* Right: Scores & Actions */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                     {score.is_nominated_best && (
                         <Chip
@@ -392,67 +657,75 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                                 bgcolor: '#fef3c7',
                                 color: '#b45309',
                                 border: '1px solid #f59e0b',
-                                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.2)'
+                                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.2)',
+                                borderRadius: '7px'
                             }}
                         />
                     )}
 
-                    <Box sx={{ textAlign: 'right', minWidth: 110 }}>
+                    {/* Status Pill */}
+                    <Box sx={{ textAlign: 'right', minWidth: 120 }}>
                         {hasScored ? (
                             <Box sx={{ 
-                                px: 1.5, 
-                                py: 0.5, 
-                                borderRadius: '10px', 
-                                bgcolor: interp.bg, 
-                                border: `1px solid ${interp.border}`,
+                                px: 1.6, 
+                                py: 0.6, 
+                                borderRadius: '12px', 
+                                bgcolor: isDark ? 'rgba(5, 150, 105, 0.15)' : interp.bg, 
+                                border: `1px solid ${isDark ? 'rgba(5, 150, 105, 0.3)' : interp.border}`,
                                 display: 'inline-block'
                             }}>
                                 <Typography sx={{
                                     fontWeight: 900,
-                                    fontSize: '1.05rem',
-                                    color: interp.color,
+                                    fontSize: '1.10rem',
+                                    color: isDark ? '#34d399' : interp.color,
                                     lineHeight: 1,
                                     fontFamily: 'monospace'
                                 }}>
                                     {finalScore}
                                 </Typography>
                                 <Typography sx={{
-                                    color: interp.color,
+                                    color: isDark ? '#6ee7b7' : interp.color,
                                     fontWeight: 800,
                                     fontSize: '0.62rem',
                                     textTransform: 'uppercase',
-                                    letterSpacing: '0.04em'
+                                    letterSpacing: '0.04em',
+                                    mt: 0.3
                                 }}>
                                     {interp.label}
                                 </Typography>
                             </Box>
                         ) : isDraft ? (
                             <Box sx={{ 
-                                px: 1.4, 
-                                py: 0.5, 
-                                borderRadius: '10px', 
-                                bgcolor: metrics.filledCount > 0 ? '#fffbeb' : '#f8fafc', 
-                                border: `1px solid ${metrics.filledCount > 0 ? '#fde68a' : '#e2e8f0'}`,
+                                px: 1.6, 
+                                py: 0.6, 
+                                borderRadius: '12px', 
+                                bgcolor: isDark 
+                                    ? (metrics.filledCount > 0 ? 'rgba(245, 158, 11, 0.12)' : 'rgba(255, 255, 255, 0.04)') 
+                                    : (metrics.filledCount > 0 ? '#fffbeb' : '#f8fafc'), 
+                                border: `1px solid ${isDark 
+                                    ? (metrics.filledCount > 0 ? 'rgba(245, 158, 11, 0.3)' : 'rgba(255, 255, 255, 0.08)') 
+                                    : (metrics.filledCount > 0 ? '#fde68a' : '#e2e8f0')}`,
                                 display: 'inline-block',
                                 textAlign: 'right'
                             }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, justifyContent: 'flex-end' }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, justifyContent: 'flex-end' }}>
                                     <Chip 
-                                        label={metrics.filledCount > 0 ? "Draft" : "Draft (0 Terisi)"} 
+                                        label={metrics.filledCount > 0 ? "Draft" : "Draft Kosong"} 
                                         size="small" 
                                         sx={{
-                                            bgcolor: metrics.filledCount > 0 ? '#f59e0b' : '#64748b',
+                                            bgcolor: metrics.filledCount > 0 ? '#f59e0b' : (isDark ? 'rgba(255,255,255,0.08)' : '#64748b'),
                                             color: '#ffffff', 
                                             fontWeight: 900, 
                                             height: 18, 
                                             fontSize: '0.62rem',
+                                            borderRadius: '5px'
                                         }} 
                                     />
                                     {metrics.provisionalScore && (
                                         <Typography sx={{
                                             fontWeight: 900,
-                                            fontSize: '0.96rem',
-                                            color: '#b45309',
+                                            fontSize: '1.02rem',
+                                            color: isDark ? '#fbbf24' : '#b45309',
                                             fontFamily: 'monospace',
                                             lineHeight: 1
                                         }}>
@@ -461,11 +734,11 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                                     )}
                                 </Box>
                                 <Typography sx={{
-                                    color: metrics.filledCount > 0 ? '#92400e' : '#64748b',
+                                    color: isDark ? (metrics.filledCount > 0 ? '#fcd34d' : '#94a3b8') : (metrics.filledCount > 0 ? '#92400e' : '#64748b'),
                                     fontWeight: 800,
                                     fontSize: '0.62rem',
                                     textTransform: 'uppercase',
-                                    letterSpacing: '0.03em',
+                                    letterSpacing: '0.04em',
                                     mt: 0.3
                                 }}>
                                     {metrics.filledCount > 0 
@@ -478,35 +751,42 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                                 label="⏳ Belum Dinilai" 
                                 size="small" 
                                 sx={{
-                                    bgcolor: '#f1f5f9',
-                                    color: '#64748b', 
+                                    bgcolor: isDark ? 'rgba(255, 255, 255, 0.04)' : '#f1f5f9',
+                                    color: isDark ? '#94a3b8' : '#64748b', 
                                     fontWeight: 800, 
-                                    height: 24, 
+                                    height: 26, 
                                     fontSize: '0.70rem',
-                                    border: '1px solid #e2e8f0',
+                                    border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'}`,
+                                    borderRadius: '8px'
                                 }} 
                             />
                         )}
                     </Box>
 
+                    {/* Action Buttons */}
                     {hasScored ? (
                         <Button
                             size="small"
                             variant="outlined"
                             onClick={() => setShowDetail(!showDetail)}
+                            endIcon={showDetail ? <KeyboardArrowUpIcon sx={{ fontSize: 16 }} /> : <KeyboardArrowDownIcon sx={{ fontSize: 16 }} />}
                             sx={{ 
                                 textTransform: 'none', 
-                                fontSize: '0.72rem', 
+                                fontSize: '0.74rem', 
                                 fontWeight: 800,
-                                borderRadius: '8px',
-                                px: 1.5,
-                                borderColor: '#cbd5e1',
-                                color: '#334155',
-                                bgcolor: showDetail ? '#f1f5f9' : '#ffffff',
-                                '&:hover': { bgcolor: '#f8fafc', borderColor: '#0d9488', color: '#094d42' }
+                                borderRadius: '10px',
+                                px: 1.8,
+                                py: 0.7,
+                                borderColor: showDetail ? '#0d9488' : (isDark ? 'rgba(255,255,255,0.12)' : '#cbd5e1'),
+                                color: showDetail ? '#094d42' : (isDark ? '#f8fafc' : '#334155'),
+                                bgcolor: showDetail ? (isDark ? 'rgba(13, 148, 136, 0.15)' : '#ecfdf5') : (isDark ? 'rgba(255,255,255,0.03)' : '#ffffff'),
+                                '&:hover': { 
+                                    bgcolor: isDark ? 'rgba(13, 148, 136, 0.2)' : '#f0fdf4', 
+                                    borderColor: '#0d9488' 
+                                }
                             }}
                         >
-                            {showDetail ? 'Tutup Rubrik ▴' : 'Lihat Rubrik ▾'}
+                            {showDetail ? 'Tutup Rubrik' : 'Lihat Rubrik'}
                         </Button>
                     ) : isDraft ? (
                         <Stack direction="row" spacing={1} alignItems="center">
@@ -514,19 +794,26 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                                 size="small"
                                 variant="outlined"
                                 onClick={() => setShowDetail(!showDetail)}
+                                endIcon={showDetail ? <KeyboardArrowUpIcon sx={{ fontSize: 16 }} /> : <KeyboardArrowDownIcon sx={{ fontSize: 16 }} />}
                                 sx={{ 
                                     textTransform: 'none', 
-                                    fontSize: '0.72rem', 
+                                    fontSize: '0.74rem', 
                                     fontWeight: 800,
-                                    borderRadius: '8px',
-                                    px: 1.5,
-                                    borderColor: '#f59e0b',
-                                    color: '#b45309',
-                                    bgcolor: showDetail ? '#fef3c7' : '#fffbeb',
-                                    '&:hover': { bgcolor: '#fde68a', borderColor: '#d97706' }
+                                    borderRadius: '10px',
+                                    px: 1.8,
+                                    py: 0.7,
+                                    borderColor: showDetail ? '#f59e0b' : (isDark ? 'rgba(245, 158, 11, 0.35)' : '#fcd34d'),
+                                    color: isDark ? '#fbbf24' : '#b45309',
+                                    bgcolor: showDetail 
+                                        ? (isDark ? 'rgba(245, 158, 11, 0.2)' : '#fef3c7') 
+                                        : (isDark ? 'rgba(245, 158, 11, 0.08)' : '#fffbeb'),
+                                    '&:hover': { 
+                                        bgcolor: isDark ? 'rgba(245, 158, 11, 0.25)' : '#fde68a', 
+                                        borderColor: '#f59e0b' 
+                                    }
                                 }}
                             >
-                                {showDetail ? 'Tutup Draft ▴' : 'Lihat Draft Rubrik ▾'}
+                                {showDetail ? 'Tutup Draft' : 'Lihat Draft Rubrik'}
                             </Button>
                             <Tooltip title="Batalkan / Hapus Penugasan Juri ini">
                                 <IconButton 
@@ -534,9 +821,10 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                                     color="error" 
                                     onClick={() => onRemoveJuri(submissionId, score.juri_id, score.juri?.name)}
                                     sx={{ 
-                                        bgcolor: '#fef2f2', 
-                                        border: '1px solid #fecaca',
-                                        '&:hover': { bgcolor: '#fee2e2' } 
+                                        bgcolor: isDark ? 'rgba(239, 68, 68, 0.1)' : '#fef2f2', 
+                                        border: `1px solid ${isDark ? 'rgba(239, 68, 68, 0.25)' : '#fecaca'}`,
+                                        borderRadius: '8px',
+                                        '&:hover': { bgcolor: isDark ? 'rgba(239, 68, 68, 0.2)' : '#fee2e2' } 
                                     }}
                                 >
                                     <DeleteOutlineIcon sx={{ fontSize: 16 }} />
@@ -550,9 +838,10 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                                 color="error" 
                                 onClick={() => onRemoveJuri(submissionId, score.juri_id, score.juri?.name)}
                                 sx={{ 
-                                    bgcolor: '#fef2f2', 
-                                    border: '1px solid #fecaca',
-                                    '&:hover': { bgcolor: '#fee2e2' } 
+                                    bgcolor: isDark ? 'rgba(239, 68, 68, 0.1)' : '#fef2f2', 
+                                    border: `1px solid ${isDark ? 'rgba(239, 68, 68, 0.25)' : '#fecaca'}`,
+                                    borderRadius: '8px',
+                                    '&:hover': { bgcolor: isDark ? 'rgba(239, 68, 68, 0.2)' : '#fee2e2' } 
                                 }}
                             >
                                 <DeleteOutlineIcon sx={{ fontSize: 16 }} />
