@@ -5,6 +5,8 @@
  * Menegakkan Integritas Asas LUBER (Langsung, Umum, Bebas, Rahasia).
  */
 
+if (!defined('IN_KPKU_APP')) define('IN_KPKU_APP', true);
+
 // Enterprise CORS Protection - Restrict to official domain
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 $allowedOrigins = [

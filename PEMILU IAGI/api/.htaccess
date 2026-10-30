@@ -1,5 +1,5 @@
-# Protect sensitive files from direct download
-<FilesMatch "\.(json|lock|log|csv|bak|sql|env)$">
+# Protect sensitive files and registry from direct download
+<FilesMatch "(\.(json|lock|log|csv|bak|sql|env)$|dpt_master_registry\.php$)">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>

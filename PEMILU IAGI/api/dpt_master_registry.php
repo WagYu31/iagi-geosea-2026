@@ -3,6 +3,10 @@
  * KPKU IAGI 2026 - Master Authoritative DPT Registry (Server-Side Only)
  * Digunakan secara eksklusif oleh server untuk memvalidasi kepemilikan email saat klaim token.
  */
+if (!defined('IN_KPKU_APP')) {
+    http_response_code(403);
+    exit('Akses langsung ditolak (Direct access forbidden).');
+}
 return [
   '00092' => ['name' => 'Adjat Sudradjat', 'email' => 'asudradjat@yahoo.com'],
   '00252' => ['name' => 'Made Emmy Relawati Suparka', 'email' => 'myrel65@yahoo.com'],

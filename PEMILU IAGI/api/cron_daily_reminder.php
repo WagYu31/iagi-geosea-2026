@@ -18,6 +18,8 @@
  *    POST ?action=broadcast&batch=50
  */
 
+if (!defined('IN_KPKU_APP')) define('IN_KPKU_APP', true);
+
 date_default_timezone_set('Asia/Jakarta');
 
 // CORS for official domain

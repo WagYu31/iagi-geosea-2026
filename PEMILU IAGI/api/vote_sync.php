@@ -5,6 +5,8 @@
  * Dilengkapi atomic file lock (flock) untuk mencegah race condition / pencoblosan ganda lintas perangkat/browser.
  */
 
+if (!defined('IN_KPKU_APP')) define('IN_KPKU_APP', true);
+
 // Enterprise CORS Protection - Restrict to official domain
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 $allowedOrigins = [
@@ -1759,6 +1761,7 @@ if ($action === 'register_claim') {
     $npa = isset($payload['npa']) ? substr(preg_replace('/\D/', '', $payload['npa']), 0, 5) : '';
     $token = isset($payload['token']) ? strtoupper(trim($payload['token'])) : '';
     $name = isset($payload['name']) ? trim($payload['name']) : '';
+    $email = isset($payload['email']) ? strtolower(trim($payload['email'])) : '';
 
     if (strlen($npa) !== 5 || empty($token) || strlen($token) < 8) {
         http_response_code(400);
@@ -1766,16 +1769,62 @@ if ($action === 'register_claim') {
         exit;
     }
 
+    $isDemo = ($npa === '00000' || $npa === '01001');
+
+    // Strict Master DPT Verification: Ensure email matches registered voter email
+    if (!$isDemo) {
+        $masterRegistryFile = __DIR__ . '/dpt_master_registry.php';
+        if (file_exists($masterRegistryFile)) {
+            $masterDpt = require $masterRegistryFile;
+            if (!isset($masterDpt[$npa])) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => "NPA {$npa} tidak terdaftar dalam Daftar Pemilih Tetap (DPT) resmi KPKU."]);
+                exit;
+            }
+
+            $regEmail = strtolower(trim($masterDpt[$npa]['email'] ?? ''));
+            $inputEmail = $email;
+            $regNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $regEmail);
+            $inputNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $inputEmail);
+
+            if ($regEmail !== $inputEmail && $regNorm !== $inputNorm) {
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => "Alamat email tidak cocok dengan email resmi yang terdaftar untuk NPA {$npa} pada DPT KPKU."]);
+                exit;
+            }
+        }
+    }
+
+    $tokenHash = hash('sha256', $token);
+
     $fpLock = @fopen($lockFile, 'c+');
     if ($fpLock && @flock($fpLock, LOCK_EX)) {
         $voters = readJsonFile($votersFile, []);
-        if (!isset($voters[$npa]) || empty($voters[$npa]['voted'])) {
+        if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
+            flock($fpLock, LOCK_UN);
+            fclose($fpLock);
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Hak suara untuk NPA ini sudah digunakan. Pemilihan berulang ditolak.']);
+            exit;
+        }
+
+        // If already claimed, prevent token overwrite by different token
+        if (isset($voters[$npa]) && !empty($voters[$npa]['token_hash'])) {
+            if ($voters[$npa]['token_hash'] !== $tokenHash) {
+                flock($fpLock, LOCK_UN);
+                fclose($fpLock);
+                http_response_code(409);
+                echo json_encode(['success' => false, 'error' => 'Surat suara untuk NPA ini sudah diterbitkan sebelumnya. Gunakan token resmi yang telah dikirim ke email Anda.']);
+                exit;
+            }
+        } else {
             $voters[$npa] = [
                 'npa' => $npa,
                 'name' => $name ?: (isset($voters[$npa]['name']) ? $voters[$npa]['name'] : ''),
+                'email' => $email,
                 'claimed' => true,
                 'claimed_at' => date('d F Y, H:i:s') . ' WIB',
-                'token_hash' => hash('sha256', $token),
+                'token_hash' => $tokenHash,
                 'voted' => false
             ];
             writeJsonFile($votersFile, $voters);
@@ -1819,6 +1868,25 @@ if ($action === 'cast_vote') {
         exit;
     }
 
+    // IP Rate Limiting & Anti Brute-Force for Voting Booth
+    $clientIp = getClientIp();
+    $now = time();
+    $voteRateFile = $dataDir . '/vote_rate_limits.json';
+    $voteRates = readJsonFile($voteRateFile, []);
+
+    if (isset($voteRates[$clientIp])) {
+        $ipRate = $voteRates[$clientIp];
+        if (!empty($ipRate['locked_until']) && $ipRate['locked_until'] > $now) {
+            $sisaMenit = ceil(($ipRate['locked_until'] - $now) / 60);
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => "⛔ Bilik suara ditangguhkan sementara dari perangkat Anda karena 5x percobaan token yang salah. Silakan coba kembali dalam {$sisaMenit} menit."
+            ]);
+            exit;
+        }
+    }
+
     // Open lock file with exclusive lock (flock) to prevent ANY simultaneous double voting
     $fpLock = @fopen($lockFile, 'c+');
     if (!$fpLock || !@flock($fpLock, LOCK_EX)) {
@@ -1846,19 +1914,56 @@ if ($action === 'cast_vote') {
         }
 
         // CRITICAL CHECK 2: Token verification against issued token hash
-        $tokenHash = hash('sha256', $token);
-        if (isset($voters[$npa]) && !empty($voters[$npa]['token_hash'])) {
-            if ($tokenHash !== $voters[$npa]['token_hash']) {
+        $isDemo = ($npa === '00000' || $npa === '01001');
+        if ($isDemo) {
+            if ($token !== 'IAGI-2026-DEMO-2026' && $token !== 'DEMO-2026') {
                 flock($fpLock, LOCK_UN);
                 fclose($fpLock);
-
+                http_response_code(403);
+                echo json_encode(['success' => false, 'error' => 'Token akun demo tidak valid.']);
+                exit;
+            }
+        } else {
+            // Real voter: MUST have claimed on server AND token_hash MUST match!
+            if (!isset($voters[$npa]) || empty($voters[$npa]['token_hash'])) {
+                flock($fpLock, LOCK_UN);
+                fclose($fpLock);
                 http_response_code(403);
                 echo json_encode([
                     'success' => false,
-                    'error' => "❌ Token Surat Suara tidak cocok dengan token resmi yang diterbitkan untuk NPA {$npa}. Pastikan menggunakan kode dari email resmi KPKU."
+                    'error' => "❌ Surat suara untuk NPA {$npa} belum diklaim atau kode token belum diterbitkan resmi oleh KPKU. Silakan lakukan klaim melalui menu Klaim Token terlebih dahulu."
                 ]);
                 exit;
             }
+
+            $tokenHash = hash('sha256', $token);
+            if ($tokenHash !== $voters[$npa]['token_hash']) {
+                // Record failed attempt for brute force lockout
+                if (!isset($voteRates[$clientIp])) {
+                    $voteRates[$clientIp] = ['fails' => 0, 'locked_until' => 0];
+                }
+                $voteRates[$clientIp]['fails'] = ($voteRates[$clientIp]['fails'] ?? 0) + 1;
+                $voteRates[$clientIp]['last_attempt'] = $now;
+                if ($voteRates[$clientIp]['fails'] >= 5) {
+                    $voteRates[$clientIp]['locked_until'] = $now + (15 * 60);
+                }
+                writeJsonFile($voteRateFile, $voteRates);
+
+                flock($fpLock, LOCK_UN);
+                fclose($fpLock);
+                http_response_code(403);
+                echo json_encode([
+                    'success' => false,
+                    'error' => "❌ Token Surat Suara tidak cocok dengan kode resmi yang diterbitkan untuk NPA {$npa}. Pastikan menggunakan kode dari surel resmi KPKU."
+                ]);
+                exit;
+            }
+        }
+
+        // Reset fail count on successful token verification
+        if (isset($voteRates[$clientIp])) {
+            unset($voteRates[$clientIp]);
+            writeJsonFile($voteRateFile, $voteRates);
         }
 
         $nowTimestamp = time();
@@ -1870,6 +1975,26 @@ if ($action === 'cast_vote') {
         ];
         $timeStrWib = strtr(date('d F Y, H:i:s'), $monthsIndo) . ' WIB';
 
+        // ISOLASI KHUSUS AKUN DEMO: Simulasi UI sukses tanpa mengotori total surat suara resmi!
+        if ($isDemo) {
+            flock($fpLock, LOCK_UN);
+            fclose($fpLock);
+            echo json_encode([
+                'success' => true,
+                'isDemo' => true,
+                'message' => 'Simulasi coblosan akun demo berhasil. Suara uji coba terisolasi dan tidak mempengaruhi hasil resmi DPT.',
+                'receipt' => [
+                    'npa' => $npa,
+                    'voterName' => $voterName ?: 'Anggota Uji Coba IAGI',
+                    'votedAt' => $timeStrWib,
+                    'receiptHash' => 'DEMO-' . substr($fullHash ?: hash('sha256', microtime()), 0, 12),
+                    'fullHash' => $fullHash ?: hash('sha256', 'DEMO-BALLOT-' . microtime()),
+                    'status' => 'SIMULASI UJI COBA SAH'
+                ]
+            ]);
+            exit;
+        }
+
         // 1. Mark voter registry as VOTED and burn token (NO candidate id is stored here!)
         $voters[$npa] = [
             'npa' => $npa,
@@ -1878,7 +2003,8 @@ if ($action === 'cast_vote') {
             'voted_at' => $timeStrWib,
             'receipt_hash' => $receiptHash,
             'claimed' => true,
-            'token' => null // Token burned immediately on server
+            'token_hash' => null, // Token burned immediately on server
+            'token' => null
         ];
         writeJsonFile($votersFile, $voters);
 

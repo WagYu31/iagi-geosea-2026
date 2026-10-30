@@ -978,7 +978,8 @@ class PemiluStorage {
             action: 'register_claim',
             npa: voter.npa,
             token: token,
-            name: voter.name
+            name: voter.name,
+            email: voter.email
           })
         }).catch(() => {});
       }
