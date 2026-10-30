@@ -60,34 +60,75 @@ function getInterpretation(score) {
     return { label: 'Unsatisfactory', color: '#dc2626', bg: '#fef2f2', border: '#fecaca' };
 }
 
+// Rubric Criteria definitions with weights
+const ORAL_CRITERIA = [
+    { label: 'Time Management', key: 'time_management', weight: 0.05, weightLabel: '5%' },
+    { label: 'Posture & Professionalism', key: 'posture_professionalism', weight: 0.10, weightLabel: '10%' },
+    { label: 'Communication Skills', key: 'communication_skills', weight: 0.15, weightLabel: '15%' },
+    { label: 'Scientific Substantiation', key: 'scientific_substantiation', weight: 0.15, weightLabel: '15%' },
+    { label: 'Technical Contribution', key: 'technical_contribution', weight: 0.10, weightLabel: '10%' },
+    { label: 'Logical Organization', key: 'logical_organization', weight: 0.10, weightLabel: '10%' },
+    { label: 'Visual Quality', key: 'visual_quality', weight: 0.05, weightLabel: '5%' },
+    { label: 'Originality & Innovation', key: 'originality_innovation', weight: 0.10, weightLabel: '10%' },
+    { label: 'Manuscript Substantiation', key: 'manuscript_substantiation', weight: 0.10, weightLabel: '10%' },
+    { label: 'Manuscript Writing', key: 'manuscript_writing', weight: 0.10, weightLabel: '10%' },
+];
+
+const POSTER_CRITERIA = [
+    { label: 'Scientific Substantiation', key: 'poster_scientific_substantiation', weight: 0.15, weightLabel: '15%' },
+    { label: 'Practical Usefulness', key: 'practical_usefulness', weight: 0.10, weightLabel: '10%' },
+    { label: 'Technical Contribution', key: 'poster_technical_contribution', weight: 0.10, weightLabel: '10%' },
+    { label: 'Organization & Visual Design', key: 'poster_organization_design', weight: 0.10, weightLabel: '10%' },
+    { label: 'Originality & Authenticity', key: 'poster_originality', weight: 0.10, weightLabel: '10%' },
+    { label: 'Presentation & Explanation', key: 'presentation_explanation', weight: 0.10, weightLabel: '10%' },
+    { label: 'Subject Knowledge', key: 'subject_knowledge', weight: 0.15, weightLabel: '15%' },
+    { label: 'Manuscript Substantiation', key: 'manuscript_substantiation', weight: 0.10, weightLabel: '10%' },
+    { label: 'Manuscript Writing', key: 'manuscript_writing', weight: 0.10, weightLabel: '10%' },
+];
+
+// Helper to calculate filled criteria, provisional score, and draft status
+function getScoreMetrics(score, isOral) {
+    const list = isOral ? ORAL_CRITERIA : POSTER_CRITERIA;
+    const totalCount = list.length;
+    let filledCount = 0;
+    let weightedSum = 0;
+    let weightFilled = 0;
+
+    list.forEach(c => {
+        const val = score[c.key];
+        if (val !== null && val !== undefined && val !== '') {
+            const num = parseFloat(val);
+            if (!isNaN(num) && num > 0) {
+                filledCount++;
+                weightedSum += num * c.weight;
+                weightFilled += c.weight;
+            }
+        }
+    });
+
+    const isExplicitDraft = score.is_draft === true || score.is_draft === 1 || score.is_draft === '1';
+    const hasFinalScore = !!score.weighted_final_score && !isExplicitDraft;
+    const isDraft = isExplicitDraft || (!hasFinalScore && filledCount > 0);
+
+    // Provisional score: normalized to 10 based on criteria filled so far
+    const provisionalScore = weightFilled > 0 ? (weightedSum / weightFilled).toFixed(2) : null;
+    const rawWeighted = weightedSum.toFixed(2);
+
+    return {
+        totalCount,
+        filledCount,
+        isDraft,
+        hasFinalScore,
+        provisionalScore,
+        rawWeighted,
+        weightFilledPercent: Math.round(weightFilled * 100),
+    };
+}
+
 // Helper to render criterion breakdown inside expanded rows
-function CriterionBreakdown({ score, isOral, isDark, bdr }) {
-    const oralCriteria = [
-        { label: 'Time Management', key: 'time_management', weight: '5%' },
-        { label: 'Posture & Professionalism', key: 'posture_professionalism', weight: '10%' },
-        { label: 'Communication Skills', key: 'communication_skills', weight: '15%' },
-        { label: 'Scientific Substantiation', key: 'scientific_substantiation', weight: '15%' },
-        { label: 'Technical Contribution', key: 'technical_contribution', weight: '10%' },
-        { label: 'Logical Organization', key: 'logical_organization', weight: '10%' },
-        { label: 'Visual Quality', key: 'visual_quality', weight: '5%' },
-        { label: 'Originality & Innovation', key: 'originality_innovation', weight: '10%' },
-        { label: 'Manuscript Substantiation', key: 'manuscript_substantiation', weight: '10%' },
-        { label: 'Manuscript Writing', key: 'manuscript_writing', weight: '10%' },
-    ];
-
-    const posterCriteria = [
-        { label: 'Scientific Substantiation', key: 'poster_scientific_substantiation', weight: '15%' },
-        { label: 'Practical Usefulness', key: 'practical_usefulness', weight: '10%' },
-        { label: 'Technical Contribution', key: 'poster_technical_contribution', weight: '10%' },
-        { label: 'Organization & Visual Design', key: 'poster_organization_design', weight: '10%' },
-        { label: 'Originality & Authenticity', key: 'poster_originality', weight: '10%' },
-        { label: 'Presentation & Explanation', key: 'presentation_explanation', weight: '10%' },
-        { label: 'Subject Knowledge', key: 'subject_knowledge', weight: '15%' },
-        { label: 'Manuscript Substantiation', key: 'manuscript_substantiation', weight: '10%' },
-        { label: 'Manuscript Writing', key: 'manuscript_writing', weight: '10%' },
-    ];
-
-    const list = isOral ? oralCriteria : posterCriteria;
+function CriterionBreakdown({ score, isOral, isDark, bdr, isDraft, metrics }) {
+    const list = isOral ? ORAL_CRITERIA : POSTER_CRITERIA;
+    const info = metrics || getScoreMetrics(score, isOral);
 
     return (
         <Box sx={{
@@ -95,63 +136,132 @@ function CriterionBreakdown({ score, isOral, isDark, bdr }) {
             p: 2.2, 
             borderRadius: '12px',
             bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
-            border: `1px solid ${bdr}`,
-            boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
+            border: `1px solid ${isDraft ? '#fde68a' : bdr}`,
+            boxShadow: isDraft ? '0 2px 10px rgba(245, 158, 11, 0.08)' : '0 2px 6px rgba(0,0,0,0.02)'
         }}>
+            {/* Draft Notice Banner */}
+            {isDraft && (
+                <Box sx={{
+                    mb: 2,
+                    p: 1.5,
+                    borderRadius: '10px',
+                    bgcolor: '#fffbeb',
+                    border: '1px solid #fde68a',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 1.2
+                }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Chip 
+                            label="DRAFT EVALUASI" 
+                            size="small" 
+                            sx={{ bgcolor: '#f59e0b', color: '#ffffff', fontWeight: 900, fontSize: '0.66rem', height: 22 }} 
+                        />
+                        <Typography sx={{ fontSize: '0.78rem', color: '#78350f', fontWeight: 600 }}>
+                            Penilaian ini <strong>masih berstatus draft</strong> dan belum difinalisasi oleh Juri. Rincian di bawah mencerminkan isian sementara.
+                        </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Chip 
+                            label={`Progres: ${info.filledCount}/${info.totalCount} Kriteria Terisi (${info.weightFilledPercent}% Bobot)`} 
+                            size="small" 
+                            sx={{ bgcolor: '#ffffff', color: '#92400e', fontWeight: 800, fontSize: '0.70rem', border: '1px solid #fcd34d' }} 
+                        />
+                        {info.provisionalScore && (
+                            <Chip 
+                                label={`Estimasi Sementara: ~${info.provisionalScore}`} 
+                                size="small" 
+                                sx={{ bgcolor: '#fef3c7', color: '#b45309', fontWeight: 900, fontSize: '0.72rem', border: '1px solid #f59e0b' }} 
+                            />
+                        )}
+                    </Box>
+                </Box>
+            )}
+
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5, pb: 1, borderBottom: `1px solid ${bdr}` }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <AutoAwesomeIcon sx={{ fontSize: 16, color: '#0d9488' }} />
+                    <AutoAwesomeIcon sx={{ fontSize: 16, color: isDraft ? '#f59e0b' : '#0d9488' }} />
                     <Typography sx={{ fontWeight: 800, color: '#0f172a', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         Rincian Skor Rubrik Penilaian ({isOral ? 'Oral Presentation' : 'Poster Presentation'})
+                        {isDraft && ' — DRAFT'}
                     </Typography>
                 </Box>
                 <Chip 
                     label={isOral ? '10 Parameter Penilaian' : '9 Parameter Penilaian'} 
                     size="small" 
-                    sx={{ height: 20, fontSize: '0.65rem', fontWeight: 800, bgcolor: '#f1f5f9', color: '#475569' }} 
+                    sx={{ height: 20, fontSize: '0.65rem', fontWeight: 800, bgcolor: isDraft ? '#fef3c7' : '#f1f5f9', color: isDraft ? '#92400e' : '#475569' }} 
                 />
             </Box>
 
             <Grid container spacing={1.5}>
                 {list.map(c => {
                     const val = score[c.key];
-                    const numVal = parseFloat(val) || 0;
+                    const hasVal = val !== null && val !== undefined && val !== '' && !isNaN(val) && parseFloat(val) > 0;
+                    const numVal = hasVal ? parseFloat(val) : 0;
                     return (
                         <Grid item xs={12} sm={6} md={4} key={c.key}>
                             <Box sx={{ 
                                 p: 1.2, 
                                 borderRadius: '10px', 
-                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', 
-                                border: '1px solid',
-                                borderColor: val ? '#e2e8f0' : '#f1f5f9'
+                                bgcolor: hasVal 
+                                    ? (isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc') 
+                                    : (isDark ? 'rgba(255,255,255,0.01)' : '#fafafa'), 
+                                border: hasVal ? '1px solid #e2e8f0' : '1px dashed #cbd5e1',
+                                opacity: hasVal ? 1 : 0.75
                             }}>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.6 }}>
-                                    <Typography sx={{ fontSize: '0.74rem', fontWeight: 700, color: '#334155', pr: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    <Typography sx={{ fontSize: '0.74rem', fontWeight: 700, color: hasVal ? '#334155' : '#64748b', pr: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                         {c.label}
                                     </Typography>
-                                    <Chip 
-                                        label={c.weight} 
-                                        size="small" 
-                                        sx={{ height: 18, fontSize: '0.62rem', fontWeight: 800, bgcolor: '#e2e8f0', color: '#475569', borderRadius: '4px' }} 
-                                    />
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                        {isDraft && (
+                                            <Chip 
+                                                label={hasVal ? 'Terisi' : 'Kosong'} 
+                                                size="small" 
+                                                sx={{ 
+                                                    height: 16, 
+                                                    fontSize: '0.58rem', 
+                                                    fontWeight: 800, 
+                                                    bgcolor: hasVal ? '#ecfdf5' : '#f1f5f9', 
+                                                    color: hasVal ? '#047857' : '#94a3b8' 
+                                                }} 
+                                            />
+                                        )}
+                                        <Chip 
+                                            label={c.weightLabel} 
+                                            size="small" 
+                                            sx={{ height: 18, fontSize: '0.62rem', fontWeight: 800, bgcolor: '#e2e8f0', color: '#475569', borderRadius: '4px' }} 
+                                        />
+                                    </Box>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <LinearProgress 
                                         variant="determinate" 
-                                        value={val ? Math.min(100, (numVal / 10) * 100) : 0} 
+                                        value={hasVal ? Math.min(100, (numVal / 10) * 100) : 0} 
                                         sx={{ 
                                             flex: 1, 
                                             height: 5, 
                                             borderRadius: 2, 
                                             bgcolor: '#e2e8f0',
                                             '& .MuiLinearProgress-bar': {
-                                                bgcolor: numVal >= 8 ? '#10b981' : numVal >= 6 ? '#3b82f6' : '#f59e0b',
+                                                bgcolor: isDraft 
+                                                    ? (numVal >= 8 ? '#10b981' : numVal >= 6 ? '#f59e0b' : '#fb923c') 
+                                                    : (numVal >= 8 ? '#10b981' : numVal >= 6 ? '#3b82f6' : '#f59e0b'),
                                                 borderRadius: 2
                                             }
                                         }} 
                                     />
-                                    <Typography sx={{ fontSize: '0.82rem', fontWeight: 900, color: val ? '#0f172a' : '#94a3b8', fontFamily: 'monospace', minWidth: 28, textAlign: 'right' }}>
-                                        {val ? numVal.toFixed(1) : '—'}
+                                    <Typography sx={{ 
+                                        fontSize: '0.82rem', 
+                                        fontWeight: 900, 
+                                        color: hasVal ? '#0f172a' : '#94a3b8', 
+                                        fontFamily: 'monospace', 
+                                        minWidth: 28, 
+                                        textAlign: 'right' 
+                                    }}>
+                                        {hasVal ? numVal.toFixed(1) : '—'}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -160,7 +270,7 @@ function CriterionBreakdown({ score, isOral, isDark, bdr }) {
                 })}
             </Grid>
 
-            {score.juri_notes && (
+            {score.juri_notes ? (
                 <Box sx={{ 
                     mt: 2, 
                     p: 1.5, 
@@ -174,12 +284,18 @@ function CriterionBreakdown({ score, isOral, isDark, bdr }) {
                     <FormatQuoteIcon sx={{ color: '#d97706', fontSize: 24, mt: -0.3, flexShrink: 0 }} />
                     <Box>
                         <Typography sx={{ fontWeight: 800, color: '#92400e', fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.04em', mb: 0.2 }}>
-                            Catatan & Masukan Juri:
+                            {isDraft ? 'Catatan Sementara Juri (Draft):' : 'Catatan & Masukan Juri:'}
                         </Typography>
                         <Typography sx={{ fontSize: '0.78rem', fontStyle: 'italic', color: '#78350f', lineHeight: 1.45 }}>
                             "{score.juri_notes}"
                         </Typography>
                     </Box>
+                </Box>
+            ) : isDraft && (
+                <Box sx={{ mt: 1.5, px: 1 }}>
+                    <Typography variant="caption" sx={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.72rem' }}>
+                        * Catatan tertulis juri belum diisi pada draft ini.
+                    </Typography>
                 </Box>
             )}
         </Box>
@@ -188,18 +304,32 @@ function CriterionBreakdown({ score, isOral, isDark, bdr }) {
 
 function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri }) {
     const [showDetail, setShowDetail] = useState(false);
-    const hasScored = !!score.weighted_final_score;
+    const metrics = getScoreMetrics(score, isOral);
+    const hasScored = metrics.hasFinalScore;
+    const isDraft = metrics.isDraft;
     const finalScore = hasScored ? parseFloat(score.weighted_final_score).toFixed(2) : null;
     const interp = hasScored ? getInterpretation(parseFloat(finalScore)) : null;
     const avatarGrad = getAvatarGradient(score.juri?.name || 'Juri');
+
+    // Format last updated date
+    const updatedTime = score.updated_at ? new Date(score.updated_at).toLocaleString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+    }) : null;
 
     return (
         <Paper elevation={0} sx={{
             p: 2.2, 
             borderRadius: '14px',
             bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#ffffff',
-            border: `1px solid ${score.is_nominated_best ? '#f59e0b' : bdr}`,
-            boxShadow: score.is_nominated_best ? '0 4px 14px rgba(245, 158, 11, 0.15)' : '0 1px 3px rgba(0,0,0,0.02)',
+            border: `1px solid ${score.is_nominated_best ? '#f59e0b' : isDraft ? '#fcd34d' : bdr}`,
+            boxShadow: score.is_nominated_best 
+                ? '0 4px 14px rgba(245, 158, 11, 0.15)' 
+                : isDraft 
+                ? '0 2px 10px rgba(245, 158, 11, 0.08)' 
+                : '0 1px 3px rgba(0,0,0,0.02)',
             transition: 'all 0.2s ease',
             '&:hover': { boxShadow: '0 6px 16px rgba(0,0,0,0.05)' }
         }}>
@@ -212,7 +342,11 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                         background: avatarGrad, 
                         color: '#ffffff', 
                         fontWeight: 800,
-                        border: '1.5px solid #ffffff',
+                        border: hasScored 
+                            ? '2px solid #10b981' 
+                            : isDraft 
+                            ? '2px solid #f59e0b' 
+                            : '1.5px solid #ffffff',
                         boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
                     }}>
                         {(score.juri?.name || 'J').charAt(0).toUpperCase()}
@@ -234,10 +368,15 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                             {score.juri?.email || '—'}
                             {score.juri?.affiliation && ` • ${score.juri.affiliation}`}
                         </Typography>
+                        {isDraft && updatedTime && (
+                            <Typography variant="caption" sx={{ color: '#d97706', fontSize: '0.68rem', fontWeight: 600, display: 'block' }}>
+                                💾 Draft disimpan: {updatedTime}
+                            </Typography>
+                        )}
                     </Box>
                 </Stack>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                     {score.is_nominated_best && (
                         <Chip
                             icon={<EmojiEventsIcon sx={{ fontSize: '14px !important', color: '#b45309 !important' }} />}
@@ -255,7 +394,7 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                         />
                     )}
 
-                    <Box sx={{ textAlign: 'right', minWidth: 100 }}>
+                    <Box sx={{ textAlign: 'right', minWidth: 110 }}>
                         {hasScored ? (
                             <Box sx={{ 
                                 px: 1.5, 
@@ -284,19 +423,51 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                                     {interp.label}
                                 </Typography>
                             </Box>
-                        ) : score.is_draft ? (
-                            <Chip 
-                                label="Draft (Tersimpan)" 
-                                size="small" 
-                                sx={{
-                                    bgcolor: '#fffbeb',
-                                    color: '#d97706', 
-                                    fontWeight: 800, 
-                                    height: 24, 
-                                    fontSize: '0.70rem',
-                                    border: '1px solid #fde68a',
-                                }} 
-                            />
+                        ) : isDraft ? (
+                            <Box sx={{ 
+                                px: 1.4, 
+                                py: 0.5, 
+                                borderRadius: '10px', 
+                                bgcolor: '#fffbeb', 
+                                border: '1px solid #fde68a',
+                                display: 'inline-block',
+                                textAlign: 'right'
+                            }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, justifyContent: 'flex-end' }}>
+                                    <Chip 
+                                        label="Draft" 
+                                        size="small" 
+                                        sx={{
+                                            bgcolor: '#f59e0b',
+                                            color: '#ffffff', 
+                                            fontWeight: 900, 
+                                            height: 18, 
+                                            fontSize: '0.62rem',
+                                        }} 
+                                    />
+                                    {metrics.provisionalScore && (
+                                        <Typography sx={{
+                                            fontWeight: 900,
+                                            fontSize: '0.96rem',
+                                            color: '#b45309',
+                                            fontFamily: 'monospace',
+                                            lineHeight: 1
+                                        }}>
+                                            ~{metrics.provisionalScore}
+                                        </Typography>
+                                    )}
+                                </Box>
+                                <Typography sx={{
+                                    color: '#92400e',
+                                    fontWeight: 800,
+                                    fontSize: '0.62rem',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.03em',
+                                    mt: 0.3
+                                }}>
+                                    {metrics.filledCount}/{metrics.totalCount} Terisi
+                                </Typography>
+                            </Box>
                         ) : (
                             <Chip 
                                 label="⏳ Belum Dinilai" 
@@ -332,6 +503,41 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                         >
                             {showDetail ? 'Tutup Rubrik ▴' : 'Lihat Rubrik ▾'}
                         </Button>
+                    ) : isDraft ? (
+                        <Stack direction="row" spacing={1} alignItems="center">
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                onClick={() => setShowDetail(!showDetail)}
+                                sx={{ 
+                                    textTransform: 'none', 
+                                    fontSize: '0.72rem', 
+                                    fontWeight: 800,
+                                    borderRadius: '8px',
+                                    px: 1.5,
+                                    borderColor: '#f59e0b',
+                                    color: '#b45309',
+                                    bgcolor: showDetail ? '#fef3c7' : '#fffbeb',
+                                    '&:hover': { bgcolor: '#fde68a', borderColor: '#d97706' }
+                                }}
+                            >
+                                {showDetail ? 'Tutup Draft ▴' : 'Lihat Draft Rubrik ▾'}
+                            </Button>
+                            <Tooltip title="Batalkan / Hapus Penugasan Juri ini">
+                                <IconButton 
+                                    size="small" 
+                                    color="error" 
+                                    onClick={() => onRemoveJuri(submissionId, score.juri_id, score.juri?.name)}
+                                    sx={{ 
+                                        bgcolor: '#fef2f2', 
+                                        border: '1px solid #fecaca',
+                                        '&:hover': { bgcolor: '#fee2e2' } 
+                                    }}
+                                >
+                                    <DeleteOutlineIcon sx={{ fontSize: 16 }} />
+                                </IconButton>
+                            </Tooltip>
+                        </Stack>
                     ) : (
                         <Tooltip title="Batalkan / Hapus Penugasan Juri ini">
                             <IconButton 
@@ -351,8 +557,8 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                 </Box>
             </Box>
 
-            <Collapse in={showDetail && hasScored} timeout="auto" unmountOnExit>
-                <CriterionBreakdown score={score} isOral={isOral} isDark={isDark} bdr={bdr} />
+            <Collapse in={showDetail && (hasScored || isDraft)} timeout="auto" unmountOnExit>
+                <CriterionBreakdown score={score} isOral={isOral} isDark={isDark} bdr={bdr} isDraft={isDraft} metrics={metrics} />
             </Collapse>
         </Paper>
     );
@@ -361,14 +567,23 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
 function SubmissionRow({ submission, isDark, c, bdr, onAssignJuriClick, onRemoveJuri }) {
     const [open, setOpen] = useState(false);
     const scores = submission.presentation_scores || [];
-    const scoredScores = scores.filter(s => s.weighted_final_score);
-    const avgScore = scoredScores.length > 0
-        ? (scoredScores.reduce((sum, s) => sum + parseFloat(s.weighted_final_score), 0) / scoredScores.length).toFixed(2)
+    const isOral = submission.category_submission?.toLowerCase().includes('oral');
+
+    // Categorize scores: completed, draft, pending
+    const completedScores = scores.filter(s => s.weighted_final_score && !s.is_draft);
+    const draftScores = scores.filter(s => {
+        if (s.is_draft) return true;
+        if (s.weighted_final_score) return false;
+        const m = getScoreMetrics(s, isOral);
+        return m.filledCount > 0;
+    });
+
+    const avgScore = completedScores.length > 0
+        ? (completedScores.reduce((sum, s) => sum + parseFloat(s.weighted_final_score), 0) / completedScores.length).toFixed(2)
         : null;
     const interp = avgScore ? getInterpretation(parseFloat(avgScore)) : null;
     const hasNomination = scores.some(s => s.is_nominated_best);
     const nominationCategory = scores.find(s => s.is_nominated_best)?.nomination_category || 'Kandidat Juara';
-    const isOral = submission.category_submission?.toLowerCase().includes('oral');
 
     // Presenter details
     const presenterName = submission.author_full_name || submission.user?.name || 'Author';
@@ -376,8 +591,8 @@ function SubmissionRow({ submission, isDark, c, bdr, onAssignJuriClick, onRemove
     const presenterAffiliation = submission.affiliation || submission.institute_organization || submission.user?.affiliation || '';
     const presenterAvatarGrad = getAvatarGradient(presenterName);
 
-    const isFullyEvaluated = scores.length > 0 && scoredScores.length === scores.length;
-    const isPartiallyEvaluated = scoredScores.length > 0 && scoredScores.length < scores.length;
+    const isFullyEvaluated = scores.length > 0 && completedScores.length === scores.length;
+    const hasActiveDrafts = draftScores.length > 0;
 
     const cellSx = { 
         borderBottom: `1px solid ${bdr}`, 
@@ -517,17 +732,39 @@ function SubmissionRow({ submission, isDark, c, bdr, onAssignJuriClick, onRemove
                 {/* ASSIGNED JURIS AVATARS & PROGRESS */}
                 <TableCell sx={{ ...cellSx, width: '22%' }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.8 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1 }}>
                             <Chip
-                                label={`${scoredScores.length} / ${scores.length} Selesai`}
+                                label={
+                                    hasActiveDrafts
+                                        ? `${completedScores.length} / ${scores.length} Selesai (${draftScores.length} Draft)`
+                                        : `${completedScores.length} / ${scores.length} Selesai`
+                                }
                                 size="small"
                                 sx={{
                                     fontWeight: 800,
                                     fontSize: '0.70rem',
-                                    bgcolor: isFullyEvaluated ? '#ecfdf5' : isPartiallyEvaluated ? '#fffbeb' : '#f1f5f9',
-                                    color: isFullyEvaluated ? '#047857' : isPartiallyEvaluated ? '#b45309' : '#64748b',
+                                    bgcolor: isFullyEvaluated 
+                                        ? '#ecfdf5' 
+                                        : hasActiveDrafts 
+                                        ? '#fffbeb' 
+                                        : completedScores.length > 0 
+                                        ? '#eff6ff' 
+                                        : '#f1f5f9',
+                                    color: isFullyEvaluated 
+                                        ? '#047857' 
+                                        : hasActiveDrafts 
+                                        ? '#b45309' 
+                                        : completedScores.length > 0 
+                                        ? '#1d4ed8' 
+                                        : '#64748b',
                                     border: '1px solid',
-                                    borderColor: isFullyEvaluated ? '#a7f3d0' : isPartiallyEvaluated ? '#fde68a' : '#e2e8f0',
+                                    borderColor: isFullyEvaluated 
+                                        ? '#a7f3d0' 
+                                        : hasActiveDrafts 
+                                        ? '#fde68a' 
+                                        : completedScores.length > 0 
+                                        ? '#bfdbfe' 
+                                        : '#e2e8f0',
                                     height: 22,
                                     borderRadius: '6px'
                                 }}
@@ -550,13 +787,26 @@ function SubmissionRow({ submission, isDark, c, bdr, onAssignJuriClick, onRemove
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                                 <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 28, height: 28, fontSize: '0.70rem', fontWeight: 800 } }}>
                                     {scores.map(s => {
-                                        const scored = !!s.weighted_final_score;
+                                        const metrics = getScoreMetrics(s, isOral);
+                                        const scored = metrics.hasFinalScore;
+                                        const draft = metrics.isDraft;
+                                        const tooltipTitle = scored 
+                                            ? `${s.juri?.name || 'Juri'} (Selesai Dinilai - Skor: ${parseFloat(s.weighted_final_score).toFixed(2)})`
+                                            : draft 
+                                            ? `${s.juri?.name || 'Juri'} (Draft: ${metrics.filledCount}/${metrics.totalCount} Kriteria Terisi)`
+                                            : `${s.juri?.name || 'Juri'} (Belum Dinilai)`;
+
                                         return (
-                                            <Tooltip key={s.id} title={`${s.juri?.name || 'Juri'} (${scored ? 'Sudah dinilai' : 'Belum dinilai'})`}>
+                                            <Tooltip key={s.id} title={tooltipTitle}>
                                                 <Avatar 
                                                     sx={{ 
                                                         background: getAvatarGradient(s.juri?.name), 
-                                                        border: scored ? '2px solid #10b981 !important' : '2px solid #ffffff !important' 
+                                                        border: scored 
+                                                            ? '2px solid #10b981 !important' 
+                                                            : draft 
+                                                            ? '2px solid #f59e0b !important' 
+                                                            : '2px solid #ffffff !important',
+                                                        boxShadow: draft ? '0 0 6px rgba(245, 158, 11, 0.4)' : 'none'
                                                     }}
                                                 >
                                                     {(s.juri?.name || 'J').charAt(0).toUpperCase()}
@@ -600,6 +850,24 @@ function SubmissionRow({ submission, isDark, c, bdr, onAssignJuriClick, onRemove
                                 {interp.label}
                             </Typography>
                         </Box>
+                    ) : hasActiveDrafts ? (
+                        <Box sx={{ 
+                            display: 'inline-flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            px: 1.5,
+                            py: 0.6,
+                            borderRadius: '10px',
+                            bgcolor: '#fffbeb',
+                            border: '1px solid #fde68a'
+                        }}>
+                            <Typography sx={{ fontWeight: 900, color: '#d97706', fontSize: '0.85rem', lineHeight: 1 }}>
+                                📝 {draftScores.length} Draft
+                            </Typography>
+                            <Typography sx={{ color: '#b45309', fontWeight: 800, fontSize: '0.60rem', textTransform: 'uppercase', letterSpacing: '0.04em', mt: 0.3 }}>
+                                Sedang Dinilai
+                            </Typography>
+                        </Box>
                     ) : (
                         <Chip 
                             label="Menunggu Nilai" 
@@ -621,9 +889,9 @@ function SubmissionRow({ submission, isDark, c, bdr, onAssignJuriClick, onRemove
                                 fontWeight: 800,
                                 fontSize: '0.72rem',
                                 borderRadius: '8px',
-                                borderColor: open ? '#0d9488' : '#e2e8f0',
-                                color: open ? '#094d42' : '#334155',
-                                bgcolor: open ? '#ecfdf4' : '#ffffff',
+                                borderColor: open ? '#0d9488' : hasActiveDrafts ? '#f59e0b' : '#e2e8f0',
+                                color: open ? '#094d42' : hasActiveDrafts ? '#b45309' : '#334155',
+                                bgcolor: open ? '#ecfdf4' : hasActiveDrafts ? '#fffbeb' : '#ffffff',
                                 '&:hover': { bgcolor: '#f0fdf4', borderColor: '#0d9488' }
                             }}
                         >
@@ -684,6 +952,12 @@ function SubmissionRow({ submission, isDark, c, bdr, onAssignJuriClick, onRemove
                                             size="small" 
                                             sx={{ bgcolor: interp.bg, color: interp.color, border: `1px solid ${interp.border}`, fontWeight: 900, fontFamily: 'monospace', height: 28 }} 
                                         />
+                                    ) : hasActiveDrafts ? (
+                                        <Chip 
+                                            label={`Ada ${draftScores.length} Draft Sedang Dinilai`} 
+                                            size="small" 
+                                            sx={{ bgcolor: '#fffbeb', color: '#b45309', border: '1px solid #fde68a', fontWeight: 800, height: 28 }} 
+                                        />
                                     ) : (
                                         <Chip label="Belum Ada Nilai Selesai" size="small" sx={{ bgcolor: '#f1f5f9', color: '#94a3b8', fontWeight: 700 }} />
                                     )}
@@ -736,7 +1010,7 @@ function LeaderboardView({ submissions, bdr, isDark }) {
     const scoredSubmissions = submissions
         .map(sub => {
             const scores = sub.presentation_scores || [];
-            const scored = scores.filter(s => s.weighted_final_score);
+            const scored = scores.filter(s => s.weighted_final_score && !s.is_draft);
             const avg = scored.length > 0
                 ? parseFloat((scored.reduce((sum, s) => sum + parseFloat(s.weighted_final_score), 0) / scored.length).toFixed(2))
                 : null;
@@ -1021,13 +1295,16 @@ export default function PresentationScores({ submissions, availableJuris = [] })
 
         const isOral = sub.category_submission?.toLowerCase().includes('oral');
         const scores = sub.presentation_scores || [];
-        const scored = scores.filter(s => s.weighted_final_score);
-        const isComplete = scores.length > 0 && scored.length === scores.length;
+        const scored = scores.filter(s => s.weighted_final_score && !s.is_draft);
+        const completedScores = scores.filter(s => s.weighted_final_score && !s.is_draft);
+        const draftScores = scores.filter(s => s.is_draft || (!s.weighted_final_score && Object.keys(s).some(k => (k.startsWith('poster_') || k.startsWith('manuscript_') || k === 'time_management') && s[k] !== null && s[k] !== '')));
+        const isComplete = scores.length > 0 && completedScores.length === scores.length;
         const isNominated = scores.some(s => s.is_nominated_best);
 
         if (filter === 'all') return true;
         if (filter === 'oral') return isOral;
         if (filter === 'poster') return !isOral;
+        if (filter === 'draft') return draftScores.length > 0;
         if (filter === 'nominated') return isNominated;
         if (filter === 'completed') return isComplete;
         if (filter === 'pending') return !isComplete;
@@ -1109,7 +1386,7 @@ export default function PresentationScores({ submissions, availableJuris = [] })
 
         const rows = filteredSubmissions.map(sub => {
             const scores = sub.presentation_scores || [];
-            const scored = scores.filter(s => s.weighted_final_score);
+            const scored = scores.filter(s => s.weighted_final_score && !s.is_draft);
             const total = scored.reduce((sum, s) => sum + parseFloat(s.weighted_final_score), 0);
             const avg = scored.length > 0 ? (total / scored.length).toFixed(2) : '—';
             const grade = scored.length > 0 ? getInterpretation(parseFloat(avg)).label : '—';
@@ -1149,18 +1426,21 @@ export default function PresentationScores({ submissions, availableJuris = [] })
 
     // Calculate metrics
     const totalAssignments = allSubmissions.reduce((sum, s) => sum + (s.presentation_scores?.length || 0), 0);
-    const completedAssignments = allSubmissions.reduce((sum, s) => sum + (s.presentation_scores?.filter(ps => ps.weighted_final_score)?.length || 0), 0);
+    const completedAssignments = allSubmissions.reduce((sum, s) => sum + (s.presentation_scores?.filter(ps => ps.weighted_final_score && !ps.is_draft)?.length || 0), 0);
+    const draftAssignments = allSubmissions.reduce((sum, s) => sum + (s.presentation_scores?.filter(ps => ps.is_draft || (!ps.weighted_final_score && (ps.manuscript_substantiation !== null || ps.poster_scientific_substantiation !== null || ps.time_management !== null)))?.length || 0), 0);
     const pendingAssignments = totalAssignments - completedAssignments;
     const completionPercent = totalAssignments > 0 ? Math.round((completedAssignments / totalAssignments) * 100) : 0;
 
     const oralCount = allSubmissions.filter(s => s.category_submission?.toLowerCase().includes('oral')).length;
     const posterCount = allSubmissions.length - oralCount;
     const nominatedCount = allSubmissions.filter(s => s.presentation_scores?.some(ps => ps.is_nominated_best)).length;
+    const draftPaperCount = allSubmissions.filter(s => s.presentation_scores?.some(ps => ps.is_draft || (!ps.weighted_final_score && (ps.manuscript_substantiation !== null || ps.poster_scientific_substantiation !== null || ps.time_management !== null)))).length;
 
     const quickPills = [
         { key: 'all', label: 'Semua Paper', count: allSubmissions.length },
         { key: 'oral', label: 'Oral', count: oralCount },
         { key: 'poster', label: 'Poster', count: posterCount },
+        { key: 'draft', label: '📝 Ada Draft', count: draftPaperCount },
         { key: 'nominated', label: '🏆 Nominasi Juara', count: nominatedCount },
         { key: 'completed', label: '✅ Selesai Dinilai' },
         { key: 'pending', label: '⏳ Belum Lengkap' },
@@ -1392,7 +1672,7 @@ export default function PresentationScores({ submissions, availableJuris = [] })
                                 {pendingAssignments} <Typography component="span" sx={{ fontSize: '0.82rem', fontWeight: 700, color: c.textSecondary }}>Slot Juri</Typography>
                             </Typography>
                             <Typography variant="caption" sx={{ color: c.textSecondary, fontSize: '0.74rem' }}>
-                                Menunggu input nilai rubrik oleh juri
+                                {draftAssignments > 0 ? `${draftAssignments} Draft Aktif • ${pendingAssignments - draftAssignments} Belum Diisi` : 'Menunggu input nilai rubrik oleh juri'}
                             </Typography>
                         </Paper>
                     </Grid>
