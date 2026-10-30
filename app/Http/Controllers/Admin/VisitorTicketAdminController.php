@@ -199,6 +199,58 @@ class VisitorTicketAdminController extends Controller
             'unpaidExcelCount' => count($unpaidTicketIds),
         ];
 
+        // Fetch tickets timestamp & status in memory for bulletproof, SQL-version-agnostic grouping
+        $allTicketTimestamps = VisitorTicket::select('created_at', 'status')
+            ->whereNotNull('created_at')
+            ->get();
+
+        $fourteenDaysAgo = now()->subDays(14)->startOfDay();
+        $twentyOneDaysAgo = now()->subDays(21)->startOfDay();
+
+        $dailyVelocity = $allTicketTimestamps
+            ->filter(fn($t) => $t->created_at >= $fourteenDaysAgo)
+            ->groupBy(fn($t) => $t->created_at->format('Y-m-d'))
+            ->sortKeys()
+            ->map(function ($group, $dateStr) {
+                return [
+                    'date' => date('d M', strtotime($dateStr)),
+                    'day' => date('d', strtotime($dateStr)),
+                    'total' => $group->count(),
+                    'lunas' => $group->where('status', 'active')->count(),
+                    'pending' => $group->where('status', '!=', 'active')->count(),
+                ];
+            })
+            ->values()
+            ->toArray();
+
+        $dailyTrend = $allTicketTimestamps
+            ->filter(fn($t) => $t->created_at >= $twentyOneDaysAgo)
+            ->groupBy(fn($t) => $t->created_at->format('Y-m-d'))
+            ->sortKeys()
+            ->map(function ($group, $dateStr) {
+                return [
+                    'date' => date('d M', strtotime($dateStr)),
+                    'count' => $group->count(),
+                ];
+            })
+            ->values()
+            ->toArray();
+
+        $monthlyVelocity = $allTicketTimestamps
+            ->groupBy(fn($t) => $t->created_at->format('Y-m'))
+            ->sortKeys()
+            ->map(function ($group, $ym) {
+                $first = $group->first();
+                return [
+                    'month' => $first ? $first->created_at->format('M') : $ym,
+                    'total' => $group->count(),
+                    'lunas' => $group->where('status', 'active')->count(),
+                    'pending' => $group->where('status', '!=', 'active')->count(),
+                ];
+            })
+            ->values()
+            ->toArray();
+
         // Prepare Comprehensive Realtime Analytics Data (Charts & Diagrams)
         $analytics = [
             'categoryDistribution' => VisitorTicket::select('visitor_type', DB::raw('count(*) as count'), DB::raw('sum(individual_price) as est_revenue'))
@@ -222,48 +274,9 @@ class VisitorTicketAdminController extends Controller
                 ->orderByDesc('count')
                 ->limit(10)
                 ->get(),
-            'dailyTrend' => VisitorTicket::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
-                ->where('created_at', '>=', now()->subDays(21))
-                ->groupBy('date')
-                ->orderBy('date', 'asc')
-                ->get()
-                ->map(fn($d) => [
-                    'date' => date('d M', strtotime($d->date)),
-                    'count' => (int) $d->count,
-                ]),
-            'dailyVelocity' => VisitorTicket::select(
-                    DB::raw('DATE(created_at) as date_val'),
-                    DB::raw('count(*) as total'),
-                    DB::raw("count(case when status = 'active' then 1 end) as lunas"),
-                    DB::raw("count(case when status != 'active' then 1 end) as pending")
-                )
-                ->where('created_at', '>=', now()->subDays(14))
-                ->groupBy('date_val')
-                ->orderBy('date_val', 'asc')
-                ->get()
-                ->map(fn($d) => [
-                    'date' => date('d M', strtotime($d->date_val)),
-                    'day' => date('d', strtotime($d->date_val)),
-                    'total' => (int) $d->total,
-                    'lunas' => (int) $d->lunas,
-                    'pending' => (int) $d->pending,
-                ]),
-            'monthlyVelocity' => VisitorTicket::select(
-                    DB::raw("DATE_FORMAT(created_at, '%b') as month_name"),
-                    DB::raw("DATE_FORMAT(created_at, '%Y-%m') as year_month"),
-                    DB::raw('count(*) as total'),
-                    DB::raw("count(case when status = 'active' then 1 end) as lunas"),
-                    DB::raw("count(case when status != 'active' then 1 end) as pending")
-                )
-                ->groupBy('year_month', 'month_name')
-                ->orderBy('year_month', 'asc')
-                ->get()
-                ->map(fn($m) => [
-                    'month' => $m->month_name,
-                    'total' => (int) $m->total,
-                    'lunas' => (int) $m->lunas,
-                    'pending' => (int) $m->pending,
-                ]),
+            'dailyTrend' => $dailyTrend,
+            'dailyVelocity' => $dailyVelocity,
+            'monthlyVelocity' => $monthlyVelocity,
             'ticketStatusBreakdown' => [
                 'active' => VisitorTicket::where('status', 'active')->count(),
                 'pending' => VisitorTicket::where('status', 'pending')->count(),
