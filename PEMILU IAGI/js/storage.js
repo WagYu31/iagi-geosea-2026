@@ -297,7 +297,9 @@ class PemiluStorage {
   async syncVotedListWithServer() {
     try {
       if (typeof fetch === 'undefined') return;
-      const respVoted = await fetch('api/vote_sync.php?action=get_voted_list');
+      const respVoted = await fetch(`api/vote_sync.php?action=get_voted_list&_t=${Date.now()}`, {
+        cache: 'no-store'
+      });
       const dataVoted = await respVoted.json();
       if (dataVoted && dataVoted.success && dataVoted.voted_npas) {
         const dpt = this.getDPT();
@@ -334,12 +336,13 @@ class PemiluStorage {
 
       // 2. Cek apakah ada otorisasi admin via token sesi resmi
       const adminToken = this.getAdminToken();
-      let resultsUrl = 'api/vote_sync.php?action=get_results';
+      let resultsUrl = `api/vote_sync.php?action=get_results&_t=${Date.now()}`;
       if (adminToken) {
         resultsUrl += `&session_token=${encodeURIComponent(adminToken)}`;
       }
 
       const respResults = await fetch(resultsUrl, {
+        cache: 'no-store',
         headers: adminToken ? { 'Authorization': 'Bearer ' + adminToken, 'X-Admin-Token': adminToken } : {}
       });
       const dataResults = await respResults.json();

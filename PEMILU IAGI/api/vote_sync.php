@@ -1822,6 +1822,11 @@ if ($action === 'check_voter') {
 
 // ================= ACTION 2: GET ALL VOTED NPAS (FOR SYNC) =================
 if ($action === 'get_voted_list') {
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
     $voters = readJsonFile($votersFile, []);
     $votedNpas = [];
     foreach ($voters as $npaKey => $info) {
@@ -2201,6 +2206,11 @@ if ($action === 'cast_vote') {
 // Jika kotak suara masih TERSEGEL (Sealed Vault) dan pengakses BUKAN Admin resmi dengan PIN:
 // Perolehan suara masing-masing calon (counts) dan surat suara mentah (ballots) WAJIB DIKUNCI / DIRAHASIAKAN!
 if ($action === 'get_results') {
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
     $settings = getVaultSettings();
     $isSealed = ($settings['is_sealed'] !== false);
 

@@ -11139,12 +11139,27 @@
       };
 
       window.refreshAdminData = async function() {
+        const btn = document.querySelector('button[onclick*="refreshAdminData"]');
+        const oldHtml = btn ? btn.innerHTML : '';
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span>⏳ Sinkronisasi...</span>';
+        }
+
         if (window.pemiluStorage && typeof window.pemiluStorage.syncWithServer === 'function') {
           await window.pemiluStorage.syncWithServer();
         }
         refreshAll();
         if (typeof renderResumePlenoSection === 'function') {
           renderResumePlenoSection();
+        }
+
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>✅ Terupdate!</span>';
+          setTimeout(() => {
+            btn.innerHTML = oldHtml || '🔄 Refresh Data';
+          }, 1200);
         }
       };
 
