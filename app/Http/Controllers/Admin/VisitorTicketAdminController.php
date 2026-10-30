@@ -199,6 +199,70 @@ class VisitorTicketAdminController extends Controller
             'unpaidExcelCount' => count($unpaidTicketIds),
         ];
 
+        // Prepare Comprehensive Realtime Analytics Data (Charts & Diagrams)
+        $analytics = [
+            'categoryDistribution' => VisitorTicket::select('visitor_type', DB::raw('count(*) as count'), DB::raw('sum(individual_price) as est_revenue'))
+                ->groupBy('visitor_type')
+                ->orderByDesc('count')
+                ->get()
+                ->map(function ($c) {
+                    return [
+                        'visitor_type' => $c->visitor_type,
+                        'label' => VisitorTicket::getVisitorTypeLabelStatic($c->visitor_type),
+                        'count' => (int) $c->count,
+                        'est_revenue' => (float) ($c->est_revenue ?? 0),
+                    ];
+                }),
+            'topInstitutions' => VisitorTicket::whereNotNull('visitor_institution')
+                ->where('visitor_institution', '!=', '')
+                ->where('visitor_institution', '!=', '-')
+                ->where('visitor_institution', 'not like', '%-%')
+                ->select('visitor_institution as name', DB::raw('count(*) as count'))
+                ->groupBy('visitor_institution')
+                ->orderByDesc('count')
+                ->limit(10)
+                ->get(),
+            'dailyTrend' => VisitorTicket::select(DB::raw('DATE(created_at) as date'), DB::raw('count(*) as count'))
+                ->where('created_at', '>=', now()->subDays(21))
+                ->groupBy('date')
+                ->orderBy('date', 'asc')
+                ->get()
+                ->map(fn($d) => [
+                    'date' => date('d M', strtotime($d->date)),
+                    'count' => (int) $d->count,
+                ]),
+            'paymentBreakdown' => [
+                ['id' => 0, 'label' => 'Approved (Lunas)', 'value' => VisitorPayment::where('status', 'approved')->whereHas('tickets')->count(), 'color' => '#10b981'],
+                ['id' => 1, 'label' => 'Pending Verification', 'value' => VisitorPayment::where('status', 'pending')->where('is_debt', false)->whereHas('tickets')->count(), 'color' => '#f59e0b'],
+                ['id' => 2, 'label' => 'Outstanding Debt', 'value' => VisitorPayment::where('is_debt', true)->whereHas('tickets')->count(), 'color' => '#ea580c'],
+                ['id' => 3, 'label' => 'Rejected', 'value' => VisitorPayment::where('status', 'rejected')->whereHas('tickets')->count(), 'color' => '#ef4444'],
+            ],
+            'revenueBreakdown' => [
+                'paidRevenue' => (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount'),
+                'debtRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
+                'pendingRevenue' => (float) VisitorPayment::where('status', 'pending')->where('is_debt', false)->whereHas('tickets')->sum('total_amount'),
+            ],
+            'sourceDistribution' => [
+                ['id' => 0, 'label' => 'Online Self-Reg', 'value' => VisitorTicket::where(function($q) { $q->where('registration_source', 'online_self')->orWhereNull('registration_source'); })->count(), 'color' => '#3b82f6'],
+                ['id' => 1, 'label' => 'Onsite Assisted', 'value' => VisitorTicket::where('registration_source', 'onsite_admin')->count(), 'color' => '#10b981'],
+                ['id' => 2, 'label' => 'Group Delegation', 'value' => VisitorTicket::whereHas('payment', fn($pq) => $pq->where('is_mixed_category', true))->count(), 'color' => '#8b5cf6'],
+                ['id' => 3, 'label' => 'Free / Invited', 'value' => VisitorTicket::whereIn('visitor_type', ['vip', 'keynote_speaker', 'speaker', 'session_chair', 'board', 'delegate', 'committee', 'student_volunteer', 'exhibition', 'student_crowd', 'non_exclusive'])->count(), 'color' => '#0d9488'],
+            ],
+            'gateAttendance' => [
+                'checkedIn' => VisitorTicket::where('checked_in', true)->count(),
+                'notCheckedIn' => VisitorTicket::where('checked_in', false)->count(),
+                'total' => VisitorTicket::count(),
+                'percentage' => VisitorTicket::count() > 0 ? round((VisitorTicket::where('checked_in', true)->count() / VisitorTicket::count()) * 100, 1) : 0,
+            ],
+            'emailDelivery' => [
+                'sent' => VisitorTicket::whereNotNull('email_sent_at')->count(),
+                'unsent' => VisitorTicket::whereNull('email_sent_at')->where('status', 'active')->whereNotNull('visitor_email')->count(),
+                'percentage' => (VisitorTicket::whereNotNull('email_sent_at')->count() + VisitorTicket::whereNull('email_sent_at')->where('status', 'active')->whereNotNull('visitor_email')->count()) > 0 
+                    ? round((VisitorTicket::whereNotNull('email_sent_at')->count() / (VisitorTicket::whereNotNull('email_sent_at')->count() + VisitorTicket::whereNull('email_sent_at')->where('status', 'active')->whereNotNull('visitor_email')->count())) * 100, 1) 
+                    : 0,
+            ],
+        ];
+
         // Lanyard Templates from settings
         $settings = LandingPageSetting::whereIn('key', [
             'visitor_exclusive_lanyard_template',
@@ -209,6 +273,7 @@ class VisitorTicketAdminController extends Controller
         return Inertia::render('Admin/VisitorTickets/Index', [
             'tickets' => $tickets,
             'stats' => $stats,
+            'analytics' => $analytics,
             'settings' => [
                 'exclusiveTemplate' => $settings['visitor_exclusive_lanyard_template'] ?? null,
                 'nonExclusiveTemplate' => $settings['visitor_non_exclusive_lanyard_template'] ?? null,

@@ -124,10 +124,12 @@ class VisitorTicket extends Model
     }
 
     /**
-     * Get human-readable category name
+     * Get human-readable category name statically
      */
-    public function getCategoryLabelAttribute(): string
+    public static function getVisitorTypeLabelStatic(?string $type): string
     {
+        if (!$type) return 'Participant';
+
         $map = [
             // 1. Participant
             'iagi_member_professional' => 'Professional (Member)',
@@ -151,6 +153,7 @@ class VisitorTicket extends Model
 
             // 3. Visitor
             'non_exclusive' => 'Visitor Pass (Free)',
+            'visitor' => 'Visitor Pass (Free)',
 
             // Roles & Invitations
             'vip' => 'VIP',
@@ -170,7 +173,15 @@ class VisitorTicket extends Model
             'student_crowd' => 'Student Crowd',
         ];
 
-        return $map[$this->visitor_type] ?? ucwords(str_replace('_', ' ', $this->visitor_type));
+        return $map[$type] ?? ucwords(str_replace('_', ' ', $type));
+    }
+
+    /**
+     * Get human-readable category name
+     */
+    public function getCategoryLabelAttribute(): string
+    {
+        return self::getVisitorTypeLabelStatic($this->visitor_type);
     }
 
     /**
