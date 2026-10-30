@@ -6,6 +6,18 @@
 # Disable directory listing
 Options -Indexes
 
+# ==============================================================================
+# ANTI-BOT & LOAD-TEST FLOOD SHIELD (Locust, Python Flooder, Malicious Scanners)
+# ==============================================================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Blokir langsung bot load-testing, scrapers agresif, dan scanner berbahaya
+    RewriteCond %{HTTP_USER_AGENT} (locust|python-requests|aiohttp|httpx|sqlmap|nikto|havij|acunetix|nessus|nmap|masscan) [NC,OR]
+    RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+    RewriteCond %{HTTP:User-Agent} ^-?$
+    RewriteRule .* - [F,L]
+</IfModule>
+
 # Block direct HTTP access to api/data directory
 <IfModule mod_rewrite.c>
     RewriteEngine On
