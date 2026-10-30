@@ -1775,6 +1775,22 @@ if ($action === 'get_audit_logs') {
         return ($act !== 'VAULT_UNSEALED' && stripos($det, 'DIBUKA') === false);
     }));
 
+    // Assign sequential vote_number to vote entries
+    $currentVoteNum = count($ballots);
+    foreach ($combinedLogs as &$cLog) {
+        if (!is_array($cLog)) continue;
+        $act = strtoupper($cLog['action'] ?? '');
+        if (strpos($act, 'VOTE') !== false || strpos($act, 'BALLOT') !== false) {
+            if (empty($cLog['vote_number'])) {
+                $cLog['vote_number'] = $currentVoteNum;
+            }
+            if ($currentVoteNum > 1) {
+                $currentVoteNum--;
+            }
+        }
+    }
+    unset($cLog);
+
     echo json_encode([
         'success' => true,
         'total_logs' => count($combinedLogs),
@@ -2159,7 +2175,8 @@ if ($action === 'cast_vote') {
             'id' => 'audit-' . bin2hex(random_bytes(4)),
             'action' => 'VOTE_RECORDED',
             'details' => "Surat suara sah direkam ke kotak suara terenkripsi (NPA: {$npa}, Receipt: {$receiptHash})",
-            'timestamp' => date('c')
+            'timestamp' => date('c'),
+            'vote_number' => count($ballots)
         ];
         writeJsonFile($auditFile, $auditLogs);
 
