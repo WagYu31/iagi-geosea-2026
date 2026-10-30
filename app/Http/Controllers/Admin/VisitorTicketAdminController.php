@@ -231,6 +231,45 @@ class VisitorTicketAdminController extends Controller
                     'date' => date('d M', strtotime($d->date)),
                     'count' => (int) $d->count,
                 ]),
+            'dailyVelocity' => VisitorTicket::select(
+                    DB::raw('DATE(created_at) as date_val'),
+                    DB::raw('count(*) as total'),
+                    DB::raw("count(case when status = 'active' then 1 end) as lunas"),
+                    DB::raw("count(case when status != 'active' then 1 end) as pending")
+                )
+                ->where('created_at', '>=', now()->subDays(14))
+                ->groupBy('date_val')
+                ->orderBy('date_val', 'asc')
+                ->get()
+                ->map(fn($d) => [
+                    'date' => date('d M', strtotime($d->date_val)),
+                    'day' => date('d', strtotime($d->date_val)),
+                    'total' => (int) $d->total,
+                    'lunas' => (int) $d->lunas,
+                    'pending' => (int) $d->pending,
+                ]),
+            'monthlyVelocity' => VisitorTicket::select(
+                    DB::raw("DATE_FORMAT(created_at, '%b') as month_name"),
+                    DB::raw("DATE_FORMAT(created_at, '%Y-%m') as year_month"),
+                    DB::raw('count(*) as total'),
+                    DB::raw("count(case when status = 'active' then 1 end) as lunas"),
+                    DB::raw("count(case when status != 'active' then 1 end) as pending")
+                )
+                ->groupBy('year_month', 'month_name')
+                ->orderBy('year_month', 'asc')
+                ->get()
+                ->map(fn($m) => [
+                    'month' => $m->month_name,
+                    'total' => (int) $m->total,
+                    'lunas' => (int) $m->lunas,
+                    'pending' => (int) $m->pending,
+                ]),
+            'ticketStatusBreakdown' => [
+                'active' => VisitorTicket::where('status', 'active')->count(),
+                'pending' => VisitorTicket::where('status', 'pending')->count(),
+                'debt' => VisitorTicket::whereHas('payment', fn($pq) => $pq->where('is_debt', true))->count(),
+                'total' => VisitorTicket::count(),
+            ],
             'paymentBreakdown' => [
                 ['id' => 0, 'label' => 'Approved (Lunas)', 'value' => VisitorPayment::where('status', 'approved')->whereHas('tickets')->count(), 'color' => '#10b981'],
                 ['id' => 1, 'label' => 'Pending Verification', 'value' => VisitorPayment::where('status', 'pending')->where('is_debt', false)->whereHas('tickets')->count(), 'color' => '#f59e0b'],
