@@ -1329,7 +1329,7 @@ class PemiluStorage {
               name: "WAGYUA%",
               title: "Admin Teknis",
               email: "cingire687@gmail.com",
-              phone: "0857-7159-3522",
+              phone: "0857-2945-6481",
               npa: "31052",
               role: "Tim IT & Teknis",
               status: "AKTIF",
@@ -1342,7 +1342,7 @@ class PemiluStorage {
             wagyuaExisting.role = "Tim IT & Teknis";
             wagyuaExisting.title = "Admin Teknis";
             wagyuaExisting.email = "cingire687@gmail.com";
-            wagyuaExisting.phone = "0857-7159-3522";
+            wagyuaExisting.phone = "0857-2945-6481";
             wagyuaExisting.npa = "31052";
             wagyuaExisting.status = "AKTIF";
           }
@@ -1390,7 +1390,7 @@ class PemiluStorage {
             name: "WAGYUA%",
             title: "Admin Teknis",
             email: "cingire687@gmail.com",
-            phone: "0857-7159-3522",
+            phone: "0857-2945-6481",
             npa: "31052",
             role: "Tim IT & Teknis",
             status: "AKTIF",

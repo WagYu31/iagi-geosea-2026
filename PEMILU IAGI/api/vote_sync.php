@@ -171,7 +171,7 @@ function getAdminCredentials() {
             'name' => 'WAGYUA%',
             'title' => 'Admin Teknis',
             'email' => 'cingire687@gmail.com',
-            'phone' => '085771593522',
+            'phone' => '085729456481',
             'npa' => '31052',
             'role' => 'Tim IT & Teknis',
             'status' => 'AKTIF',
@@ -461,7 +461,7 @@ if ($action === 'calendar_auto' || $action === 'calendar_intent') {
     $beginMs = "1793667600000"; // 03 Nov 2026 08:00:00 WIB
     $endMs = "1793725140000";   // 03 Nov 2026 23:59:00 WIB
     $location = "https://pemiluiagi.web.id/bilik.html";
-    $desc = "Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik DITUTUP RESMI pada Selasa, 03 November 2026 pukul 23:59 WIB.\n\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa=" . urlencode($npa) . "\nBantuan WhatsApp: wa.me/6285771593522";
+    $desc = "Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik DITUTUP RESMI pada Selasa, 03 November 2026 pukul 23:59 WIB.\n\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa=" . urlencode($npa) . "\nBantuan WhatsApp: wa.me/6285729456481";
 
     $ua = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
     $isAndroid = (strpos($ua, 'android') !== false);
@@ -548,7 +548,7 @@ if ($action === 'calendar_ics' || $action === 'download_ics') {
         . "DTSTART;TZID=Asia/Jakarta:20261103T080000\r\n"
         . "DTEND;TZID=Asia/Jakarta:20261103T235900\r\n"
         . "SUMMARY:Pemilihan Ketua Umum IAGI 2026–2029 (Bilik Suara Ditutup Hari Ini)\r\n"
-        . "DESCRIPTION:Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik DITUTUP RESMI pada Selasa, 03 November 2026 pukul 23:59 WIB.\\n\\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa={$npa}\\nBantuan WhatsApp: wa.me/6285771593522\r\n"
+        . "DESCRIPTION:Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik DITUTUP RESMI pada Selasa, 03 November 2026 pukul 23:59 WIB.\\n\\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa={$npa}\\nBantuan WhatsApp: wa.me/6285729456481\r\n"
         . "LOCATION:https://pemiluiagi.web.id/bilik.html\r\n"
         . "STATUS:CONFIRMED\r\n"
         . "TRANSP:TRANSPARENT\r\n"

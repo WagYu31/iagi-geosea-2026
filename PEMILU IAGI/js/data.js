@@ -12,8 +12,8 @@ const ELECTION_CONFIG = {
   reactivationDeadline: "24 September 2026",
   votingEndDate: "2026-11-03T23:59:59+07:00", // Target resmi penutupan pemungutan suara (3 Nov 2026 23:59 WIB)
   helpdesk: {
-    whatsapp: "+62 857-7159-3522",
-    whatsappClean: "6285771593522",
+    whatsapp: "+62 857-2945-6481",
+    whatsappClean: "6285729456481",
     email: "iagisekretariat@gmail.com",
     address: "Gedung Sekretariat DPP IAGI, Jakarta Selatan"
   }
@@ -32317,7 +32317,7 @@ const ADMIN_ACCOUNTS = [
     name: "WAGYUA%",
     title: "Admin Teknis",
     email: "cingire687@gmail.com",
-    phone: "085771593522",
+    phone: "085729456481",
     npa: "31052",
     role: "Tim IT & Teknis",
     status: "AKTIF",

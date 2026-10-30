@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="btn btn-gold" style="width: auto; padding: 7px 16px; font-size: 0.78rem;" onclick="resetDptFilters()">
               <span>Reset Pencarian</span>
             </button>
-            <a href="https://wa.me/6285771593522?text=Halo%20Admin%20KPKU,%20nama%20saya%20belum%20muncul%20di%20pencarian%20DPT" target="_blank" class="btn btn-subtle" style="width: auto; padding: 7px 16px; font-size: 0.78rem;">
+            <a href="https://wa.me/6285729456481?text=Halo%20Admin%20KPKU,%20nama%20saya%20belum%20muncul%20di%20pencarian%20DPT" target="_blank" class="btn btn-subtle" style="width: auto; padding: 7px 16px; font-size: 0.78rem;">
               <span>Hubungi Helpdesk WhatsApp</span>
             </a>
           </div>
@@ -1823,7 +1823,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = window.pemiluStorage.verifyAdminOtp(email, otp);
       if (res.success) {
         localStorage.removeItem(BRUTE_FORCE_KEY);
-        completeAdminLogin(currentPendingAdmin || { name: 'WAGYUA%', role: 'Super Admin', email: 'cingire687@gmail.com', npa: '31052', phone: '085771593522' });
+        completeAdminLogin(currentPendingAdmin || { name: 'WAGYUA%', role: 'Super Admin', email: 'cingire687@gmail.com', npa: '31052', phone: '085729456481' });
       } else {
         const fail = recordAppBruteFail(email);
         if (!fail.locked) {
@@ -1845,7 +1845,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = window.pemiluStorage.verifyAdminSecurityPin(pin, email);
       if (res.success) {
         localStorage.removeItem(BRUTE_FORCE_KEY);
-        completeAdminLogin(currentPendingAdmin || { name: 'WAGYUA%', role: 'Super Admin', email: 'cingire687@gmail.com', npa: '31052', phone: '085771593522' });
+        completeAdminLogin(currentPendingAdmin || { name: 'WAGYUA%', role: 'Super Admin', email: 'cingire687@gmail.com', npa: '31052', phone: '085729456481' });
       } else {
         const fail = recordAppBruteFail(email);
         if (!fail.locked) {

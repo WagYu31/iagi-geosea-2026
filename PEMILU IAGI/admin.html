@@ -5607,7 +5607,7 @@
               <div class="login-input-group">
                 <label class="login-input-label">
                   <span>Password Akun</span>
-                  <a href="#" onclick="alert('Hubungi Helpdesk Panitia KPKU (+62 857-7159-3522) untuk pemulihan password.'); return false;" style="color: #10B981; font-size: 0.72rem; text-decoration: none;">Lupa Password?</a>
+                  <a href="#" onclick="alert('Hubungi Helpdesk Panitia KPKU (+62 857-2945-6481) untuk pemulihan password.'); return false;" style="color: #10B981; font-size: 0.72rem; text-decoration: none;">Lupa Password?</a>
                 </label>
                 <div style="position: relative;">
                   <input type="password" id="desktop-password-input" class="login-input-field" placeholder="Masukkan password" required style="padding-right: 44px;">
@@ -6693,7 +6693,7 @@
           <div class="kpi-val-row">
             <div class="kpi-val" id="stat-chat-wa" style="color: #4ADE80;">0</div>
           </div>
-          <div class="kpi-sub">Helpdesk Darurat +62 857-7159-3522</div>
+          <div class="kpi-sub">Helpdesk Darurat +62 857-2945-6481</div>
         </div>
       </div>
 
@@ -7642,7 +7642,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Nomor WhatsApp (OTP Fonnte) *</label>
-                <input type="tel" id="manage-admin-phone" class="form-input font-mono" placeholder="Contoh: 085771593522" required>
+                <input type="tel" id="manage-admin-phone" class="form-input font-mono" placeholder="Contoh: 085729456481" required>
                 <span class="helper" style="display:block; margin-top:2px; font-size:0.68rem; color:#A7F3D0;">Tujuan OTP WhatsApp via Fonnte</span>
               </div>
             </div>
@@ -10433,7 +10433,7 @@
         if (btnToggleResolved) btnToggleResolved.classList.toggle('active', currentStatus === 'resolved');
 
         if (btnWa) {
-          const waPhone = ticket.userPhone ? ticket.userPhone.replace(/^0/, '62').replace(/\D/g, '') : '6285771593522';
+          const waPhone = ticket.userPhone ? ticket.userPhone.replace(/^0/, '62').replace(/\D/g, '') : '6285729456481';
           const waText = encodeURIComponent(`Halo ${ticket.userName} (NPA: ${ticket.userNpa || '-'}), kami dari Panitia Pelaksana KPKU Pemilu IAGI 2026 menindaklanjuti pengaduan Live Chat Anda.`);
           btnWa.href = `https://wa.me/${waPhone}?text=${waText}`;
         }
@@ -10577,7 +10577,7 @@
         } else if (type === 'Bilik') {
           text = 'Bilik Suara Elektronik dapat diakses dengan memasukkan NPA 5-digit dan Token Surat Suara unik yang telah Anda klaim. Pilihan suara Anda dijamin LUBER dan berenkripsi SHA-256.';
         } else if (type === 'WA') {
-          text = 'Untuk koordinasi berkas khusus atau verifikasi keanggotaan darurat, Anda dapat menghubungi Helpdesk WhatsApp resmi Panitia KPKU di nomor +62 857-7159-3522.';
+          text = 'Untuk koordinasi berkas khusus atau verifikasi keanggotaan darurat, Anda dapat menghubungi Helpdesk WhatsApp resmi Panitia KPKU di nomor +62 857-2945-6481.';
         } else if (type === 'Selesai') {
           text = 'Terima kasih telah berkonsultasi dengan Helpdesk KPKU Pemilu IAGI 2026. Laporan pengaduan ini telah selesai ditangani. Selamat berpartisipasi menyukseskan Pemilu IAGI 2026!';
         }
@@ -14087,7 +14087,7 @@
                 name: "WAGYUA%",
                 title: "Admin Teknis",
                 email: "cingire687@gmail.com",
-                phone: "085771593522",
+                phone: "085729456481",
                 npa: "31052",
                 role: "Tim IT & Teknis",
                 status: "AKTIF",
@@ -14101,7 +14101,7 @@
               wagyuaAcc.title = "Admin Teknis";
               wagyuaAcc.role = "Tim IT & Teknis";
               wagyuaAcc.email = "cingire687@gmail.com";
-              wagyuaAcc.phone = "085771593522";
+              wagyuaAcc.phone = "085729456481";
               wagyuaAcc.npa = "31052";
               wagyuaAcc.status = "AKTIF";
             }
