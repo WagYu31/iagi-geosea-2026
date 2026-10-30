@@ -186,6 +186,7 @@ function buildReminderEmailHtml($npa, $name, $daysLeft) {
     $bilikUrl = 'https://pemiluiagi.web.id/bilik.html';
     $claimUrl = 'https://pemiluiagi.web.id/claim.html' . ($npa ? '?npa=' . urlencode($npa) : '');
     $gCalUrl = buildGoogleCalendarUrl($npa, $name);
+    $icsUrl = 'https://pemiluiagi.web.id/api/vote_sync.php?action=calendar_ics&npa=' . urlencode($npa);
     
     // Status text & urgency
     if ($daysLeft <= 1) {
@@ -309,20 +310,21 @@ function buildReminderEmailHtml($npa, $name, $daysLeft) {
                 </tr>
               </table>
 
-              <!-- Action Button 2: Google Calendar Integration -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 22px;">
+              <!-- Action Button 2: Direct Calendar (.ics) & Google Calendar Integration -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 12px;">
                 <tr>
                   <td align="center">
-                    <a href="{$gCalUrl}" target="_blank" style="display: block; width: 100%; box-sizing: border-box; background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%); color: #FFFFFF; text-decoration: none; font-size: 13.5px; font-weight: 700; text-align: center; padding: 13px 20px; border-radius: 10px; border: 1px solid #3B82F6; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); letter-spacing: 0.02em;">
-                      📅 Pasang Pengingat di Google Calendar (1-Klik)
+                    <a href="{$icsUrl}" target="_blank" style="display: block; width: 100%; box-sizing: border-box; background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%); color: #FFFFFF; text-decoration: none; font-size: 13.5px; font-weight: 700; text-align: center; padding: 13px 20px; border-radius: 10px; border: 1px solid #3B82F6; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); letter-spacing: 0.02em;">
+                      📅 Pasang Pengingat di Kalender HP & Google (1-Klik)
                     </a>
                   </td>
                 </tr>
               </table>
 
-              <div style="text-align: center; margin-bottom: 24px;">
-                <span style="font-size: 12px; color: #64748B;">
-                  💡 <em>Klik tombol biru di atas agar Google Calendar otomatis memasang alarm notifikasi di HP & komputer Anda hingga penutupan.</em>
+              <div style="text-align: center; margin-bottom: 22px;">
+                <span style="font-size: 11.5px; color: #94A3B8; line-height: 1.5;">
+                  💡 <em>Klik tombol biru di atas untuk langsung menyimpan jadwal otomatis di HP Anda (bebas error sinkronisasi).</em><br>
+                  <a href="{$gCalUrl}" target="_blank" style="color: #60A5FA; font-size: 11.5px; text-decoration: underline; margin-top: 5px; display: inline-block;">Atau buka via Google Calendar Web Browser &raquo;</a>
                 </span>
               </div>
 

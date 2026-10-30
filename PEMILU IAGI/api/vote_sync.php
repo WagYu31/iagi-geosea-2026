@@ -454,6 +454,59 @@ if (empty($action) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// ================= ACTION: DOWNLOAD / OPEN ICALENDAR (.ICS) =================
+if ($action === 'calendar_ics' || $action === 'download_ics') {
+    $npa = trim($_GET['npa'] ?? '00000');
+    $dtStamp = gmdate('Ymd\THis\Z');
+    $uid = 'kpku-reminder-' . md5($npa . '-2026-iagi') . '@pemiluiagi.web.id';
+
+    $ics = "BEGIN:VCALENDAR\r\n"
+        . "VERSION:2.0\r\n"
+        . "PRODID:-//KPKU IAGI//Pemilu Ketua Umum 2026//ID\r\n"
+        . "CALSCALE:GREGORIAN\r\n"
+        . "METHOD:PUBLISH\r\n"
+        . "BEGIN:VTIMEZONE\r\n"
+        . "TZID:Asia/Jakarta\r\n"
+        . "BEGIN:STANDARD\r\n"
+        . "DTSTART:19700101T000000\r\n"
+        . "TZOFFSETFROM:+0700\r\n"
+        . "TZOFFSETTO:+0700\r\n"
+        . "TZNAME:WIB\r\n"
+        . "END:STANDARD\r\n"
+        . "END:VTIMEZONE\r\n"
+        . "BEGIN:VEVENT\r\n"
+        . "UID:{$uid}\r\n"
+        . "DTSTAMP:{$dtStamp}\r\n"
+        . "ORGANIZER;CN=\"KPKU IAGI 2026\":mailto:noreply@pitiagi.cloud\r\n"
+        . "DTSTART;TZID=Asia/Jakarta:20261103T080000\r\n"
+        . "DTEND;TZID=Asia/Jakarta:20261103T235900\r\n"
+        . "SUMMARY:Pemilihan Ketua Umum IAGI 2026–2029 (Bilik Suara Ditutup Hari Ini)\r\n"
+        . "DESCRIPTION:Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik DITUTUP RESMI pada Selasa, 03 November 2026 pukul 23:59 WIB.\\n\\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa={$npa}\\nBantuan WhatsApp: wa.me/6285771593522\r\n"
+        . "LOCATION:https://pemiluiagi.web.id/bilik.html\r\n"
+        . "STATUS:CONFIRMED\r\n"
+        . "TRANSP:TRANSPARENT\r\n"
+        . "SEQUENCE:1\r\n"
+        . "BEGIN:VALARM\r\n"
+        . "ACTION:DISPLAY\r\n"
+        . "DESCRIPTION:Pengingat: 1 Hari Menuju Penutupan Bilik Suara Pemilu IAGI 2026!\r\n"
+        . "TRIGGER:-P1D\r\n"
+        . "END:VALARM\r\n"
+        . "BEGIN:VALARM\r\n"
+        . "ACTION:DISPLAY\r\n"
+        . "DESCRIPTION:Mendesak: 3 Jam Menuju Penutupan Bilik Suara Pemilu IAGI 2026!\r\n"
+        . "TRIGGER:-PT3H\r\n"
+        . "END:VALARM\r\n"
+        . "END:VEVENT\r\n"
+        . "END:VCALENDAR";
+
+    header('Content-Type: text/calendar; charset=utf-8');
+    header('Content-Disposition: inline; filename="pemilu_iagi_2026.ics"');
+    header('Cache-Control: no-cache, must-revalidate');
+    header('Expires: 0');
+    echo $ics;
+    exit;
+}
+
 // ================= ACTION: ADMIN LOGIN (STEP 1) =================
 if ($action === 'admin_login') {
     $rawInput = @file_get_contents('php://input');
