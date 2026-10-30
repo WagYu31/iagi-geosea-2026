@@ -9007,34 +9007,85 @@
     }
 
     window.checkCurrentPermStatus = async function() {
-      if (!window.currentPermRequest || !window.currentPermRequest.requestId) return;
-      const req = window.currentPermRequest;
+      const container = document.getElementById('perm-modal-status-container');
+      const btnCheck = document.querySelector('#perm-modal-actions button[onclick*="checkCurrentPermStatus"]');
+
+      // Ambil requestId dari memori atau parse otomatis dari teks modal jika ter-reset
+      let reqId = (window.currentPermRequest && window.currentPermRequest.requestId) ? window.currentPermRequest.requestId : null;
+      let featureKey = (window.currentPermRequest && window.currentPermRequest.featureKey) ? window.currentPermRequest.featureKey : 'unseal_vault';
+      let cbAction = (window.currentPermRequest && window.currentPermRequest.callbackAction) ? window.currentPermRequest.callbackAction : null;
+
+      if (!reqId && container) {
+        const text = container.innerText || '';
+        const match = text.match(/REQ-[A-Z0-9]+/i);
+        if (match) {
+          reqId = match[0].toUpperCase();
+          if (!window.currentPermRequest) {
+            window.currentPermRequest = { requestId: reqId, featureKey: 'unseal_vault' };
+          } else {
+            window.currentPermRequest.requestId = reqId;
+          }
+        }
+      }
+
+      if (!reqId) return;
+
+      if (btnCheck) {
+        btnCheck.disabled = true;
+        btnCheck.innerHTML = `<span>⏳</span><span>Memeriksa Izin...</span>`;
+      }
 
       try {
-        const res = await fetch(`api/vote_sync.php?action=check_feature_access&req_id=${encodeURIComponent(req.requestId)}`);
+        const cacheBuster = Date.now();
+        const res = await fetch(`api/vote_sync.php?action=check_feature_access&req_id=${encodeURIComponent(reqId)}&_t=${cacheBuster}`, {
+          cache: 'no-store'
+        });
         const data = await res.json();
+
+        if (btnCheck) {
+          btnCheck.disabled = false;
+          btnCheck.innerHTML = `<span>🔄</span><span>Periksa Status Sekarang</span>`;
+        }
+
         if (data.success && data.status) {
           if (data.status === 'APPROVED') {
             if (window.permPollingInterval) clearInterval(window.permPollingInterval);
             showPermDecisionUI(true, data.decided_by || 'M. Addiansyah');
+            
             // Simpan izin aktif selama 15 menit
-            window.approvedFeatureSession[req.featureKey] = {
+            window.approvedFeatureSession = window.approvedFeatureSession || {};
+            window.approvedFeatureSession[data.feature_key || featureKey] = {
               until: Date.now() + (15 * 60 * 1000),
-              reqId: req.requestId
+              reqId: reqId
             };
+
             setTimeout(() => {
-              const cb = req.callbackAction;
               closeSuperAdminPermModal();
-              if (typeof cb === 'function') {
-                cb();
+              if (typeof cbAction === 'function') {
+                cbAction();
+              } else if (featureKey === 'unseal_vault' && typeof window.openUnsealVaultModal === 'function') {
+                window.openUnsealVaultModal();
               }
             }, 1200);
           } else if (data.status === 'REJECTED') {
             if (window.permPollingInterval) clearInterval(window.permPollingInterval);
             showPermDecisionUI(false, data.decided_by || 'M. Addiansyah');
+          } else if (data.status === 'PENDING') {
+            if (container) {
+              const notice = document.getElementById('perm-pending-notice');
+              const timeStr = new Date().toLocaleTimeString('id-ID');
+              if (!notice) {
+                const el = document.createElement('div');
+                el.id = 'perm-pending-notice';
+                el.style = 'margin-top: 10px; font-size: 0.74rem; color: #FCD34D;';
+                el.innerHTML = `🕒 <em>Status server: Belum disetujui / Menunggu (Dicek pukul ${timeStr})</em>`;
+                container.appendChild(el);
+              } else {
+                notice.innerHTML = `🕒 <em>Status server: Belum disetujui / Menunggu (Dicek pukul ${timeStr})</em>`;
+              }
+            }
           } else if (data.status === 'EXPIRED') {
             if (window.permPollingInterval) clearInterval(window.permPollingInterval);
-            const container = document.getElementById('perm-modal-status-container');
             if (container) {
               container.innerHTML = `
                 <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #EF4444; border-radius: 12px; padding: 14px; text-align: center; color: #FCA5A5; font-size: 0.82rem;">
@@ -9046,6 +9097,10 @@
         }
       } catch (e) {
         console.error(e);
+        if (btnCheck) {
+          btnCheck.disabled = false;
+          btnCheck.innerHTML = `<span>🔄</span><span>Periksa Status Sekarang</span>`;
+        }
       }
     };
 

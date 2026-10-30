@@ -1388,6 +1388,11 @@ HTML;
 // Frontend WAGYUA% memeriksa status approval dari M. Addiansyah
 // =========================================================================
 if ($action === 'check_feature_access') {
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
     $reqId = trim($_GET['req_id'] ?? ($_POST['req_id'] ?? ''));
     $now = time();
 
