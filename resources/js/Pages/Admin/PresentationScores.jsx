@@ -145,8 +145,8 @@ function CriterionBreakdown({ score, isOral, isDark, bdr, isDraft, metrics }) {
                     mb: 2,
                     p: 1.5,
                     borderRadius: '10px',
-                    bgcolor: '#fffbeb',
-                    border: '1px solid #fde68a',
+                    bgcolor: info.filledCount > 0 ? '#fffbeb' : '#f8fafc',
+                    border: `1px solid ${info.filledCount > 0 ? '#fde68a' : '#e2e8f0'}`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -155,19 +155,22 @@ function CriterionBreakdown({ score, isOral, isDark, bdr, isDraft, metrics }) {
                 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Chip 
-                            label="DRAFT EVALUASI" 
+                            label={info.filledCount > 0 ? "DRAFT EVALUASI" : "DRAFT KOSONG"} 
                             size="small" 
-                            sx={{ bgcolor: '#f59e0b', color: '#ffffff', fontWeight: 900, fontSize: '0.66rem', height: 22 }} 
+                            sx={{ bgcolor: info.filledCount > 0 ? '#f59e0b' : '#64748b', color: '#ffffff', fontWeight: 900, fontSize: '0.66rem', height: 22 }} 
                         />
-                        <Typography sx={{ fontSize: '0.78rem', color: '#78350f', fontWeight: 600 }}>
-                            Penilaian ini <strong>masih berstatus draft</strong> dan belum difinalisasi oleh Juri. Rincian di bawah mencerminkan isian sementara.
+                        <Typography sx={{ fontSize: '0.78rem', color: info.filledCount > 0 ? '#78350f' : '#475569', fontWeight: 600 }}>
+                            {info.filledCount > 0
+                                ? <>Penilaian ini <strong>masih berstatus draft</strong> dan belum difinalisasi oleh Juri. Rincian di bawah mencerminkan isian sementara.</>
+                                : <>Juri telah membuka form penilaian ini dan menekan <strong>Simpan Draft</strong>, tetapi <strong>belum menginput nilai kriteria (0 terisi)</strong>.</>
+                            }
                         </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Chip 
                             label={`Progres: ${info.filledCount}/${info.totalCount} Kriteria Terisi (${info.weightFilledPercent}% Bobot)`} 
                             size="small" 
-                            sx={{ bgcolor: '#ffffff', color: '#92400e', fontWeight: 800, fontSize: '0.70rem', border: '1px solid #fcd34d' }} 
+                            sx={{ bgcolor: '#ffffff', color: info.filledCount > 0 ? '#92400e' : '#64748b', fontWeight: 800, fontSize: '0.70rem', border: `1px solid ${info.filledCount > 0 ? '#fcd34d' : '#cbd5e1'}` }} 
                         />
                         {info.provisionalScore && (
                             <Chip 
@@ -428,17 +431,17 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                                 px: 1.4, 
                                 py: 0.5, 
                                 borderRadius: '10px', 
-                                bgcolor: '#fffbeb', 
-                                border: '1px solid #fde68a',
+                                bgcolor: metrics.filledCount > 0 ? '#fffbeb' : '#f8fafc', 
+                                border: `1px solid ${metrics.filledCount > 0 ? '#fde68a' : '#e2e8f0'}`,
                                 display: 'inline-block',
                                 textAlign: 'right'
                             }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, justifyContent: 'flex-end' }}>
                                     <Chip 
-                                        label="Draft" 
+                                        label={metrics.filledCount > 0 ? "Draft" : "Draft (0 Terisi)"} 
                                         size="small" 
                                         sx={{
-                                            bgcolor: '#f59e0b',
+                                            bgcolor: metrics.filledCount > 0 ? '#f59e0b' : '#64748b',
                                             color: '#ffffff', 
                                             fontWeight: 900, 
                                             height: 18, 
@@ -458,14 +461,16 @@ function JuriScoreCard({ score, isOral, isDark, bdr, submissionId, onRemoveJuri 
                                     )}
                                 </Box>
                                 <Typography sx={{
-                                    color: '#92400e',
+                                    color: metrics.filledCount > 0 ? '#92400e' : '#64748b',
                                     fontWeight: 800,
                                     fontSize: '0.62rem',
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.03em',
                                     mt: 0.3
                                 }}>
-                                    {metrics.filledCount}/{metrics.totalCount} Terisi
+                                    {metrics.filledCount > 0 
+                                        ? `${metrics.filledCount}/${metrics.totalCount} Terisi` 
+                                        : `Belum Diinput Nilai`}
                                 </Typography>
                             </Box>
                         ) : (
