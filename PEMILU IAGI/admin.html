@@ -1690,6 +1690,14 @@
       box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
     }
 
+    /* Strict Authenticated View Shield: Hide entire dashboard until server validates session */
+    .admin-dashboard-container {
+      display: none !important;
+    }
+    body.admin-authenticated .admin-dashboard-container {
+      display: flex !important;
+    }
+
     /* Split-Pane Login Modal Matching Image 2 */
     #desktop-admin-pin-modal {
       position: fixed;
@@ -8817,8 +8825,8 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=5.0.0"></script>
-  <script src="js/storage.js?v=5.0.3"></script>
+  <script src="js/data.js?v=5.1.0"></script>
+  <script src="js/storage.js?v=5.1.0"></script>
 
   <script>
     // =========================================================================
@@ -8925,10 +8933,16 @@
       const requester = (window.pemiluStorage && window.pemiluStorage.getAdminSession) ? window.pemiluStorage.getAdminSession() : {};
 
       try {
+        const token = sessionStorage.getItem('kpku_admin_token') || '';
         const res = await fetch('api/vote_sync.php?action=request_feature_access', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+            'X-Admin-Token': token
+          },
           body: JSON.stringify({
+            session_token: token,
             requester_name: requester.name || 'WAGYUA%',
             requester_email: requester.email || 'cingire687@gmail.com',
             feature_key: req.featureKey,
@@ -9074,7 +9088,10 @@
     setInterval(async () => {
       if (!window.isCurrentSuperAdmin()) return;
       try {
-        const res = await fetch('api/vote_sync.php?action=get_pending_access_requests');
+        const token = sessionStorage.getItem('kpku_admin_token') || '';
+        const res = await fetch('api/vote_sync.php?action=get_pending_access_requests', {
+          headers: { 'Authorization': 'Bearer ' + token, 'X-Admin-Token': token }
+        });
         const data = await res.json();
         if (data.success && Array.isArray(data.pending_requests) && data.pending_requests.length > 0) {
           const topReq = data.pending_requests[0];
@@ -9110,10 +9127,15 @@
 
     async function respondDirectApproval(reqId, decision) {
       try {
+        const token = sessionStorage.getItem('kpku_admin_token') || '';
         await fetch('api/vote_sync.php?action=admin_approve_access_direct', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ req_id: reqId, decision: decision })
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+            'X-Admin-Token': token
+          },
+          body: JSON.stringify({ req_id: reqId, decision: decision, session_token: token })
         });
       } catch (e) {}
     }
@@ -9462,7 +9484,7 @@
           const curEmail = activeSess ? (activeSess.email || '') : '';
           const app = window.approvedFeatureSession ? window.approvedFeatureSession['unseal_vault'] : null;
           const curReqId = (typeof app === 'object' && app) ? app.reqId : '';
-          store.updateServerVaultSeal(nextState, '31052002', curReqId, curEmail);
+          store.updateServerVaultSeal(nextState, '', curReqId, curEmail);
         }
 
         // 2. Direct DOM update (Guaranteed instant UI reaction)
@@ -9624,21 +9646,7 @@
         } catch(e) {}
       }
 
-      window.emergencyUnlockKPKU = function() {
-        resetBruteForceState();
-        clearLockoutUI();
-        if (pinAlert) {
-          pinAlert.style.display = 'none';
-        }
-        showAlert('✓ Penguncian brute-force dibuka. Silakan masukkan kredensial Anda.', 'success');
-      };
-
       function checkAndApplyLockout() {
-        if (window.location.search.includes('unlock') || window.location.search.includes('reset')) {
-          resetBruteForceState();
-          clearLockoutUI();
-          return false;
-        }
         const state = getBruteForceState();
         const now = Date.now();
         if (state.lockUntil && state.lockUntil > now) {
@@ -9693,7 +9701,6 @@
             pinAlert.innerHTML = `
               <div style="font-weight: 800; font-size: 0.85rem; color: #EF4444; display: flex; align-items: center; justify-content: space-between; gap: 6px;">
                 <span>⛔ AKSES DIBLOKIR SEMENTARA (BRUTE-FORCE DETECTED)</span>
-                <button type="button" onclick="window.emergencyUnlockKPKU()" style="background: rgba(239,68,68,0.25); border: 1px solid #EF4444; color: #FCA5A5; font-size: 0.72rem; font-weight: 700; border-radius: 4px; padding: 2px 7px; cursor: pointer;">Buka Blokir</button>
               </div>
               <div style="font-size: 0.74rem; color: #FCA5A5; margin-top: 4px; line-height: 1.4;">
                 Terdeteksi <b>5 kali percobaan login tidak sah</b>. Demi keamanan Command Center KPKU, sistem dikunci ketat selama <b>15 Menit</b>.
@@ -9702,7 +9709,6 @@
                 <div style="font-family: monospace; font-size: 0.88rem; font-weight: 800; color: #FDE68A; background: rgba(0,0,0,0.4); padding: 5px 10px; border-radius: 4px; display: inline-block;">
                   ⏳ Akses dibuka kembali dalam: <span id="span-lockout-timer">${m}:${s}</span>
                 </div>
-                <a href="javascript:void(0)" onclick="window.emergencyUnlockKPKU()" style="color: #6EE7B7; font-size: 0.75rem; text-decoration: underline; font-weight: 600;">Reset Kunci Sekarang →</a>
               </div>
             `;
           }
@@ -10007,6 +10013,7 @@
         clearLockoutUI();
         window.pemiluStorage.setAdminSession(admin);
         isUnlocked = true;
+        document.body.classList.add('admin-authenticated');
         if (pinModal) {
           pinModal.style.setProperty('display', 'none', 'important');
         }
@@ -11065,6 +11072,7 @@
           }
           window.pemiluStorage.logoutAdmin();
           isUnlocked = false;
+          document.body.classList.remove('admin-authenticated');
           if (pinModal) {
             pinModal.style.setProperty('display', 'flex', 'important');
           }
@@ -11101,13 +11109,33 @@
       initSectionFromHash();
       window.addEventListener('hashchange', initSectionFromHash);
 
-      // Session verification check upon loading
-      if (!checkAndApplyLockout()) {
-        const activeSession = window.pemiluStorage.getAdminSession();
-        if (activeSession && activeSession.authenticated) {
-          completeLogin(activeSession);
+      // Session verification check upon loading (Verified Cryptographically with Server)
+      (async function initAdminAuthSession() {
+        if (checkAndApplyLockout()) return;
+
+        const token = window.pemiluStorage && window.pemiluStorage.getAdminToken ? window.pemiluStorage.getAdminToken() : '';
+        if (!token) {
+          document.body.classList.remove('admin-authenticated');
+          if (pinModal) pinModal.style.setProperty('display', 'flex', 'important');
+          return;
         }
-      }
+
+        try {
+          const res = await window.pemiluStorage.verifyAdminSessionServer();
+          if (res && res.success && res.admin) {
+            document.body.classList.add('admin-authenticated');
+            completeLogin(res.admin);
+          } else {
+            sessionStorage.removeItem('kpku_admin_token');
+            sessionStorage.removeItem('kpku_admin_session');
+            document.body.classList.remove('admin-authenticated');
+            if (pinModal) pinModal.style.setProperty('display', 'flex', 'important');
+          }
+        } catch (err) {
+          document.body.classList.remove('admin-authenticated');
+          if (pinModal) pinModal.style.setProperty('display', 'flex', 'important');
+        }
+      })();
 
       // Render Functions
       function refreshAll() {
@@ -11168,10 +11196,15 @@
         if (baseVotedCount > 0 && !window._votedNpasSynced) {
           window._votedNpasSynced = true;
           const votedNpas = dptList.filter(v => v && v.voted).map(v => v.npa);
+          const token = sessionStorage.getItem('kpku_admin_token') || '';
           fetch('api/vote_sync.php?action=sync_voted_npas', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ voted_npas: votedNpas })
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token,
+              'X-Admin-Token': token
+            },
+            body: JSON.stringify({ voted_npas: votedNpas, session_token: token })
           }).catch(() => {});
         }
 
@@ -12868,7 +12901,10 @@
           : [];
         const localVoted = dptList.filter(v => v && v.voted).length;
 
-        fetch('api/vote_sync.php?action=get_reminder_status')
+        const token = sessionStorage.getItem('kpku_admin_token') || '';
+        fetch('api/vote_sync.php?action=get_reminder_status', {
+          headers: { 'Authorization': 'Bearer ' + token, 'X-Admin-Token': token }
+        })
           .then(res => res.json())
           .then(data => {
             if (data && data.success) {
@@ -12925,10 +12961,15 @@
           const dpt = window.pemiluStorage.getDPT();
           const votedNpas = dpt.filter(v => v && v.voted).map(v => v.npa);
           if (votedNpas.length > 0) {
+            const token = sessionStorage.getItem('kpku_admin_token') || '';
             fetch('api/vote_sync.php?action=sync_voted_npas', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ voted_npas: votedNpas })
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+                'X-Admin-Token': token
+              },
+              body: JSON.stringify({ voted_npas: votedNpas, session_token: token })
             }).then(() => {
               loadReminderStats();
             }).catch(() => {});
@@ -12975,10 +13016,15 @@
           alertBox.innerText = 'Mengirimkan sampel email pengingat & Google Calendar (.ics) ke ' + email + '...';
         }
 
+        const token = sessionStorage.getItem('kpku_admin_token') || '';
         fetch('api/vote_sync.php?action=send_reminder_test', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email })
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+            'X-Admin-Token': token
+          },
+          body: JSON.stringify({ email: email, session_token: token })
         })
         .then(r => r.json())
         .then(res => {

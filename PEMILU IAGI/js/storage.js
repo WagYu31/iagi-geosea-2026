@@ -332,16 +332,16 @@ class PemiluStorage {
       // 1. Selalu sinkronkan daftar NPA yang sudah mencoblos
       await this.syncVotedListWithServer();
 
-      // 2. Cek apakah ada otorisasi admin
-      const adminSession = (typeof this.getAdminSession === 'function') ? this.getAdminSession() : null;
-      const adminPin = options.adminPin || (adminSession ? (adminSession.pin || '31052002') : '');
-
+      // 2. Cek apakah ada otorisasi admin via token sesi resmi
+      const adminToken = this.getAdminToken();
       let resultsUrl = 'api/vote_sync.php?action=get_results';
-      if (adminPin) {
-        resultsUrl += `&admin_pin=${encodeURIComponent(adminPin)}`;
+      if (adminToken) {
+        resultsUrl += `&session_token=${encodeURIComponent(adminToken)}`;
       }
 
-      const respResults = await fetch(resultsUrl);
+      const respResults = await fetch(resultsUrl, {
+        headers: adminToken ? { 'Authorization': 'Bearer ' + adminToken, 'X-Admin-Token': adminToken } : {}
+      });
       const dataResults = await respResults.json();
 
       if (dataResults && dataResults.success) {
@@ -386,14 +386,20 @@ class PemiluStorage {
   }
 
   // Update Status Segel Kotak Suara ke Server (Admin Pleno)
-  async updateServerVaultSeal(isSealed, pin = '31052002', reqId = '', adminEmail = '') {
+  async updateServerVaultSeal(isSealed, pin = '', reqId = '', adminEmail = '') {
     try {
       if (typeof fetch === 'undefined') return { success: false };
+      const token = this.getAdminToken();
       const resp = await fetch('api/vote_sync.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token,
+          'X-Admin-Token': token
+        },
         body: JSON.stringify({
           action: 'set_vault_seal',
+          session_token: token,
           is_sealed: Boolean(isSealed),
           admin_pin: pin,
           req_id: reqId,
@@ -1608,6 +1614,14 @@ class PemiluStorage {
   }
 
   // --- Admin Authentication & 2FA (Server-Backed Bcrypt & Anti Brute-Force) ---
+  getAdminToken() {
+    try {
+      return sessionStorage.getItem('kpku_admin_token') || '';
+    } catch(e) {
+      return '';
+    }
+  }
+
   async validateAdminCredentials(email, password) {
     const cleanEmail = (email || '').trim().toLowerCase();
     const cleanPass = (password || '').trim();
@@ -1621,23 +1635,33 @@ class PemiluStorage {
       const data = await res.json();
       return data;
     } catch (err) {
-      console.warn('Gagal koneksi ke server admin login, fallback lokal:', err);
-      const accounts = this.getAdminAccounts();
-      const found = accounts.find(a => a.email.toLowerCase() === cleanEmail);
-      if (!found) return { success: false, error: 'Email admin tidak terdaftar di sistem KPKU.' };
-      return {
-        success: true,
-        challenge_token: 'local_challenge_' + Date.now(),
-        admin: {
-          id: found.id,
-          name: found.name,
-          email: found.email,
-          role: found.role,
-          title: found.title,
-          phone_masked: '08**-****-****',
-          two_factor: true
-        }
+      console.error('Gagal koneksi ke server admin login:', err);
+      return { 
+        success: false, 
+        error: 'Gagal menghubungi server autentikasi KPKU. Silakan periksa jaringan internet Anda.' 
       };
+    }
+  }
+
+  async verifyAdminSessionServer() {
+    const token = this.getAdminToken();
+    if (!token) return { success: false, error: 'Tidak ada sesi aktif.' };
+
+    try {
+      const res = await fetch('api/vote_sync.php?action=verify_session', {
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'X-Admin-Token': token
+        }
+      });
+      if (!res.ok) {
+        sessionStorage.removeItem('kpku_admin_token');
+        sessionStorage.removeItem('kpku_admin_session');
+        return { success: false, error: 'Sesi kedaluwarsa atau tidak valid.' };
+      }
+      return await res.json();
+    } catch (e) {
+      return { success: false, error: e.message };
     }
   }
 
@@ -1716,7 +1740,20 @@ class PemiluStorage {
 
   logoutAdmin() {
     try {
+      const token = this.getAdminToken();
+      if (token && typeof fetch !== 'undefined') {
+        fetch('api/vote_sync.php?action=admin_logout', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+            'X-Admin-Token': token
+          },
+          body: JSON.stringify({ session_token: token })
+        }).catch(() => {});
+      }
       sessionStorage.removeItem('kpku_admin_session');
+      sessionStorage.removeItem('kpku_admin_token');
       sessionStorage.removeItem('kpku_admin_otp');
       localStorage.removeItem('kpku_admin_auth');
     } catch(e) {}
@@ -1838,8 +1875,8 @@ class PemiluStorage {
     return true;
   }
 
-  // --- Clear Ballots & Reset Votes to 0 (Keep DPT intact - Sandi: 31052002) ---
-  async clearBallotsAndResetVotes(adminPin = '31052002') {
+  // --- Clear Ballots & Reset Votes to 0 (Keep DPT intact - Super Admin / Dual-Key Protected) ---
+  async clearBallotsAndResetVotes(adminPin = '', reqId = '') {
     localStorage.setItem(STORAGE_KEYS.BALLOTS, JSON.stringify([]));
     localStorage.removeItem(STORAGE_KEYS.SERVER_RESULTS);
     try {
@@ -1859,10 +1896,15 @@ class PemiluStorage {
 
     try {
       if (typeof fetch !== 'undefined') {
+        const token = this.getAdminToken();
         await fetch('api/vote_sync.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'clear_ballots', admin_pin: adminPin })
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+            'X-Admin-Token': token
+          },
+          body: JSON.stringify({ action: 'clear_ballots', session_token: token, req_id: reqId })
         });
       }
     } catch (e) {}

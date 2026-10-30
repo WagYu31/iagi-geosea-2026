@@ -260,6 +260,56 @@ function isIpLocked($clientIp) {
     return 0;
 }
 
+// Validasi Sesi Login Admin Resmi Server (Bearer Token / Custom Header / Body Token)
+function getAuthenticatedAdmin($payload = null) {
+    global $adminSessionsFile;
+    $token = '';
+
+    // 1. Cek Header Authorization: Bearer <token>
+    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '');
+    if (preg_match('/Bearer\s+(\S+)/i', $authHeader, $matches)) {
+        $token = trim($matches[1]);
+    }
+
+    // 2. Cek Header Custom X-Admin-Token
+    if (empty($token) && !empty($_SERVER['HTTP_X_ADMIN_TOKEN'])) {
+        $token = trim($_SERVER['HTTP_X_ADMIN_TOKEN']);
+    }
+
+    // 3. Cek parameter dari JSON payload atau POST / GET
+    if (empty($token) && is_array($payload) && !empty($payload['session_token'])) {
+        $token = trim($payload['session_token']);
+    }
+    if (empty($token) && !empty($_POST['session_token'])) {
+        $token = trim($_POST['session_token']);
+    }
+    if (empty($token) && !empty($_GET['session_token'])) {
+        $token = trim($_GET['session_token']);
+    }
+
+    if (empty($token)) {
+        return null;
+    }
+
+    $sessions = readJsonFile($adminSessionsFile, []);
+    if (!isset($sessions[$token])) {
+        return null;
+    }
+
+    $session = $sessions[$token];
+    $now = time();
+
+    // Periksa apakah sesi kedaluwarsa (12 jam)
+    if (isset($session['expires_at']) && $session['expires_at'] < $now) {
+        unset($sessions[$token]);
+        writeJsonFile($adminSessionsFile, $sessions);
+        return null;
+    }
+
+    $session['token'] = $token;
+    return $session;
+}
+
 function sendServerWhatsAppFonnte($phone, $message) {
     $cleanPhone = preg_replace('/\D/', '', $phone);
     if (strpos($cleanPhone, '0') === 0) {
@@ -676,6 +726,62 @@ if ($action === 'admin_verify_otp') {
     exit;
 }
 
+// ================= ACTION: VERIFY ADMIN SESSION =================
+if ($action === 'verify_session') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $admin = getAuthenticatedAdmin($payload);
+    if (!$admin) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Sesi admin tidak valid atau telah kedaluwarsa. Silakan login kembali.']);
+        exit;
+    }
+
+    echo json_encode([
+        'success' => true,
+        'admin' => [
+            'name' => $admin['name'],
+            'email' => $admin['email'],
+            'role' => $admin['role'],
+            'title' => ($admin['role'] === 'Ketua Panitia') ? 'SUPER ADMIN' : 'Admin Teknis',
+            'phone_masked' => !empty($admin['phone']) ? substr($admin['phone'], 0, 4) . '-****-' . substr($admin['phone'], -4) : '08**-****-****',
+            'npa' => $admin['npa'] ?? '-',
+            'expires_at' => $admin['expires_at'] ?? null
+        ]
+    ]);
+    exit;
+}
+
+// ================= ACTION: ADMIN LOGOUT =================
+if ($action === 'admin_logout') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $admin = getAuthenticatedAdmin($payload);
+    if ($admin && !empty($admin['token'])) {
+        $sessions = readJsonFile($adminSessionsFile, []);
+        unset($sessions[$admin['token']]);
+        writeJsonFile($adminSessionsFile, $sessions);
+
+        $clientIp = getClientIp();
+        $auditLogs = readJsonFile($auditFile, []);
+        $auditLogs[] = [
+            'id' => 'auth-' . bin2hex(random_bytes(4)),
+            'action' => 'ADMIN_LOGOUT',
+            'details' => "Sesi admin {$admin['name']} ({$admin['email']}) ditutup (logout) dari IP {$clientIp}.",
+            'ip' => $clientIp,
+            'timestamp' => date('c')
+        ];
+        writeJsonFile($auditFile, $auditLogs);
+    }
+
+    echo json_encode(['success' => true, 'message' => 'Sesi admin berhasil ditutup.']);
+    exit;
+}
+
 // =========================================================================
 // ACTION: REQUEST FEATURE ACCESS (OTORISASI AKSES FITUR OLEH SUPER ADMIN)
 // WAGYUA% meminta izin membuka fitur terproteksi -> Notifikasi dikirim ke M. Addiansyah
@@ -684,6 +790,14 @@ if ($action === 'request_feature_access') {
     $rawInput = @file_get_contents('php://input');
     $payload = @json_decode($rawInput, true);
     if (!$payload) $payload = $_POST;
+
+    // WAJIB TERAUTENTIKASI SEBAGAI ADMIN RESMI
+    $currentAdmin = getAuthenticatedAdmin($payload);
+    if (!$currentAdmin) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Akses ditolak: Memerlukan sesi login admin resmi KPKU.']);
+        exit;
+    }
 
     $requesterName = trim($payload['requester_name'] ?? 'WAGYUA%');
     $requesterEmail = strtolower(trim($payload['requester_email'] ?? 'cingire687@gmail.com'));
@@ -1308,6 +1422,17 @@ if ($action === 'check_feature_access') {
 // M. Addiansyah dapat melihat daftar permohonan yang sedang pending
 // =========================================================================
 if ($action === 'get_pending_access_requests') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $admin = getAuthenticatedAdmin($payload);
+    if (!$admin) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Akses ditolak: Memerlukan login admin resmi.']);
+        exit;
+    }
+
     $now = time();
     $requests = readJsonFile($accessRequestsFile, []);
     $pending = [];
@@ -1345,6 +1470,17 @@ if ($action === 'admin_approve_access_direct') {
     $rawInput = @file_get_contents('php://input');
     $payload = @json_decode($rawInput, true);
     if (!$payload) $payload = $_POST;
+
+    // HANYA SUPER ADMIN (M. Addiansyah) YANG DAPAT MENYETUJUI LANGSUNG
+    $admin = getAuthenticatedAdmin($payload);
+    if (!$admin || $admin['email'] !== 'addiansyah@unsri.ac.id') {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'error' => '⛔ AKSES DITOLAK: Hanya Ketua Panitia (M. Addiansyah) yang berhak memberikan persetujuan akses fitur!'
+        ]);
+        exit;
+    }
 
     $reqId = trim($payload['req_id'] ?? '');
     $decision = strtolower(trim($payload['decision'] ?? 'approve'));
@@ -1568,6 +1704,13 @@ if ($action === 'sync_voted_npas') {
     $rawInput = @file_get_contents('php://input');
     $payload = @json_decode($rawInput, true);
     if (!$payload) $payload = $_POST;
+
+    $admin = getAuthenticatedAdmin($payload);
+    if (!$admin) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Akses ditolak: Memerlukan login admin resmi.']);
+        exit;
+    }
 
     $npasList = $payload['voted_npas'] ?? [];
     if (!empty($npasList) && is_array($npasList)) {
@@ -1867,12 +2010,13 @@ if ($action === 'get_results') {
     exit;
 }
 
-// ================= ACTION 4B: SET VAULT SEAL STATUS (ADMIN AUTHORIZED WITH PIN) =================
+// ================= ACTION 4B: SET VAULT SEAL STATUS (ADMIN AUTHORIZED) =================
 if ($action === 'set_vault_seal') {
     $rawInput = @file_get_contents('php://input');
     $payload = @json_decode($rawInput, true);
     if (!$payload) $payload = $_POST;
 
+    $admin = getAuthenticatedAdmin($payload);
     $adminPin = getAdminPin($payload);
     $clientIp = getClientIp();
     $now = time();
@@ -1898,7 +2042,7 @@ if ($action === 'set_vault_seal') {
         }
     }
 
-    if (!isValidAdminPin($adminPin)) {
+    if (!$admin && !isValidAdminPin($adminPin)) {
         if (!isset($lockouts[$clientIp])) {
             $lockouts[$clientIp] = ['fails' => 0, 'lock_until' => 0, 'first_fail' => $now];
         }
@@ -1914,7 +2058,7 @@ if ($action === 'set_vault_seal') {
             $auditLogs[] = [
                 'id' => 'sec-' . bin2hex(random_bytes(4)),
                 'action' => 'BRUTE_FORCE_LOCKOUT_TRIGGERED',
-                'details' => "IP {$clientIp} diblokir 15 menit setelah 5x gagal memasukkan PIN segel vault.",
+                'details' => "IP {$clientIp} diblokir 15 menit setelah 5x gagal memasukkan otorisasi segel vault.",
                 'ip' => $clientIp,
                 'timestamp' => date('c')
             ];
@@ -1923,7 +2067,7 @@ if ($action === 'set_vault_seal') {
             http_response_code(429);
             echo json_encode([
                 'success' => false,
-                'error' => "⛔ AKSES DIBLOKIR: Terdeteksi 5 kali kegagalan input PIN otorisasi. Alamat IP ({$clientIp}) dibekukan selama 15 menit.",
+                'error' => "⛔ AKSES DIBLOKIR: Terdeteksi 5 kali kegagalan input otorisasi. Alamat IP ({$clientIp}) dibekukan selama 15 menit.",
                 'locked' => true,
                 'remaining_seconds' => 900
             ]);
@@ -1935,13 +2079,13 @@ if ($action === 'set_vault_seal') {
         http_response_code(403);
         echo json_encode([
             'success' => false,
-            'error' => "❌ PIN Otoritas KPKU tidak valid! Sisa kesempatan: {$sisaPercobaan}x sebelum IP Anda diblokir 15 menit.",
+            'error' => "❌ Sesi login admin atau PIN Otoritas KPKU tidak valid! Sisa kesempatan: {$sisaPercobaan}x sebelum IP Anda diblokir 15 menit.",
             'remaining_attempts' => $sisaPercobaan
         ]);
         exit;
     }
 
-    // PIN Valid: Reset kegagalan IP
+    // Otorisasi Valid: Reset kegagalan IP
     if (isset($lockouts[$clientIp])) {
         unset($lockouts[$clientIp]);
         writeJsonFile($lockoutFile, $lockouts);
@@ -1954,9 +2098,17 @@ if ($action === 'set_vault_seal') {
 
     // Jika ingin MEMBUKA segel brankas ($nextState === false)
     if ($nextState === false) {
+        if (!$admin) {
+            http_response_code(401);
+            echo json_encode([
+                'success' => false,
+                'error' => '⛔ OTORISASI DITOLAK: Membuka segel brankas pleno memerlukan sesi login admin resmi KPKU terautentikasi!'
+            ]);
+            exit;
+        }
+
         $reqId = trim($payload['req_id'] ?? '');
-        $adminEmail = trim($payload['admin_email'] ?? '');
-        $isSuperAdmin = ($adminEmail === 'addiansyah@unsri.ac.id');
+        $isSuperAdmin = ($admin['email'] === 'addiansyah@unsri.ac.id');
 
         $hasApproval = false;
         if (!empty($reqId)) {
@@ -2024,15 +2176,25 @@ if ($action === 'get_vault_status') {
     exit;
 }
 
-// ================= ACTION 5: CLEAR BALLOTS & RESET VOTES (ADMIN AUTHORIZED WITH BRUTE-FORCE SHIELD) =================
+// ================= ACTION 5: CLEAR BALLOTS & RESET VOTES (SUPER ADMIN AUTHORIZED) =================
 if ($action === 'clear_ballots') {
     $rawInput = @file_get_contents('php://input');
     $payload = @json_decode($rawInput, true);
     if (!$payload) $payload = $_POST;
-    $adminPin = getAdminPin($payload);
     $clientIp = getClientIp();
 
-    // Proteksi Anti Brute-Force Server (5x Gagal = Lockout 15 Menit)
+    // 1. WAJIB TERAUTENTIKASI SEBAGAI ADMIN RESMI DENGAN TOKEN SESI SERVER
+    $admin = getAuthenticatedAdmin($payload);
+    if (!$admin) {
+        http_response_code(401);
+        echo json_encode([
+            'success' => false,
+            'error' => '⛔ AKSES DITOLAK: Mengosongkan kotak suara memerlukan sesi login admin resmi KPKU terautentikasi!'
+        ]);
+        exit;
+    }
+
+    // 2. Proteksi Anti Brute-Force Server (5x Gagal = Lockout 15 Menit)
     $lockoutFile = $dataDir . '/ip_lockout.json';
     $lockouts = readJsonFile($lockoutFile, []);
     $now = time();
@@ -2054,7 +2216,7 @@ if ($action === 'clear_ballots') {
         }
     }
 
-    // Proteksi Honeypot Trap Server: Jika robot otomatis mengirim parameter jebakan
+    // 3. Proteksi Honeypot Trap Server: Jika robot otomatis mengirim parameter jebakan
     if (!empty($payload['official_org_website_url']) || !empty($payload['trap_field']) || !empty($payload['website_url'])) {
         if (!isset($lockouts[$clientIp])) {
             $lockouts[$clientIp] = ['fails' => 5, 'lock_until' => $now + (15 * 60), 'first_fail' => $now];
@@ -2082,65 +2244,31 @@ if ($action === 'clear_ballots') {
         exit;
     }
 
-    // Validasi Dual-Key Otoritas Pleno: 31052002 (atau legacy 312226)
-    $isPinValid = ($adminPin === '31052002' || $adminPin === '312226');
+    // 4. OTORISASI TINGKAT TINGGI: Hanya Super Admin (M. Addiansyah) ATAU Izin Dual-Key yang telah disetujui
+    $isSuperAdmin = ($admin['email'] === 'addiansyah@unsri.ac.id');
+    $reqId = trim($payload['req_id'] ?? '');
 
-    if (!$isPinValid) {
-        if (!isset($lockouts[$clientIp])) {
-            $lockouts[$clientIp] = ['fails' => 0, 'lock_until' => 0, 'first_fail' => $now];
+    $hasApproval = false;
+    if (!empty($reqId)) {
+        $requests = readJsonFile($accessRequestsFile, []);
+        if (isset($requests[$reqId]) && $requests[$reqId]['feature_key'] === 'clear_ballots' && in_array($requests[$reqId]['status'], ['APPROVED', 'CONSUMED'])) {
+            $hasApproval = true;
+            $requests[$reqId]['status'] = 'CONSUMED';
+            $requests[$reqId]['consumed_at'] = date('c');
+            writeJsonFile($accessRequestsFile, $requests);
         }
-        $lockouts[$clientIp]['fails'] = ($lockouts[$clientIp]['fails'] ?? 0) + 1;
-        $lockouts[$clientIp]['last_attempt'] = $now;
+    }
 
-        $auditLogs = readJsonFile($auditFile, []);
-
-        if ($lockouts[$clientIp]['fails'] >= 5) {
-            // Aktifkan Lockout 15 Menit (900 detik)
-            $lockouts[$clientIp]['lock_until'] = $now + (15 * 60);
-            writeJsonFile($lockoutFile, $lockouts);
-
-            $auditLogs[] = [
-                'id' => 'sec-' . bin2hex(random_bytes(4)),
-                'action' => 'BRUTE_FORCE_LOCKOUT_TRIGGERED',
-                'details' => "IP {$clientIp} diblokir selama 15 menit setelah 5x gagal memasukkan PIN otorisasi server.",
-                'ip' => $clientIp,
-                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? substr($_SERVER['HTTP_USER_AGENT'], 0, 200) : 'UNKNOWN',
-                'timestamp' => date('c')
-            ];
-            writeJsonFile($auditFile, $auditLogs);
-
-            http_response_code(429);
-            echo json_encode([
-                'success' => false,
-                'error' => "⛔ AKSES DIBLOKIR: Terdeteksi 5 kali kegagalan input PIN otorisasi. Alamat IP ({$clientIp}) dibekukan selama 15 menit demi keamanan.",
-                'locked' => true,
-                'remaining_seconds' => 900
-            ]);
-            exit;
-        }
-
-        writeJsonFile($lockoutFile, $lockouts);
-
-        $sisaPercobaan = 5 - $lockouts[$clientIp]['fails'];
-        $auditLogs[] = [
-            'id' => 'sec-' . bin2hex(random_bytes(4)),
-            'action' => 'UNAUTHORIZED_PIN_ATTEMPT',
-            'details' => "Percobaan PIN otorisasi salah dari IP {$clientIp}. Kesempatan tersisa: {$sisaPercobaan}x.",
-            'ip' => $clientIp,
-            'timestamp' => date('c')
-        ];
-        writeJsonFile($auditFile, $auditLogs);
-
+    if (!$isSuperAdmin && !$hasApproval) {
         http_response_code(403);
         echo json_encode([
             'success' => false,
-            'error' => "❌ PIN Otoritas KPKU tidak valid! Sisa kesempatan: {$sisaPercobaan}x sebelum IP Anda diblokir 15 menit.",
-            'remaining_attempts' => $sisaPercobaan
+            'error' => '⛔ OTORISASI DITOLAK: Fitur mengosongkan kotak suara memerlukan otorisasi langsung Ketua Panitia (M. Addiansyah) atau persetujuan Dual-Key terverifikasi!'
         ]);
         exit;
     }
 
-    // Jika PIN Benar: Reset counter kegagalan IP
+    // Jika Terotorisasi Sah: Reset counter kegagalan IP
     if (isset($lockouts[$clientIp])) {
         unset($lockouts[$clientIp]);
         writeJsonFile($lockoutFile, $lockouts);
@@ -2180,6 +2308,15 @@ if ($action === 'clear_ballots') {
 
 // ================= ACTION: PENGINGAT HARIAN DPT & GOOGLE CALENDAR =================
 if ($action === 'get_reminder_status') {
+    $rawPost = @file_get_contents('php://input');
+    $body = @json_decode($rawPost, true) ?: $_POST;
+    $admin = getAuthenticatedAdmin($body);
+    if (!$admin) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Akses ditolak: Memerlukan login admin resmi.']);
+        exit;
+    }
+
     if (!defined('IN_VOTE_SYNC')) define('IN_VOTE_SYNC', true);
     require_once __DIR__ . '/cron_daily_reminder.php';
 
@@ -2211,11 +2348,19 @@ if ($action === 'get_reminder_status') {
 }
 
 if ($action === 'send_reminder_test') {
+    $rawPost = @file_get_contents('php://input');
+    $body = @json_decode($rawPost, true) ?: $_POST;
+
+    $admin = getAuthenticatedAdmin($body);
+    if (!$admin) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Akses ditolak: Memerlukan login admin resmi.']);
+        exit;
+    }
+
     if (!defined('IN_VOTE_SYNC')) define('IN_VOTE_SYNC', true);
     require_once __DIR__ . '/cron_daily_reminder.php';
 
-    $rawPost = @file_get_contents('php://input');
-    $body = @json_decode($rawPost, true) ?: $_POST;
     $targetEmail = trim($body['email'] ?? ($_GET['email'] ?? ''));
 
     if (empty($targetEmail) || !filter_var($targetEmail, FILTER_VALIDATE_EMAIL)) {
@@ -2243,6 +2388,16 @@ if ($action === 'send_reminder_test') {
 }
 
 if ($action === 'trigger_reminder_batch') {
+    $isCli = (php_sapi_name() === 'cli');
+    $rawPost = @file_get_contents('php://input');
+    $body = @json_decode($rawPost, true) ?: $_POST;
+    $admin = getAuthenticatedAdmin($body);
+    if (!$isCli && !$admin) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Akses ditolak: Memerlukan sesi login admin resmi atau eksekusi server CLI.']);
+        exit;
+    }
+
     if (!defined('IN_VOTE_SYNC')) define('IN_VOTE_SYNC', true);
     require_once __DIR__ . '/cron_daily_reminder.php';
 
