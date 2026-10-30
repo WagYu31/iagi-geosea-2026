@@ -235,7 +235,7 @@ def build_pdf(filename):
     Menindaklanjuti beredarnya selebaran infografis 'Quick Count 688 Suara', laporan akses uji coba (NPA 00000), serta pengujian penetrasi beban (stress test) yang dilakukan terhadap sistem e-voting <i>https://pemiluiagi.web.id</i> pada tanggal 30 Oktober 2026, Tim Teknologi Informasi KPKU IAGI 2026 telah melaksanakan audit forensik menyeluruh dan penguatan sistem dengan hasil sebagai berikut:
     <br/><br/>
     &bull; <b>Integritas Brankas Suara (100% Sah & Murni):</b> Total suara yang tersimpan dalam Brankas Elektronik Bersegel (Sealed Vault) per audit ini telah mencapai <b>764 Suara Sah</b> dari total 2.143 DPT. Tidak ada suara ilegal, tidak ada kebocoran perolehan suara calon, dan integritas rantai SHA-256 terjaga 100%.<br/>
-    &bull; <b>Bantahan Forensik Infografis '688 Suara':</b> Berdasarkan audit stempel waktu database server tepat pada 29 Oktober 2026 pukul 18:26 WIB, jumlah suara sah server adalah <b>687 Suara</b> (bukan 688). Hal ini membuktikan 100% bahwa infografis yang beredar adalah <b>rekayasa/tebakan fiktif</b>.<br/>
+    &bull; <b>Bantahan Forensik Infografis '688 Suara':</b> Angka total 688 adalah <b>data kuorum kehadiran terbuka</b> yang tercatat resmi di dashboard monitor KPKU per 29 Oktober 2026 pukul 18:26:44 WIB. Namun, rincian perolehan persentase calon (56,4% vs 25,3% vs 18,3%) terbukti <b>100% hoaks / rekayasa fiktif</b> karena brankas suara berstatus <b>TERSEGEL RAPAT (counts: 0, 0, 0)</b> hingga Sidang Pleno resmi.<br/>
     &bull; <b>Hasil Uji Beban & Penetrasi (Locust Test Report):</b> Server ditembak dengan <b>85.219 requests</b> selama 18 menit oleh alat uji beban Locust dengan 533 concurrent bots. Hasilnya: <b>85.219 requests GAGAL TOTAL (Tingkat Kegagalan 100%)</b>. Firewall dan Rate Limiter server berhasil menangkis seluruh tembakan tanpa ada satu pun paket yang menembus sistem.<br/>
     &bull; <b>Penutupan Akun Uji Coba UI (NPA 00000):</b> Tombol demo bantu di bilik suara telah <b>dihapus total</b> di frontend maupun backend. Di server, akun uji coba sejak awal terisolasi dan 0% tercatat di brankas resmi.<br/>
     &bull; <b>Penerapan Arsitektur Pertahanan Berlapis (Defense-in-Depth):</b> Domain telah dilindungi penuh oleh <b>Cloudflare Global Proxy (Anti-DDoS, WAF, SSL Full Mode)</b> serta <b>Perisai Anti-Bot .htaccess</b> di server cPanel DomaiNesia.
@@ -320,26 +320,26 @@ def build_pdf(filename):
         [
             Paragraph("<b>Target Waktu</b>", table_cell_bold),
             Paragraph("29 Oktober 2026, 18:26 WIB", table_cell_style),
-            Paragraph("29 Oktober 2026, 18:26:00 WIB", table_cell_style),
-            Paragraph("Validasi waktu sinkron", table_cell_style)
+            Paragraph("29 Oktober 2026, 18:26:44 WIB", table_cell_style),
+            Paragraph("Sinkron (Suara #688 tercatat)", table_cell_style)
         ],
         [
-            Paragraph("<b>Total Suara Masuk</b>", table_cell_bold),
-            Paragraph("<b>688 Suara</b> (+12 suara)", table_cell_style),
-            Paragraph("<b>Tepat 687 Suara</b> (Terakhir 17:57:29 WIB)", table_cell_bold),
-            Paragraph("<font color='#B91C1C'><b>TIDAK COCOK (SELISIH 1)</b></font>", table_cell_bold)
+            Paragraph("<b>Total Partisipasi Suara</b>", table_cell_bold),
+            Paragraph("<b>688 Suara</b> (+12 dari update 676)", table_cell_style),
+            Paragraph("<b>Tepat 688 Suara</b> (Masuk jam 18:26:44 WIB)", table_cell_bold),
+            Paragraph("<font color='#047857'><b>DATA KUORUM TERBUKA (MONITOR)</b></font>", table_cell_bold)
         ],
         [
-            Paragraph("<b>Status Brankas Suara</b>", table_cell_bold),
-            Paragraph("Mengklaim angka paslon terbuka", table_cell_style),
-            Paragraph("<b>TERSEGEL (is_sealed: true)</b>", table_cell_bold),
-            Paragraph("Mustahil paslon terbaca di API", table_cell_style)
+            Paragraph("<b>Rincian Pilihan Calon</b>", table_cell_bold),
+            Paragraph("Mengklaim 03: 56.4%, 02: 25.3%, 01: 18.3%", table_cell_style),
+            Paragraph("<b>TERSEGEL RAPAT (counts: 0, 0, 0)</b>", table_cell_bold),
+            Paragraph("<font color='#B91C1C'><b>100% HOAKS / REKAYASA FIKTIF</b></font>", table_cell_bold)
         ],
         [
-            Paragraph("<b>Penyimpanan Fisik</b>", table_cell_bold),
-            Paragraph("Diasumsikan bocor dari web", table_cell_style),
-            Paragraph("Di luar web root (<code>~/pemiluiagi_data/</code>)", table_cell_style),
-            Paragraph("Akses publik via URL diblokir", table_cell_style)
+            Paragraph("<b>Status Kotak Suara</b>", table_cell_bold),
+            Paragraph("Dinarasikan bocor ke publik", table_cell_style),
+            Paragraph("<b>Sealed Vault di luar web root</b>", table_cell_style),
+            Paragraph("Terkunci aman sampai Sidang Pleno", table_cell_style)
         ]
     ]
     cmp_tbl = Table(cmp_data, colWidths=[105, 125, 145, 140])
@@ -372,7 +372,7 @@ def build_pdf(filename):
     if img_term and img_hoax:
         side_data = [
             [
-                Paragraph("<font color='#047857'><b>BUKTI A: TERMINAL RESMI SERVER KPKU</b></font><br/><font size='7' color='#334155'>Data Asli: Tepat <b>687 Suara</b> per 29 Okt 18:26 WIB</font>", ParagraphStyle('HdrGreen', parent=table_cell_style, alignment=1)),
+                Paragraph("<font color='#047857'><b>BUKTI A: TERMINAL RESMI SERVER KPKU</b></font><br/><font size='7' color='#334155'>Data Asli: Suara #688 Masuk Tepat Jam 18:26:44 WIB</font>", ParagraphStyle('HdrGreen', parent=table_cell_style, alignment=1)),
                 Paragraph("<font color='#B91C1C'><b>BUKTI B: SELEBARAN INFOGRAFIS HOAKS</b></font><br/><font size='7' color='#334155'>Klaim Fiktif: <b>688 Suara</b> (Rekayasa/Tebakan)</font>", ParagraphStyle('HdrRed', parent=table_cell_style, alignment=1))
             ],
             [
