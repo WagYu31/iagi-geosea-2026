@@ -511,84 +511,13 @@ if ($action === 'calendar_auto' || $action === 'calendar_intent') {
         exit;
     }
 
-    // Jika Desktop: Redirect ke Google Calendar Web
-    if (!$isAndroid) {
-        $gCalUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE"
-            . "&text=" . urlencode($title)
-            . "&dates=20261103T010000Z/20261103T165900Z"
-            . "&details=" . urlencode($desc)
-            . "&location=" . urlencode($location);
-        header("Location: {$gCalUrl}");
-        exit;
-    }
-
-    // Jika Android: Jalankan Android Intent langsung ke aplikasi Google Calendar (Tanpa Download File!)
-    $intentUri = "intent://#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/event;"
-        . "S.title=" . rawurlencode($title) . ";"
-        . "L.beginTime={$beginMs};"
-        . "L.endTime={$endMs};"
-        . "S.eventLocation=" . rawurlencode($location) . ";"
-        . "S.description=" . rawurlencode($desc) . ";"
-        . "end;";
-
-    echo <<<HTML
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Membuka Kalender HP...</title>
-  <style>
-    body {
-      background: #0B1120;
-      color: #E2E8F0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-      text-align: center;
-    }
-    .card {
-      background: #1E293B;
-      border: 1px solid rgba(245, 186, 66, 0.3);
-      border-radius: 16px;
-      padding: 24px;
-      max-width: 360px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-    }
-    .btn {
-      display: block;
-      background: #2563EB;
-      color: #FFFFFF;
-      font-weight: 700;
-      text-decoration: none;
-      padding: 12px 20px;
-      border-radius: 10px;
-      margin-top: 18px;
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <div style="font-size: 2.5rem; margin-bottom: 10px;">📅</div>
-    <h2 style="font-size: 1.1rem; margin: 0 0 8px; color: #FFFFFF;">Membuka Kalender HP...</h2>
-    <p style="font-size: 0.85rem; color: #94A3B8; margin: 0;">Menghubungkan ke aplikasi Kalender Anda.</p>
-    <a href="{$intentUri}" class="btn" id="btn-manual">Buka Kalender Sekarang &raquo;</a>
-  </div>
-  <script>
-    try {
-      window.location.replace("{$intentUri}");
-    } catch(e) {
-      window.location.href = "{$intentUri}";
-    }
-  </script>
-</body>
-</html>
-HTML;
+    // Langsung Redirect ke Google Calendar Resmi (Bekerja 100% di Semua Browser & HP tanpa macet!)
+    $gCalUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+        . "&text=" . urlencode($title)
+        . "&dates=20261103T010000Z/20261103T165900Z"
+        . "&details=" . urlencode($desc)
+        . "&location=" . urlencode($location);
+    header("Location: {$gCalUrl}");
     exit;
 }
 
