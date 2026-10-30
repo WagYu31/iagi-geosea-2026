@@ -949,7 +949,6 @@ class VisitorTicketAdminController extends Controller
             'exclusive' => '/images/badges/VIP.png',
             'non_exclusive' => '/images/badges/Visitor.png',
             // Technical
-            'student' => '/images/badges/Presenter.png',
             'presenter' => '/images/badges/Presenter.png',
             'invited_speaker' => '/images/badges/Invited_Speaker.png',
             'session_chair_judge' => '/images/badges/Session_Chair_Judge.png',
