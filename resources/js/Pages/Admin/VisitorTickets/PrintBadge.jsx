@@ -151,7 +151,7 @@ function SingleLanyardCard({
     isBulk,
     showHoleGuide = true,
     holeShape = 'slot',
-    holePosition = 2.2,
+    holePosition = 2.75,
 }) {
     const visitorType = ticket.visitor_type || 'non_exclusive';
     const cat = CATEGORY_MAP[visitorType] || CATEGORY_MAP.non_exclusive;
@@ -219,7 +219,7 @@ function SingleLanyardCard({
                 }}
             />
 
-            {/* Lanyard Hole Punch Visual Guide - Placed directly on the natural card texture ABOVE the logos */}
+            {/* Lanyard Hole Punch Visual Guide - Placed in SAFE CLEAR ZONE between yellow line and logos (NEVER touching yellow line or logos) */}
             {showHoleGuide && (
                 <Box
                     className="badge-hole-guide"
@@ -229,11 +229,11 @@ function SingleLanyardCard({
                         left: '50%',
                         transform: 'translateX(-50%)',
                         width: holeShape === 'round'
-                            ? `${(4.5 / 54) * 100}%`
-                            : `${(13 / 54) * 100}%`,
+                            ? `${(2.8 / 54) * 100}%`
+                            : `${(12.5 / 54) * 100}%`,
                         height: holeShape === 'round'
-                            ? `${(4.5 / 85.6) * 100}%`
-                            : `${(2.8 / 85.6) * 100}%`,
+                            ? `${(2.8 / 85.6) * 100}%`
+                            : `${(2.4 / 85.6) * 100}%`,
                         borderRadius: '100px',
                         border: '1.2px dashed rgba(71, 85, 105, 0.75)',
                         bgcolor: 'transparent',
@@ -242,8 +242,8 @@ function SingleLanyardCard({
                         boxSizing: 'border-box',
                         '@media print': {
                             top: `${holePosition}mm !important`,
-                            width: holeShape === 'round' ? '4.5mm !important' : '13mm !important',
-                            height: holeShape === 'round' ? '4.5mm !important' : '2.8mm !important',
+                            width: holeShape === 'round' ? '2.8mm !important' : '12.5mm !important',
+                            height: holeShape === 'round' ? '2.8mm !important' : '2.4mm !important',
                             border: '0.6pt dashed rgba(71, 85, 105, 0.8) !important',
                             bgcolor: 'transparent !important',
                         },
@@ -375,10 +375,10 @@ export default function PrintBadge({
 
     const [holePosition, setHolePosition] = useState(() => {
         try {
-            const saved = localStorage.getItem('badge_hole_position');
-            return saved !== null ? Number(saved) : 2.2; // 2.2mm from top (above logos)
+            const saved = localStorage.getItem('badge_hole_position_v3');
+            return saved !== null ? Number(saved) : 2.75; // 2.75mm from top (safely between yellow line at 2.3mm and logos at 5.6mm)
         } catch {
-            return 2.2;
+            return 2.75;
         }
     });
 
@@ -400,7 +400,7 @@ export default function PrintBadge({
     const handleHolePositionChange = (pos) => {
         setHolePosition(pos);
         try {
-            localStorage.setItem('badge_hole_position', String(pos));
+            localStorage.setItem('badge_hole_position_v3', String(pos));
         } catch {}
     };
 
@@ -755,8 +755,8 @@ export default function PrintBadge({
                         <>
                             <Box sx={{ width: '1px', height: '24px', bgcolor: '#334155', mx: 0.5 }} />
                             {[
-                                { label: 'Oval Pipih (13×3mm)', shape: 'slot' },
-                                { label: 'Bulat (Ø4.5mm)', shape: 'round' },
+                                { label: 'Oval Pipih (12.5×2.4mm)', shape: 'slot' },
+                                { label: 'Bulat (Ø2.8mm)', shape: 'round' },
                             ].map(opt => (
                                 <Button
                                     key={opt.shape}
@@ -782,9 +782,9 @@ export default function PrintBadge({
 
                             <Box sx={{ width: '1px', height: '24px', bgcolor: '#334155', mx: 0.5 }} />
                             {[
-                                { label: 'Posisi: Atas (1.8mm)', val: 1.8 },
-                                { label: 'Tengah (2.2mm ⭐)', val: 2.2 },
-                                { label: 'Bawah (2.6mm)', val: 2.6 },
+                                { label: 'Atas (2.6mm)', val: 2.6 },
+                                { label: 'Tengah Aman (2.75mm ⭐)', val: 2.75 },
+                                { label: 'Bawah (2.9mm)', val: 2.9 },
                             ].map(opt => (
                                 <Button
                                     key={opt.val}
