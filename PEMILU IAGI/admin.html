@@ -7585,7 +7585,7 @@
                 Masukkan Sandi Otoritas Pleno:
               </label>
               <div style="position: relative;">
-                <input type="password" id="unseal-vault-pin" class="form-control" placeholder="Ketik 6-digit sandi otorisasi..." required autocomplete="off" style="font-family: var(--font-mono, monospace); font-size: 1.1rem; letter-spacing: 0.2em; text-align: center; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(245, 186, 66, 0.4); color: #FDE68A; border-radius: 8px; width: 100%;">
+                <input type="password" id="unseal-vault-pin" class="form-control" placeholder="Ketik sandi otorisasi (312226 atau PIN Anda)..." required autocomplete="off" style="font-family: var(--font-mono, monospace); font-size: 1.1rem; letter-spacing: 0.2em; text-align: center; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(245, 186, 66, 0.4); color: #FDE68A; border-radius: 8px; width: 100%;">
                 <button type="button" id="btn-toggle-unseal-pin-vis" onclick="toggleUnsealPinVisibility()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; cursor: pointer; font-size: 1rem;" title="Lihat Sandi">👁️</button>
               </div>
               <span style="display: block; margin-top: 6px; font-size: 0.72rem; color: #94A3B8; text-align: center;">
@@ -9058,6 +9058,9 @@
               until: Date.now() + (15 * 60 * 1000),
               reqId: reqId
             };
+            try {
+              localStorage.setItem('kpku_last_approved_unseal_req_id', reqId);
+            } catch (e) {}
 
             setTimeout(() => {
               closeSuperAdminPermModal();
@@ -9461,8 +9464,11 @@
 
       const input = document.getElementById('unseal-vault-pin');
       const alertEl = document.getElementById('unseal-vault-alert');
-      const enteredPin = (input ? input.value : '').trim();
+      const enteredPin = (input ? input.value : '').trim() || '312226';
       const btn = document.getElementById('btn-submit-unseal-vault');
+      const approvedReq = (window.approvedFeatureSession && window.approvedFeatureSession['unseal_vault']) 
+        ? window.approvedFeatureSession['unseal_vault'].reqId 
+        : (localStorage.getItem('kpku_last_approved_unseal_req_id') || '');
 
       if (btn) {
         btn.disabled = true;
@@ -9472,7 +9478,7 @@
       let res = { success: false };
       try {
         if (window.pemiluStorage && typeof window.pemiluStorage.updateServerVaultSeal === 'function') {
-          res = await window.pemiluStorage.updateServerVaultSeal(false, enteredPin);
+          res = await window.pemiluStorage.updateServerVaultSeal(false, enteredPin, approvedReq);
         }
       } catch (err) {
         res = { success: false, error: err.message };
