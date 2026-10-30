@@ -678,7 +678,7 @@ return [
   '04621' => ['name' => 'Afrizon Setiawan', 'email' => 'afrizon.setiawan@emp.id'],
   '04622' => ['name' => 'Radig Wisnu Yuwono', 'email' => 'radig_wisnu@energy-mp.com'],
   '04624' => ['name' => 'Hendarman', 'email' => 'hendarman@emp.id'],
-  '04640' => ['name' => 'Prof. Husnul Kausarian, M.Sc, Ph.D', 'email' => 'kausarianhusnul@yahoo.com'],
+  '04640' => ['name' => 'Prof. Husnul Kausarian, M.Sc, Ph.D', 'email' => 'husnulkausarian@eng.uir.ac.id', 'alt_emails' => ['kausarianhusnul@yahoo.com']],
   '04642' => ['name' => 'Budi Prayitno', 'email' => 'budiprayitno@eng.uir.ac.id'],
   '04647' => ['name' => 'Ufi Ma’rufianty', 'email' => 'umarufianty30@gmail.com'],
   '04650' => ['name' => 'David Howard Stock', 'email' => 'stocky2020@gmail.com'],

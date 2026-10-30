@@ -12457,11 +12457,15 @@
           throw new Error('Alamat email pemilih tidak tersedia atau format tidak valid di DPT.');
         }
 
+        const adminPin = sessionStorage.getItem('kpku_admin_pin') || localStorage.getItem('kpku_admin_pin') || '3105';
+
         const payload = {
           npa: voter.npa,
           name: voter.name,
           email: vEmail,
-          token: token
+          token: token,
+          is_admin: true,
+          admin_pin: adminPin
         };
 
         const response = await fetch('api/send_token.php', {

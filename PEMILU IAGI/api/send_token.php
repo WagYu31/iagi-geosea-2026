@@ -89,27 +89,31 @@ foreach ($rateData as $k => $info) {
     }
 }
 
-// Cek limit IP (Maksimal 5 kirim email per 10 menit per IP)
-if (!isset($rateData[$clientIp])) {
-    $rateData[$clientIp] = ['count' => 1, 'reset_at' => $now + (10 * 60)];
-} else {
-    if ($rateData[$clientIp]['count'] >= 5) {
-        $sisaMenit = ceil(($rateData[$clientIp]['reset_at'] - $now) / 60);
-        http_response_code(429);
-        echo json_encode([
-            'success' => false,
-            'error' => "⛔ Terlalu banyak permintaan pengiriman token dari perangkat Anda. Demi keamanan server, silakan tunggu {$sisaMenit} menit lagi sebelum mencoba kembali."
-        ]);
-        exit;
-    }
-    $rateData[$clientIp]['count']++;
-}
-@file_put_contents($rateFile, json_encode($rateData), LOCK_EX);
-
 $npa = isset($data['npa']) ? substr(preg_replace('/\D/', '', $data['npa']), 0, 5) : '';
 $name = isset($data['name']) ? trim($data['name']) : '';
 $email = isset($data['email']) ? trim($data['email']) : '';
 $token = isset($data['token']) ? trim($data['token']) : '';
+$adminPin = trim($data['admin_pin'] ?? '');
+$isAdmin = in_array($adminPin, ['3105', '312226', '5930', '1926']);
+
+// Cek limit IP (Maksimal 5 kirim email per 10 menit per IP - dikecualikan untuk Admin Helpdesk)
+if (!$isAdmin) {
+    if (!isset($rateData[$clientIp])) {
+        $rateData[$clientIp] = ['count' => 1, 'reset_at' => $now + (10 * 60)];
+    } else {
+        if ($rateData[$clientIp]['count'] >= 5) {
+            $sisaMenit = ceil(($rateData[$clientIp]['reset_at'] - $now) / 60);
+            http_response_code(429);
+            echo json_encode([
+                'success' => false,
+                'error' => "⛔ Terlalu banyak permintaan pengiriman token dari perangkat Anda. Demi keamanan server, silakan tunggu {$sisaMenit} menit lagi sebelum mencoba kembali."
+            ]);
+            exit;
+        }
+        $rateData[$clientIp]['count']++;
+    }
+    @file_put_contents($rateFile, json_encode($rateData), LOCK_EX);
+}
 
 if (strlen($npa) !== 5) {
     http_response_code(400);
@@ -142,22 +146,51 @@ if (file_exists($masterRegistryFile)) {
     $regEmail = strtolower(trim($masterDpt[$npa]['email'] ?? ''));
     $inputEmail = strtolower(trim($email));
 
-        $regNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $regEmail);
-        $inputNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $inputEmail);
+    $regNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $regEmail);
+    $inputNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $inputEmail);
 
-        if ($regEmail !== $inputEmail && $regNorm !== $inputNorm) {
-            http_response_code(403);
-            echo json_encode([
-                'success' => false,
-                'error' => "Alamat email yang dimasukkan tidak cocok dengan email resmi yang terdaftar untuk NPA {$npa} pada DPT KPKU."
-            ]);
-            exit;
-        }
+    $matched = ($regEmail === $inputEmail || $regNorm === $inputNorm);
 
-        if (empty($name) && !empty($masterDpt[$npa]['name'])) {
-            $name = $masterDpt[$npa]['name'];
+    // Check alt_emails in master registry
+    if (!$matched && !empty($masterDpt[$npa]['alt_emails']) && is_array($masterDpt[$npa]['alt_emails'])) {
+        foreach ($masterDpt[$npa]['alt_emails'] as $alt) {
+            if (strtolower(trim($alt)) === $inputEmail) {
+                $matched = true;
+                break;
+            }
         }
     }
+
+    // Check dynamic overrides file in secure data dir
+    $overridesFile = $dataDir . '/dpt_email_overrides.json';
+    if (!$matched && file_exists($overridesFile)) {
+        $overrides = @json_decode(@file_get_contents($overridesFile), true) ?: [];
+        if (isset($overrides[$npa]) && strtolower(trim($overrides[$npa])) === $inputEmail) {
+            $matched = true;
+        }
+    }
+
+    // If still not matched, allow if request is authorized from Admin Helpdesk
+    if (!$matched && $isAdmin) {
+        $matched = true;
+        $overrides = file_exists($overridesFile) ? (@json_decode(@file_get_contents($overridesFile), true) ?: []) : [];
+        $overrides[$npa] = $inputEmail;
+        @file_put_contents($overridesFile, json_encode($overrides, JSON_PRETTY_PRINT), LOCK_EX);
+    }
+
+    if (!$matched) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'error' => "Alamat email yang dimasukkan ({$email}) tidak cocok dengan email resmi yang terdaftar untuk NPA {$npa} pada DPT KPKU."
+        ]);
+        exit;
+    }
+
+    if (empty($name) && !empty($masterDpt[$npa]['name'])) {
+        $name = $masterDpt[$npa]['name'];
+    }
+}
 
 $displayName = !empty($name) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : 'Anggota IAGI';
 $displayNpa = !empty($npa) ? htmlspecialchars($npa, ENT_QUOTES, 'UTF-8') : '-';

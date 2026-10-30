@@ -1924,7 +1924,28 @@ if ($action === 'register_claim') {
         $regNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $regEmail);
         $inputNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $inputEmail);
 
-        if ($regEmail !== $inputEmail && $regNorm !== $inputNorm) {
+        $matched = ($regEmail === $inputEmail || $regNorm === $inputNorm);
+
+        // Check alt_emails
+        if (!$matched && !empty($masterDpt[$npa]['alt_emails']) && is_array($masterDpt[$npa]['alt_emails'])) {
+            foreach ($masterDpt[$npa]['alt_emails'] as $alt) {
+                if (strtolower(trim($alt)) === $inputEmail) {
+                    $matched = true;
+                    break;
+                }
+            }
+        }
+
+        // Check dynamic overrides file
+        $overridesFile = $dataDir . '/dpt_email_overrides.json';
+        if (!$matched && file_exists($overridesFile)) {
+            $overrides = @json_decode(@file_get_contents($overridesFile), true) ?: [];
+            if (isset($overrides[$npa]) && strtolower(trim($overrides[$npa])) === $inputEmail) {
+                $matched = true;
+            }
+        }
+
+        if (!$matched) {
             http_response_code(403);
             echo json_encode(['success' => false, 'error' => "Alamat email tidak cocok dengan email resmi yang terdaftar untuk NPA {$npa} pada DPT KPKU."]);
             exit;
