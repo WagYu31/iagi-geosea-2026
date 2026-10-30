@@ -1469,8 +1469,99 @@ export default function VisitorTicketsIndex({
                 userSelect: !isUnlocked ? 'none' : 'auto',
                 transition: 'filter 0.3s ease',
             }}>
-                {/* 3D HEADER & QUICK ACTION BAR */}
+                {/* ── EXECUTIVE VIEW MODE SWITCHER (DIBOLD STYLE) ── */}
                 <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 1.5,
+                        mb: 2.5,
+                        p: 0.6,
+                        px: 0.8,
+                        borderRadius: '16px',
+                        bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : '#ffffff',
+                        border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'}`,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+                    }}
+                >
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                        <Button
+                            onClick={() => setViewMode('table')}
+                            startIcon={<TableChartRoundedIcon sx={{ fontSize: 18 }} />}
+                            sx={{
+                                borderRadius: '12px',
+                                px: 2.2,
+                                py: 0.7,
+                                fontSize: '0.82rem',
+                                fontWeight: 800,
+                                textTransform: 'none',
+                                bgcolor: viewMode === 'table' ? '#2563eb' : 'transparent',
+                                color: viewMode === 'table' ? '#ffffff' : (isDark ? '#94a3b8' : '#64748b'),
+                                boxShadow: viewMode === 'table' ? '0 2px 10px rgba(37,99,235,0.25)' : 'none',
+                                '&:hover': {
+                                    bgcolor: viewMode === 'table' ? '#1d4ed8' : (isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'),
+                                },
+                            }}
+                        >
+                            📋 Kelola & Data Tiket ({Number(stats.totalVisitors || 0).toLocaleString('id-ID')})
+                        </Button>
+
+                        <Button
+                            onClick={() => setViewMode('analytics')}
+                            startIcon={<InsightsRoundedIcon sx={{ fontSize: 18 }} />}
+                            sx={{
+                                borderRadius: '12px',
+                                px: 2.5,
+                                py: 0.7,
+                                fontSize: '0.82rem',
+                                fontWeight: 800,
+                                textTransform: 'none',
+                                bgcolor: viewMode === 'analytics' ? '#2563eb' : 'transparent',
+                                color: viewMode === 'analytics' ? '#ffffff' : (isDark ? '#94a3b8' : '#64748b'),
+                                boxShadow: viewMode === 'analytics' ? '0 4px 14px rgba(37,99,235,0.25)' : 'none',
+                                '&:hover': {
+                                    bgcolor: viewMode === 'analytics' ? '#1d4ed8' : (isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'),
+                                },
+                            }}
+                        >
+                            📊 DiBold Analytics Dashboard
+                            <Chip
+                                label="LIVE DASHBOARD"
+                                size="small"
+                                sx={{
+                                    ml: 1.2,
+                                    height: 18,
+                                    fontSize: '0.62rem',
+                                    fontWeight: 900,
+                                    letterSpacing: '0.04em',
+                                    bgcolor: viewMode === 'analytics' ? 'rgba(255,255,255,0.2)' : '#eff6ff',
+                                    color: viewMode === 'analytics' ? '#ffffff' : '#2563eb',
+                                }}
+                            />
+                        </Button>
+                    </Stack>
+
+                    <Box sx={{ pr: 1.5, display: { xs: 'none', md: 'block' } }}>
+                        <Typography sx={{ fontSize: '0.75rem', color: isDark ? '#94a3b8' : '#64748b', fontWeight: 600 }}>
+                            {viewMode === 'table' ? 'Menampilkan tabel registrasi & verifikasi' : 'Menampilkan DiBold Executive Analytics Dashboard'}
+                        </Typography>
+                    </Box>
+                </Box>
+
+                {viewMode === 'analytics' ? (
+                    <VisitorAnalyticsDashboard
+                        analytics={analytics}
+                        stats={stats}
+                        isDark={isDark}
+                        onSwitchToTable={() => setViewMode('table')}
+                        onTriggerGateScanner={() => router.visit(route('admin.gateScanner'))}
+                    />
+                ) : (
+                    <>
+                        {/* 3D HEADER & QUICK ACTION BAR */}
+                        <Box
                     sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -1730,100 +1821,7 @@ export default function VisitorTicketsIndex({
                     </Stack>
                 </Box>
 
-                {/* ── EXECUTIVE VIEW MODE SWITCHER ── */}
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        flexWrap: 'wrap',
-                        gap: 1.5,
-                        mb: 3,
-                        p: 0.8,
-                        px: 1,
-                        borderRadius: '16px',
-                        bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : '#f8fafc',
-                        border: `1.5px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'}`,
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-                    }}
-                >
-                    <Stack direction="row" spacing={1} flexWrap="wrap">
-                        <Button
-                            onClick={() => setViewMode('table')}
-                            startIcon={<TableChartRoundedIcon sx={{ fontSize: 18 }} />}
-                            sx={{
-                                borderRadius: '12px',
-                                px: 2.2,
-                                py: 0.85,
-                                fontSize: '0.84rem',
-                                fontWeight: 800,
-                                textTransform: 'none',
-                                bgcolor: viewMode === 'table' ? (isDark ? '#094d42' : '#ffffff') : 'transparent',
-                                color: viewMode === 'table' ? (isDark ? '#ffffff' : '#094d42') : (isDark ? '#94a3b8' : '#64748b'),
-                                boxShadow: viewMode === 'table' ? '0 2px 10px rgba(0,0,0,0.06)' : 'none',
-                                border: viewMode === 'table' ? `1.5px solid ${isDark ? '#0d7a6a' : '#cbd5e1'}` : '1.5px solid transparent',
-                                '&:hover': {
-                                    bgcolor: viewMode === 'table' ? (isDark ? '#0d6356' : '#ffffff') : (isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'),
-                                },
-                            }}
-                        >
-                            📋 Kelola & Data Tiket ({Number(stats.totalVisitors || 0).toLocaleString('id-ID')})
-                        </Button>
-
-                        <Button
-                            onClick={() => setViewMode('analytics')}
-                            startIcon={<InsightsRoundedIcon sx={{ fontSize: 18 }} />}
-                            sx={{
-                                borderRadius: '12px',
-                                px: 2.5,
-                                py: 0.85,
-                                fontSize: '0.84rem',
-                                fontWeight: 800,
-                                textTransform: 'none',
-                                bgcolor: viewMode === 'analytics' ? '#094d42' : 'transparent',
-                                color: viewMode === 'analytics' ? '#ffffff' : (isDark ? '#94a3b8' : '#64748b'),
-                                boxShadow: viewMode === 'analytics' ? '0 4px 14px rgba(9,77,66,0.25)' : 'none',
-                                border: viewMode === 'analytics' ? '1.5px solid #06332b' : '1.5px solid transparent',
-                                '&:hover': {
-                                    bgcolor: viewMode === 'analytics' ? '#0d6356' : (isDark ? 'rgba(255,255,255,0.05)' : '#f1f5f9'),
-                                },
-                            }}
-                        >
-                            📊 Executive Analytics Dashboard
-                            <Chip
-                                label="LIVE CHARTS"
-                                size="small"
-                                sx={{
-                                    ml: 1.2,
-                                    height: 18,
-                                    fontSize: '0.62rem',
-                                    fontWeight: 900,
-                                    letterSpacing: '0.04em',
-                                    bgcolor: viewMode === 'analytics' ? 'rgba(255,255,255,0.2)' : '#ecfdf5',
-                                    color: viewMode === 'analytics' ? '#ffffff' : '#059669',
-                                }}
-                            />
-                        </Button>
-                    </Stack>
-
-                    <Box sx={{ pr: 1.5, display: { xs: 'none', md: 'block' } }}>
-                        <Typography sx={{ fontSize: '0.75rem', color: isDark ? '#94a3b8' : '#64748b', fontWeight: 600 }}>
-                            {viewMode === 'table' ? 'Menampilkan tabel registrasi, cetak lanyard & verifikasi tiket' : 'Menampilkan grafik interaktif & analisis data komprehensif'}
-                        </Typography>
-                    </Box>
-                </Box>
-
-                {viewMode === 'analytics' ? (
-                    <VisitorAnalyticsDashboard
-                        analytics={analytics}
-                        stats={stats}
-                        isDark={isDark}
-                        onSwitchToTable={() => setViewMode('table')}
-                        onTriggerGateScanner={() => router.visit(route('admin.gateScanner'))}
-                    />
-                ) : (
-                    <>
-                        {/* 3D TACTILE STAT CARDS */}
+                {/* 3D TACTILE STAT CARDS */}
                         <Box
                     sx={{
                         display: 'grid',

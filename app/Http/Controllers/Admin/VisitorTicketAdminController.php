@@ -261,6 +261,23 @@ class VisitorTicketAdminController extends Controller
                     ? round((VisitorTicket::whereNotNull('email_sent_at')->count() / (VisitorTicket::whereNotNull('email_sent_at')->count() + VisitorTicket::whereNull('email_sent_at')->where('status', 'active')->whereNotNull('visitor_email')->count())) * 100, 1) 
                     : 0,
             ],
+            'highValueInvoices' => VisitorPayment::withCount('tickets')
+                ->where('total_amount', '>', 0)
+                ->orderByDesc('total_amount')
+                ->limit(6)
+                ->get()
+                ->map(fn($p) => [
+                    'id' => $p->id,
+                    'code' => $p->payment_code,
+                    'institution' => $p->pic_institution ?: ($p->pic_name ?: 'Delegasi Terdaftar'),
+                    'opportunity' => $p->is_mixed_category ? 'Corporate Delegation' : ($p->tickets_count > 1 ? "Delegasi {$p->tickets_count} Peserta" : 'Conference Delegate'),
+                    'deal_size' => (float) $p->total_amount,
+                    'pic' => $p->pic_name ?: 'PIC Delegasi',
+                    'status' => $p->status,
+                    'is_debt' => (bool) $p->is_debt,
+                    'delegates' => $p->tickets_count ?: ($p->total_members ?: 1),
+                    'pending_days' => $p->created_at ? max(1, (int) round($p->created_at->diffInDays(now()))) : 1,
+                ]),
         ];
 
         // Lanyard Templates from settings
