@@ -360,11 +360,42 @@ def build_pdf(filename):
     ))
     story.append(Spacer(1, 4))
 
-    # Gambar Bukti Terminal Server
-    term_img = get_scaled_image(os.path.join(user_img_dir, "media_1793345435150_423872dc.jpg"), target_width=490, max_height=220)
-    if term_img:
-        story.append(term_img)
-        story.append(Paragraph("<b>Gambar 1:</b> Bukti Eksekusi Skrip Forensik Terminal Server cPanel membuktikan total suara per 29 Okt 18:26 WIB adalah 687 suara (bukan 688), dan total akumulasi saat ini mencapai 764 suara sah.", caption_style))
+    # Perbandingan Visual Berdampingan (Side-by-Side)
+    img_term_path = os.path.join(user_img_dir, "media_1793347763128_0ef52cc4.jpg")
+    img_hoax_path = os.path.join(user_img_dir, "media_1793347793481_478ac5da.jpg")
+
+    img_term = RLImage(img_term_path, width=245, height=205) if os.path.exists(img_term_path) else None
+    img_hoax = RLImage(img_hoax_path, width=245, height=205) if os.path.exists(img_hoax_path) else None
+
+    if img_term and img_hoax:
+        side_data = [
+            [
+                Paragraph("<font color='#047857'><b>BUKTI A: TERMINAL RESMI SERVER KPKU</b></font><br/><font size='7' color='#334155'>Data Asli: Tepat <b>687 Suara</b> per 29 Okt 18:26 WIB</font>", ParagraphStyle('HdrGreen', parent=table_cell_style, alignment=1)),
+                Paragraph("<font color='#B91C1C'><b>BUKTI B: SELEBARAN INFOGRAFIS HOAKS</b></font><br/><font size='7' color='#334155'>Klaim Fiktif: <b>688 Suara</b> (Rekayasa/Tebakan)</font>", ParagraphStyle('HdrRed', parent=table_cell_style, alignment=1))
+            ],
+            [
+                img_term,
+                img_hoax
+            ],
+            [
+                Paragraph("<b>Fakta Server:</b> Surat suara ke-687 masuk pukul 17:57:29 WIB. Pada 18:26:00 WIB suara ke-688 belum ada. Total akumulasi saat ini 764 suara sah.", caption_style),
+                Paragraph("<b>Fakta Pemalsuan:</b> Angka 688 ditebak spekulatif tanpa akses ke brankas database asli KPKU yang berstatus tersegel kriptografis.", caption_style)
+            ]
+        ]
+        side_tbl = Table(side_data, colWidths=[254, 254])
+        side_tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (0,0), colors.HexColor("#ECFDF5")),
+            ('BACKGROUND', (1,0), (1,0), colors.HexColor("#FEF2F2")),
+            ('BOX', (0,0), (0,-1), 1, colors.HexColor("#10B981")),
+            ('BOX', (1,0), (1,-1), 1, colors.HexColor("#EF4444")),
+            ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+            ('VALIGN', (0,0), (-1,-1), 'TOP'),
+            ('TOPPADDING', (0,0), (-1,-1), 2),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 2),
+            ('LEFTPADDING', (0,0), (-1,-1), 3),
+            ('RIGHTPADDING', (0,0), (-1,-1), 3),
+        ]))
+        story.append(side_tbl)
 
     # ==========================================
     # PAGE 3: BAB II — AUDIT HASIL STRESS TEST (LOCUST REPORT)
