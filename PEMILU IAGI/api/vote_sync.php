@@ -454,6 +454,144 @@ if (empty($action) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+// ================= ACTION: SMART AUTO CALENDAR INTENT (1-CLICK DIRECT TO APP) =================
+if ($action === 'calendar_auto' || $action === 'calendar_intent') {
+    $npa = trim($_GET['npa'] ?? '00000');
+    $title = "Pemilu Ketua Umum IAGI 2026–2029 (Bilik Suara Ditutup Hari Ini)";
+    $beginMs = "1793667600000"; // 03 Nov 2026 08:00:00 WIB
+    $endMs = "1793725140000";   // 03 Nov 2026 23:59:00 WIB
+    $location = "https://pemiluiagi.web.id/bilik.html";
+    $desc = "Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik DITUTUP RESMI pada Selasa, 03 November 2026 pukul 23:59 WIB.\n\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa=" . urlencode($npa) . "\nBantuan WhatsApp: wa.me/6285771593522";
+
+    $ua = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
+    $isAndroid = (strpos($ua, 'android') !== false);
+    $isIos = (strpos($ua, 'iphone') !== false || strpos($ua, 'ipad') !== false || strpos($ua, 'ipod') !== false);
+
+    // Jika iOS (iPhone/iPad): Sajikan langsung file .ics agar kalender Apple langsung muncul
+    if ($isIos) {
+        $dtStamp = gmdate('Ymd\THis\Z');
+        $uid = 'kpku-reminder-' . md5($npa . '-2026-iagi') . '@pemiluiagi.web.id';
+        $ics = "BEGIN:VCALENDAR\r\n"
+            . "VERSION:2.0\r\n"
+            . "PRODID:-//KPKU IAGI//Pemilu Ketua Umum 2026//ID\r\n"
+            . "CALSCALE:GREGORIAN\r\n"
+            . "METHOD:PUBLISH\r\n"
+            . "BEGIN:VTIMEZONE\r\n"
+            . "TZID:Asia/Jakarta\r\n"
+            . "BEGIN:STANDARD\r\n"
+            . "DTSTART:19700101T000000\r\n"
+            . "TZOFFSETFROM:+0700\r\n"
+            . "TZOFFSETTO:+0700\r\n"
+            . "TZNAME:WIB\r\n"
+            . "END:STANDARD\r\n"
+            . "END:VTIMEZONE\r\n"
+            . "BEGIN:VEVENT\r\n"
+            . "UID:{$uid}\r\n"
+            . "DTSTAMP:{$dtStamp}\r\n"
+            . "ORGANIZER;CN=\"KPKU IAGI 2026\":mailto:noreply@pitiagi.cloud\r\n"
+            . "DTSTART;TZID=Asia/Jakarta:20261103T080000\r\n"
+            . "DTEND;TZID=Asia/Jakarta:20261103T235900\r\n"
+            . "SUMMARY:{$title}\r\n"
+            . "DESCRIPTION:Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik DITUTUP RESMI pada Selasa, 03 November 2026 pukul 23:59 WIB.\\n\\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa={$npa}\r\n"
+            . "LOCATION:{$location}\r\n"
+            . "STATUS:CONFIRMED\r\n"
+            . "TRANSP:TRANSPARENT\r\n"
+            . "SEQUENCE:1\r\n"
+            . "BEGIN:VALARM\r\n"
+            . "ACTION:DISPLAY\r\n"
+            . "DESCRIPTION:Pengingat: 1 Hari Menuju Penutupan Bilik Suara Pemilu IAGI 2026!\r\n"
+            . "TRIGGER:-P1D\r\n"
+            . "END:VALARM\r\n"
+            . "END:VEVENT\r\n"
+            . "END:VCALENDAR";
+
+        header('Content-Type: text/calendar; charset=utf-8');
+        header('Content-Disposition: inline; filename="pemilu_iagi_2026.ics"');
+        echo $ics;
+        exit;
+    }
+
+    // Jika Desktop: Redirect ke Google Calendar Web
+    if (!$isAndroid) {
+        $gCalUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+            . "&text=" . urlencode($title)
+            . "&dates=20261103T010000Z/20261103T165900Z"
+            . "&details=" . urlencode($desc)
+            . "&location=" . urlencode($location);
+        header("Location: {$gCalUrl}");
+        exit;
+    }
+
+    // Jika Android: Jalankan Android Intent langsung ke aplikasi Google Calendar (Tanpa Download File!)
+    $intentUri = "intent://#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/event;"
+        . "S.title=" . rawurlencode($title) . ";"
+        . "L.beginTime={$beginMs};"
+        . "L.endTime={$endMs};"
+        . "S.eventLocation=" . rawurlencode($location) . ";"
+        . "S.description=" . rawurlencode($desc) . ";"
+        . "end;";
+
+    echo <<<HTML
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Membuka Kalender HP...</title>
+  <style>
+    body {
+      background: #0B1120;
+      color: #E2E8F0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .card {
+      background: #1E293B;
+      border: 1px solid rgba(245, 186, 66, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 360px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .btn {
+      display: block;
+      background: #2563EB;
+      color: #FFFFFF;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      margin-top: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="font-size: 2.5rem; margin-bottom: 10px;">📅</div>
+    <h2 style="font-size: 1.1rem; margin: 0 0 8px; color: #FFFFFF;">Membuka Kalender HP...</h2>
+    <p style="font-size: 0.85rem; color: #94A3B8; margin: 0;">Menghubungkan ke aplikasi Kalender Anda.</p>
+    <a href="{$intentUri}" class="btn" id="btn-manual">Buka Kalender Sekarang &raquo;</a>
+  </div>
+  <script>
+    try {
+      window.location.replace("{$intentUri}");
+    } catch(e) {
+      window.location.href = "{$intentUri}";
+    }
+  </script>
+</body>
+</html>
+HTML;
+    exit;
+}
+
 // ================= ACTION: DOWNLOAD / OPEN ICALENDAR (.ICS) =================
 if ($action === 'calendar_ics' || $action === 'download_ics') {
     $npa = trim($_GET['npa'] ?? '00000');

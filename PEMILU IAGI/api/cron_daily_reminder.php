@@ -186,7 +186,7 @@ function buildReminderEmailHtml($npa, $name, $daysLeft) {
     $bilikUrl = 'https://pemiluiagi.web.id/bilik.html';
     $claimUrl = 'https://pemiluiagi.web.id/claim.html' . ($npa ? '?npa=' . urlencode($npa) : '');
     $gCalUrl = buildGoogleCalendarUrl($npa, $name);
-    $icsUrl = 'https://pemiluiagi.web.id/api/vote_sync.php?action=calendar_ics&npa=' . urlencode($npa);
+    $icsUrl = 'https://pemiluiagi.web.id/api/vote_sync.php?action=calendar_auto&npa=' . urlencode($npa);
     
     // Status text & urgency
     if ($daysLeft <= 1) {
