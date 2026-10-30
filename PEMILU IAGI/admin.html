@@ -5629,7 +5629,7 @@
           <div id="desktop-auth-step2" style="display: none; text-align: left;">
             <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 14px;">
               <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Verifikasi Masuk Panitia (2FA Multi-Factor)</div>
-              <div id="desktop-step2-email-label" style="font-size: 0.85rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono); margin-top: 2px;">cingire687@gmail.com</div>
+              <div id="desktop-step2-email-label" style="font-size: 0.85rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono); margin-top: 2px;">admin@iagi.or.id</div>
             </div>
 
             <!-- 2FA Selector Tabs: WhatsApp (Fonnte) vs Email -->
@@ -5816,10 +5816,10 @@
       <!-- Authenticated Admin Profile Card -->
       <div class="sidebar-admin-profile" id="desktop-admin-profile">
         <div class="admin-profile-header">
-          <div class="admin-avatar-initials" id="sidebar-admin-avatar">WA</div>
+          <div class="admin-avatar-initials" id="sidebar-admin-avatar">AD</div>
           <div class="admin-info-text">
-            <div class="admin-info-name" id="desktop-admin-name">WAGYUA%</div>
-            <div class="admin-info-role">Admin Teknis</div>
+            <div class="admin-info-name" id="desktop-admin-name">Administrator</div>
+            <div class="admin-info-role" id="desktop-admin-role">Petugas KPKU</div>
           </div>
         </div>
         <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
@@ -6304,7 +6304,7 @@
                 <td style="padding: 9px 12px; font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem; white-space: nowrap;">29 Okt 2026, 07:48:12 WIB</td>
                 <td style="padding: 9px 12px;"><span style="display: inline-block; background: rgba(59, 130, 246, 0.15); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;">ADMIN_LOGIN_SUCCESS</span></td>
                 <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">114.125.10.22</td>
-                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Sesi Admin Terverifikasi (cingire687@gmail.com - Admin Teknis KPKU)</td>
+                <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">Sesi Admin Terverifikasi (Admin Teknis KPKU)</td>
                 <td style="padding: 9px 12px; text-align: center;"><span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">0 MUTASI (ASLI)</span></td>
               </tr>
               <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='transparent'">
@@ -8742,7 +8742,7 @@
       </div>
     </div>
 
-    <!-- ================= MODAL: OTORISASI AKSES FITUR OLEH SUPER ADMIN (M. ADDIANSYAH) ================= -->
+    <!-- ================= MODAL: OTORISASI AKSES FITUR DUAL-CONTROL ================= -->
     <div id="modal-super-admin-permission" class="admin-modal-backdrop" style="display: none !important; z-index: 10050;">
       <div class="admin-modal-dialog" style="max-width: 530px; width: 92%; background: #021612; border: 1.5px solid rgba(245, 186, 66, 0.45); border-radius: 20px; padding: 32px 26px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.85); position: relative;">
         
@@ -8755,7 +8755,7 @@
           Otorisasi Super Admin Diperlukan
         </h3>
         <div style="font-size: 0.74rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 18px;">
-          Wewenang Eksklusif: M. Addiansyah
+          Wewenang Eksklusif: Pejabat Otoritas KPKU
         </div>
 
         <div style="background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 16px; text-align: left; margin-bottom: 20px;">
@@ -8767,11 +8767,11 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
             <div>
               <span style="color: #64748B; display: block; margin-bottom: 2px;">Pemohon:</span>
-              <strong id="perm-modal-requester" style="color: #CBD5E1;">WAGYUA% (Admin Teknis)</strong>
+              <strong id="perm-modal-requester" style="color: #CBD5E1;">Operator Sesi</strong>
             </div>
             <div>
-              <span style="color: #64748B; display: block; margin-bottom: 2px;">Pemberi Izin Eksklusif:</span>
-              <strong style="color: #10B981;">M. Addiansyah (Ketua Panitia)</strong>
+              <span style="color: #64748B; display: block; margin-bottom: 2px;">Pemberi Otorisasi:</span>
+              <strong style="color: #10B981;">Otoritas Terdaftar (Dual-Control)</strong>
             </div>
           </div>
         </div>
@@ -8779,7 +8779,7 @@
         <!-- Dynamic Status Container -->
         <div id="perm-modal-status-container" style="margin-bottom: 20px;">
           <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: 10px; padding: 12px 14px; font-size: 0.8rem; color: #FDE68A; line-height: 1.5; text-align: left;">
-            💡 Sesuai regulasi keamanan pleno, fitur ini hanya dapat dijalankan setelah <strong>M. Addiansyah</strong> memberikan persetujuan resmi melalui email konfirmasi.
+            💡 Sesuai regulasi keamanan pleno, fitur ini memerlukan verifikasi otorisasi bertingkat sebelum dapat dijalankan.
           </div>
         </div>
 
@@ -8789,22 +8789,22 @@
             Batal
           </button>
           <button type="button" id="btn-perm-modal-send" onclick="sendSuperAdminAccessRequest()" class="btn btn-gold" style="height: 40px; padding: 0 20px; font-size: 0.84rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
-            <span>📧</span>
-            <span>Kirim Notifikasi Izin ke M. Addiansyah</span>
+            <span>🛡️</span>
+            <span>Kirim Permohonan Otorisasi</span>
           </button>
         </div>
 
       </div>
     </div>
 
-    <!-- ================= FLOATING APPROVAL NOTIFICATION UNTUK M. ADDIANSYAH ================= -->
+    <!-- ================= FLOATING APPROVAL NOTIFICATION ================= -->
     <div id="toast-super-admin-approval" style="display: none; position: fixed; bottom: 24px; right: 24px; z-index: 10060; max-width: 420px; width: 90%; background: #021612; border: 1.5px solid #F5BA42; border-radius: 16px; padding: 18px 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); animation: alertSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
       <div style="display: flex; align-items: flex-start; gap: 12px;">
         <div style="font-size: 26px; line-height: 1;">🔔</div>
         <div style="flex: 1;">
           <div style="font-size: 0.72rem; font-weight: 800; color: #F5BA42; text-transform: uppercase; letter-spacing: 0.06em;">Permohonan Akses Masuk</div>
           <div id="toast-approval-desc" style="font-size: 0.84rem; font-weight: 700; color: #FFFFFF; margin: 4px 0 10px; line-height: 1.35;">
-            WAGYUA% meminta izin membuka fitur...
+            Permohonan otorisasi akses fitur masuk...
           </div>
           <div style="display: flex; gap: 8px;">
             <button type="button" id="btn-toast-approve" class="btn" style="flex: 1; padding: 8px 10px; font-size: 0.78rem; font-weight: 800; background: #10B981; color: #FFFFFF; border: none; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
@@ -8827,377 +8827,9 @@
   <!-- Include Core Logic Scripts -->
   <script src="js/data.js?v=5.1.0"></script>
   <script src="js/storage.js?v=5.1.0"></script>
+  <script src="js/guard.js?v=5.2.0"></script>
 
   <script>
-    // =========================================================================
-    // PROTOKOL OTORISASI EKSKLUSIF SUPER ADMIN (M. ADDIANSYAH) & GUARD SYSTEM
-    // Fitur sensitif hanya bisa diakses langsung oleh M. Addiansyah.
-    // Jika WAGYUA% ingin mengakses -> Wajib minta izin via Notifikasi Email resmi.
-    // =========================================================================
-    window.currentPermRequest = null;
-    window.permPollingInterval = null;
-    window.approvedFeatureSession = {};
-
-    window.isCurrentSuperAdmin = function() {
-      const session = (window.pemiluStorage && typeof window.pemiluStorage.getAdminSession === 'function')
-        ? window.pemiluStorage.getAdminSession()
-        : null;
-      if (!session || !session.email) return false;
-      const email = String(session.email).trim().toLowerCase();
-      const name = String(session.name || '').trim().toLowerCase();
-      return email === 'addiansyah@unsri.ac.id' || name === 'm. addiansyah' || session.role === 'Ketua Panitia';
-    };
-
-    window.guardSuperAdminFeature = function(featureKey, featureName, callbackAction, extraInfo = '') {
-      // 1. Jika yang login adalah M. Addiansyah -> Akses Penuh Langsung Tanpa Hambatan!
-      if (window.isCurrentSuperAdmin()) {
-        if (typeof callbackAction === 'function') callbackAction();
-        return;
-      }
-
-      // 2. Jika fitur sudah di-approve oleh M. Addiansyah dalam sesi aktif (berlaku 15 menit) -> Langsung lolos!
-      const app = window.approvedFeatureSession[featureKey];
-      const validUntil = (typeof app === 'object' && app) ? app.until : (app || 0);
-      if (validUntil > Date.now()) {
-        if (typeof callbackAction === 'function') callbackAction();
-        return;
-      }
-
-      // 3. Jika yang login adalah WAGYUA% (atau admin selain M. Addiansyah) -> Tampilkan Modal Permintaan Izin
-      window.openSuperAdminPermModal(featureKey, featureName, callbackAction, extraInfo);
-    };
-
-    window.openSuperAdminPermModal = function(featureKey, featureName, callbackAction, extraInfo = '') {
-      if (window.permPollingInterval) {
-        clearInterval(window.permPollingInterval);
-        window.permPollingInterval = null;
-      }
-
-      window.currentPermRequest = {
-        featureKey,
-        featureName,
-        callbackAction,
-        extraInfo,
-        requestId: null
-      };
-
-      const modal = document.getElementById('modal-super-admin-permission');
-      if (!modal) {
-        alert(`Fitur "${featureName}" merupakan wewenang eksklusif Super Admin (M. Addiansyah).`);
-        return;
-      }
-
-      document.getElementById('perm-modal-feature-name').innerText = featureName;
-      const requester = (window.pemiluStorage && window.pemiluStorage.getAdminSession) ? window.pemiluStorage.getAdminSession() : null;
-      document.getElementById('perm-modal-requester').innerText = (requester && requester.name) ? `${requester.name} (Admin Teknis)` : 'WAGYUA% (Admin Teknis)';
-
-      document.getElementById('perm-modal-status-container').innerHTML = `
-        <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: 12px; padding: 14px 16px; font-size: 0.82rem; color: #FDE68A; line-height: 1.5; text-align: left;">
-          💡 Fitur ini memerlukan otorisasi resmi. Klik tombol di bawah untuk mengirimkan notifikasi persetujuan ke email <strong>addiansyah@unsri.ac.id</strong>. M. Addiansyah akan menerima opsi <strong>IZINKAN</strong> atau <strong>TOLAK</strong>.
-        </div>
-      `;
-
-      document.getElementById('perm-modal-actions').innerHTML = `
-        <button type="button" class="btn" onclick="closeSuperAdminPermModal()" style="height: 40px; padding: 0 18px; font-size: 0.82rem; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; border-radius: 10px; cursor: pointer;">
-          Batal
-        </button>
-        <button type="button" id="btn-perm-modal-send" onclick="sendSuperAdminAccessRequest()" class="btn btn-gold" style="height: 40px; padding: 0 20px; font-size: 0.84rem; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
-          <span>📧</span>
-          <span>Kirim Notifikasi Izin ke M. Addiansyah</span>
-        </button>
-      `;
-
-      modal.style.setProperty('display', 'flex', 'important');
-    };
-
-    window.closeSuperAdminPermModal = function() {
-      if (window.permPollingInterval) {
-        clearInterval(window.permPollingInterval);
-        window.permPollingInterval = null;
-      }
-      const modal = document.getElementById('modal-super-admin-permission');
-      if (modal) modal.style.setProperty('display', 'none', 'important');
-      window.currentPermRequest = null;
-    };
-
-    window.sendSuperAdminAccessRequest = async function() {
-      if (!window.currentPermRequest) return;
-      const req = window.currentPermRequest;
-
-      const btnSend = document.getElementById('btn-perm-modal-send');
-      if (btnSend) {
-        btnSend.disabled = true;
-        btnSend.innerHTML = `<span>⏳</span><span>Mengirim Email...</span>`;
-      }
-
-      const requester = (window.pemiluStorage && window.pemiluStorage.getAdminSession) ? window.pemiluStorage.getAdminSession() : {};
-
-      try {
-        const token = sessionStorage.getItem('kpku_admin_token') || '';
-        const res = await fetch('api/vote_sync.php?action=request_feature_access', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
-            'X-Admin-Token': token
-          },
-          body: JSON.stringify({
-            session_token: token,
-            requester_name: requester.name || 'WAGYUA%',
-            requester_email: requester.email || 'cingire687@gmail.com',
-            feature_key: req.featureKey,
-            feature_name: req.featureName,
-            extra_info: req.extraInfo || ''
-          })
-        });
-        const data = await res.json();
-        if (data.success && data.request_id) {
-          req.requestId = data.request_id;
-          startPermWaitingState(data.request_id, req.featureName);
-        } else {
-          alert('Gagal mengirim permohonan: ' + (data.error || 'Terjadi kesalahan sistem.'));
-          if (btnSend) {
-            btnSend.disabled = false;
-            btnSend.innerHTML = `<span>📧</span><span>Kirim Ulang Notifikasi</span>`;
-          }
-        }
-      } catch (e) {
-        console.error(e);
-        const fakeId = 'REQ-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        req.requestId = fakeId;
-        startPermWaitingState(fakeId, req.featureName);
-      }
-    };
-
-    function startPermWaitingState(requestId, featureName) {
-      const container = document.getElementById('perm-modal-status-container');
-      if (container) {
-        container.innerHTML = `
-          <div style="background: rgba(16, 185, 129, 0.08); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 18px; text-align: center;">
-            <div style="display: inline-flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 800; color: #6EE7B7; margin-bottom: 8px;">
-              <span style="display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #10B981; box-shadow: 0 0 10px #10B981;"></span>
-              <span>NOTIFIKASI TERKIRIM KE M. ADDIANSYAH</span>
-            </div>
-            <p style="font-size: 0.82rem; color: #CBD5E1; margin: 0 0 12px; line-height: 1.55;">
-              Email persetujuan resmi beserta tombol <strong>[IZINKAN]</strong> dan <strong>[TOLAK]</strong> telah dikirim ke <strong>addiansyah@unsri.ac.id</strong>.<br>
-              Menunggu keputusan otorisasi dari <strong>M. Addiansyah</strong>...
-            </p>
-            <div style="font-family: var(--font-mono); font-size: 0.74rem; color: #94A3B8; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 6px; display: inline-block;">
-              ID Permohonan: <strong style="color: #F5BA42;">${requestId}</strong>
-            </div>
-          </div>
-        `;
-      }
-
-      document.getElementById('perm-modal-actions').innerHTML = `
-        <button type="button" class="btn" onclick="closeSuperAdminPermModal()" style="height: 38px; padding: 0 16px; font-size: 0.8rem; font-weight: 600; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #CBD5E1; border-radius: 8px; cursor: pointer;">
-          Batalkan
-        </button>
-        <button type="button" onclick="checkCurrentPermStatus()" class="btn" style="height: 38px; padding: 0 18px; font-size: 0.8rem; font-weight: 700; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.4); color: #FDE68A; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-          <span>🔄</span>
-          <span>Periksa Status Sekarang</span>
-        </button>
-      `;
-
-      // Polling setiap 3 detik
-      if (window.permPollingInterval) clearInterval(window.permPollingInterval);
-      window.permPollingInterval = setInterval(() => {
-        checkCurrentPermStatus();
-      }, 3000);
-    }
-
-    window.checkCurrentPermStatus = async function() {
-      const container = document.getElementById('perm-modal-status-container');
-      const btnCheck = document.querySelector('#perm-modal-actions button[onclick*="checkCurrentPermStatus"]');
-
-      // Ambil requestId dari memori atau parse otomatis dari teks modal jika ter-reset
-      let reqId = (window.currentPermRequest && window.currentPermRequest.requestId) ? window.currentPermRequest.requestId : null;
-      let featureKey = (window.currentPermRequest && window.currentPermRequest.featureKey) ? window.currentPermRequest.featureKey : 'unseal_vault';
-      let cbAction = (window.currentPermRequest && window.currentPermRequest.callbackAction) ? window.currentPermRequest.callbackAction : null;
-
-      if (!reqId && container) {
-        const text = container.innerText || '';
-        const match = text.match(/REQ-[A-Z0-9]+/i);
-        if (match) {
-          reqId = match[0].toUpperCase();
-          if (!window.currentPermRequest) {
-            window.currentPermRequest = { requestId: reqId, featureKey: 'unseal_vault' };
-          } else {
-            window.currentPermRequest.requestId = reqId;
-          }
-        }
-      }
-
-      if (!reqId) return;
-
-      if (btnCheck) {
-        btnCheck.disabled = true;
-        btnCheck.innerHTML = `<span>⏳</span><span>Memeriksa Izin...</span>`;
-      }
-
-      try {
-        const cacheBuster = Date.now();
-        const res = await fetch(`api/vote_sync.php?action=check_feature_access&req_id=${encodeURIComponent(reqId)}&_t=${cacheBuster}`, {
-          cache: 'no-store'
-        });
-        const data = await res.json();
-
-        if (btnCheck) {
-          btnCheck.disabled = false;
-          btnCheck.innerHTML = `<span>🔄</span><span>Periksa Status Sekarang</span>`;
-        }
-
-        if (data.success && data.status) {
-          if (data.status === 'APPROVED') {
-            if (window.permPollingInterval) clearInterval(window.permPollingInterval);
-            showPermDecisionUI(true, data.decided_by || 'M. Addiansyah');
-            
-            // Simpan izin aktif selama 15 menit
-            window.approvedFeatureSession = window.approvedFeatureSession || {};
-            window.approvedFeatureSession[data.feature_key || featureKey] = {
-              until: Date.now() + (15 * 60 * 1000),
-              reqId: reqId
-            };
-            try {
-              localStorage.setItem('kpku_last_approved_unseal_req_id', reqId);
-            } catch (e) {}
-
-            setTimeout(() => {
-              closeSuperAdminPermModal();
-              if (typeof cbAction === 'function') {
-                cbAction();
-              } else if (featureKey === 'unseal_vault' && typeof window.openUnsealVaultModal === 'function') {
-                window.openUnsealVaultModal();
-              }
-            }, 1200);
-          } else if (data.status === 'REJECTED') {
-            if (window.permPollingInterval) clearInterval(window.permPollingInterval);
-            showPermDecisionUI(false, data.decided_by || 'M. Addiansyah');
-          } else if (data.status === 'PENDING') {
-            if (container) {
-              const notice = document.getElementById('perm-pending-notice');
-              const timeStr = new Date().toLocaleTimeString('id-ID');
-              if (!notice) {
-                const el = document.createElement('div');
-                el.id = 'perm-pending-notice';
-                el.style = 'margin-top: 10px; font-size: 0.74rem; color: #FCD34D;';
-                el.innerHTML = `🕒 <em>Status server: Belum disetujui / Menunggu (Dicek pukul ${timeStr})</em>`;
-                container.appendChild(el);
-              } else {
-                notice.innerHTML = `🕒 <em>Status server: Belum disetujui / Menunggu (Dicek pukul ${timeStr})</em>`;
-              }
-            }
-          } else if (data.status === 'EXPIRED') {
-            if (window.permPollingInterval) clearInterval(window.permPollingInterval);
-            if (container) {
-              container.innerHTML = `
-                <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid #EF4444; border-radius: 12px; padding: 14px; text-align: center; color: #FCA5A5; font-size: 0.82rem;">
-                  ⏳ Permohonan telah kedaluwarsa (30 menit). Silakan ajukan ulang jika masih diperlukan.
-                </div>
-              `;
-            }
-          }
-        }
-      } catch (e) {
-        console.error(e);
-        if (btnCheck) {
-          btnCheck.disabled = false;
-          btnCheck.innerHTML = `<span>🔄</span><span>Periksa Status Sekarang</span>`;
-        }
-      }
-    };
-
-    function showPermDecisionUI(isApproved, deciderName) {
-      const container = document.getElementById('perm-modal-status-container');
-      if (!container) return;
-
-      if (isApproved) {
-        container.innerHTML = `
-          <div style="background: rgba(16, 185, 129, 0.15); border: 1.5px solid #10B981; border-radius: 14px; padding: 18px; text-align: center; animation: alertSlideIn 0.3s ease;">
-            <div style="font-size: 34px; margin-bottom: 6px;">✅</div>
-            <div style="font-size: 0.95rem; font-weight: 800; color: #6EE7B7; margin-bottom: 4px;">AKSES DIIZINKAN!</div>
-            <div style="font-size: 0.82rem; color: #FFFFFF; line-height: 1.5;">
-              <strong>${deciderName}</strong> telah menyetujui permohonan akses Anda.<br>
-              <span style="color: #A7F3D0; font-weight: 700;">Membuka fitur sekarang...</span>
-            </div>
-          </div>
-        `;
-        document.getElementById('perm-modal-actions').innerHTML = '';
-      } else {
-        container.innerHTML = `
-          <div style="background: rgba(239, 68, 68, 0.15); border: 1.5px solid #EF4444; border-radius: 14px; padding: 18px; text-align: center; animation: alertSlideIn 0.3s ease;">
-            <div style="font-size: 34px; margin-bottom: 6px;">⛔</div>
-            <div style="font-size: 0.95rem; font-weight: 800; color: #FCA5A5; margin-bottom: 4px;">AKSES DITOLAK</div>
-            <div style="font-size: 0.82rem; color: #CBD5E1; line-height: 1.5;">
-              Permohonan akses fitur ini telah <strong>DITOLAK</strong> oleh <strong>${deciderName}</strong>.<br>
-              Fitur tetap terkunci demi integritas sistem.
-            </div>
-          </div>
-        `;
-        document.getElementById('perm-modal-actions').innerHTML = `
-          <button type="button" class="btn" onclick="closeSuperAdminPermModal()" style="height: 38px; padding: 0 20px; font-size: 0.82rem; font-weight: 700; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #FCA5A5; border-radius: 8px; cursor: pointer;">
-            Tutup
-          </button>
-        `;
-      }
-    }
-
-    // Listener Live Dashboard untuk M. Addiansyah: Floating Approval Notification
-    setInterval(async () => {
-      if (!window.isCurrentSuperAdmin()) return;
-      try {
-        const token = sessionStorage.getItem('kpku_admin_token') || '';
-        const res = await fetch('api/vote_sync.php?action=get_pending_access_requests', {
-          headers: { 'Authorization': 'Bearer ' + token, 'X-Admin-Token': token }
-        });
-        const data = await res.json();
-        if (data.success && Array.isArray(data.pending_requests) && data.pending_requests.length > 0) {
-          const topReq = data.pending_requests[0];
-          const toast = document.getElementById('toast-super-admin-approval');
-          const desc = document.getElementById('toast-approval-desc');
-          const btnApprove = document.getElementById('btn-toast-approve');
-          const btnReject = document.getElementById('btn-toast-reject');
-
-          if (toast && desc && btnApprove && btnReject) {
-            desc.innerHTML = `<strong>${topReq.requester_name}</strong> meminta izin membuka:<br><span style="color:#F5BA42; font-weight:800;">${topReq.feature_name}</span>`;
-            
-            btnApprove.onclick = async () => {
-              btnApprove.disabled = true;
-              await respondDirectApproval(topReq.id, 'approve');
-              toast.style.display = 'none';
-              btnApprove.disabled = false;
-            };
-            btnReject.onclick = async () => {
-              btnReject.disabled = true;
-              await respondDirectApproval(topReq.id, 'reject');
-              toast.style.display = 'none';
-              btnReject.disabled = false;
-            };
-
-            toast.style.display = 'block';
-          }
-        } else {
-          const toast = document.getElementById('toast-super-admin-approval');
-          if (toast && toast.style.display !== 'none') toast.style.display = 'none';
-        }
-      } catch (e) {}
-    }, 5000);
-
-    async function respondDirectApproval(reqId, decision) {
-      try {
-        const token = sessionStorage.getItem('kpku_admin_token') || '';
-        await fetch('api/vote_sync.php?action=admin_approve_access_direct', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
-            'X-Admin-Token': token
-          },
-          body: JSON.stringify({ req_id: reqId, decision: decision, session_token: token })
-        });
-      } catch (e) {}
-    }
-
     // =========================================================================
     // DUAL-KEY OTORITAS PLENO KPKU & CINEMATIC 10-0 COUNTDOWN
     // =========================================================================
@@ -9540,7 +9172,7 @@
       const nextState = typeof forceState === 'boolean' ? forceState : !currentSettings.isSealed;
 
       if (nextState === false) {
-        // Mau BUKA segel -> Wajib izin Super Admin (M. Addiansyah) jika yang mengakses WAGYUA%
+        // Dual-Control guard untuk membuka segel brankas pleno
         window.guardSuperAdminFeature('unseal_vault', 'Buka Segel Pleno Brankas Kriptografi', () => {
           window.openUnsealVaultModal();
         });
@@ -10178,7 +9810,7 @@
           lastUpdated: '22:25 WIB',
           messages: [
             { sender: 'user', text: 'Mohon konfirmasi apakah anggota Pengda Jawa Timur dengan NPA 02519 sudah bisa langsung klaim token malam ini?', time: '22:10 WIB' },
-            { sender: 'admin', adminName: 'WAGYUA% (Admin Teknis)', text: 'Yth. Dr. Rina, betul sekali. Data DPT Pengda Jawa Timur telah terverifikasi 100% aktif. Token dapat langsung diklaim mandiri melalui menu Klaim Token di portal pemilu.', time: '22:15 WIB' },
+            { sender: 'admin', adminName: 'Helpdesk & IT Support', text: 'Yth. Dr. Rina, betul sekali. Data DPT Pengda Jawa Timur telah terverifikasi 100% aktif. Token dapat langsung diklaim mandiri melalui menu Klaim Token di portal pemilu.', time: '22:15 WIB' },
             { sender: 'user', text: 'Baik terima kasih banyak infonya Pak Ketua!', time: '22:25 WIB' }
           ]
         },
@@ -14029,102 +13661,6 @@
       }
 
       function renderAdminUsersTable() {
-        // Direct safety purge of legacy dummy accounts from localStorage
-        try {
-          const raw = localStorage.getItem('pemilu_iagi_admin_accounts_v1');
-          let list = [];
-          if (raw) {
-            try { list = JSON.parse(raw); } catch(e) { list = []; }
-          }
-          if (!Array.isArray(list) || list.length === 0) {
-            if (window.pemiluStorage && typeof window.pemiluStorage.getAdminAccounts === 'function') {
-              list = window.pemiluStorage.getAdminAccounts();
-            }
-          }
-          if (Array.isArray(list)) {
-            const dummyEmails = ['admin.kpku@iagi.or.id', 'panitia@pemiluiagi.id', 'operator.dpt@iagi.or.id', 'it.pemilu@iagi.or.id'];
-            let cleaned = list.filter(a => 
-              !dummyEmails.includes(a.email) && 
-              a.name !== 'Dr. Ir. Hendra Saputra, M.T.' &&
-              a.name !== 'Sekretariat Panitia & Saksi Pleno' &&
-              a.name !== 'Ir. Bambang Triyono, M.Sc.' &&
-              a.name !== 'Tim IT & Cyber Security KPKU'
-            );
-
-            // Normalize M. Addiansyah as Ketua Panitia & Super Admin
-            let adminAddiansyah = cleaned.find(a => a.email === 'addiansyah@unsri.ac.id' || a.name === 'M. Addiansyah' || a.phone === '082255555930' || a.id === 'adm-02');
-            if (!adminAddiansyah) {
-              adminAddiansyah = {
-                id: "adm-02",
-                name: "M. Addiansyah",
-                title: "SUPER ADMIN",
-                email: "addiansyah@unsri.ac.id",
-                phone: "082255555930",
-                npa: "00880",
-                role: "Ketua Panitia",
-                status: "AKTIF",
-                twoFactor: true,
-                createdAt: "2026-01-20T08:00:00Z",
-                lastLogin: null
-              };
-              cleaned.push(adminAddiansyah);
-            } else {
-              adminAddiansyah.name = "M. Addiansyah";
-              adminAddiansyah.title = "SUPER ADMIN";
-              adminAddiansyah.email = "addiansyah@unsri.ac.id";
-              adminAddiansyah.phone = "082255555930";
-              adminAddiansyah.npa = "00880";
-              adminAddiansyah.role = "Ketua Panitia";
-              adminAddiansyah.status = "AKTIF";
-              adminAddiansyah.twoFactor = true;
-            }
-
-            // Normalize WAGYUA% as Admin Teknis (Admin Biasa)
-            let wagyuaAcc = cleaned.find(a => a.email === 'cingire687@gmail.com' || a.name === 'WAGYUA%' || a.npa === '31052' || a.id === 'adm-01');
-            if (!wagyuaAcc) {
-              wagyuaAcc = {
-                id: "adm-01",
-                name: "WAGYUA%",
-                title: "Admin Teknis",
-                email: "cingire687@gmail.com",
-                phone: "085729456481",
-                npa: "31052",
-                role: "Tim IT & Teknis",
-                status: "AKTIF",
-                twoFactor: true,
-                createdAt: "2026-01-15T08:00:00Z",
-                lastLogin: "2026-10-28T17:02:00Z"
-              };
-              cleaned.push(wagyuaAcc);
-            } else {
-              wagyuaAcc.name = "WAGYUA%";
-              wagyuaAcc.title = "Admin Teknis";
-              wagyuaAcc.role = "Tim IT & Teknis";
-              wagyuaAcc.email = "cingire687@gmail.com";
-              wagyuaAcc.phone = "085729456481";
-              wagyuaAcc.npa = "31052";
-              wagyuaAcc.status = "AKTIF";
-            }
-
-            // Clean security artifacts
-            cleaned.forEach(acc => {
-              delete acc.password;
-              delete acc.securityPin;
-            });
-
-            // Ensure M. Addiansyah is first
-            cleaned.sort((a, b) => {
-              if (a.email === 'addiansyah@unsri.ac.id') return -1;
-              if (b.email === 'addiansyah@unsri.ac.id') return 1;
-              return 0;
-            });
-
-            localStorage.setItem('pemilu_iagi_admin_accounts_v1', JSON.stringify(cleaned));
-          }
-        } catch (e) {
-          console.error(e);
-        }
-
         if (!window.pemiluStorage || !window.pemiluStorage.getAdminAccounts) return;
         const accounts = window.pemiluStorage.getAdminAccounts();
         const searchInput = document.getElementById('admin-search-input');
@@ -14250,7 +13786,7 @@
             }
           }
 
-          const isPrimaryRoot = a.email === 'addiansyah@unsri.ac.id' || a.name === 'M. Addiansyah' || a.id === 'adm-02';
+          const isPrimaryRoot = a.id === 'adm-02' || a.role === 'Ketua Panitia' || Boolean(a.is_root);
 
           return `
             <tr>
@@ -14323,7 +13859,7 @@
                     <span>🔑 Kredensial</span>
                   </button>
                   ${isPrimaryRoot ? `
-                    <span title="Akun Super Admin Utama (M. Addiansyah) terkunci permanen oleh sistem dan tidak dapat dihapus" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 5px 9px; border-radius: 6px; border: 1px solid rgba(245, 186, 66, 0.45); color: #FDE68A; background: rgba(245, 186, 66, 0.15); font-weight: 800;">
+                    <span title="Akun Administrator Utama dilindungi permanen oleh sistem dan tidak dapat dihapus" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; padding: 5px 9px; border-radius: 6px; border: 1px solid rgba(245, 186, 66, 0.45); color: #FDE68A; background: rgba(245, 186, 66, 0.15); font-weight: 800;">
                       <span>🔒</span>
                       <span>Utama</span>
                     </span>
@@ -14392,7 +13928,7 @@
         document.getElementById('manage-admin-pin').value = target.securityPin || '';
         document.getElementById('manage-admin-2fa').checked = target.twoFactor !== false;
 
-        if (target.email === 'addiansyah@unsri.ac.id' || target.name === 'M. Addiansyah' || target.id === 'adm-02') {
+        if (target.id === 'adm-02' || target.role === 'Ketua Panitia' || Boolean(target.is_root)) {
           document.getElementById('manage-admin-email').disabled = true;
           document.getElementById('manage-admin-status').disabled = true;
         } else {
@@ -14621,8 +14157,8 @@
         const target = accounts.find(a => a.id === id);
         if (!target) return;
 
-        if (target.email === 'addiansyah@unsri.ac.id' || target.name === 'M. Addiansyah' || target.id === 'adm-02') {
-          alert('Akun Super Admin Utama (M. Addiansyah) terkunci permanen oleh sistem dan tidak dapat dihapus!');
+        if (target.id === 'adm-02' || target.role === 'Ketua Panitia' || Boolean(target.is_root)) {
+          alert('Akun Administrator Utama terkunci permanen oleh regulasi sistem dan tidak dapat dihapus!');
           return;
         }
 

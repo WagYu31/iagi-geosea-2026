@@ -32298,34 +32298,7 @@ const INITIAL_DPT = [
     "voted_at": null
   }
 ];
-const ADMIN_ACCOUNTS = [
-  {
-    id: "adm-02",
-    name: "M. Addiansyah",
-    title: "SUPER ADMIN",
-    email: "addiansyah@unsri.ac.id",
-    phone: "082255555930",
-    npa: "00880",
-    role: "Ketua Panitia",
-    status: "AKTIF",
-    twoFactor: true,
-    createdAt: "2026-01-20T08:00:00Z",
-    lastLogin: null
-  },
-  {
-    id: "adm-01",
-    name: "WAGYUA%",
-    title: "Admin Teknis",
-    email: "cingire687@gmail.com",
-    phone: "085729456481",
-    npa: "31052",
-    role: "Tim IT & Teknis",
-    status: "AKTIF",
-    twoFactor: true,
-    createdAt: "2026-01-15T08:00:00Z",
-    lastLogin: "2026-10-28T17:02:00Z"
-  }
-];
+const ADMIN_ACCOUNTS = [];
 
 // Attach explicitly to window for cross-script safety
 window.ELECTION_CONFIG = ELECTION_CONFIG;

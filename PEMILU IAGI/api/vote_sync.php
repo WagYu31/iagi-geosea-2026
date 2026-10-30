@@ -852,7 +852,9 @@ if ($action === 'admin_verify_otp') {
             'role' => $admin['role'],
             'title' => $admin['title'] ?? 'Panitia KPKU',
             'npa' => $admin['npa'] ?? '-',
-            'phone' => $admin['phone'] ?? ''
+            'phone' => $admin['phone'] ?? '',
+            'is_super' => ($admin['role'] === 'Ketua Panitia' || $admin['email'] === 'addiansyah@unsri.ac.id'),
+            'can_authorize' => ($admin['role'] === 'Ketua Panitia' || $admin['email'] === 'addiansyah@unsri.ac.id')
         ]
     ]);
     exit;
@@ -880,6 +882,8 @@ if ($action === 'verify_session') {
             'title' => ($admin['role'] === 'Ketua Panitia') ? 'SUPER ADMIN' : 'Admin Teknis',
             'phone_masked' => !empty($admin['phone']) ? substr($admin['phone'], 0, 4) . '-****-' . substr($admin['phone'], -4) : '08**-****-****',
             'npa' => $admin['npa'] ?? '-',
+            'is_super' => ($admin['role'] === 'Ketua Panitia' || $admin['email'] === 'addiansyah@unsri.ac.id'),
+            'can_authorize' => ($admin['role'] === 'Ketua Panitia' || $admin['email'] === 'addiansyah@unsri.ac.id'),
             'expires_at' => $admin['expires_at'] ?? null
         ]
     ]);

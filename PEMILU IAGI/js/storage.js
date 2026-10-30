@@ -1294,70 +1294,10 @@ class PemiluStorage {
             a.name !== 'Tim IT & Cyber Security KPKU'
           );
 
-          // Ensure M. Addiansyah (addiansyah@unsri.ac.id) exists as Super Admin & Ketua Panitia
-          const adminAddiansyah = filtered.find(a => a.email === 'addiansyah@unsri.ac.id' || a.name === 'ADMIN' || a.name === 'M. Addiansyah' || a.phone === '082255555930' || a.id === 'adm-02');
-          if (!adminAddiansyah) {
-            filtered.unshift({
-              id: "adm-02",
-              name: "M. Addiansyah",
-              title: "SUPER ADMIN",
-              email: "addiansyah@unsri.ac.id",
-              phone: "0822-5555-5930",
-              npa: "00880",
-              role: "Ketua Panitia",
-              status: "AKTIF",
-              twoFactor: true,
-              createdAt: "2026-01-20T08:00:00Z",
-              lastLogin: null
-            });
-          } else {
-            adminAddiansyah.name = "M. Addiansyah";
-            adminAddiansyah.title = "SUPER ADMIN";
-            adminAddiansyah.email = "addiansyah@unsri.ac.id";
-            adminAddiansyah.phone = "0822-5555-5930";
-            adminAddiansyah.npa = "00880";
-            adminAddiansyah.role = "Ketua Panitia";
-            adminAddiansyah.status = "AKTIF";
-            adminAddiansyah.twoFactor = true;
-          }
-
-          // Ensure WAGYUA% exists as admin teknis (Admin Biasa)
-          const wagyuaExisting = filtered.find(a => a.email === 'cingire687@gmail.com' || a.name === 'WAGYUA%' || a.npa === '31052' || a.id === 'adm-01');
-          if (!wagyuaExisting) {
-            filtered.push({
-              id: "adm-01",
-              name: "WAGYUA%",
-              title: "Admin Teknis",
-              email: "cingire687@gmail.com",
-              phone: "0857-2945-6481",
-              npa: "31052",
-              role: "Tim IT & Teknis",
-              status: "AKTIF",
-              twoFactor: true,
-              createdAt: "2026-01-15T08:00:00Z",
-              lastLogin: "2026-10-28T17:02:00Z"
-            });
-          } else {
-            wagyuaExisting.name = "WAGYUA%";
-            wagyuaExisting.role = "Tim IT & Teknis";
-            wagyuaExisting.title = "Admin Teknis";
-            wagyuaExisting.email = "cingire687@gmail.com";
-            wagyuaExisting.phone = "0857-2945-6481";
-            wagyuaExisting.npa = "31052";
-            wagyuaExisting.status = "AKTIF";
-          }
-
           // Clean all passwords and securityPin from client storage
           filtered.forEach(acc => {
             delete acc.password;
             delete acc.securityPin;
-          });
-
-          // Sort so M. Addiansyah is always first
-          filtered.sort((a, b) => {
-            if (a.email === 'addiansyah@unsri.ac.id') return -1;
-            if (b.email === 'addiansyah@unsri.ac.id') return 1;
-            return 0;
           });
 
           this.saveAdminAccounts(filtered);
@@ -1368,44 +1308,17 @@ class PemiluStorage {
       console.error('Error reading admin accounts from storage:', e);
     }
 
-    // Default seed from window.ADMIN_ACCOUNTS or fallback (Only M. Addiansyah & WAGYUA%)
     const seeds = (typeof window !== 'undefined' && Array.isArray(window.ADMIN_ACCOUNTS) && window.ADMIN_ACCOUNTS.length > 0)
       ? window.ADMIN_ACCOUNTS
-      : [
-          {
-            id: "adm-02",
-            name: "M. Addiansyah",
-            title: "SUPER ADMIN",
-            email: "addiansyah@unsri.ac.id",
-            phone: "0822-5555-5930",
-            npa: "00880",
-            role: "Ketua Panitia",
-            status: "AKTIF",
-            twoFactor: true,
-            createdAt: "2026-01-20T08:00:00Z",
-            lastLogin: null
-          },
-          {
-            id: "adm-01",
-            name: "WAGYUA%",
-            title: "Admin Teknis",
-            email: "cingire687@gmail.com",
-            phone: "0857-2945-6481",
-            npa: "31052",
-            role: "Tim IT & Teknis",
-            status: "AKTIF",
-            twoFactor: true,
-            createdAt: "2026-01-15T08:00:00Z",
-            lastLogin: "2026-10-28T17:02:00Z"
-          }
-        ];
+      : [];
 
-    seeds.forEach(acc => {
-      delete acc.password;
-      delete acc.securityPin;
-    });
-
-    this.saveAdminAccounts(seeds);
+    if (seeds.length > 0) {
+      seeds.forEach(acc => {
+        delete acc.password;
+        delete acc.securityPin;
+      });
+      this.saveAdminAccounts(seeds);
+    }
     return seeds;
   }
 
@@ -1506,13 +1419,13 @@ class PemiluStorage {
       updatedFields.email = cleanEmail;
     }
 
-    // Protect Super Admin email & status change
-    const isRootAccount = accounts[idx].email === 'addiansyah@unsri.ac.id' || accounts[idx].name === 'M. Addiansyah' || accounts[idx].id === 'adm-02';
-    if (isRootAccount && updatedFields.email && updatedFields.email !== 'addiansyah@unsri.ac.id') {
-      return { success: false, error: 'Email akun Super Admin Utama (M. Addiansyah) dilindungi dan tidak dapat diubah demi integritas sistem.' };
+    // Protect Root Admin email & status change
+    const isRootAccount = accounts[idx].id === 'adm-02' || Boolean(accounts[idx].is_root) || accounts[idx].role === 'Ketua Panitia';
+    if (isRootAccount && updatedFields.email && updatedFields.email !== accounts[idx].email) {
+      return { success: false, error: 'Email akun Administrator Utama dilindungi dan tidak dapat diubah demi integritas sistem.' };
     }
     if (isRootAccount && updatedFields.status && updatedFields.status !== 'AKTIF') {
-      return { success: false, error: 'Status akun Super Admin Utama (M. Addiansyah) terkunci AKTIF dan tidak dapat dinonaktifkan.' };
+      return { success: false, error: 'Status akun Administrator Utama terkunci AKTIF dan tidak dapat dinonaktifkan.' };
     }
 
     accounts[idx] = {
@@ -1522,7 +1435,7 @@ class PemiluStorage {
     };
 
     this.saveAdminAccounts(accounts);
-    this.addAuditLog('ADMIN_UPDATED', `Akun admin diperbarui: ${accounts[idx].name} (${accounts[idx].email})`);
+    this.addAuditLog('ADMIN_UPDATED', `Akun admin diperbarui: ${accounts[idx].name}`);
     return { success: true, admin: accounts[idx] };
   }
 
@@ -1533,9 +1446,9 @@ class PemiluStorage {
       return { success: false, error: 'Akun admin tidak ditemukan.' };
     }
 
-    // Protection 1: cannot delete primary super admin (M. Addiansyah)
-    if (target.email === 'addiansyah@unsri.ac.id' || target.name === 'M. Addiansyah' || target.id === 'adm-02') {
-      return { success: false, error: 'Akun Super Admin Utama (M. Addiansyah) terkunci permanen oleh sistem dan tidak dapat dihapus!' };
+    // Protection 1: cannot delete primary root account
+    if (target.id === 'adm-02' || Boolean(target.is_root) || target.role === 'Ketua Panitia') {
+      return { success: false, error: 'Akun Administrator Utama terkunci permanen oleh regulasi sistem dan tidak dapat dihapus!' };
     }
 
     // Protection 2: cannot delete own currently logged in account
@@ -1714,13 +1627,15 @@ class PemiluStorage {
       email: admin.email,
       name: admin.name,
       role: admin.role,
+      is_super: Boolean(admin.is_super || admin.can_authorize || admin.role === 'Ketua Panitia'),
+      can_authorize: Boolean(admin.can_authorize || admin.is_super || admin.role === 'Ketua Panitia'),
       loginAt: new Date().toISOString()
     };
     try {
       sessionStorage.setItem('kpku_admin_session', JSON.stringify(session));
       localStorage.setItem('kpku_admin_auth', 'true');
     } catch(e) {}
-    this.addAuditLog('ADMIN_LOGIN', `Admin berhasil login: ${admin.name} (${admin.email})`);
+    this.addAuditLog('ADMIN_LOGIN', `Admin berhasil login: ${admin.name}`);
     return session;
   }
 

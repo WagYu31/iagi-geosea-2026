@@ -1823,7 +1823,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = window.pemiluStorage.verifyAdminOtp(email, otp);
       if (res.success) {
         localStorage.removeItem(BRUTE_FORCE_KEY);
-        completeAdminLogin(currentPendingAdmin || { name: 'WAGYUA%', role: 'Super Admin', email: 'cingire687@gmail.com', npa: '31052', phone: '085729456481' });
+        if (currentPendingAdmin) completeAdminLogin(currentPendingAdmin);
       } else {
         const fail = recordAppBruteFail(email);
         if (!fail.locked) {
@@ -1845,7 +1845,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = window.pemiluStorage.verifyAdminSecurityPin(pin, email);
       if (res.success) {
         localStorage.removeItem(BRUTE_FORCE_KEY);
-        completeAdminLogin(currentPendingAdmin || { name: 'WAGYUA%', role: 'Super Admin', email: 'cingire687@gmail.com', npa: '31052', phone: '085729456481' });
+        if (currentPendingAdmin) completeAdminLogin(currentPendingAdmin);
       } else {
         const fail = recordAppBruteFail(email);
         if (!fail.locked) {
