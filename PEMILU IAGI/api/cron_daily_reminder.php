@@ -116,7 +116,7 @@ function buildGoogleCalendarUrl($npa = '', $name = '') {
         . "📅 Selasa, 03 November 2026 pukul 23:59 WIB.\n\n"
         . "🗳️ Masuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\n"
         . "🔑 Klaim Token Mandiri: https://pemiluiagi.web.id/claim.html?npa={$cleanNpa}\n"
-        . "💬 Hotline Panitia WhatsApp: https://wa.me/628111581461\n\n"
+        . "💬 Hotline Panitia WhatsApp: https://wa.me/6285771593522\n\n"
         . "Suara Anda menentukan masa depan organisasi IAGI!";
     
     $location = "https://pemiluiagi.web.id/bilik.html";
@@ -157,7 +157,7 @@ function buildIcsAttachment($npa = '', $name = '') {
         . "DTSTART;TZID=Asia/Jakarta:20261026T000100\r\n"
         . "DTEND;TZID=Asia/Jakarta:20261103T235900\r\n"
         . "SUMMARY:Pemilihan Ketua Umum IAGI 2026–2029 (Bilik Suara)\r\n"
-        . "DESCRIPTION:Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik ditutup pada Selasa, 03 November 2026 pukul 23:59 WIB.\\n\\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa={$cleanNpa}\\nBantuan WhatsApp: wa.me/628111581461\r\n"
+        . "DESCRIPTION:Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik ditutup pada Selasa, 03 November 2026 pukul 23:59 WIB.\\n\\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa={$cleanNpa}\\nBantuan WhatsApp: wa.me/6285771593522\r\n"
         . "LOCATION:https://pemiluiagi.web.id/bilik.html\r\n"
         . "STATUS:CONFIRMED\r\n"
         . "TRANSP:TRANSPARENT\r\n"
@@ -352,7 +352,7 @@ function buildReminderEmailHtml($npa, $name, $daysLeft) {
                 Ketua Panitia: <strong>M. Addiansyah</strong> &bull; Sekretariat & Admin Teknis
               </div>
               <div style="font-size: 11px; color: #94A3B8; margin-bottom: 12px;">
-                💬 Hotline WhatsApp: <a href="https://wa.me/628111581461" target="_blank" style="color: #34D399; font-weight: 700; text-decoration: none;">+62 811-158-1461</a> &bull; 
+                💬 Hotline WhatsApp: <a href="https://wa.me/6285771593522" target="_blank" style="color: #34D399; font-weight: 700; text-decoration: none;">+62 857-7159-3522</a> &bull; 
                 ✉️ Email: <a href="mailto:iagisekretariat@gmail.com" style="color: #F5BA42; text-decoration: none;">iagisekretariat@gmail.com</a>
               </div>
               <div style="font-size: 10px; color: #475569; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 10px; line-height: 1.5;">

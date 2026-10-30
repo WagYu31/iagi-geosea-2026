@@ -1004,7 +1004,7 @@ class PemiluStorage {
       const dpt = this.getDPT();
       let demoVoter = dpt.find(v => v.npa === '00000' || v.npa === '01001');
       if (!demoVoter) {
-        demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', claimed_at: new Date().toISOString(), voted: false, voted_at: null };
+        demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "085771593522", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', claimed_at: new Date().toISOString(), voted: false, voted_at: null };
       }
       return { valid: true, voter: demoVoter };
     }

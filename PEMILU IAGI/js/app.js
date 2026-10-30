@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="btn btn-gold" style="width: auto; padding: 7px 16px; font-size: 0.78rem;" onclick="resetDptFilters()">
               <span>Reset Pencarian</span>
             </button>
-            <a href="https://wa.me/628111581461?text=Halo%20Admin%20KPKU,%20nama%20saya%20belum%20muncul%20di%20pencarian%20DPT" target="_blank" class="btn btn-subtle" style="width: auto; padding: 7px 16px; font-size: 0.78rem;">
+            <a href="https://wa.me/6285771593522?text=Halo%20Admin%20KPKU,%20nama%20saya%20belum%20muncul%20di%20pencarian%20DPT" target="_blank" class="btn btn-subtle" style="width: auto; padding: 7px 16px; font-size: 0.78rem;">
               <span>Hubungi Helpdesk WhatsApp</span>
             </a>
           </div>
@@ -707,7 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dpt = window.pemiluStorage.getDPT();
     let demoVoter = dpt.find(v => v.npa === '00000' || v.npa === '01001' || v.npa === 'IAGI-2024-0001');
     if (!demoVoter) {
-      demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "08111581461", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', voted: false, voted_at: null };
+      demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "085771593522", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', voted: false, voted_at: null };
       dpt.unshift(demoVoter);
     }
     demoVoter.claimed = true;
