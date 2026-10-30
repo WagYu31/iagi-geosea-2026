@@ -363,7 +363,7 @@ def build_pdf(filename):
     story.append(Spacer(1, 4))
 
     # Perbandingan Visual Berdampingan (Side-by-Side)
-    img_term_path = os.path.join(user_img_dir, "media_1793347763128_0ef52cc4.jpg")
+    img_term_path = os.path.join(user_img_dir, "media_1793348989523_b884f605.jpg")
     img_hoax_path = os.path.join(user_img_dir, "media_1793347793481_478ac5da.jpg")
 
     img_term = RLImage(img_term_path, width=245, height=205) if os.path.exists(img_term_path) else None
