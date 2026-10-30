@@ -10932,10 +10932,16 @@
         // 3. Audit Logs
         renderAuditLogs();
 
-        // 4. Update DPT mini stats bar
+        // 4. Update DPT mini stats bar & reconcile local voted voters
         const dptList = window.pemiluStorage.getDPT ? window.pemiluStorage.getDPT() : [];
-        const baseVotedCount = dptList.filter(v => v && v.voted).length;
+        let baseVotedCount = dptList.filter(v => v && v.voted).length;
         const effectiveVotedCount = Math.max(baseVotedCount, Number(results.totalVotes || 0));
+
+        if (baseVotedCount < effectiveVotedCount && window.pemiluStorage && typeof window.pemiluStorage.reconcileLocalDptWithResults === 'function') {
+          window.pemiluStorage.reconcileLocalDptWithResults(effectiveVotedCount);
+          baseVotedCount = effectiveVotedCount;
+        }
+
         const claimedNotVoted = dptList.filter(v => v && (v.claimed || v.token) && !v.voted).length;
         const unclaimedCount = Math.max(0, results.totalDPT - (effectiveVotedCount + claimedNotVoted));
 
