@@ -149,9 +149,9 @@ function SingleLanyardCard({
     ticket,
     templatePath,
     isBulk,
-    lanyardSpace = 8,
     showHoleGuide = true,
     holeShape = 'slot',
+    holePosition = 2.2,
 }) {
     const visitorType = ticket.visitor_type || 'non_exclusive';
     const cat = CATEGORY_MAP[visitorType] || CATEGORY_MAP.non_exclusive;
@@ -171,17 +171,13 @@ function SingleLanyardCard({
     const institutionLength = (ticket.visitor_institution || '').length;
     const instFontSize = institutionLength > 28 ? '0.82rem' : institutionLength > 20 ? '0.92rem' : '1.02rem';
 
-    // Calculate vertical offset percentage based on 85.6mm card height
-    const spacePercent = (lanyardSpace / 85.6) * 100;
-    const contentHeightPercent = 100 - spacePercent;
-
     return (
         <Box
             className="badge-page"
             sx={{
                 width: { xs: '330px', sm: '380px' },
                 height: { xs: '523px', sm: '602px' },
-                bgcolor: '#fbf9f4',
+                bgcolor: '#ffffff',
                 borderRadius: '16px',
                 boxShadow: '0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1)',
                 position: 'relative',
@@ -202,174 +198,137 @@ function SingleLanyardCard({
                     breakInside: 'avoid !important',
                     pageBreakAfter: 'always !important',
                     breakAfter: 'page !important',
-                    bgcolor: '#fbf9f4 !important',
                 },
             }}
         >
-            {/* Lanyard Hole Punch Visual Guide (Dashed Guide at top center for Hole Puncher) */}
-            {lanyardSpace > 0 && showHoleGuide && (
+            {/* Real DOM Image Element - Full edge-to-edge with natural card background & contours */}
+            <img
+                src={bgImage}
+                alt="Badge Background"
+                className="badge-bg-img"
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'fill',
+                    zIndex: 1,
+                    pointerEvents: 'none',
+                    display: 'block',
+                }}
+            />
+
+            {/* Lanyard Hole Punch Visual Guide - Placed directly on the natural card texture ABOVE the logos */}
+            {showHoleGuide && (
                 <Box
                     className="badge-hole-guide"
                     sx={{
                         position: 'absolute',
-                        top: { xs: `${Math.max(6, spacePercent * 0.3)}%`, sm: `${Math.max(6, spacePercent * 0.3)}%` },
+                        top: `${(holePosition / 85.6) * 100}%`,
                         left: '50%',
                         transform: 'translateX(-50%)',
                         width: holeShape === 'round'
-                            ? { xs: '26px', sm: '32px' }
-                            : { xs: '76px', sm: '92px' },
+                            ? `${(4.5 / 54) * 100}%`
+                            : `${(13 / 54) * 100}%`,
                         height: holeShape === 'round'
-                            ? { xs: '26px', sm: '32px' }
-                            : { xs: '18px', sm: '22px' },
+                            ? `${(4.5 / 85.6) * 100}%`
+                            : `${(2.8 / 85.6) * 100}%`,
                         borderRadius: '100px',
-                        border: '1.5px dashed #94a3b8',
-                        bgcolor: 'rgba(255, 255, 255, 0.45)',
+                        border: '1.2px dashed rgba(71, 85, 105, 0.75)',
+                        bgcolor: 'transparent',
                         zIndex: 10,
                         pointerEvents: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
                         boxSizing: 'border-box',
                         '@media print': {
-                            top: `${Math.max(2, (lanyardSpace - 4) / 2)}mm !important`,
-                            width: holeShape === 'round' ? '5mm !important' : '14mm !important',
-                            height: holeShape === 'round' ? '5mm !important' : '3.5mm !important',
-                            border: '0.6pt dashed #94a3b8 !important',
+                            top: `${holePosition}mm !important`,
+                            width: holeShape === 'round' ? '4.5mm !important' : '13mm !important',
+                            height: holeShape === 'round' ? '4.5mm !important' : '2.8mm !important',
+                            border: '0.6pt dashed rgba(71, 85, 105, 0.8) !important',
                             bgcolor: 'transparent !important',
                         },
                     }}
-                >
-                    <Typography
-                        variant="caption"
-                        sx={{
-                            fontSize: '0.52rem',
-                            color: '#64748b',
-                            fontWeight: 800,
-                            letterSpacing: '0.04em',
-                            textTransform: 'uppercase',
-                            userSelect: 'none',
-                            '@media print': { display: 'none !important' },
-                        }}
-                    >
-                        {holeShape === 'round' ? '●' : 'LANYARD'}
-                    </Typography>
-                </Box>
+                />
             )}
 
-            {/* Inner Content Wrapper: Background Image + Text Overlays move together in perfect lockstep */}
+            {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 765.5 - 856.5 / 61.1% - 68.35% - BLACK FONT FOR VISITOR, WHITE FOR OTHERS) */}
             <Box
-                className="badge-content"
                 sx={{
                     position: 'absolute',
-                    top: lanyardSpace > 0 ? `${spacePercent}%` : 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    height: lanyardSpace > 0 ? `${contentHeightPercent}%` : '100%',
-                    overflow: 'hidden',
-                    '@media print': {
-                        top: lanyardSpace > 0 ? `${lanyardSpace}mm !important` : '0 !important',
-                        height: lanyardSpace > 0 ? `calc(85.6mm - ${lanyardSpace}mm) !important` : '85.6mm !important',
-                    },
+                    top: '61.1%',
+                    height: '7.25%',
+                    left: '15.5%',
+                    right: '15.5%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    zIndex: 5,
                 }}
             >
-                {/* Real DOM Image Element - ensures print preview ALWAYS prints background even if "Background Graphics" is unchecked */}
-                <img
-                    src={bgImage}
-                    alt="Badge Background"
-                    className="badge-bg-img"
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
+                <Typography
+                    variant="h5"
+                    sx={{
+                        fontWeight: 900,
+                        color: isVisitor ? '#000000' : '#ffffff',
+                        fontSize: nameFontSize,
+                        fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.03em',
+                        lineHeight: 1.15,
+                        wordBreak: 'break-word',
+                        textAlign: 'center',
                         width: '100%',
-                        height: '100%',
-                        objectFit: 'fill',
-                        zIndex: 1,
-                        pointerEvents: 'none',
-                        display: 'block',
-                    }}
-                />
-
-                {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 765.5 - 856.5 / 61.1% - 68.35% - BLACK FONT FOR VISITOR, WHITE FOR OTHERS) */}
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: '61.1%',
-                        height: '7.25%',
-                        left: '15.5%',
-                        right: '15.5%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        textAlign: 'center',
-                        zIndex: 5,
+                        textShadow: isVisitor ? 'none' : '0 1px 4px rgba(0,0,0,0.3)',
+                        '@media print': {
+                            color: isVisitor ? '#000000 !important' : '#ffffff !important',
+                            fontSize: nameLength > 28 ? '6.5pt !important' : nameLength > 20 ? '7.5pt !important' : nameLength > 14 ? '8.5pt !important' : '9.5pt !important',
+                            lineHeight: '1.15 !important',
+                        },
                     }}
                 >
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            fontWeight: 900,
-                            color: isVisitor ? '#000000' : '#ffffff',
-                            fontSize: nameFontSize,
-                            fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.03em',
-                            lineHeight: 1.15,
-                            wordBreak: 'break-word',
-                            textAlign: 'center',
-                            width: '100%',
-                            textShadow: isVisitor ? 'none' : '0 1px 4px rgba(0,0,0,0.3)',
-                            '@media print': {
-                                color: isVisitor ? '#000000 !important' : '#ffffff !important',
-                                fontSize: nameLength > 28 ? '6.5pt !important' : nameLength > 20 ? '7.5pt !important' : nameLength > 14 ? '8.5pt !important' : '9.5pt !important',
-                                lineHeight: '1.15 !important',
-                            },
-                        }}
-                    >
-                        {ticket.visitor_name}
-                    </Typography>
-                </Box>
+                    {ticket.visitor_name}
+                </Typography>
+            </Box>
 
-                {/* 2. INSTITUTION OVERLAY (Positioned BELOW the Blue Box at y: 865 - 922.6 / 68.8% - 73.6% right above underline) */}
-                <Box
+            {/* 2. INSTITUTION OVERLAY (Positioned BELOW the Blue Box at y: 865 - 922.6 / 68.8% - 73.6% right above underline) */}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    top: '68.8%',
+                    height: '4.8%',
+                    left: '10%',
+                    right: '10%',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    pb: '2px',
+                    zIndex: 5,
+                }}
+            >
+                <Typography
+                    variant="body1"
                     sx={{
-                        position: 'absolute',
-                        top: '68.8%',
-                        height: '4.8%',
-                        left: '10%',
-                        right: '10%',
-                        display: 'flex',
-                        alignItems: 'flex-end',
-                        justifyContent: 'center',
+                        fontWeight: 800,
+                        color: '#0f172a',
+                        fontSize: instFontSize,
+                        fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                        lineHeight: 1.15,
+                        wordBreak: 'break-word',
                         textAlign: 'center',
-                        pb: '2px',
-                        zIndex: 5,
+                        width: '100%',
+                        '@media print': {
+                            color: '#000000 !important',
+                            fontSize: institutionLength > 28 ? '5.5pt !important' : institutionLength > 20 ? '6.5pt !important' : '7.5pt !important',
+                            lineHeight: '1.15 !important',
+                        },
                     }}
                 >
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            fontWeight: 800,
-                            color: '#0f172a',
-                            fontSize: instFontSize,
-                            fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.04em',
-                            lineHeight: 1.15,
-                            wordBreak: 'break-word',
-                            textAlign: 'center',
-                            width: '100%',
-                            '@media print': {
-                                color: '#000000 !important',
-                                fontSize: institutionLength > 28 ? '5.5pt !important' : institutionLength > 20 ? '6.5pt !important' : '7.5pt !important',
-                                lineHeight: '1.15 !important',
-                            },
-                        }}
-                    >
-                        {ticket.visitor_institution || '-'}
-                    </Typography>
-                </Box>
+                    {ticket.visitor_institution || '-'}
+                </Typography>
             </Box>
         </Box>
     );
@@ -396,16 +355,7 @@ export default function PrintBadge({
     const [imagesReady, setImagesReady] = useState(false);
     const [progressPercent, setProgressPercent] = useState(0);
 
-    // Lanyard hole spacing (in mm) and guide indicators
-    const [lanyardSpace, setLanyardSpace] = useState(() => {
-        try {
-            const saved = localStorage.getItem('badge_lanyard_space');
-            return saved !== null ? Number(saved) : 8; // Default 8mm (Standard Lanyard Space)
-        } catch {
-            return 8;
-        }
-    });
-
+    // Lanyard hole punch visual guide settings (positioned directly on natural card background above logos)
     const [showHoleGuide, setShowHoleGuide] = useState(() => {
         try {
             const saved = localStorage.getItem('badge_show_hole_guide');
@@ -423,12 +373,14 @@ export default function PrintBadge({
         }
     });
 
-    const handleLanyardSpaceChange = (val) => {
-        setLanyardSpace(val);
+    const [holePosition, setHolePosition] = useState(() => {
         try {
-            localStorage.setItem('badge_lanyard_space', String(val));
-        } catch {}
-    };
+            const saved = localStorage.getItem('badge_hole_position');
+            return saved !== null ? Number(saved) : 2.2; // 2.2mm from top (above logos)
+        } catch {
+            return 2.2;
+        }
+    });
 
     const handleToggleHoleGuide = () => {
         const next = !showHoleGuide;
@@ -442,6 +394,13 @@ export default function PrintBadge({
         setHoleShape(shape);
         try {
             localStorage.setItem('badge_hole_shape', shape);
+        } catch {}
+    };
+
+    const handleHolePositionChange = (pos) => {
+        setHolePosition(pos);
+        try {
+            localStorage.setItem('badge_hole_position', String(pos));
         } catch {}
     };
 
@@ -732,7 +691,7 @@ export default function PrintBadge({
                 </Stack>
             </Box>
 
-            {/* Lanyard Spacing & Hole Punch Control Bar (Hidden when printing) */}
+            {/* Lanyard Hole Punch Guide Control Bar (Hidden when printing) */}
             <Box
                 sx={{
                     mb: 3,
@@ -754,12 +713,12 @@ export default function PrintBadge({
             >
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <span>🏷️ Spasi Lubang Gantungan (Lanyard Space):</span>
+                        <span>🏷️ Panduan Lubang Gantungan (Di Atas Logo):</span>
                         <Chip
-                            label={lanyardSpace === 0 ? 'Tanpa Spasi (0 mm)' : `Aktif: +${lanyardSpace} mm`}
+                            label={showHoleGuide ? `Aktif (${holeShape === 'slot' ? 'Oval 13×3mm' : 'Bulat Ø4.5mm'})` : 'Nonaktif (Polos)'}
                             size="small"
                             sx={{
-                                bgcolor: lanyardSpace > 0 ? '#10b981' : '#64748b',
+                                bgcolor: showHoleGuide ? '#10b981' : '#64748b',
                                 color: '#ffffff',
                                 fontWeight: 900,
                                 fontSize: '0.72rem',
@@ -767,82 +726,87 @@ export default function PrintBadge({
                         />
                     </Typography>
                     <Typography variant="caption" sx={{ color: '#94a3b8' }}>
-                        Memberikan ruang di bagian atas kartu agar logo & pita tidak terpotong saat membuat lubang gantungan tali lanyard ID Card.
+                        Garis putus-putus dicetak di atas latar asli kartu (tepat di atas deretan logo) tanpa blok putih, sebagai acuan alat pembolong tali ID Card.
                     </Typography>
                 </Box>
 
                 <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                    {[
-                        { label: '0 mm (Asli)', val: 0 },
-                        { label: '6 mm (Kecil)', val: 6 },
-                        { label: '8 mm (Standar ⭐)', val: 8 },
-                        { label: '10 mm (Luas)', val: 10 },
-                        { label: '12 mm (Besar)', val: 12 },
-                    ].map(opt => (
-                        <Button
-                            key={opt.val}
-                            size="small"
-                            variant={lanyardSpace === opt.val ? 'contained' : 'outlined'}
-                            onClick={() => handleLanyardSpaceChange(opt.val)}
-                            sx={{
-                                textTransform: 'none',
-                                fontWeight: 800,
-                                fontSize: '0.78rem',
-                                borderRadius: '10px',
-                                px: 1.5,
-                                py: 0.6,
-                                bgcolor: lanyardSpace === opt.val ? '#0284c7' : 'transparent',
-                                borderColor: lanyardSpace === opt.val ? '#0284c7' : '#475569',
-                                color: lanyardSpace === opt.val ? '#ffffff' : '#cbd5e1',
-                                '&:hover': {
-                                    bgcolor: lanyardSpace === opt.val ? '#0369a1' : 'rgba(255,255,255,0.06)',
-                                    borderColor: '#94a3b8',
-                                },
-                            }}
-                        >
-                            {opt.label}
-                        </Button>
-                    ))}
+                    <Button
+                        size="small"
+                        variant={showHoleGuide ? 'contained' : 'outlined'}
+                        onClick={handleToggleHoleGuide}
+                        sx={{
+                            textTransform: 'none',
+                            fontWeight: 800,
+                            fontSize: '0.78rem',
+                            borderRadius: '10px',
+                            px: 1.8,
+                            py: 0.6,
+                            bgcolor: showHoleGuide ? '#10b981' : 'transparent',
+                            borderColor: showHoleGuide ? '#10b981' : '#475569',
+                            color: '#ffffff',
+                            '&:hover': { bgcolor: showHoleGuide ? '#059669' : 'rgba(255,255,255,0.06)' },
+                        }}
+                    >
+                        {showHoleGuide ? '✓ Panduan Lubang: ON' : '✗ Panduan Lubang: OFF'}
+                    </Button>
 
-                    {lanyardSpace > 0 && (
+                    {showHoleGuide && (
                         <>
                             <Box sx={{ width: '1px', height: '24px', bgcolor: '#334155', mx: 0.5 }} />
-                            <Button
-                                size="small"
-                                variant="outlined"
-                                onClick={handleToggleHoleGuide}
-                                sx={{
-                                    textTransform: 'none',
-                                    fontWeight: 700,
-                                    fontSize: '0.75rem',
-                                    borderRadius: '10px',
-                                    borderColor: showHoleGuide ? '#10b981' : '#475569',
-                                    color: showHoleGuide ? '#34d399' : '#94a3b8',
-                                    bgcolor: showHoleGuide ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
-                                    '&:hover': { borderColor: '#10b981', bgcolor: 'rgba(16, 185, 129, 0.15)' },
-                                }}
-                            >
-                                {showHoleGuide ? '✓ Pola Lubang: ON' : '✗ Pola Lubang: OFF'}
-                            </Button>
-
-                            {showHoleGuide && (
+                            {[
+                                { label: 'Oval Pipih (13×3mm)', shape: 'slot' },
+                                { label: 'Bulat (Ø4.5mm)', shape: 'round' },
+                            ].map(opt => (
                                 <Button
+                                    key={opt.shape}
                                     size="small"
-                                    variant="outlined"
-                                    onClick={() => handleHoleShapeChange(holeShape === 'slot' ? 'round' : 'slot')}
+                                    variant={holeShape === opt.shape ? 'contained' : 'outlined'}
+                                    onClick={() => handleHoleShapeChange(opt.shape)}
                                     sx={{
                                         textTransform: 'none',
                                         fontWeight: 700,
                                         fontSize: '0.75rem',
                                         borderRadius: '10px',
-                                        borderColor: '#475569',
-                                        color: '#38bdf8',
-                                        '&:hover': { borderColor: '#38bdf8', bgcolor: 'rgba(56, 189, 248, 0.1)' },
+                                        px: 1.5,
+                                        py: 0.6,
+                                        bgcolor: holeShape === opt.shape ? '#0284c7' : 'transparent',
+                                        borderColor: holeShape === opt.shape ? '#0284c7' : '#475569',
+                                        color: holeShape === opt.shape ? '#ffffff' : '#cbd5e1',
+                                        '&:hover': { bgcolor: holeShape === opt.shape ? '#0369a1' : 'rgba(255,255,255,0.06)' },
                                     }}
                                 >
-                                    Bentuk: {holeShape === 'slot' ? 'Oval' : 'Bulat'}
+                                    {opt.label}
                                 </Button>
-                            )}
+                            ))}
+
+                            <Box sx={{ width: '1px', height: '24px', bgcolor: '#334155', mx: 0.5 }} />
+                            {[
+                                { label: 'Posisi: Atas (1.8mm)', val: 1.8 },
+                                { label: 'Tengah (2.2mm ⭐)', val: 2.2 },
+                                { label: 'Bawah (2.6mm)', val: 2.6 },
+                            ].map(opt => (
+                                <Button
+                                    key={opt.val}
+                                    size="small"
+                                    variant={holePosition === opt.val ? 'contained' : 'outlined'}
+                                    onClick={() => handleHolePositionChange(opt.val)}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontWeight: 700,
+                                        fontSize: '0.75rem',
+                                        borderRadius: '10px',
+                                        px: 1.2,
+                                        py: 0.6,
+                                        bgcolor: holePosition === opt.val ? '#0284c7' : 'transparent',
+                                        borderColor: holePosition === opt.val ? '#0284c7' : '#475569',
+                                        color: holePosition === opt.val ? '#ffffff' : '#cbd5e1',
+                                        '&:hover': { bgcolor: holePosition === opt.val ? '#0369a1' : 'rgba(255,255,255,0.06)' },
+                                    }}
+                                >
+                                    {opt.label}
+                                </Button>
+                            ))}
                         </>
                     )}
                 </Stack>
@@ -904,9 +868,9 @@ export default function PrintBadge({
                             ticket={t}
                             templatePath={templatePath}
                             isBulk={isBulk || count > 1}
-                            lanyardSpace={lanyardSpace}
                             showHoleGuide={showHoleGuide}
                             holeShape={holeShape}
+                            holePosition={holePosition}
                         />
                     </Box>
                 ))}
