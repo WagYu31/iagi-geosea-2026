@@ -307,12 +307,13 @@ class PemiluStorage {
         dpt.forEach(v => {
           const clean = String(v.npa || '').trim().toUpperCase();
           if (dataVoted.voted_npas[clean]) {
-            if (!v.voted || !v.claimed) {
+            const serverVote = dataVoted.voted_npas[clean];
+            if (!v.voted || !v.claimed || !v.voted_at || (serverVote.voted_at && v.voted_at !== serverVote.voted_at)) {
               v.voted = true;
               v.claimed = true;
               v.token = null; // Token dibakar permanen
-              v.voted_at = dataVoted.voted_npas[clean].voted_at || new Date().toISOString();
-              v.receipt_hash = dataVoted.voted_npas[clean].receipt_hash || 'VERIFIED';
+              v.voted_at = serverVote.voted_at || v.voted_at || new Date().toISOString();
+              v.receipt_hash = serverVote.receipt_hash || 'VERIFIED';
               changed = true;
             }
           }
