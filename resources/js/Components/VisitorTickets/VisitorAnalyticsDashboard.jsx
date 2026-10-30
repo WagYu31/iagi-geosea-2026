@@ -39,9 +39,17 @@ const formatRupiah = (val) => {
 
 const formatShortCurrency = (val) => {
     const num = Number(val || 0);
-    if (num >= 1000000000) return `Rp ${(num / 1000000000).toFixed(1)}B`;
-    if (num >= 1000000) return `Rp ${(num / 1000000).toFixed(0)}M`;
-    if (num >= 1000) return `Rp ${(num / 1000).toFixed(0)}K`;
+    if (num >= 1000000000) {
+        const valM = num / 1000000000;
+        return `Rp ${valM % 1 === 0 ? valM : valM.toFixed(1)} Milyar`;
+    }
+    if (num >= 1000000) {
+        const valJt = num / 1000000;
+        return `Rp ${valJt % 1 === 0 ? valJt : (valJt >= 10 ? valJt.toFixed(0) : valJt.toFixed(1))} JT`;
+    }
+    if (num >= 1000) {
+        return `Rp ${(num / 1000).toFixed(0)} Rb`;
+    }
     return `Rp ${num}`;
 };
 
@@ -1559,7 +1567,7 @@ export default function VisitorAnalyticsDashboard({
                             <Box>
                                 <Typography sx={{ fontSize: '0.68rem', color: textSecondary, fontWeight: 600 }}>Target</Typography>
                                 <Typography sx={{ fontSize: '0.84rem', fontWeight: 800, color: textPrimary }}>
-                                    Rp 350M
+                                    Rp 350 JT
                                 </Typography>
                             </Box>
                         </Box>
