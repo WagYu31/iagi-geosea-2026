@@ -156,13 +156,13 @@ function buildIcsAttachment($npa = '', $name = '') {
         . "UID:{$uid}\r\n"
         . "DTSTAMP:{$dtStamp}\r\n"
         . "ORGANIZER;CN=\"KPKU IAGI 2026\":mailto:noreply@pitiagi.cloud\r\n"
-        . "DTSTART;TZID=Asia/Jakarta:20261026T000100\r\n"
+        . "DTSTART;TZID=Asia/Jakarta:20261103T080000\r\n"
         . "DTEND;TZID=Asia/Jakarta:20261103T235900\r\n"
-        . "SUMMARY:Pemilihan Ketua Umum IAGI 2026–2029 (Bilik Suara)\r\n"
-        . "DESCRIPTION:Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik ditutup pada Selasa, 03 November 2026 pukul 23:59 WIB.\\n\\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa={$cleanNpa}\\nBantuan WhatsApp: wa.me/6285771593522\r\n"
+        . "SUMMARY:Pemilihan Ketua Umum IAGI 2026–2029 (Bilik Suara Ditutup Hari Ini)\r\n"
+        . "DESCRIPTION:Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik DITUTUP RESMI pada Selasa, 03 November 2026 pukul 23:59 WIB.\\n\\nMasuk Bilik Suara: https://pemiluiagi.web.id/bilik.html\\nKlaim Token: https://pemiluiagi.web.id/claim.html?npa={$cleanNpa}\\nBantuan WhatsApp: wa.me/6285771593522\r\n"
         . "LOCATION:https://pemiluiagi.web.id/bilik.html\r\n"
         . "STATUS:CONFIRMED\r\n"
-        . "TRANSP:TRANSPARENT\r\n"
+        . "TRANSP:OPAQUE\r\n"
         . "SEQUENCE:1\r\n"
         . "BEGIN:VALARM\r\n"
         . "ACTION:DISPLAY\r\n"
@@ -213,6 +213,28 @@ function buildReminderEmailHtml($npa, $name, $daysLeft) {
   <meta charset="utf-8">
   <title>Pengingat Resmi: Pemilu Ketua Umum IAGI 2026–2029</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Schema.org Microdata untuk Google Calendar Auto-Event (Standar Traveloka & Maskapai) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "name": "Pemilihan Ketua Umum IAGI 2026–2029 (Bilik Suara Ditutup Hari Ini)",
+    "description": "Pengingat Resmi KPKU IAGI: Bilik Suara Elektronik DITUTUP RESMI pada Selasa, 03 November 2026 pukul 23:59 WIB.",
+    "startDate": "2026-11-03T08:00:00+07:00",
+    "endDate": "2026-11-03T23:59:00+07:00",
+    "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "location": {
+      "@type": "VirtualLocation",
+      "url": "https://pemiluiagi.web.id/bilik.html"
+    },
+    "organizer": {
+      "@type": "Organization",
+      "name": "KPKU IAGI 2026",
+      "url": "https://pemiluiagi.web.id"
+    }
+  }
+  </script>
   <style>
     body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
     table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
@@ -310,12 +332,12 @@ function buildReminderEmailHtml($npa, $name, $daysLeft) {
                 </tr>
               </table>
 
-              <!-- Action Button 2: Direct Calendar (.ics) & Google Calendar Integration -->
+              <!-- Action Button 2: Direct Google Calendar Integration -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 12px;">
                 <tr>
                   <td align="center">
-                    <a href="{$icsUrl}" target="_blank" style="display: block; width: 100%; box-sizing: border-box; background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%); color: #FFFFFF; text-decoration: none; font-size: 13.5px; font-weight: 700; text-align: center; padding: 13px 20px; border-radius: 10px; border: 1px solid #3B82F6; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); letter-spacing: 0.02em;">
-                      📅 Pasang Pengingat di Kalender HP & Google (1-Klik)
+                    <a href="{$gCalUrl}" target="_blank" style="display: block; width: 100%; box-sizing: border-box; background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%); color: #FFFFFF; text-decoration: none; font-size: 14px; font-weight: 700; text-align: center; padding: 14px 20px; border-radius: 10px; border: 1px solid #3B82F6; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); letter-spacing: 0.02em;">
+                      📅 Pasang Pengingat di Google Calendar (1-Klik)
                     </a>
                   </td>
                 </tr>
@@ -323,8 +345,7 @@ function buildReminderEmailHtml($npa, $name, $daysLeft) {
 
               <div style="text-align: center; margin-bottom: 22px;">
                 <span style="font-size: 11.5px; color: #94A3B8; line-height: 1.5;">
-                  💡 <em>Klik tombol biru di atas untuk langsung menyimpan jadwal otomatis di HP Anda (bebas error sinkronisasi).</em><br>
-                  <a href="{$gCalUrl}" target="_blank" style="color: #60A5FA; font-size: 11.5px; text-decoration: underline; margin-top: 5px; display: inline-block;">Atau buka via Google Calendar Web Browser &raquo;</a>
+                  💡 <em>Klik tombol di atas untuk langsung membuka formulir jadwal dan menekan "Simpan" (otomatis masuk ke kalender HP seperti Traveloka).</em>
                 </span>
               </div>
 
