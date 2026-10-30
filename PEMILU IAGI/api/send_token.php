@@ -133,15 +133,14 @@ if (empty($token) || strlen($token) < 8) {
 $masterRegistryFile = __DIR__ . '/dpt_master_registry.php';
 if (file_exists($masterRegistryFile)) {
     $masterDpt = require $masterRegistryFile;
-    if ($npa !== '00000' && $npa !== '01001') {
-        if (!isset($masterDpt[$npa])) {
-            http_response_code(404);
-            echo json_encode(['success' => false, 'error' => "NPA {$npa} tidak terdaftar dalam Daftar Pemilih Tetap (DPT) resmi KPKU."]);
-            exit;
-        }
+    if (!isset($masterDpt[$npa])) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => "NPA {$npa} tidak terdaftar dalam Daftar Pemilih Tetap (DPT) resmi KPKU."]);
+        exit;
+    }
 
-        $regEmail = strtolower(trim($masterDpt[$npa]['email'] ?? ''));
-        $inputEmail = strtolower(trim($email));
+    $regEmail = strtolower(trim($masterDpt[$npa]['email'] ?? ''));
+    $inputEmail = strtolower(trim($email));
 
         $regNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $regEmail);
         $inputNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $inputEmail);
@@ -159,7 +158,6 @@ if (file_exists($masterRegistryFile)) {
             $name = $masterDpt[$npa]['name'];
         }
     }
-}
 
 $displayName = !empty($name) ? htmlspecialchars($name, ENT_QUOTES, 'UTF-8') : 'Anggota IAGI';
 $displayNpa = !empty($npa) ? htmlspecialchars($npa, ENT_QUOTES, 'UTF-8') : '-';

@@ -1009,16 +1009,6 @@ class PemiluStorage {
       return { valid: false, error: 'Nomor Pokok Anggota (NPA) harus tepat 5 digit angka (contoh: 00000).' };
     }
 
-    // Built-in testing account for instant demonstration
-    if ((cleanNpa === '00000' || cleanNpa === '01001') && (cleanToken === 'IAGI-2026-DEMO-2026' || cleanToken === 'DEMO-2026')) {
-      const dpt = this.getDPT();
-      let demoVoter = dpt.find(v => v.npa === '00000' || v.npa === '01001');
-      if (!demoVoter) {
-        demoVoter = { npa: "00000", name: "Anggota Uji Coba IAGI", email: "pemilih@iagi.or.id", phone: "085771593522", pengda: "DKI Jakarta", category: "Professional", status: "AKTIF", claimed: true, token: 'IAGI-2026-DEMO-2026', claimed_at: new Date().toISOString(), voted: false, voted_at: null };
-      }
-      return { valid: true, voter: demoVoter };
-    }
-
     const voter = this.getVoterByNpa(cleanNpa);
     if (!voter) {
       return { valid: false, error: 'NPA tidak ditemukan dalam basis data DPT KPKU.' };
