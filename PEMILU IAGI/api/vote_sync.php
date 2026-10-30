@@ -1817,6 +1817,26 @@ if ($action === 'verify_integrity') {
 
 // ================= ACTION: GET SYSTEM & ADMIN ACTIVITY AUDIT LOGS =================
 if ($action === 'get_audit_logs') {
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    // WAJIB TERAUTENTIKASI SEBAGAI PANITIA RESMI (Bearer Token / X-Admin-Token / session_token)
+    $admin = getAuthenticatedAdmin($payload);
+    if (!$admin) {
+        http_response_code(401);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Akses ditolak: Catatan Audit Trail Kriptografi hanya dapat diakses oleh Panitia Pemilihan resmi yang memiliki sesi aktif.'
+        ]);
+        exit;
+    }
+
     $auditLogs = readJsonFile($auditFile, []);
     $ballots = readJsonFile($ballotsFile, []);
     $voters = readJsonFile($votersFile, []);
@@ -2023,6 +2043,12 @@ if ($action === 'get_voted_list') {
     header('Pragma: no-cache');
     header('Expires: 0');
 
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $admin = getAuthenticatedAdmin($payload);
+
     $voters = readJsonFile($votersFile, []);
     $ballots = readJsonFile($ballotsFile, []);
     reconcileVotersWithBallots($voters, $ballots, $votersFile);
@@ -2037,6 +2063,18 @@ if ($action === 'get_voted_list') {
             ];
         }
     }
+
+    // Jika bukan admin resmi, JANGAN ekspos mapping NPA pemilih individu ke publik
+    if (!$admin) {
+        echo json_encode([
+            'success' => true,
+            'is_public' => true,
+            'total_voted' => count($votedNpas),
+            'voted_npas' => [] // Protected: Detail NPA disembunyikan untuk menjaga privasi pemilih
+        ]);
+        exit;
+    }
+
     echo json_encode(['success' => true, 'voted_npas' => $votedNpas, 'total_voted' => count($votedNpas)]);
     exit;
 }

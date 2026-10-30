@@ -11505,7 +11505,15 @@
 
         let logs = [];
         try {
-          const resp = await fetch('api/vote_sync.php?action=get_audit_logs');
+          const token = (window.pemiluStorage && typeof window.pemiluStorage.getAdminToken === 'function')
+            ? window.pemiluStorage.getAdminToken()
+            : (sessionStorage.getItem('kpku_admin_token') || '');
+          const resp = await fetch(`api/vote_sync.php?action=get_audit_logs&session_token=${encodeURIComponent(token)}`, {
+            headers: token ? {
+              'Authorization': `Bearer ${token}`,
+              'X-Admin-Token': token
+            } : {}
+          });
           if (resp.ok) {
             const srvData = await resp.json();
             if (srvData && Array.isArray(srvData.logs) && srvData.logs.length > 0) {

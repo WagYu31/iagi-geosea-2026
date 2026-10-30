@@ -297,8 +297,15 @@ class PemiluStorage {
   async syncVotedListWithServer() {
     try {
       if (typeof fetch === 'undefined') return;
-      const respVoted = await fetch(`api/vote_sync.php?action=get_voted_list&_t=${Date.now()}`, {
-        cache: 'no-store'
+      const token = (typeof this.getAdminToken === 'function') 
+        ? this.getAdminToken() 
+        : (typeof sessionStorage !== 'undefined' ? (sessionStorage.getItem('kpku_admin_token') || '') : '');
+      const respVoted = await fetch(`api/vote_sync.php?action=get_voted_list&_t=${Date.now()}&session_token=${encodeURIComponent(token)}`, {
+        cache: 'no-store',
+        headers: token ? {
+          'Authorization': `Bearer ${token}`,
+          'X-Admin-Token': token
+        } : {}
       });
       const dataVoted = await respVoted.json();
       if (dataVoted && dataVoted.success && dataVoted.voted_npas) {
@@ -1730,7 +1737,15 @@ class PemiluStorage {
 
   async fetchServerAuditLogs() {
     try {
-      const resp = await fetch('api/vote_sync.php?action=get_audit_logs');
+      const token = (typeof this.getAdminToken === 'function') 
+        ? this.getAdminToken() 
+        : (typeof sessionStorage !== 'undefined' ? (sessionStorage.getItem('kpku_admin_token') || '') : '');
+      const resp = await fetch(`api/vote_sync.php?action=get_audit_logs&session_token=${encodeURIComponent(token)}`, {
+        headers: token ? {
+          'Authorization': `Bearer ${token}`,
+          'X-Admin-Token': token
+        } : {}
+      });
       if (!resp.ok) return null;
       const data = await resp.json();
       if (data && data.success && Array.isArray(data.logs)) {
