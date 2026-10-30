@@ -18,9 +18,11 @@ Options -Indexes
     RewriteRule .* - [F,L]
 </IfModule>
 
-# Block direct HTTP access to api/data directory
+# Block direct HTTP access to api/data directory and all CSV/sensitive database exports
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteRule \.(csv|tsv)$ - [F,L]
+    RewriteRule ^DPT_IAGI_2026_Publikasi - [F,L]
     RewriteRule ^api/data(/.*)?$ - [F,L]
 </IfModule>
 
