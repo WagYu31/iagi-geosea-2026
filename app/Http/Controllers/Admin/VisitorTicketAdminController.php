@@ -204,11 +204,11 @@ class VisitorTicketAdminController extends Controller
             ->whereNotNull('created_at')
             ->get();
 
-        $fourteenDaysAgo = now()->subDays(14)->startOfDay();
+        $thirtyDaysAgo = now()->subDays(30)->startOfDay();
         $twentyOneDaysAgo = now()->subDays(21)->startOfDay();
 
         $dailyVelocity = $allTicketTimestamps
-            ->filter(fn($t) => $t->created_at >= $fourteenDaysAgo)
+            ->filter(fn($t) => $t->created_at >= $thirtyDaysAgo)
             ->groupBy(fn($t) => $t->created_at->format('Y-m-d'))
             ->sortKeys()
             ->map(function ($group, $dateStr) {
