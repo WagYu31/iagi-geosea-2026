@@ -7558,7 +7558,7 @@
       </div>
     </section>
 
-    <!-- ================= MODAL: OTENTIKASI DUAL-KEY BUKA SEGEL PLENO (PIN: 312226) ================= -->
+    <!-- ================= MODAL: OTENTIKASI DUAL-KEY BUKA SEGEL PLENO ================= -->
     <div id="modal-unseal-vault-auth" class="admin-modal-backdrop" style="display: none !important;">
       <div class="admin-modal-dialog" style="max-width: 500px; border: 1px solid rgba(245, 186, 66, 0.4); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(245, 186, 66, 0.15);">
         <div class="admin-modal-header" style="border-bottom: 1px solid rgba(245, 186, 66, 0.2);">
@@ -9141,7 +9141,7 @@
     }
 
     // =========================================================================
-    // DUAL-KEY OTORITAS PLENO KPKU (PIN: 312226) & CINEMATIC 10-0 COUNTDOWN
+    // DUAL-KEY OTORITAS PLENO KPKU & CINEMATIC 10-0 COUNTDOWN
     // =========================================================================
     let unsealCountdownTimer = null;
 
@@ -9368,10 +9368,14 @@
       } else {
         const pin = prompt('OTORISASI DUAL-KEY KPKU (BUKA SEGEL PLENO):\n\nMasukkan Sandi Otoritas Sidang Pleno Terbuka:');
         if (!pin) return;
-        if (pin.trim() === '312226' || pin.trim() === '31052002') {
-          window.startUnsealCountdown();
-        } else {
-          alert('❌ Sandi Otoritas Pleno Salah! Segel brankas tetap terkunci.');
+        if (window.pemiluStorage && typeof window.pemiluStorage.updateServerVaultSeal === 'function') {
+          window.pemiluStorage.updateServerVaultSeal(false, pin.trim()).then(res => {
+            if (res && res.success) {
+              window.startUnsealCountdown();
+            } else {
+              alert('❌ Sandi Otoritas Pleno Salah atau Belum Disetujui Super Admin!\n' + ((res && res.error) || ''));
+            }
+          });
         }
       }
     };
@@ -9396,16 +9400,35 @@
       }
     };
 
-    window.handleConfirmUnsealVault = function(e) {
+    window.handleConfirmUnsealVault = async function(e) {
       if (e) e.preventDefault();
       if (checkVaultUnsealLockout()) return;
 
       const input = document.getElementById('unseal-vault-pin');
       const alertEl = document.getElementById('unseal-vault-alert');
       const enteredPin = (input ? input.value : '').trim();
+      const btn = document.getElementById('btn-submit-unseal-vault');
 
-      // Validasi Sandi Resmi Pleno: 312226 (atau 31052002)
-      if (enteredPin === '312226' || enteredPin === '31052002') {
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ Memvalidasi ke Server...</span>';
+      }
+
+      let res = { success: false };
+      try {
+        if (window.pemiluStorage && typeof window.pemiluStorage.updateServerVaultSeal === 'function') {
+          res = await window.pemiluStorage.updateServerVaultSeal(false, enteredPin);
+        }
+      } catch (err) {
+        res = { success: false, error: err.message };
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>🔓 Verifikasi & Buka Segel</span>';
+        }
+      }
+
+      if (res && res.success) {
         localStorage.removeItem(VAULT_LOCKOUT_KEY);
         clearVaultLockoutUI();
         window.closeUnsealVaultModal();
@@ -14392,17 +14415,8 @@
 
         currentViewedAdmin = target;
 
-        // Ambil password & PIN nyata
-        if (target.email === 'addiansyah@unsri.ac.id') {
-          credRawPassword = target.password || 'Addiansyah2026!';
-          credRawPin = target.securityPin || '5930';
-        } else if (target.email === 'cingire687@gmail.com') {
-          credRawPassword = target.password || 'W31052002.';
-          credRawPin = target.securityPin || '3522';
-        } else {
-          credRawPassword = target.password || 'IagiPanitia2026!';
-          credRawPin = target.securityPin || (target.phone ? target.phone.slice(-4) : '2026');
-        }
+        credRawPassword = '••••••••••••';
+        credRawPin = '••••';
 
         credPasswordRevealed = false;
         credPinRevealed = false;
@@ -14427,12 +14441,12 @@
         const btnPin = document.getElementById('btn-toggle-cred-pin');
 
         if (pwdEl) {
-          pwdEl.innerText = credPasswordRevealed ? credRawPassword : '••••••••';
-          if (btnPwd) btnPwd.innerHTML = credPasswordRevealed ? '🙈 Tutup' : '👁️ Intip';
+          pwdEl.innerText = credPasswordRevealed ? '(Tersimpan Terenkripsi Bcrypt)' : '••••••••••••';
+          if (btnPwd) btnPwd.innerHTML = credPasswordRevealed ? '🙈 Tutup' : '👁️ Info';
         }
         if (pinEl) {
-          pinEl.innerText = credPinRevealed ? credRawPin : '••••';
-          if (btnPin) btnPin.innerHTML = credPinRevealed ? '🙈 Tutup' : '👁️ Intip';
+          pinEl.innerText = credPinRevealed ? '(Tersimpan Terenkripsi Bcrypt)' : '••••';
+          if (btnPin) btnPin.innerHTML = credPinRevealed ? '🙈 Tutup' : '👁️ Info';
         }
       }
 
@@ -14480,19 +14494,15 @@
           phone = '62' + phone;
         }
 
-        const pwd = credRawPassword || admin.password || 'Addiansyah2026!';
-        const pin = credRawPin || admin.securityPin || '5930';
-
         const originUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/admin.html';
-        const text = `*KREDENSIAL RESMI ADMIN E-VOTING PEMILU IAGI 2026*\n\n` +
+        const text = `*PEMBERITAHUAN RESMI ADMIN E-VOTING PEMILU IAGI 2026*\n\n` +
           `Yth. Bapak/Ibu *${admin.name}*,\n` +
-          `Berikut adalah akun kredensial akses resmi Anda untuk Portal Panitia Pemilu Ketua Umum IAGI 2026:\n\n` +
+          `Akun resmi Anda untuk Portal Panitia Pemilu Ketua Umum IAGI 2026 telah aktif:\n\n` +
           `🔗 *Portal Admin*: ${originUrl}\n` +
           `👤 *Peran / Otoritas*: ${admin.role} (${admin.title || 'Panitia KPKU'})\n` +
           `📧 *Email Login*: ${admin.email}\n` +
-          `🔑 *Kata Sandi*: ${pwd}\n` +
-          `🛡️ *PIN Keamanan (2FA)*: ${pin}\n\n` +
-          `_Penting: Harap jaga kerahasiaan kata sandi dan PIN ini. Saat login, sistem mewajibkan verifikasi OTP Email dan PIN keamanan._\n\n` +
+          `🔑 *Status Kredensial*: Password & PIN tersimpan terenkripsi di server KPKU.\n\n` +
+          `_Penting: Saat login, sistem mewajibkan verifikasi OTP WhatsApp atau PIN keamanan resmi._\n\n` +
           `Salam hormat,\n*Komisi Pemilihan Ketua Umum (KPKU) IAGI 2026*`;
 
         window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(text)}`, '_blank');
@@ -14509,14 +14519,11 @@
       window.copyAdminCredentialsText = function() {
         if (!currentViewedAdmin) return;
         const a = currentViewedAdmin;
-        const pwd = credRawPassword || a.password || 'Addiansyah2026!';
-        const pin = credRawPin || a.securityPin || '5930';
         const text = `KREDENSIAL RESMI ADMIN E-VOTING PEMILU IAGI 2026\n\n` +
           `Nama: ${a.name}\n` +
           `Role: ${a.role} (${a.title || 'Panitia KPKU'})\n` +
           `Email: ${a.email}\n` +
-          `Password: ${pwd}\n` +
-          `PIN Keamanan: ${pin}\n` +
+          `Status: Kredensial terenkripsi di server KPKU\n` +
           `URL Portal: ${window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/admin.html'}`;
 
         navigator.clipboard.writeText(text).then(() => {
@@ -14629,7 +14636,7 @@
         });
       }
 
-      // Kosongkan Kotak Suara (Reset Suara ke 0 Tanpa Merusak DPT - Sandi: 31052002)
+      // Kosongkan Kotak Suara (Reset Suara ke 0 Tanpa Merusak DPT - Otorisasi Super Admin)
       window.confirmClearBallotBox = function() {
         window.guardSuperAdminFeature('clear_ballots', 'Kosongkan Kotak Suara (Reset ke 0 Suara)', () => {
           const modal = document.getElementById('modal-clear-ballot-box');
@@ -14665,13 +14672,12 @@
         const btn = document.getElementById('btn-execute-clear-ballots');
         const pin = inp ? inp.value.trim() : '';
 
-        // Validasi Sandi Otoritas: 31052002
-        if (pin !== '31052002') {
+        if (!pin) {
           if (err) {
             err.style.display = 'block';
-            err.innerText = '❌ Sandi otoritas salah! Pengosongan kotak suara ditolak.';
+            err.innerText = '❌ Sandi otoritas wajib diisi!';
           } else {
-            alert('❌ Sandi otoritas salah! Pengosongan kotak suara ditolak.');
+            alert('❌ Sandi otoritas wajib diisi!');
           }
           if (inp) {
             inp.focus();
@@ -14687,7 +14693,7 @@
 
         try {
           if (window.pemiluStorage && typeof window.pemiluStorage.clearBallotsAndResetVotes === 'function') {
-            await window.pemiluStorage.clearBallotsAndResetVotes('31052002');
+            await window.pemiluStorage.clearBallotsAndResetVotes(pin);
           }
           if (typeof refreshAll === 'function') refreshAll();
           if (typeof renderResumePlenoSection === 'function') renderResumePlenoSection();
@@ -14718,14 +14724,10 @@
         const pin = prompt('KONFIRMASI PENGOSONGAN KOTAK SUARA (RESET KE 0):\n\n' +
           'Aksi ini akan menghapus seluruh suara testing dan mengembalikan kotak suara ke 0 Suara.\n' +
           'Data DPT tetap utuh dan dipulihkan seluruh hak suaranya.\n\n' +
-          'Masukkan Sandi Otoritas (31052002):');
+          'Masukkan Sandi Otoritas Super Admin:');
         if (!pin) return;
-        if (pin.trim() !== '31052002') {
-          alert('❌ Sandi otoritas salah! Pengosongan kotak suara dibatalkan.');
-          return;
-        }
         if (window.pemiluStorage && typeof window.pemiluStorage.clearBallotsAndResetVotes === 'function') {
-          await window.pemiluStorage.clearBallotsAndResetVotes('31052002');
+          await window.pemiluStorage.clearBallotsAndResetVotes(pin.trim());
         }
         if (typeof refreshAll === 'function') refreshAll();
         if (typeof renderResumePlenoSection === 'function') renderResumePlenoSection();
@@ -15918,23 +15920,28 @@
         window.print();
       };
 
-      window.publishResultsToPublic = function() {
+      window.publishResultsToPublic = async function() {
         const settings = window.pemiluStorage.getSettings();
         if (settings.isSealed === false) {
           window.open('hasil.html', '_blank');
           return;
         }
 
-        if (confirm('KONFIRMASI SIDANG PLENO SORE:\nBuka tabulasi hasil pemilu sekarang ke publik (hasil.html)?\n\nHalaman hasil publik akan langsung menampilkan tabulasi perolehan suara secara real-time.')) {
-          window.pemiluStorage.updateSettings({ isSealed: false });
-          if (typeof window.pemiluStorage.updateServerVaultSeal === 'function') {
-            window.pemiluStorage.updateServerVaultSeal(false, '31052002');
+        const pin = prompt('KONFIRMASI SIDANG PLENO SORE:\nBuka tabulasi hasil pemilu sekarang ke publik (hasil.html)?\n\nMasukkan PIN Otoritas Pleno:');
+        if (!pin) return;
+
+        if (typeof window.pemiluStorage.updateServerVaultSeal === 'function') {
+          const res = await window.pemiluStorage.updateServerVaultSeal(false, pin.trim());
+          if (!res || !res.success) {
+            alert('❌ Otorisasi gagal: ' + ((res && res.error) || 'PIN salah atau belum diizinkan Super Admin.'));
+            return;
           }
-          renderResumePlenoSection();
-          refreshAll();
-          alert('✓ Tabulasi hasil resmi telah DIBUKA ke publik!\nAnggota dan publik kini dapat melihat resume hasil di hasil.html');
-          window.open('hasil.html', '_blank');
         }
+        window.pemiluStorage.updateSettings({ isSealed: false });
+        renderResumePlenoSection();
+        refreshAll();
+        alert('✓ Tabulasi hasil resmi telah DIBUKA ke publik!\nAnggota dan publik kini dapat melihat resume hasil di hasil.html');
+        window.open('hasil.html', '_blank');
       };
 
       // Periodic refresh listener hook
