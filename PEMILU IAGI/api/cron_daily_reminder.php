@@ -710,7 +710,8 @@ if ($isCli) {
         exit(0);
     }
 
-    $batchSize = isset($args['batch']) ? (int)$args['batch'] : 50;
+    // Default 0 = Kirim otomatis ke SELURUH pemilih yang Belum Memilih (1.442 pemilih)
+    $batchSize = isset($args['batch']) ? (int)$args['batch'] : 0;
     $dryRun = isset($args['dry-run']);
     $force = isset($args['force']);
 
