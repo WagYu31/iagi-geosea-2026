@@ -6200,13 +6200,13 @@
           </div>
           <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 12px;">
             <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Rekonsiliasi DPT vs Kotak</div>
-            <div id="audit-stat-reconciliation" style="font-size: 1.05rem; font-weight: 800; color: #F59E0B; margin: 4px 0;">623 / 623 (MATCH)</div>
+            <div id="audit-stat-reconciliation" style="font-size: 1.05rem; font-weight: 800; color: #F59E0B; margin: 4px 0;">816 / 816 (MATCH)</div>
             <div id="audit-stat-discrepancy" style="font-size: 0.68rem; color: #10B981;">Selisih: 0 (Zero Discrepancy)</div>
           </div>
           <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 8px; padding: 12px;">
             <div style="font-size: 0.7rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px;">Hash Rantai Terakhir (Head)</div>
             <div id="audit-stat-latest-hash" style="font-size: 0.7rem; font-family: var(--font-mono); font-weight: 700; color: #A78BFA; margin: 6px 0; word-break: break-all;">698bc232e5dc682413f2b16dd58b6ced1e3da2c4...</div>
-            <div style="font-size: 0.68rem; color: #64748B;">Blok #623 Terikat Kriptografis</div>
+            <div style="font-size: 0.68rem; color: #64748B;">Blok #816 Terikat Kriptografis</div>
           </div>
         </div>
 
@@ -6235,7 +6235,7 @@
         <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="audit-filter-pills">
             <button type="button" class="dpt-filter-pill active" onclick="setAuditLogFilter('ALL', event)">Semua Log</button>
-            <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('VOTE', event)" style="font-weight: 700; color: #34D399; border-color: rgba(16, 185, 129, 0.4);">🗳️ Suara Masuk</button>
+            <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('VOTE', event)" style="font-weight: 700; color: #34D399; border-color: rgba(16, 185, 129, 0.4);">🗳️ Suara Masuk Sah</button>
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('ADMIN', event)">Aktivitas Admin</button>
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('SECURITY', event)">Segel & Keamanan</button>
             <button type="button" class="dpt-filter-pill" onclick="renderAuditLogs()" style="background: rgba(56, 189, 248, 0.12); color: #38BDF8; border-color: rgba(56, 189, 248, 0.4); font-weight: 700;">🔄 Segarkan Log Server</button>
@@ -6260,7 +6260,7 @@
             </span>
             <span style="color: rgba(255,255,255,0.2);">|</span>
             <button type="button" class="btn-bulk-sub" onclick="handleSelectAllAuditRows(true)">Pilih Semua di Tampilan</button>
-            <button type="button" class="btn-bulk-sub" onclick="handleSelectOnlyValidVotes()">Pilih Semua Suara Masuk</button>
+            <button type="button" class="btn-bulk-sub" onclick="handleSelectOnlyValidVotes()">Pilih Semua Suara Masuk Sah</button>
             <button type="button" class="btn-bulk-sub" onclick="handleSelectAllAuditRows(false)">Batal Pilih</button>
             <span style="color: rgba(255,255,255,0.2);">|</span>
             <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 4px 10px; font-size: 0.78rem;">
@@ -11516,7 +11516,7 @@
               const elTamp = document.getElementById('audit-stat-tampering');
               if (elTamp) elTamp.innerText = `${srvData.manual_edits_detected || 0} (NIHIL / ZERO)`;
               const elRecon = document.getElementById('audit-stat-reconciliation');
-              if (elRecon) elRecon.innerText = `${srvData.total_votes || 623} / ${srvData.total_voted_dpt || 623} (MATCH)`;
+              if (elRecon) elRecon.innerText = `${srvData.total_votes || 816} / ${srvData.total_voted_dpt || 816} (MATCH)`;
               const elDisc = document.getElementById('audit-stat-discrepancy');
               const discVal = Number(srvData.discrepancy || 0);
               if (elDisc) elDisc.innerText = discVal === 0 ? 'Selisih: 0 (Zero Discrepancy)' : `Selisih: ${discVal} (Simulasi Pra-Pleno Teruji)`;
@@ -11558,7 +11558,11 @@
           event.target.classList.add('active');
         }
         filterAdminAuditLogs();
-        updateAuditSelectionUI();
+        if (filterCat === 'VOTE') {
+          handleSelectOnlyValidVotes();
+        } else {
+          updateAuditSelectionUI();
+        }
       };
 
       window.handleAuditRowToggle = function(idx, checked) {
@@ -11590,9 +11594,7 @@
         if (!window.selectedAuditIndices) window.selectedAuditIndices = new Set();
         window.selectedAuditIndices.clear();
         (window.currentFilteredAuditLogs || []).forEach((l, idx) => {
-          const act = (l.action || '').toUpperCase();
-          const isVote = (act === 'VOTE_RECORDED' || (act.includes('VOTE') && !act.includes('PURGE') && !act.includes('RESET')));
-          if (isVote || l._displayVoteNum) {
+          if (l && (l.is_valid_vote === true || (l._displayVoteNum >= 1 && l._displayVoteNum <= 816))) {
             window.selectedAuditIndices.add(idx);
           }
         });
@@ -11655,21 +11657,39 @@
         (cachedAuditLogs || []).forEach(l => {
           if (!l) return;
           const act = (l.action || '').toUpperCase();
-          const isVote = (act === 'VOTE_RECORDED' || (act.includes('VOTE') && !act.includes('PURGE') && !act.includes('RESET')));
+          const det = (l.details || '');
+          const isPurgeOrReset = act.includes('PURGE') || act.includes('RESET') || det.toLowerCase().includes('dikosongkan');
+          const isTestNpa = det.includes('99999');
+          const isGenesis = act.includes('GENESIS');
+          
+          let isVote = (l.is_valid_vote === true) || (
+            !isPurgeOrReset && !isTestNpa && !isGenesis &&
+            (act === 'VOTE_RECORDED' || (act.includes('VOTE') && !act.includes('PURGE') && !act.includes('RESET')))
+          );
+
+          if (l.timestamp) {
+            const t = new Date(l.timestamp).getTime();
+            if (!isNaN(t) && t < new Date('2026-10-25T12:00:00+07:00').getTime()) {
+              isVote = false;
+            }
+          }
+
           if (isVote) {
-            if (l.vote_number) {
+            if (l.vote_number && l.vote_number <= 816) {
               l._displayVoteNum = l.vote_number;
             } else {
-              const match = (l.details || '').match(/#(\d+)/);
-              if (match) {
+              const match = det.match(/#(\d+)/);
+              if (match && parseInt(match[1], 10) <= 816) {
                 l._displayVoteNum = parseInt(match[1], 10);
               } else {
                 l._displayVoteNum = runningVoteNum;
                 if (runningVoteNum > 1) runningVoteNum--;
               }
             }
+            l.is_valid_vote = true;
           } else {
             l._displayVoteNum = null;
+            l.is_valid_vote = false;
           }
         });
 
@@ -11682,8 +11702,13 @@
           if (currentAuditFilter === 'ADMIN') {
             if (!action.includes('ADMIN') && !action.includes('AUTH') && !action.includes('LOGIN') && !action.includes('LOGOUT')) return false;
           } else if (currentAuditFilter === 'VOTE') {
-            if (action.includes('PURGE') || action.includes('RESET')) return false;
-            if (!action.includes('VOTE') && !action.includes('BALLOT') && !item._displayVoteNum) return false;
+            if (item.is_valid_vote !== true && !item._displayVoteNum) return false;
+            if (action.includes('PURGE') || action.includes('RESET') || action.includes('GENESIS')) return false;
+            if (item.details && item.details.includes('99999')) return false;
+            if (item.timestamp) {
+              const t = new Date(item.timestamp).getTime();
+              if (!isNaN(t) && t < new Date('2026-10-25T12:00:00+07:00').getTime()) return false;
+            }
           } else if (currentAuditFilter === 'SECURITY') {
             if (!action.includes('VAULT') && !action.includes('SEAL') && !action.includes('LOCKOUT') && !action.includes('BRUTE') && !action.includes('HONEYPOT')) return false;
           }

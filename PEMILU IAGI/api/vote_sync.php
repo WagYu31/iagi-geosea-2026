@@ -1939,16 +1939,30 @@ if ($action === 'get_audit_logs') {
         return ($tB - $tA);
     });
 
-    // Beri nomor urut suara mundur dari totalBallots ke 1
+    // Beri nomor urut suara mundur dari totalBallots (816) ke 1 untuk suara sah resmi (mulai 26 Okt 2026)
     $currentVoteNum = $totalBallots;
     foreach ($combinedLogs as &$cLog) {
         if (!is_array($cLog)) continue;
         $act = strtoupper($cLog['action'] ?? '');
-        if (strpos($act, 'VOTE') !== false || strpos($act, 'BALLOT') !== false) {
+        $det = $cLog['details'] ?? '';
+        $t = strtotime($cLog['timestamp'] ?? '');
+        $isOfficialTime = ($t >= strtotime('2026-10-25 12:00:00 +0700'));
+        $isPurge = (strpos($act, 'PURGE') !== false || strpos($act, 'RESET') !== false || stripos($det, 'dikosongkan') !== false);
+        $isTestNpa = (strpos($det, '99999') !== false);
+        $isGenesis = (strpos($act, 'GENESIS') !== false);
+
+        if (!$isPurge && !$isTestNpa && !$isGenesis && $isOfficialTime && (strpos($act, 'VOTE') !== false || strpos($act, 'BALLOT') !== false)) {
             $cLog['vote_number'] = $currentVoteNum;
+            $cLog['is_valid_vote'] = true;
+            if (preg_match('/NPA:\s*(\d{5})/i', $det, $mNpa)) {
+                $cLog['npa'] = $mNpa[1];
+            }
             if ($currentVoteNum > 1) {
                 $currentVoteNum--;
             }
+        } else {
+            $cLog['vote_number'] = null;
+            $cLog['is_valid_vote'] = false;
         }
     }
     unset($cLog);
