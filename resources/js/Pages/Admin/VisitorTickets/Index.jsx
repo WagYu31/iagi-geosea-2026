@@ -443,7 +443,14 @@ export default function VisitorTicketsIndex({
     const [debtFilter, setDebtFilter] = useState(filters.debt || 'all');
     const [emailSentFilter, setEmailSentFilter] = useState(filters.email_sent || 'all');
     const [unpaidExcelFilter, setUnpaidExcelFilter] = useState(filters.unpaid_excel || 'all');
+    const [perPageFilter, setPerPageFilter] = useState(filters.per_page ? String(filters.per_page) : '25');
     const [sentTicketIds, setSentTicketIds] = useState([]);
+
+    useEffect(() => {
+        if (filters.per_page !== undefined) {
+            setPerPageFilter(String(filters.per_page));
+        }
+    }, [filters.per_page]);
 
     // Multi-select state (persisted in localStorage so red mark doesn't disappear on refresh)
     const [selectedIds, setSelectedIds] = useState(() => {
@@ -613,6 +620,7 @@ export default function VisitorTicketsIndex({
     const searchTimer = useRef(null);
 
     const navigateFilters = (overrides = {}) => {
+        const currentPerPage = overrides.per_page !== undefined ? overrides.per_page : perPageFilter;
         const params = {
             search: overrides.search !== undefined ? overrides.search : searchTerm,
             type: overrides.type !== undefined ? overrides.type : typeFilter,
@@ -621,6 +629,7 @@ export default function VisitorTicketsIndex({
             status: overrides.status !== undefined ? overrides.status : statusFilter,
             debt: overrides.debt !== undefined ? overrides.debt : debtFilter,
             email_sent: overrides.email_sent !== undefined ? overrides.email_sent : emailSentFilter,
+            per_page: currentPerPage,
             page: overrides.page || 1,
         };
 
@@ -631,6 +640,7 @@ export default function VisitorTicketsIndex({
         if (params.status === 'all') delete params.status;
         if (params.debt === 'all') delete params.debt;
         if (params.email_sent === 'all') delete params.email_sent;
+        if (String(params.per_page) === '25') delete params.per_page;
         if (params.page === 1) delete params.page;
 
         router.get(route('admin.visitorTickets'), params, {
@@ -638,6 +648,12 @@ export default function VisitorTicketsIndex({
             preserveScroll: true,
             replace: true,
         });
+    };
+
+    const handlePerPageChange = (val) => {
+        const strVal = String(val);
+        setPerPageFilter(strVal);
+        navigateFilters({ per_page: strVal, page: 1 });
     };
 
     const handleSearchChange = (val) => {
@@ -686,7 +702,8 @@ export default function VisitorTicketsIndex({
         setStatusFilter('all');
         setDebtFilter('all');
         setEmailSentFilter('all');
-        navigateFilters({ search: '', type: 'all', registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', page: 1 });
+        setPerPageFilter('25');
+        navigateFilters({ search: '', type: 'all', registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', per_page: '25', page: 1 });
     };
 
     const handlePageChange = (_, page) => {
@@ -1325,7 +1342,7 @@ export default function VisitorTicketsIndex({
         { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
 
-    const hasActiveFilters = searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all';
+    const hasActiveFilters = searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || (perPageFilter && String(perPageFilter) !== '25');
 
     return (
         <SidebarLayout>
@@ -2356,6 +2373,120 @@ export default function VisitorTicketsIndex({
                         </Box>
                     )}
 
+                    {/* TOP TABLE BAR: Quick Row Limit Switcher & Summary */}
+                    <Box
+                        sx={{
+                            px: 2.5,
+                            py: 1.2,
+                            bgcolor: '#f8fafc',
+                            borderBottom: '1.5px solid #e2e8f0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flexWrap: 'wrap',
+                            gap: 1.5,
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
+                            <Typography variant="body2" sx={{ fontWeight: 800, color: '#334155', fontSize: '0.82rem' }}>
+                                Total Terdaftar: <strong style={{ color: '#094d42' }}>{totalItems}</strong> pengunjung
+                            </Typography>
+                            {perPageFilter === 'all' || lastPage <= 1 ? (
+                                <Chip
+                                    label={`⚡ Menampilkan Seluruh ${ticketsData.length} Baris Sekaligus`}
+                                    size="small"
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.72rem',
+                                        bgcolor: '#ecfdf5',
+                                        color: '#065f46',
+                                        border: '1px solid #a7f3d0',
+                                    }}
+                                />
+                            ) : (
+                                <Chip
+                                    label={`Halaman ${currentPage} dari ${lastPage} (${ticketsData.length} baris tampil)`}
+                                    size="small"
+                                    sx={{
+                                        fontWeight: 700,
+                                        fontSize: '0.72rem',
+                                        bgcolor: '#f1f5f9',
+                                        color: '#475569',
+                                    }}
+                                />
+                            )}
+                        </Box>
+
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.76rem' }}>
+                                Tampilkan:
+                            </Typography>
+                            <Select
+                                size="small"
+                                value={perPageFilter}
+                                onChange={(e) => handlePerPageChange(e.target.value)}
+                                sx={{
+                                    height: 32,
+                                    fontSize: '0.78rem',
+                                    fontWeight: 700,
+                                    bgcolor: '#ffffff',
+                                    borderRadius: '8px',
+                                    '& .MuiSelect-select': {
+                                        py: 0.3,
+                                        px: 1.2,
+                                    }
+                                }}
+                            >
+                                <MenuItem value="25" sx={{ fontSize: '0.78rem', fontWeight: 600 }}>25 / halaman</MenuItem>
+                                <MenuItem value="50" sx={{ fontSize: '0.78rem', fontWeight: 600 }}>50 / halaman</MenuItem>
+                                <MenuItem value="100" sx={{ fontSize: '0.78rem', fontWeight: 600 }}>100 / halaman</MenuItem>
+                                <MenuItem value="all" sx={{ fontSize: '0.78rem', fontWeight: 800, color: '#094d42' }}>
+                                    ⚡ Tampilkan Semua ({totalItems})
+                                </MenuItem>
+                            </Select>
+
+                            {perPageFilter !== 'all' ? (
+                                <Button
+                                    size="small"
+                                    variant="contained"
+                                    onClick={() => handlePerPageChange('all')}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontSize: '0.74rem',
+                                        fontWeight: 800,
+                                        height: 32,
+                                        borderRadius: '8px',
+                                        bgcolor: '#094d42',
+                                        color: '#ffffff',
+                                        boxShadow: 'none',
+                                        '&:hover': { bgcolor: '#063830', boxShadow: 'none' },
+                                    }}
+                                >
+                                    ⚡ Tampilkan Semua ({totalItems})
+                                </Button>
+                            ) : (
+                                <Button
+                                    size="small"
+                                    variant="outlined"
+                                    onClick={() => handlePerPageChange('25')}
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontSize: '0.74rem',
+                                        fontWeight: 700,
+                                        height: 32,
+                                        borderRadius: '8px',
+                                        borderColor: '#cbd5e1',
+                                        color: '#64748b',
+                                        bgcolor: '#ffffff',
+                                        '&:hover': { bgcolor: '#f1f5f9' },
+                                    }}
+                                >
+                                    Kembali ke 25 / hal
+                                </Button>
+                            )}
+                        </Box>
+                    </Box>
+
                     <TableContainer
                         sx={{
                             width: '100%',
@@ -3065,29 +3196,79 @@ export default function VisitorTicketsIndex({
                         </Table>
                     </TableContainer>
 
-                    {/* Pagination */}
+                    {/* Pagination & Row Controls */}
                     {totalItems > 0 && (
-                        <Box sx={{ p: 2, px: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', bgcolor: '#f8fafc', flexWrap: 'wrap', gap: 1 }}>
-                            <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700 }}>
-                                Showing page {currentPage} of {lastPage} &bull; Total {totalItems} registered visitors
-                            </Typography>
-                            <Pagination
-                                count={lastPage}
-                                page={currentPage}
-                                onChange={handlePageChange}
-                                color="primary"
-                                size="small"
-                                sx={{
-                                    '& .MuiPaginationItem-root': {
-                                        borderRadius: '8px',
-                                        fontWeight: 800,
-                                    },
-                                    '& .Mui-selected': {
-                                        bgcolor: '#094d42 !important',
-                                        color: '#ffffff',
-                                    }
-                                }}
-                            />
+                        <Box sx={{ p: 2, px: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #e2e8f0', bgcolor: '#f8fafc', flexWrap: 'wrap', gap: 2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                                <Typography variant="caption" sx={{ color: '#475569', fontWeight: 700, fontSize: '0.8rem' }}>
+                                    {perPageFilter === 'all' || lastPage <= 1 ? (
+                                        <>Menampilkan seluruh <strong>{ticketsData.length}</strong> data ({totalItems} registered visitors)</>
+                                    ) : (
+                                        <>Showing page <strong>{currentPage}</strong> of <strong>{lastPage}</strong> &bull; Total <strong>{totalItems}</strong> registered visitors</>
+                                    )}
+                                </Typography>
+
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 700, fontSize: '0.75rem' }}>
+                                        Baris per halaman:
+                                    </Typography>
+                                    <Select
+                                        size="small"
+                                        value={perPageFilter}
+                                        onChange={(e) => handlePerPageChange(e.target.value)}
+                                        sx={{
+                                            height: 32,
+                                            fontSize: '0.8rem',
+                                            fontWeight: 700,
+                                            bgcolor: '#ffffff',
+                                            borderRadius: '8px',
+                                            '& .MuiSelect-select': {
+                                                py: 0.4,
+                                                px: 1.2,
+                                            }
+                                        }}
+                                    >
+                                        <MenuItem value="25" sx={{ fontSize: '0.8rem', fontWeight: 600 }}>25 / halaman</MenuItem>
+                                        <MenuItem value="50" sx={{ fontSize: '0.8rem', fontWeight: 600 }}>50 / halaman</MenuItem>
+                                        <MenuItem value="100" sx={{ fontSize: '0.8rem', fontWeight: 600 }}>100 / halaman</MenuItem>
+                                        <MenuItem value="all" sx={{ fontSize: '0.8rem', fontWeight: 800, color: '#094d42' }}>
+                                            ⚡ Tampilkan Semua ({totalItems})
+                                        </MenuItem>
+                                    </Select>
+                                </Box>
+                            </Box>
+
+                            {perPageFilter !== 'all' && lastPage > 1 ? (
+                                <Pagination
+                                    count={lastPage}
+                                    page={currentPage}
+                                    onChange={handlePageChange}
+                                    color="primary"
+                                    size="small"
+                                    sx={{
+                                        '& .MuiPaginationItem-root': {
+                                            borderRadius: '8px',
+                                            fontWeight: 800,
+                                        },
+                                        '& .Mui-selected': {
+                                            bgcolor: '#094d42 !important',
+                                            color: '#ffffff',
+                                        }
+                                    }}
+                                />
+                            ) : (
+                                <Chip
+                                    label={`✅ Seluruh ${totalItems} data tampil sekaligus dalam 1 layar`}
+                                    size="small"
+                                    sx={{
+                                        fontWeight: 700,
+                                        fontSize: '0.75rem',
+                                        bgcolor: '#ecfdf5',
+                                        color: '#065f46',
+                                        border: '1px solid #a7f3d0',
+                                    }}
+                                />
+                            )}
                         </Box>
                     )}
                 </Paper>

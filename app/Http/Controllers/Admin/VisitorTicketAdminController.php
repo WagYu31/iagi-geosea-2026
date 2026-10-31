@@ -163,7 +163,14 @@ class VisitorTicketAdminController extends Controller
     {
         $query = $this->filterTicketsQuery($request);
 
-        $tickets = $query->latest()->paginate(25)->withQueryString();
+        $perPageInput = $request->input('per_page', 25);
+        if ($perPageInput === 'all' || (int)$perPageInput >= 9999 || (int)$perPageInput <= 0) {
+            $perPage = 10000;
+        } else {
+            $perPage = max(10, min(1000, (int)$perPageInput));
+        }
+
+        $tickets = $query->latest()->paginate($perPage)->withQueryString();
 
         // Cleanup any orphan payments that have no associated visitor tickets
         try {
@@ -357,6 +364,7 @@ class VisitorTicketAdminController extends Controller
                 'debt' => $request->input('debt', 'all'),
                 'email_sent' => $request->input('email_sent', 'all'),
                 'unpaid_excel' => $request->input('unpaid_excel', 'all'),
+                'per_page' => $perPageInput,
             ],
             'occupiedUniqueCodes' => VisitorPayment::getOccupiedUniqueCodes(),
             'unpaidExcelEmails' => $unpaidEmails,
