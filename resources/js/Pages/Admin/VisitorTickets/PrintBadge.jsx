@@ -136,7 +136,7 @@ const CATEGORY_MAP = {
     student_crowd: { label: 'STUDENT CROWD', short: 'STUDENT CROWD' },
 };
 
-export const BADGE_VERSION = '20261031_lowered_logos_v2';
+export const BADGE_VERSION = '20261025_student_badge';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;
@@ -151,7 +151,7 @@ function SingleLanyardCard({
     isBulk,
     showHoleGuide = true,
     holeShape = 'slot',
-    holePosition = 3.2,
+    holePosition = 2.75,
 }) {
     const visitorType = ticket.visitor_type || 'non_exclusive';
     const cat = CATEGORY_MAP[visitorType] || CATEGORY_MAP.non_exclusive;
@@ -375,10 +375,10 @@ export default function PrintBadge({
 
     const [holePosition, setHolePosition] = useState(() => {
         try {
-            const saved = localStorage.getItem('badge_hole_position_v4');
-            return saved !== null ? Number(saved) : 3.2; // 3.2mm from top (safely centered in 8.5mm expanded safe zone above logos)
+            const saved = localStorage.getItem('badge_hole_position_v3');
+            return saved !== null ? Number(saved) : 2.75; // 2.75mm from top (safely between yellow line at 2.3mm and logos at 5.6mm)
         } catch {
-            return 3.2;
+            return 2.75;
         }
     });
 
@@ -400,7 +400,7 @@ export default function PrintBadge({
     const handleHolePositionChange = (pos) => {
         setHolePosition(pos);
         try {
-            localStorage.setItem('badge_hole_position_v4', String(pos));
+            localStorage.setItem('badge_hole_position_v3', String(pos));
         } catch {}
     };
 
@@ -782,9 +782,9 @@ export default function PrintBadge({
 
                             <Box sx={{ width: '1px', height: '24px', bgcolor: '#334155', mx: 0.5 }} />
                             {[
-                                { label: 'Atas (2.8mm)', val: 2.8 },
-                                { label: 'Tengah Pas (3.2mm ⭐)', val: 3.2 },
-                                { label: 'Bawah (3.6mm)', val: 3.6 },
+                                { label: 'Atas (2.6mm)', val: 2.6 },
+                                { label: 'Tengah Aman (2.75mm ⭐)', val: 2.75 },
+                                { label: 'Bawah (2.9mm)', val: 2.9 },
                             ].map(opt => (
                                 <Button
                                     key={opt.val}
