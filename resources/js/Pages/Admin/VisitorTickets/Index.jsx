@@ -380,6 +380,8 @@ export default function VisitorTicketsIndex({
     occupiedUniqueCodes = [],
     unpaidExcelEmails = [],
     unpaidTicketIds = [],
+    duplicateEmails = [],
+    duplicateNames = [],
 }) {
     const theme = useTheme();
     const c = theme.palette.custom;
@@ -442,6 +444,7 @@ export default function VisitorTicketsIndex({
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
     const [debtFilter, setDebtFilter] = useState(filters.debt || 'all');
     const [emailSentFilter, setEmailSentFilter] = useState(filters.email_sent || 'all');
+    const [duplicateFilter, setDuplicateFilter] = useState(filters.duplicate || 'all');
     const [unpaidExcelFilter, setUnpaidExcelFilter] = useState(filters.unpaid_excel || 'all');
     const [perPageFilter, setPerPageFilter] = useState(filters.per_page ? String(filters.per_page) : '25');
     const [sentTicketIds, setSentTicketIds] = useState([]);
@@ -629,6 +632,7 @@ export default function VisitorTicketsIndex({
             status: overrides.status !== undefined ? overrides.status : statusFilter,
             debt: overrides.debt !== undefined ? overrides.debt : debtFilter,
             email_sent: overrides.email_sent !== undefined ? overrides.email_sent : emailSentFilter,
+            duplicate: overrides.duplicate !== undefined ? overrides.duplicate : duplicateFilter,
             per_page: currentPerPage,
             page: overrides.page || 1,
         };
@@ -640,6 +644,7 @@ export default function VisitorTicketsIndex({
         if (params.status === 'all') delete params.status;
         if (params.debt === 'all') delete params.debt;
         if (params.email_sent === 'all') delete params.email_sent;
+        if (params.duplicate === 'all') delete params.duplicate;
         if (String(params.per_page) === '25') delete params.per_page;
         if (params.page === 1) delete params.page;
 
@@ -694,6 +699,11 @@ export default function VisitorTicketsIndex({
         navigateFilters({ email_sent: val, page: 1 });
     };
 
+    const handleDuplicateFilterChange = (val) => {
+        setDuplicateFilter(val);
+        navigateFilters({ duplicate: val, page: 1 });
+    };
+
     const handleResetFilters = () => {
         setSearchTerm('');
         setTypeFilter('all');
@@ -702,8 +712,9 @@ export default function VisitorTicketsIndex({
         setStatusFilter('all');
         setDebtFilter('all');
         setEmailSentFilter('all');
+        setDuplicateFilter('all');
         setPerPageFilter('25');
-        navigateFilters({ search: '', type: 'all', registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', per_page: '25', page: 1 });
+        navigateFilters({ search: '', type: 'all', registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', duplicate: 'all', per_page: '25', page: 1 });
     };
 
     const handlePageChange = (_, page) => {
@@ -1342,7 +1353,7 @@ export default function VisitorTicketsIndex({
         { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
 
-    const hasActiveFilters = searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || (perPageFilter && String(perPageFilter) !== '25');
+    const hasActiveFilters = searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || (perPageFilter && String(perPageFilter) !== '25');
 
     return (
         <SidebarLayout>
@@ -1989,7 +2000,7 @@ export default function VisitorTicketsIndex({
                                 sm: 'repeat(2, 1fr)',
                                 md: 'repeat(3, 1fr)',
                                 lg: 'repeat(4, 1fr)',
-                                xl: '2fr 1.1fr 0.95fr 0.95fr 0.95fr 0.95fr 1fr auto',
+                                xl: '1.8fr 1.05fr 0.9fr 0.9fr 0.9fr 0.9fr 0.95fr 1.1fr auto',
                             },
                             gap: 1.5,
                             alignItems: 'center',
@@ -2144,6 +2155,40 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="all">All Email Status</MenuItem>
                                 <MenuItem value="sent" sx={{ color: '#0284c7', fontWeight: 700 }}>📨 Email Sent ({stats.emailSentCount || 0})</MenuItem>
                                 <MenuItem value="not_sent" sx={{ color: '#64748b', fontWeight: 700 }}>⏳ Not Sent Yet ({stats.emailNotSentCount || 0})</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Duplikat / Dobel</InputLabel>
+                            <Select
+                                value={duplicateFilter}
+                                label="Duplikat / Dobel"
+                                onChange={(e) => handleDuplicateFilterChange(e.target.value)}
+                                sx={{
+                                    borderRadius: '10px',
+                                    fontSize: '0.82rem',
+                                    bgcolor: duplicateFilter !== 'all' ? '#fef2f2' : '#f8fafc',
+                                    fontWeight: duplicateFilter !== 'all' ? 800 : 600,
+                                    color: duplicateFilter !== 'all' ? '#dc2626' : 'inherit',
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: duplicateFilter !== 'all' ? '#ef4444 !important' : undefined,
+                                        borderWidth: duplicateFilter !== 'all' ? '2px !important' : undefined,
+                                    },
+                                }}
+                            >
+                                <MenuItem value="all">Semua Data (Bukan Dobel)</MenuItem>
+                                <MenuItem value="email" sx={{ color: '#dc2626', fontWeight: 700 }}>
+                                    👥 Email Dobel ({stats.duplicateEmailTicketsCount || 0} tiket)
+                                </MenuItem>
+                                <MenuItem value="name" sx={{ color: '#d97706', fontWeight: 700 }}>
+                                    👤 Nama Dobel ({stats.duplicateNameTicketsCount || 0} tiket)
+                                </MenuItem>
+                                <MenuItem value="any" sx={{ color: '#b91c1c', fontWeight: 800 }}>
+                                    ⚠️ Email / Nama Dobel ({stats.duplicateAnyTicketsCount || 0} tiket)
+                                </MenuItem>
+                                <MenuItem value="both" sx={{ color: '#7f1d1d', fontWeight: 900 }}>
+                                    🚨 Email & Nama Persis Sama
+                                </MenuItem>
                             </Select>
                         </FormControl>
 
@@ -2417,6 +2462,21 @@ export default function VisitorTicketsIndex({
                             <Typography variant="body2" sx={{ fontWeight: 800, color: '#334155', fontSize: '0.82rem' }}>
                                 Total Terdaftar: <strong style={{ color: '#094d42' }}>{totalItems}</strong> pengunjung
                             </Typography>
+                            {duplicateFilter !== 'all' && (
+                                <Chip
+                                    icon={<WarningAmberIcon sx={{ fontSize: '13px !important', color: '#b91c1c !important' }} />}
+                                    label={`Filter Aktif: ${duplicateFilter === 'email' ? 'Email Dobel' : duplicateFilter === 'name' ? 'Nama Dobel' : duplicateFilter === 'both' ? 'Email & Nama Sama' : 'Email/Nama Dobel'} (${totalItems} tiket)`}
+                                    size="small"
+                                    onDelete={() => handleDuplicateFilterChange('all')}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.72rem',
+                                        bgcolor: '#fee2e2',
+                                        color: '#b91c1c',
+                                        border: '1px solid #fca5a5',
+                                    }}
+                                />
+                            )}
                             {perPageFilter === 'all' || lastPage <= 1 ? (
                                 <Chip
                                     label={`⚡ Menampilkan Seluruh ${ticketsData.length} Baris Sekaligus`}
@@ -2702,6 +2762,46 @@ export default function VisitorTicketsIndex({
                                                     <Typography variant="caption" sx={{ color: isSelected ? '#b91c1c' : '#64748b', display: 'block', fontSize: '0.72rem' }}>
                                                         {t.visitor_email}
                                                     </Typography>
+                                                    {(Boolean(t.visitor_name && duplicateNames.includes(t.visitor_name.toLowerCase().trim())) || Boolean(t.visitor_email && duplicateEmails.includes(t.visitor_email.toLowerCase().trim()))) && (
+                                                        <Box sx={{ display: 'flex', gap: 0.6, mt: 0.3, flexWrap: 'wrap' }}>
+                                                            {Boolean(t.visitor_name && duplicateNames.includes(t.visitor_name.toLowerCase().trim())) && (
+                                                                <Tooltip title={`Nama "${t.visitor_name}" tercatat lebih dari 1 kali di database.`} arrow>
+                                                                    <Chip
+                                                                        icon={<WarningAmberIcon sx={{ fontSize: '11px !important', color: '#b45309 !important' }} />}
+                                                                        label="⚠️ Nama Dobel"
+                                                                        size="small"
+                                                                        sx={{
+                                                                            height: 18,
+                                                                            fontSize: '0.58rem',
+                                                                            fontWeight: 900,
+                                                                            bgcolor: '#fef3c7',
+                                                                            color: '#b45309',
+                                                                            border: '1px solid #fde68a',
+                                                                            cursor: 'help',
+                                                                        }}
+                                                                    />
+                                                                </Tooltip>
+                                                            )}
+                                                            {Boolean(t.visitor_email && duplicateEmails.includes(t.visitor_email.toLowerCase().trim())) && (
+                                                                <Tooltip title={`Email "${t.visitor_email}" tercatat lebih dari 1 kali di database.`} arrow>
+                                                                    <Chip
+                                                                        icon={<WarningAmberIcon sx={{ fontSize: '11px !important', color: '#b91c1c !important' }} />}
+                                                                        label="⚠️ Email Dobel"
+                                                                        size="small"
+                                                                        sx={{
+                                                                            height: 18,
+                                                                            fontSize: '0.58rem',
+                                                                            fontWeight: 900,
+                                                                            bgcolor: '#fee2e2',
+                                                                            color: '#b91c1c',
+                                                                            border: '1px solid #fca5a5',
+                                                                            cursor: 'help',
+                                                                        }}
+                                                                    />
+                                                                </Tooltip>
+                                                            )}
+                                                        </Box>
+                                                    )}
                                                     {isSelected && (
                                                         <Box sx={{ mt: 0.4 }}>
                                                             <Chip

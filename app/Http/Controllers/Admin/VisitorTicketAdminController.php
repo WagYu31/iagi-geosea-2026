@@ -153,6 +153,83 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
+        // Duplicate Check filter (email / name / any / both)
+        if ($duplicate = $request->input('duplicate')) {
+            if ($duplicate === 'email') {
+                $dupEmailList = VisitorTicket::select(DB::raw('LOWER(TRIM(visitor_email)) as email'))
+                    ->whereNotNull('visitor_email')
+                    ->where('visitor_email', '!=', '')
+                    ->groupBy(DB::raw('LOWER(TRIM(visitor_email))'))
+                    ->havingRaw('COUNT(*) > 1')
+                    ->pluck('email')
+                    ->toArray();
+                if (!empty($dupEmailList)) {
+                    $query->whereIn(DB::raw('LOWER(TRIM(visitor_email))'), $dupEmailList);
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            } elseif ($duplicate === 'name') {
+                $dupNameList = VisitorTicket::select(DB::raw('LOWER(TRIM(visitor_name)) as name'))
+                    ->whereNotNull('visitor_name')
+                    ->where('visitor_name', '!=', '')
+                    ->groupBy(DB::raw('LOWER(TRIM(visitor_name))'))
+                    ->havingRaw('COUNT(*) > 1')
+                    ->pluck('name')
+                    ->toArray();
+                if (!empty($dupNameList)) {
+                    $query->whereIn(DB::raw('LOWER(TRIM(visitor_name))'), $dupNameList);
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            } elseif ($duplicate === 'any') {
+                $dupEmailList = VisitorTicket::select(DB::raw('LOWER(TRIM(visitor_email)) as email'))
+                    ->whereNotNull('visitor_email')
+                    ->where('visitor_email', '!=', '')
+                    ->groupBy(DB::raw('LOWER(TRIM(visitor_email))'))
+                    ->havingRaw('COUNT(*) > 1')
+                    ->pluck('email')
+                    ->toArray();
+                $dupNameList = VisitorTicket::select(DB::raw('LOWER(TRIM(visitor_name)) as name'))
+                    ->whereNotNull('visitor_name')
+                    ->where('visitor_name', '!=', '')
+                    ->groupBy(DB::raw('LOWER(TRIM(visitor_name))'))
+                    ->havingRaw('COUNT(*) > 1')
+                    ->pluck('name')
+                    ->toArray();
+                if (!empty($dupEmailList) || !empty($dupNameList)) {
+                    $query->where(function ($q) use ($dupEmailList, $dupNameList) {
+                        if (!empty($dupEmailList)) {
+                            $q->whereIn(DB::raw('LOWER(TRIM(visitor_email))'), $dupEmailList);
+                        }
+                        if (!empty($dupNameList)) {
+                            if (!empty($dupEmailList)) {
+                                $q->orWhereIn(DB::raw('LOWER(TRIM(visitor_name))'), $dupNameList);
+                            } else {
+                                $q->whereIn(DB::raw('LOWER(TRIM(visitor_name))'), $dupNameList);
+                            }
+                        }
+                    });
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            } elseif ($duplicate === 'both') {
+                $dupBothPairs = VisitorTicket::select(DB::raw('CONCAT(LOWER(TRIM(visitor_email)), ":::", LOWER(TRIM(visitor_name))) as pair'))
+                    ->whereNotNull('visitor_email')
+                    ->where('visitor_email', '!=', '')
+                    ->whereNotNull('visitor_name')
+                    ->where('visitor_name', '!=', '')
+                    ->groupBy(DB::raw('LOWER(TRIM(visitor_email)), LOWER(TRIM(visitor_name))'))
+                    ->havingRaw('COUNT(*) > 1')
+                    ->pluck('pair')
+                    ->toArray();
+                if (!empty($dupBothPairs)) {
+                    $query->whereIn(DB::raw('CONCAT(LOWER(TRIM(visitor_email)), ":::", LOWER(TRIM(visitor_name)))'), $dupBothPairs);
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            }
+        }
+
         return $query;
     }
 
@@ -170,7 +247,16 @@ class VisitorTicketAdminController extends Controller
             $perPage = max(10, min(1000, (int)$perPageInput));
         }
 
-        $tickets = $query->latest()->paginate($perPage)->withQueryString();
+        $duplicateParam = $request->input('duplicate');
+        if ($duplicateParam === 'email') {
+            $tickets = $query->orderBy(DB::raw('LOWER(TRIM(visitor_email))'), 'asc')->orderBy('id', 'asc')->paginate($perPage)->withQueryString();
+        } elseif ($duplicateParam === 'name') {
+            $tickets = $query->orderBy(DB::raw('LOWER(TRIM(visitor_name))'), 'asc')->orderBy('id', 'asc')->paginate($perPage)->withQueryString();
+        } elseif ($duplicateParam === 'any' || $duplicateParam === 'both') {
+            $tickets = $query->orderBy(DB::raw('LOWER(TRIM(visitor_email))'), 'asc')->orderBy(DB::raw('LOWER(TRIM(visitor_name))'), 'asc')->paginate($perPage)->withQueryString();
+        } else {
+            $tickets = $query->latest()->paginate($perPage)->withQueryString();
+        }
 
         // Cleanup any orphan payments that have no associated visitor tickets
         try {
@@ -186,6 +272,55 @@ class VisitorTicketAdminController extends Controller
             $unpaidTicketIds = VisitorTicket::whereIn(DB::raw('LOWER(visitor_email)'), $unpaidEmails)->pluck('id')->toArray();
         } catch (\Exception $e) {
             Log::warning('Error fetching unpaidTicketIds: ' . $e->getMessage());
+        }
+
+        // Duplicate calculation
+        $dupEmailList = [];
+        $dupNameList = [];
+        $dupEmailTicketCount = 0;
+        $dupNameTicketCount = 0;
+        $dupAnyTicketCount = 0;
+        try {
+            $dupEmailList = VisitorTicket::select(DB::raw('LOWER(TRIM(visitor_email)) as email'))
+                ->whereNotNull('visitor_email')
+                ->where('visitor_email', '!=', '')
+                ->groupBy(DB::raw('LOWER(TRIM(visitor_email))'))
+                ->havingRaw('COUNT(*) > 1')
+                ->pluck('email')
+                ->toArray();
+
+            $dupNameList = VisitorTicket::select(DB::raw('LOWER(TRIM(visitor_name)) as name'))
+                ->whereNotNull('visitor_name')
+                ->where('visitor_name', '!=', '')
+                ->groupBy(DB::raw('LOWER(TRIM(visitor_name))'))
+                ->havingRaw('COUNT(*) > 1')
+                ->pluck('name')
+                ->toArray();
+
+            $dupEmailTicketCount = !empty($dupEmailList)
+                ? VisitorTicket::whereIn(DB::raw('LOWER(TRIM(visitor_email))'), $dupEmailList)->count()
+                : 0;
+
+            $dupNameTicketCount = !empty($dupNameList)
+                ? VisitorTicket::whereIn(DB::raw('LOWER(TRIM(visitor_name))'), $dupNameList)->count()
+                : 0;
+
+            $dupAnyTicketCount = (!empty($dupEmailList) || !empty($dupNameList))
+                ? VisitorTicket::where(function ($q) use ($dupEmailList, $dupNameList) {
+                    if (!empty($dupEmailList)) {
+                        $q->whereIn(DB::raw('LOWER(TRIM(visitor_email))'), $dupEmailList);
+                    }
+                    if (!empty($dupNameList)) {
+                        if (!empty($dupEmailList)) {
+                            $q->orWhereIn(DB::raw('LOWER(TRIM(visitor_name))'), $dupNameList);
+                        } else {
+                            $q->whereIn(DB::raw('LOWER(TRIM(visitor_name))'), $dupNameList);
+                        }
+                    }
+                })->count()
+                : 0;
+        } catch (\Exception $e) {
+            Log::warning('Error computing duplicate stats: ' . $e->getMessage());
         }
 
         // Calculate global summary stats linked to actual visitor tickets
@@ -204,6 +339,9 @@ class VisitorTicketAdminController extends Controller
             'totalRevenue' => (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount'),
             'groupRegistrationCount' => VisitorPayment::where('is_mixed_category', true)->count(),
             'unpaidExcelCount' => count($unpaidTicketIds),
+            'duplicateEmailTicketsCount' => $dupEmailTicketCount,
+            'duplicateNameTicketsCount' => $dupNameTicketCount,
+            'duplicateAnyTicketsCount' => $dupAnyTicketCount,
         ];
 
         // Fetch tickets timestamp & status in memory for bulletproof, SQL-version-agnostic grouping
@@ -363,9 +501,12 @@ class VisitorTicketAdminController extends Controller
                 'status' => $request->input('status', 'all'),
                 'debt' => $request->input('debt', 'all'),
                 'email_sent' => $request->input('email_sent', 'all'),
+                'duplicate' => $request->input('duplicate', 'all'),
                 'unpaid_excel' => $request->input('unpaid_excel', 'all'),
                 'per_page' => $perPageInput,
             ],
+            'duplicateEmails' => $dupEmailList,
+            'duplicateNames' => $dupNameList,
             'occupiedUniqueCodes' => VisitorPayment::getOccupiedUniqueCodes(),
             'unpaidExcelEmails' => $unpaidEmails,
             'unpaidTicketIds' => $unpaidTicketIds,
