@@ -1503,7 +1503,7 @@ export default function VisitorTicketsIndex({
                         boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
                     }}
                 >
-                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                    <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                         <Button
                             onClick={() => setViewMode('table')}
                             startIcon={<TableChartRoundedIcon sx={{ fontSize: 18 }} />}
@@ -1514,6 +1514,7 @@ export default function VisitorTicketsIndex({
                                 fontSize: '0.82rem',
                                 fontWeight: 800,
                                 textTransform: 'none',
+                                whiteSpace: 'nowrap',
                                 bgcolor: viewMode === 'table' ? '#2563eb' : 'transparent',
                                 color: viewMode === 'table' ? '#ffffff' : (isDark ? '#94a3b8' : '#64748b'),
                                 boxShadow: viewMode === 'table' ? '0 2px 10px rgba(37,99,235,0.25)' : 'none',
@@ -1535,6 +1536,7 @@ export default function VisitorTicketsIndex({
                                 fontSize: '0.82rem',
                                 fontWeight: 800,
                                 textTransform: 'none',
+                                whiteSpace: 'nowrap',
                                 bgcolor: viewMode === 'analytics' ? '#2563eb' : 'transparent',
                                 color: viewMode === 'analytics' ? '#ffffff' : (isDark ? '#94a3b8' : '#64748b'),
                                 boxShadow: viewMode === 'analytics' ? '0 4px 14px rgba(37,99,235,0.25)' : 'none',
@@ -1558,7 +1560,7 @@ export default function VisitorTicketsIndex({
                                 }}
                             />
                         </Button>
-                    </Stack>
+                    </Box>
 
                     <Box sx={{ pr: 1.5, display: { xs: 'none', md: 'block' } }}>
                         <Typography sx={{ fontSize: '0.75rem', color: isDark ? '#94a3b8' : '#64748b', fontWeight: 600 }}>
@@ -1581,21 +1583,20 @@ export default function VisitorTicketsIndex({
                         <Box
                     sx={{
                         display: 'flex',
+                        flexDirection: { xs: 'column', lg: 'row' },
                         justifyContent: 'space-between',
-                        alignItems: 'center',
+                        alignItems: { xs: 'flex-start', lg: 'center' },
                         mb: 3,
-                        flexWrap: 'wrap',
-                        gap: 2,
-                        p: 2.2,
-                        px: 3,
+                        gap: { xs: 2, lg: 2.5 },
+                        p: { xs: 2, sm: 2.5 },
                         borderRadius: '18px',
                         bgcolor: '#ffffff',
                         border: '1px solid #e2e8f0',
                         boxShadow: '0 4px 0 #e2e8f0, 0 10px 25px rgba(0,0,0,0.03)',
                     }}
                 >
-                    <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+                    <Box sx={{ maxWidth: { xs: '100%', lg: '380px' } }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5, flexWrap: 'wrap' }}>
                             <Typography variant="h5" sx={{ fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
                                 Visitor Tickets
                             </Typography>
@@ -1643,12 +1644,20 @@ export default function VisitorTicketsIndex({
                                 </Button>
                             </Tooltip>
                         </Box>
-                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 500 }}>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 500, display: 'block', lineHeight: 1.4 }}>
                             Central command for visitor registrations, payment verification, lanyard ID badge printing, & gate check-in.
                         </Typography>
                     </Box>
 
-                    <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            gap: { xs: 1, sm: 1.25 },
+                            width: { xs: '100%', lg: 'auto' },
+                        }}
+                    >
                         <Button
                             variant="contained"
                             startIcon={<PersonAddIcon />}
@@ -1657,11 +1666,13 @@ export default function VisitorTicketsIndex({
                                 bgcolor: '#094d42',
                                 color: '#ffffff',
                                 fontWeight: 800,
-                                fontSize: '0.82rem',
-                                px: 2,
-                                py: 1,
+                                fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                                px: { xs: 1.5, sm: 2 },
+                                py: 0.9,
                                 borderRadius: '12px',
                                 textTransform: 'none',
+                                whiteSpace: 'nowrap',
+                                flex: { xs: '1 1 calc(50% - 8px)', sm: '0 0 auto' },
                                 boxShadow: '0 4px 0 #06332b, 0 8px 16px rgba(9,77,66,0.2)',
                                 '&:hover': {
                                     bgcolor: '#0d6356',
@@ -1686,11 +1697,13 @@ export default function VisitorTicketsIndex({
                                 bgcolor: '#0284c7',
                                 color: '#ffffff',
                                 fontWeight: 800,
-                                fontSize: '0.82rem',
-                                px: 2,
-                                py: 1,
+                                fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                                px: { xs: 1.5, sm: 2 },
+                                py: 0.9,
                                 borderRadius: '12px',
                                 textTransform: 'none',
+                                whiteSpace: 'nowrap',
+                                flex: { xs: '1 1 calc(50% - 8px)', sm: '0 0 auto' },
                                 boxShadow: '0 4px 0 #0369a1, 0 8px 16px rgba(2,132,199,0.2)',
                                 '&:hover': {
                                     bgcolor: '#0369a1',
@@ -1715,11 +1728,13 @@ export default function VisitorTicketsIndex({
                                 bgcolor: '#7c3aed',
                                 color: '#ffffff',
                                 fontWeight: 800,
-                                fontSize: '0.82rem',
-                                px: 2,
-                                py: 1,
+                                fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                                px: { xs: 1.5, sm: 2 },
+                                py: 0.9,
                                 borderRadius: '12px',
                                 textTransform: 'none',
+                                whiteSpace: 'nowrap',
+                                flex: { xs: '1 1 calc(50% - 8px)', sm: '0 0 auto' },
                                 boxShadow: '0 4px 0 #6d28d9, 0 8px 16px rgba(124,58,237,0.2)',
                                 '&:hover': {
                                     bgcolor: '#6d28d9',
@@ -1747,11 +1762,13 @@ export default function VisitorTicketsIndex({
                                 bgcolor: selectedIds.length > 0 ? '#d97706' : '#0284c7',
                                 color: '#ffffff',
                                 fontWeight: 800,
-                                fontSize: '0.82rem',
-                                px: 2,
-                                py: 1,
+                                fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                                px: { xs: 1.5, sm: 2 },
+                                py: 0.9,
                                 borderRadius: '12px',
                                 textTransform: 'none',
+                                whiteSpace: 'nowrap',
+                                flex: { xs: '1 1 calc(50% - 8px)', sm: '0 0 auto' },
                                 boxShadow: selectedIds.length > 0
                                     ? '0 4px 0 #b45309, 0 8px 16px rgba(217,119,6,0.2)'
                                     : '0 4px 0 #0369a1, 0 8px 16px rgba(2,132,199,0.2)',
@@ -1783,11 +1800,13 @@ export default function VisitorTicketsIndex({
                                 bgcolor: '#0d9488',
                                 color: '#ffffff',
                                 fontWeight: 800,
-                                fontSize: '0.82rem',
-                                px: 2,
-                                py: 1,
+                                fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                                px: { xs: 1.5, sm: 2 },
+                                py: 0.9,
                                 borderRadius: '12px',
                                 textTransform: 'none',
+                                whiteSpace: 'nowrap',
+                                flex: { xs: '1 1 calc(50% - 8px)', sm: '0 0 auto' },
                                 boxShadow: '0 4px 0 #0f766e, 0 8px 16px rgba(13,148,136,0.2)',
                                 '&:hover': {
                                     bgcolor: '#0f766e',
@@ -1814,11 +1833,13 @@ export default function VisitorTicketsIndex({
                                 borderColor: '#cbd5e1',
                                 bgcolor: '#ffffff',
                                 fontWeight: 800,
-                                fontSize: '0.82rem',
-                                px: 2,
-                                py: 0.9,
+                                fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                                px: { xs: 1.5, sm: 2 },
+                                py: 0.85,
                                 borderRadius: '12px',
                                 textTransform: 'none',
+                                whiteSpace: 'nowrap',
+                                flex: { xs: '1 1 calc(50% - 8px)', sm: '0 0 auto' },
                                 boxShadow: '0 3px 0 #cbd5e1',
                                 '&:hover': {
                                     bgcolor: '#f8fafc',
@@ -1835,7 +1856,7 @@ export default function VisitorTicketsIndex({
                         >
                             Export CSV
                         </Button>
-                    </Stack>
+                    </Box>
                 </Box>
 
                 {/* 3D TACTILE STAT CARDS */}
@@ -2199,7 +2220,7 @@ export default function VisitorTicketsIndex({
                             </Button>
                         </Box>
 
-                        <Stack direction="row" spacing={1} flexWrap="wrap">
+                        <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                             <Button
                                 size="small"
                                 variant="contained"
@@ -2215,6 +2236,7 @@ export default function VisitorTicketsIndex({
                                     textTransform: 'none',
                                     fontWeight: 900,
                                     borderRadius: '10px',
+                                    whiteSpace: 'nowrap',
                                     boxShadow: '0 3px 0 #991b1b',
                                     '&:hover': { bgcolor: '#b91c1c' },
                                 }}
@@ -2236,6 +2258,7 @@ export default function VisitorTicketsIndex({
                                     textTransform: 'none',
                                     fontWeight: 900,
                                     borderRadius: '10px',
+                                    whiteSpace: 'nowrap',
                                     boxShadow: '0 3px 0 #0369a1',
                                     '&:hover': { bgcolor: '#0369a1' },
                                 }}
@@ -2254,6 +2277,7 @@ export default function VisitorTicketsIndex({
                                     textTransform: 'none',
                                     fontWeight: 900,
                                     borderRadius: '10px',
+                                    whiteSpace: 'nowrap',
                                     boxShadow: '0 3px 0 #6d28d9',
                                     '&:hover': { bgcolor: '#6d28d9' },
                                 }}
@@ -2272,6 +2296,7 @@ export default function VisitorTicketsIndex({
                                     textTransform: 'none',
                                     fontWeight: 900,
                                     borderRadius: '10px',
+                                    whiteSpace: 'nowrap',
                                     boxShadow: '0 3px 0 #047857',
                                     '&:hover': { bgcolor: '#059669' },
                                 }}
@@ -2290,6 +2315,7 @@ export default function VisitorTicketsIndex({
                                     textTransform: 'none',
                                     fontWeight: 900,
                                     borderRadius: '10px',
+                                    whiteSpace: 'nowrap',
                                     boxShadow: '0 3px 0 #0f766e',
                                     '&:hover': { bgcolor: '#0f766e' },
                                 }}
@@ -2301,7 +2327,7 @@ export default function VisitorTicketsIndex({
                                 variant="outlined"
                                 onClick={() => handleBulkAction('undo_check_in')}
                                 disabled={bulkActionProcessing}
-                                sx={{ borderColor: '#64748b', color: '#cbd5e1', textTransform: 'none', fontWeight: 800, borderRadius: '10px' }}
+                                sx={{ borderColor: '#64748b', color: '#cbd5e1', textTransform: 'none', fontWeight: 800, borderRadius: '10px', whiteSpace: 'nowrap' }}
                             >
                                 Undo Check-In
                             </Button>
@@ -2312,11 +2338,11 @@ export default function VisitorTicketsIndex({
                                 startIcon={<DeleteOutlineIcon />}
                                 onClick={() => handleBulkAction('delete')}
                                 disabled={bulkActionProcessing}
-                                sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '10px', boxShadow: '0 3px 0 #991b1b' }}
+                                sx={{ textTransform: 'none', fontWeight: 900, borderRadius: '10px', boxShadow: '0 3px 0 #991b1b', whiteSpace: 'nowrap' }}
                             >
                                 Delete
                             </Button>
-                        </Stack>
+                        </Box>
                     </Paper>
                 )}
 
@@ -5575,14 +5601,14 @@ export default function VisitorTicketsIndex({
 
                             {/* ACTIONS FOR PENDING STATUS */}
                             {proofModal.payment.status === 'pending' && (
-                                <Stack direction="row" spacing={1} flexWrap="wrap">
+                                <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                                     <Button
                                         variant="outlined"
                                         color="error"
                                         onClick={() => {
                                             setRejectModal({ open: true, paymentId: proofModal.payment.id, notes: '' });
                                         }}
-                                        sx={{ textTransform: 'none', fontWeight: 800, borderRadius: '8px' }}
+                                        sx={{ textTransform: 'none', fontWeight: 800, borderRadius: '8px', whiteSpace: 'nowrap' }}
                                     >
                                         Reject
                                     </Button>
@@ -5602,6 +5628,7 @@ export default function VisitorTicketsIndex({
                                             textTransform: 'none',
                                             fontWeight: 900,
                                             borderRadius: '8px',
+                                            whiteSpace: 'nowrap',
                                             '&:hover': { bgcolor: '#b45309' },
                                         }}
                                     >
@@ -5610,11 +5637,11 @@ export default function VisitorTicketsIndex({
                                     <Button
                                         variant="contained"
                                         onClick={() => handleVerifyPayment(proofModal.payment.id)}
-                                        sx={{ bgcolor: '#10b981', color: '#ffffff', textTransform: 'none', fontWeight: 900, borderRadius: '8px', '&:hover': { bgcolor: '#059669' } }}
+                                        sx={{ bgcolor: '#10b981', color: '#ffffff', textTransform: 'none', fontWeight: 900, borderRadius: '8px', whiteSpace: 'nowrap', '&:hover': { bgcolor: '#059669' } }}
                                     >
                                         Approve - Fully Paid
                                     </Button>
-                                </Stack>
+                                </Box>
                             )}
 
                             {/* ACTIONS FOR APPROVED STATUS */}
