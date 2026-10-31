@@ -798,7 +798,63 @@ class PemiluStorage {
     dpt[idx] = voter;
     this.saveDPT(dpt);
     this.addAuditLog('ADMIN_TOKEN_ASSIGN', `Panitia menetapkan token surat suara bantuan untuk NPA ${cleanNpa} (${voter.name}): ${voter.token}`);
+
+    // Realtime sync to server database
+    try {
+      if (typeof fetch !== 'undefined') {
+        const adminPin = (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('kpku_admin_pin')) || (typeof localStorage !== 'undefined' && localStorage.getItem('kpku_admin_pin')) || '3105';
+        fetch('api/vote_sync.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'register_claim',
+            npa: cleanNpa,
+            token: cleanToken,
+            name: voter.name,
+            email: voter.email,
+            is_admin: true,
+            force_update: true,
+            admin_pin: adminPin
+          })
+        }).catch(() => {});
+      }
+    } catch (e) {}
+
     return { success: true, token: voter.token, voter };
+  }
+
+  // Sinkronisasi status token dari server ke LocalStorage browser perangkat
+  syncTokenFromServer(npa, token, serverVoter = {}) {
+    const cleanNpa = String(npa || '').replace(/\D/g, '').slice(0, 5);
+    const cleanToken = String(token || '').replace(/\s+/g, '').toUpperCase();
+    const dpt = this.getDPT();
+    let idx = dpt.findIndex(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
+
+    if (idx === -1 && typeof INITIAL_DPT !== 'undefined') {
+      const initMatch = INITIAL_DPT.find(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
+      if (initMatch) {
+        dpt.push({
+          ...initMatch,
+          claimed: true,
+          token: cleanToken,
+          claimed_at: serverVoter.claimed_at || new Date().toISOString(),
+          voted: false
+        });
+        idx = dpt.length - 1;
+      }
+    }
+
+    if (idx !== -1) {
+      dpt[idx].claimed = true;
+      dpt[idx].token = cleanToken;
+      dpt[idx].claimed_at = serverVoter.claimed_at || dpt[idx].claimed_at || new Date().toISOString();
+      if (serverVoter.email && (!dpt[idx].email || dpt[idx].email === '-')) {
+        dpt[idx].email = serverVoter.email;
+      }
+      this.saveDPT(dpt);
+      return dpt[idx];
+    }
+    return null;
   }
 
   formatWhatsAppMessage(voter, token) {
@@ -1048,7 +1104,7 @@ class PemiluStorage {
   verifyVotingEligibility(npa, token) {
     const rawNpa = String(npa || '').trim();
     const cleanNpa = rawNpa.replace(/\D/g, '').slice(0, 5);
-    const cleanToken = (token || '').trim().toUpperCase();
+    const cleanToken = (token || '').replace(/\s+/g, '').toUpperCase();
 
     if (!cleanNpa || cleanNpa.length !== 5) {
       return { valid: false, error: 'Nomor Pokok Anggota (NPA) harus tepat 5 digit angka (contoh: 00000).' };
@@ -1072,7 +1128,7 @@ class PemiluStorage {
       return { valid: false, error: 'Surat suara untuk NPA ini belum diklaim. Silakan klik "Klaim di sini" di bawah untuk mendapatkan kode unik.' };
     }
 
-    if (voter.token.toUpperCase() !== cleanToken) {
+    if (voter.token.replace(/\s+/g, '').toUpperCase() !== cleanToken) {
       return { valid: false, error: 'Kode Unik tidak cocok dengan token resmi yang terdaftar untuk NPA ini.' };
     }
 
@@ -1082,7 +1138,7 @@ class PemiluStorage {
   // --- Cast Vote (Zero-Knowledge Anonymous Ballot Decoupling) ---
   async castVote(npa, token, candidateId) {
     const cleanNpa = String(npa || '').replace(/\D/g, '').slice(0, 5);
-    const cleanToken = String(token || '').trim().toUpperCase();
+    const cleanToken = String(token || '').replace(/\s+/g, '').toUpperCase();
 
     // 1. Strict Eligibility Verification
     const verification = this.verifyVotingEligibility(cleanNpa, cleanToken);

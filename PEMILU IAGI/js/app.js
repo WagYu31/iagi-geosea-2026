@@ -618,8 +618,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (simBtnOpenVote) {
       simBtnOpenVote.onclick = () => {
         closeAllModals();
-        // Navigasi ke bilik suara TANPA token otomatis agar pemilih memasukkan kode dari emailnya
-        navigateTo('vote', { npa: voter.npa });
+        // Navigasi ke bilik suara DENGAN token otomatis agar pemilih bisa langsung membuka kertas suara
+        const activeVoter = window.pemiluStorage ? window.pemiluStorage.getVoterByNpa(voter.npa) : voter;
+        const tokenToPass = (activeVoter && activeVoter.token) ? activeVoter.token : (voter.token || '');
+        navigateTo('vote', { npa: voter.npa, code: tokenToPass });
       };
     }
 
@@ -816,8 +818,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function handleVerifyVoteAuth(npa, token) {
-    const verification = window.pemiluStorage.verifyVotingEligibility(npa, token);
+  async function handleVerifyVoteAuth(npa, token) {
+    const cleanNpa = String(npa || '').replace(/\D/g, '').slice(0, 5);
+    const cleanToken = String(token || '').replace(/\s+/g, '').toUpperCase();
+
+    // 1. Coba verifikasi cepat di cache lokal
+    let verification = window.pemiluStorage.verifyVotingEligibility(cleanNpa, cleanToken);
+
+    // 2. Jika di lokal dinyatakan belum klaim / token tidak cocok / dibuka dari in-app browser email,
+    // langsung verifikasi realtime ke database server KPKU!
+    if (!verification.valid && !verification.alreadyVoted) {
+      const btnSubmit = document.querySelector('#form-vote-auth button[type="submit"]');
+      const origBtnHtml = btnSubmit ? btnSubmit.innerHTML : '';
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<span>⏳</span><span>Memverifikasi Otoritas Surat Suara...</span>';
+      }
+
+      try {
+        const srvResp = await fetch('api/vote_sync.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'verify_voter_token',
+            npa: cleanNpa,
+            token: cleanToken
+          })
+        });
+        const srvData = await srvResp.json();
+        if (srvData && srvData.success && srvData.valid) {
+          window.pemiluStorage.syncTokenFromServer(cleanNpa, cleanToken, srvData.voter);
+          verification = { valid: true, voter: window.pemiluStorage.getVoterByNpa(cleanNpa) };
+        } else if (srvData && srvData.alreadyVoted) {
+          verification = { valid: false, error: srvData.error, alreadyVoted: true };
+        } else if (srvData && srvData.error) {
+          verification = { valid: false, error: srvData.error };
+        }
+      } catch (err) {
+        console.warn('Realtime server verify check notice:', err);
+      } finally {
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = origBtnHtml;
+        }
+      }
+    }
+
     if (!verification.valid) {
       showAlert(voteAuthAlert, verification.error, 'error');
       triggerHaptic('error');
@@ -827,7 +873,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     currentVoter = verification.voter;
-    currentToken = token;
+    currentToken = cleanToken;
 
     if (voterBadgeName) voterBadgeName.innerText = currentVoter.name;
     if (voterBadgeNpa) voterBadgeNpa.innerText = currentVoter.npa;
@@ -847,7 +893,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (voteFormAuth) {
-    voteFormAuth.addEventListener('submit', (e) => {
+    voteFormAuth.addEventListener('submit', async (e) => {
       e.preventDefault();
       const npaRaw = document.getElementById('vote-npa').value.trim();
       const token = document.getElementById('vote-token').value.trim();
@@ -861,7 +907,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      handleVerifyVoteAuth(npa, token);
+      await handleVerifyVoteAuth(npa, token);
     });
   }
 

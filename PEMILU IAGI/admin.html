@@ -12772,10 +12772,15 @@
       };
 
       window.handleCopyGenToken = function() {
-        const token = document.getElementById('gen-token-result-input').value;
+        const token = document.getElementById('gen-token-result-input').value.trim();
+        const npa = document.getElementById('gen-token-selected-npa')?.value;
         if (!token) return;
         navigator.clipboard.writeText(token);
-        alert(`✓ Kode token "${token}" berhasil disalin ke clipboard!`);
+        if (npa && window.pemiluStorage) {
+          window.pemiluStorage.setTokenForVoter(npa, token);
+          if (typeof refreshAll === 'function') refreshAll();
+        }
+        alert(`✓ Kode token "${token}" berhasil disalin ke clipboard dan resmi tersimpan aktif di sistem!`);
       };
 
       window.handleSaveAndSendEmail = function() {

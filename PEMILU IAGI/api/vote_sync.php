@@ -2036,6 +2036,89 @@ if ($action === 'check_voter') {
     exit;
 }
 
+// ================= ACTION 1B: VERIFY VOTER TOKEN (REALTIME SERVER AUTH) =================
+if ($action === 'verify_voter_token') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $npa = isset($payload['npa']) ? substr(preg_replace('/\D/', '', $payload['npa']), 0, 5) : '';
+    $token = isset($payload['token']) ? strtoupper(trim(preg_replace('/\s+/', '', $payload['token']))) : '';
+
+    if (strlen($npa) !== 5) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Nomor Pokok Anggota (NPA) harus tepat 5 digit angka.']);
+        exit;
+    }
+
+    if (empty($token) || strlen($token) < 8) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Format kode token surat suara tidak valid.']);
+        exit;
+    }
+
+    $voters = readJsonFile($votersFile, []);
+    $voterStatus = isset($voters[$npa]) ? $voters[$npa] : null;
+
+    if ($voterStatus && !empty($voterStatus['voted'])) {
+        $votedAt = $voterStatus['voted_at'] ?? 'sesi sebelumnya';
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'alreadyVoted' => true,
+            'error' => "Hak suara untuk NPA {$npa} SUDAH DIGUNAKAN pada {$votedAt}. Sistem KPKU menolak pemungutan suara ganda!"
+        ]);
+        exit;
+    }
+
+    $tokenHash = hash('sha256', $token);
+    if ($voterStatus && !empty($voterStatus['token_hash'])) {
+        if ($voterStatus['token_hash'] === $tokenHash) {
+            echo json_encode([
+                'success' => true,
+                'valid' => true,
+                'voter' => [
+                    'npa' => $npa,
+                    'name' => $voterStatus['name'] ?? '',
+                    'email' => $voterStatus['email'] ?? '',
+                    'claimed' => true,
+                    'claimed_at' => $voterStatus['claimed_at'] ?? date('d F Y, H:i:s') . ' WIB',
+                    'voted' => false
+                ]
+            ]);
+            exit;
+        } else {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'valid' => false,
+                'error' => 'Kode Unik tidak cocok dengan token resmi yang terdaftar untuk NPA ini.'
+            ]);
+            exit;
+        }
+    }
+
+    // Fallback: If not yet recorded in voters_status on server, check if registered in DPT
+    $masterRegistryFile = __DIR__ . '/dpt_master_registry.php';
+    if (file_exists($masterRegistryFile)) {
+        $masterDpt = require $masterRegistryFile;
+        if (!isset($masterDpt[$npa])) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => "NPA {$npa} tidak terdaftar dalam DPT resmi KPKU."]);
+            exit;
+        }
+    }
+
+    http_response_code(404);
+    echo json_encode([
+        'success' => false,
+        'valid' => false,
+        'notClaimed' => true,
+        'error' => "Surat suara untuk NPA {$npa} belum diklaim atau kode token belum aktif. Silakan lakukan klaim di menu Klaim terlebih dahulu."
+    ]);
+    exit;
+}
+
 // ================= ACTION 2: GET ALL VOTED NPAS (FOR SYNC) =================
 if ($action === 'get_voted_list') {
     header('Content-Type: application/json; charset=utf-8');
@@ -2137,7 +2220,7 @@ if ($action === 'register_claim') {
     if (!$payload) $payload = $_POST;
 
     $npa = isset($payload['npa']) ? substr(preg_replace('/\D/', '', $payload['npa']), 0, 5) : '';
-    $token = isset($payload['token']) ? strtoupper(trim($payload['token'])) : '';
+    $token = isset($payload['token']) ? strtoupper(trim(preg_replace('/\s+/', '', $payload['token']))) : '';
     $name = isset($payload['name']) ? trim($payload['name']) : '';
     $email = isset($payload['email']) ? strtolower(trim($payload['email'])) : '';
 
@@ -2203,27 +2286,32 @@ if ($action === 'register_claim') {
             exit;
         }
 
-        // If already claimed, prevent token overwrite by different token
+        // If already claimed, prevent token overwrite by different token UNLESS authorized by admin or re-issue request
+        $isAdmin = !empty($payload['is_admin']) || !empty($_SESSION['kpku_admin_logged_in']);
+        $forceUpdate = !empty($payload['force_update']) || $isAdmin;
+
         if (isset($voters[$npa]) && !empty($voters[$npa]['token_hash'])) {
             if ($voters[$npa]['token_hash'] !== $tokenHash) {
-                flock($fpLock, LOCK_UN);
-                fclose($fpLock);
-                http_response_code(409);
-                echo json_encode(['success' => false, 'error' => 'Surat suara untuk NPA ini sudah diterbitkan sebelumnya. Gunakan token resmi yang telah dikirim ke email Anda.']);
-                exit;
+                if (!$forceUpdate) {
+                    flock($fpLock, LOCK_UN);
+                    fclose($fpLock);
+                    http_response_code(409);
+                    echo json_encode(['success' => false, 'error' => 'Surat suara untuk NPA ini sudah diterbitkan sebelumnya. Gunakan token resmi yang telah dikirim ke email Anda.']);
+                    exit;
+                }
             }
-        } else {
-            $voters[$npa] = [
-                'npa' => $npa,
-                'name' => $name ?: (isset($voters[$npa]['name']) ? $voters[$npa]['name'] : ''),
-                'email' => $email,
-                'claimed' => true,
-                'claimed_at' => date('d F Y, H:i:s') . ' WIB',
-                'token_hash' => $tokenHash,
-                'voted' => false
-            ];
-            writeJsonFile($votersFile, $voters);
         }
+
+        $voters[$npa] = [
+            'npa' => $npa,
+            'name' => $name ?: (isset($voters[$npa]['name']) ? $voters[$npa]['name'] : ''),
+            'email' => $email ?: (isset($voters[$npa]['email']) ? $voters[$npa]['email'] : ''),
+            'claimed' => true,
+            'claimed_at' => date('d F Y, H:i:s') . ' WIB',
+            'token_hash' => $tokenHash,
+            'voted' => false
+        ];
+        writeJsonFile($votersFile, $voters);
         flock($fpLock, LOCK_UN);
         fclose($fpLock);
     }
@@ -2239,7 +2327,7 @@ if ($action === 'cast_vote') {
     if (!$payload) $payload = $_POST;
 
     $npa = isset($payload['npa']) ? substr(preg_replace('/\D/', '', $payload['npa']), 0, 5) : '';
-    $token = isset($payload['token']) ? strtoupper(trim($payload['token'])) : '';
+    $token = isset($payload['token']) ? strtoupper(trim(preg_replace('/\s+/', '', $payload['token']))) : '';
     $candidateId = isset($payload['candidate_id']) ? intval($payload['candidate_id']) : 0;
     $voterName = isset($payload['name']) ? trim($payload['name']) : '';
     $receiptHash = isset($payload['receipt_hash']) ? trim($payload['receipt_hash']) : '';
