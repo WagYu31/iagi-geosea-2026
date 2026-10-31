@@ -1002,8 +1002,9 @@ class VisitorTicketAdminController extends Controller
         ]);
 
         $ticketCode = trim($request->ticket_code);
+        $checkinGroup = $request->boolean('checkin_group', true);
 
-        return DB::transaction(function () use ($ticketCode) {
+        return DB::transaction(function () use ($ticketCode, $checkinGroup) {
             $ticket = VisitorTicket::with('payment')
                 ->where('ticket_code', $ticketCode)
                 ->lockForUpdate()
@@ -1017,6 +1018,24 @@ class VisitorTicketAdminController extends Controller
                 ], 404);
             }
 
+            // Find all tickets belonging to the same group / payment
+            $groupTickets = collect();
+            if ($ticket->payment_id) {
+                $groupTickets = VisitorTicket::with('payment')
+                    ->where('payment_id', $ticket->payment_id)
+                    ->orderBy('is_group_leader', 'desc')
+                    ->orderBy('id', 'asc')
+                    ->get();
+            } elseif (!empty($ticket->group_code)) {
+                $groupTickets = VisitorTicket::with('payment')
+                    ->where('group_code', $ticket->group_code)
+                    ->orderBy('is_group_leader', 'desc')
+                    ->orderBy('id', 'asc')
+                    ->get();
+            }
+
+            $isGroup = $groupTickets->count() > 1;
+
             // Check if ticket is pending/cancelled
             if ($ticket->status !== 'active') {
                 return response()->json([
@@ -1026,34 +1045,73 @@ class VisitorTicketAdminController extends Controller
                         ? 'Tiket masih dalam status PENDING (Pembayaran belum diverifikasi).' 
                         : 'Tiket telah DIBATALKAN.',
                     'ticket' => $ticket,
+                    'is_group' => $isGroup,
+                    'group_tickets' => $groupTickets,
                 ], 422);
             }
 
-            // Check if already checked in (Anti double-entry)
-            if ($ticket->checked_in) {
-                $checkedTime = $ticket->checked_in_at ? $ticket->checked_in_at->format('d/m/Y H:i:s') : '-';
+            $alreadyCheckedIn = (bool) $ticket->checked_in;
+            $checkedTime = $ticket->checked_in_at ? $ticket->checked_in_at->format('d/m/Y H:i:s') : '-';
+
+            $newlyCheckedInCount = 0;
+            if ($isGroup && $checkinGroup) {
+                // Check in all active group members that have not checked in yet
+                foreach ($groupTickets as $gTicket) {
+                    if ($gTicket->status === 'active' && !$gTicket->checked_in) {
+                        $gTicket->update([
+                            'checked_in' => true,
+                            'checked_in_at' => now(),
+                            'checked_in_by_admin_id' => Auth::id(),
+                        ]);
+                        $newlyCheckedInCount++;
+                    }
+                }
+                // Refresh group tickets list
+                $groupTickets = VisitorTicket::with('payment')
+                    ->whereIn('id', $groupTickets->pluck('id'))
+                    ->orderBy('is_group_leader', 'desc')
+                    ->orderBy('id', 'asc')
+                    ->get();
+                $ticket->refresh();
+            } else {
+                if (!$alreadyCheckedIn) {
+                    $ticket->update([
+                        'checked_in' => true,
+                        'checked_in_at' => now(),
+                        'checked_in_by_admin_id' => Auth::id(),
+                    ]);
+                    $newlyCheckedInCount = 1;
+                }
+            }
+
+            $templatePath = self::getBadgeTemplateForType($ticket->visitor_type);
+
+            // If scanned ticket was already checked in and no other group members were newly checked in
+            if ($alreadyCheckedIn && $newlyCheckedInCount === 0) {
                 return response()->json([
                     'success' => false,
                     'status' => 'already_checked_in',
-                    'message' => 'PERINGATAN: Tiket ini SUDAH PERNAH CHECK-IN pada ' . $checkedTime . '.',
+                    'message' => 'PERINGATAN: Tiket ini SUDAH PERNAH CHECK-IN pada ' . $checkedTime . ($isGroup ? " (Rombongan {$groupTickets->count()} orang)." : '.'),
                     'ticket' => $ticket,
+                    'is_group' => $isGroup,
+                    'group_tickets' => $groupTickets,
+                    'templatePath' => $templatePath,
                 ], 409);
             }
 
-            // Valid Check-In
-            $ticket->update([
-                'checked_in' => true,
-                'checked_in_at' => now(),
-                'checked_in_by_admin_id' => Auth::id(),
-            ]);
-
-            $templatePath = self::getBadgeTemplateForType($ticket->visitor_type);
+            $message = 'Check-in BERHASIL! Selamat datang.';
+            if ($isGroup) {
+                $checkedTotal = $groupTickets->filter(fn($t) => $t->checked_in)->count();
+                $message = "Check-in Rombongan BERHASIL! {$checkedTotal} dari {$groupTickets->count()} peserta dalam grup ini telah terverifikasi.";
+            }
 
             return response()->json([
                 'success' => true,
                 'status' => 'checked_in',
-                'message' => 'Check-in BERHASIL! Selamat datang.',
+                'message' => $message,
                 'ticket' => $ticket,
+                'is_group' => $isGroup,
+                'group_tickets' => $groupTickets,
                 'templatePath' => $templatePath,
             ]);
         });
@@ -1141,7 +1199,8 @@ class VisitorTicketAdminController extends Controller
             $idArray = is_array($ids) ? $ids : array_filter(explode(',', (string)$ids));
             $tickets = VisitorTicket::with('payment')
                 ->whereIn('id', $idArray)
-                ->latest()
+                ->orderBy('is_group_leader', 'desc')
+                ->orderBy('id', 'asc')
                 ->get();
         } else {
             $query = $this->filterTicketsQuery($request);

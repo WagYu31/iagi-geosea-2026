@@ -23,6 +23,8 @@ import {
     Switch,
     FormControlLabel,
 } from '@mui/material';
+import PeopleIcon from '@mui/icons-material/People';
+import CheckIcon from '@mui/icons-material/Check';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
@@ -471,9 +473,18 @@ export default function GateScanner({
         localStorage.setItem('gate_scanner_auto_print', String(val));
     };
 
-    const triggerAutoPrint = (ticketId) => {
+    const triggerAutoPrint = (ticketIdOrIds) => {
         try {
-            const printUrl = route('admin.visitorTickets.printBadge', ticketId);
+            let printUrl = '';
+            if (Array.isArray(ticketIdOrIds)) {
+                if (ticketIdOrIds.length === 1) {
+                    printUrl = route('admin.visitorTickets.printBadge', ticketIdOrIds[0]);
+                } else {
+                    printUrl = route('admin.visitorTickets.printBadgesBulk') + `?ids=${ticketIdOrIds.join(',')}`;
+                }
+            } else {
+                printUrl = route('admin.visitorTickets.printBadge', ticketIdOrIds);
+            }
 
             // Attempt 1: window.open (Standard separate popup window)
             let win = null;
@@ -511,7 +522,17 @@ export default function GateScanner({
         if (!scanResult?.ticket?.id) return;
         setResettingCheckIn(true);
         try {
-            await axios.patch(route('admin.visitorTickets.toggleCheckIn', scanResult.ticket.id));
+            if (scanResult.is_group && scanResult.group_tickets?.length > 1) {
+                for (const t of scanResult.group_tickets) {
+                    if (t.checked_in) {
+                        try {
+                            await axios.patch(route('admin.visitorTickets.toggleCheckIn', t.id));
+                        } catch (_) {}
+                    }
+                }
+            } else {
+                await axios.patch(route('admin.visitorTickets.toggleCheckIn', scanResult.ticket.id));
+            }
             const ticketCode = scanResult.ticket.ticket_code;
             setScanResult(null);
             setRecentScans(prev => prev.filter(s => s.ticket.id !== scanResult.ticket.id));
@@ -523,6 +544,66 @@ export default function GateScanner({
         } finally {
             setResettingCheckIn(false);
         }
+    };
+
+    const handleToggleMemberCheckIn = async (member) => {
+        try {
+            await axios.patch(route('admin.visitorTickets.toggleCheckIn', member.id));
+            const newStatus = !member.checked_in;
+            setScanResult(prev => {
+                if (!prev) return prev;
+                const updatedGroup = (prev.group_tickets || []).map(m => {
+                    if (m.id === member.id) {
+                        return {
+                            ...m,
+                            checked_in: newStatus,
+                            checked_in_at: newStatus ? new Date().toISOString() : null,
+                        };
+                    }
+                    return m;
+                });
+                const updatedTicket = prev.ticket?.id === member.id
+                    ? { ...prev.ticket, checked_in: newStatus, checked_in_at: newStatus ? new Date().toISOString() : null }
+                    : prev.ticket;
+                return {
+                    ...prev,
+                    ticket: updatedTicket,
+                    group_tickets: updatedGroup,
+                };
+            });
+            playSound('success');
+        } catch (e) {
+            console.error('Failed to toggle member check-in:', e);
+        }
+    };
+
+    const handleCheckInAllGroup = async () => {
+        if (!scanResult?.group_tickets) return;
+        const unchecked = scanResult.group_tickets.filter(m => !m.checked_in);
+        for (const m of unchecked) {
+            try {
+                await axios.patch(route('admin.visitorTickets.toggleCheckIn', m.id));
+            } catch (_) {}
+        }
+        setScanResult(prev => {
+            if (!prev) return prev;
+            const updatedGroup = (prev.group_tickets || []).map(m => ({
+                ...m,
+                checked_in: true,
+                checked_in_at: m.checked_in_at || new Date().toISOString(),
+            }));
+            const updatedTicket = {
+                ...prev.ticket,
+                checked_in: true,
+                checked_in_at: prev.ticket.checked_in_at || new Date().toISOString(),
+            };
+            return {
+                ...prev,
+                ticket: updatedTicket,
+                group_tickets: updatedGroup,
+            };
+        });
+        playSound('success');
     };
 
     // Preload Badge Background SVGs for 0ms print latency
@@ -696,6 +777,7 @@ export default function GateScanner({
         try {
             const response = await axios.post(route('admin.gateScanner.checkin'), {
                 ticket_code: cleanCode,
+                checkin_group: true,
             });
 
             const data = response.data;
@@ -712,7 +794,11 @@ export default function GateScanner({
 
                 // ⚡ AUTO-OPEN PRINT BADGE IF ENABLED (For 10 Printer Stations High Speed Printing)
                 if (autoPrint) {
-                    triggerAutoPrint(data.ticket.id);
+                    if (data.is_group && data.group_tickets && data.group_tickets.length > 1) {
+                        triggerAutoPrint(data.group_tickets.map(t => t.id));
+                    } else {
+                        triggerAutoPrint(data.ticket.id);
+                    }
                 }
             }
         } catch (err) {
@@ -2049,11 +2135,13 @@ export default function GateScanner({
                                                     <Box sx={{ bgcolor: 'rgba(255,255,255,0.08)', borderRadius: '12px', p: 1.5, my: 1, border: '1px solid rgba(255,255,255,0.1)' }}>
                                                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5, flexWrap: 'wrap', gap: 1 }}>
                                                             <Chip
-                                                                label={getCategoryMeta(scanResult.ticket.visitor_type).label}
+                                                                label={scanResult.is_group && scanResult.group_tickets?.length > 1
+                                                                    ? `👥 GRUP (${scanResult.group_tickets.length} Peserta)`
+                                                                    : getCategoryMeta(scanResult.ticket.visitor_type).label}
                                                                 size="small"
                                                                 sx={{
-                                                                    bgcolor: getCategoryMeta(scanResult.ticket.visitor_type).bg,
-                                                                    color: getCategoryMeta(scanResult.ticket.visitor_type).color,
+                                                                    bgcolor: scanResult.is_group ? '#065f46' : getCategoryMeta(scanResult.ticket.visitor_type).bg,
+                                                                    color: scanResult.is_group ? '#ffffff' : getCategoryMeta(scanResult.ticket.visitor_type).color,
                                                                     fontWeight: 900,
                                                                     fontSize: '0.7rem',
                                                                     height: 22,
@@ -2065,6 +2153,11 @@ export default function GateScanner({
                                                         </Box>
                                                         <Typography sx={{ fontWeight: 900, fontSize: '1.15rem', color: '#ffffff', mb: 0.2 }}>
                                                             {scanResult.ticket.visitor_name}
+                                                            {scanResult.is_group && scanResult.group_tickets?.length > 1 && (
+                                                                <span style={{ fontSize: '0.85rem', color: '#6ee7b7', fontWeight: 700, marginLeft: 6 }}>
+                                                                    + {scanResult.group_tickets.length - 1} anggota rombongan
+                                                                </span>
+                                                            )}
                                                         </Typography>
                                                         {scanResult.ticket.visitor_institution && (
                                                             <Typography sx={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem', fontWeight: 600 }}>
@@ -2076,7 +2169,9 @@ export default function GateScanner({
 
                                                 {autoPrint && scanResult.success && (
                                                     <Typography sx={{ color: '#6ee7b7', fontSize: '0.75rem', fontWeight: 700, textAlign: 'center', mt: 0.5 }}>
-                                                        ⚡ Sedang Mencetak Lanyard Badge Otomatis...
+                                                        {scanResult.is_group && scanResult.group_tickets?.length > 1
+                                                            ? `⚡ Sedang Mencetak Seluruh ${scanResult.group_tickets.length} Lanyard Badge Rombongan...`
+                                                            : '⚡ Sedang Mencetak Lanyard Badge Otomatis...'}
                                                     </Typography>
                                                 )}
                                             </Box>
@@ -2297,111 +2392,358 @@ export default function GateScanner({
                                     {scanResult.message}
                                 </Typography>
 
-                                {scanResult.ticket && (
-                                    <Paper
-                                        elevation={0}
-                                        sx={{
-                                            p: 2.5,
-                                            bgcolor: '#ffffff',
-                                            borderRadius: '16px',
-                                            border: '1.5px solid #e2e8f0',
-                                            textAlign: 'left',
-                                            mb: 2.5,
-                                            boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-                                        }}
-                                    >
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                                            <Chip
-                                                icon={scanResult.ticket.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 13, color: '#92400e !important' }} /> : undefined}
-                                                label={getCategoryMeta(scanResult.ticket.visitor_type).label}
-                                                size="small"
-                                                sx={{
-                                                    bgcolor: getCategoryMeta(scanResult.ticket.visitor_type).bg,
-                                                    color: getCategoryMeta(scanResult.ticket.visitor_type).color,
-                                                    border: `1px solid ${getCategoryMeta(scanResult.ticket.visitor_type).border}`,
-                                                    fontWeight: 900,
-                                                    fontSize: '0.72rem',
-                                                    height: 24,
-                                                }}
-                                            />
-                                            <Typography variant="body2" sx={{ color: '#094d42', fontFamily: 'monospace', fontWeight: 900 }}>
-                                                {scanResult.ticket.ticket_code}
+                                {scanResult.is_group && scanResult.group_tickets && scanResult.group_tickets.length > 1 ? (
+                                    <Box sx={{ textAlign: 'left', mb: 1 }}>
+                                        {/* GROUP OVERVIEW BANNER */}
+                                        <Paper
+                                            elevation={0}
+                                            sx={{
+                                                p: 2,
+                                                mb: 2,
+                                                borderRadius: '16px',
+                                                bgcolor: '#ecfdf5',
+                                                border: '1.5px solid #a7f3d0',
+                                                boxShadow: '0 2px 8px rgba(6,95,70,0.06)',
+                                            }}
+                                        >
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1, mb: 1 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <PeopleIcon sx={{ color: '#065f46', fontSize: 26 }} />
+                                                    <Box>
+                                                        <Typography sx={{ fontWeight: 900, color: '#065f46', fontSize: '0.98rem' }}>
+                                                            PESERTA ROMBONGAN / GRUP ({scanResult.group_tickets.length} ORANG)
+                                                        </Typography>
+                                                        <Typography variant="caption" sx={{ color: '#047857', fontWeight: 700 }}>
+                                                            Invoice: {scanResult.ticket?.payment?.receipt_no || scanResult.ticket?.payment?.payment_code || scanResult.ticket?.group_code || '-'}
+                                                            {scanResult.ticket?.payment?.is_debt ? ' • ⚠️ STATUS DEBT' : ' • ✅ LUNAS'}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                                <Chip
+                                                    label={`${scanResult.group_tickets.filter(t => t.checked_in).length} / ${scanResult.group_tickets.length} Checked In`}
+                                                    size="small"
+                                                    sx={{
+                                                        fontWeight: 900,
+                                                        fontSize: '0.75rem',
+                                                        bgcolor: '#059669',
+                                                        color: '#ffffff',
+                                                    }}
+                                                />
+                                            </Box>
+                                            <Typography variant="caption" sx={{ color: '#047857', display: 'block', fontWeight: 600, lineHeight: 1.4 }}>
+                                                💡 QR Code yang Anda scan terhubung dengan <strong>{scanResult.group_tickets.length} orang dalam 1 rombongan</strong>. Seluruh ID Card anggota dapat dicetak sekaligus di bawah ini.
                                             </Typography>
+                                        </Paper>
+
+                                        {/* LIST OF ALL GROUP MEMBERS */}
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.2, mb: 2 }}>
+                                            {scanResult.group_tickets.map((member) => {
+                                                const isThisScanned = member.id === scanResult.ticket?.id;
+                                                const catMeta = getCategoryMeta(member.visitor_type);
+                                                return (
+                                                    <Paper
+                                                        key={member.id}
+                                                        elevation={0}
+                                                        sx={{
+                                                            p: 2,
+                                                            borderRadius: '14px',
+                                                            bgcolor: isThisScanned ? '#ffffff' : '#f8fafc',
+                                                            border: isThisScanned ? '2px solid #094d42' : '1.5px solid #e2e8f0',
+                                                            boxShadow: isThisScanned ? '0 4px 12px rgba(9,77,66,0.1)' : 'none',
+                                                        }}
+                                                    >
+                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 1.5 }}>
+                                                            <Box sx={{ flex: 1, minWidth: 200 }}>
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+                                                                    {isThisScanned && (
+                                                                        <Chip
+                                                                            label="⭐ QR Yang Discan"
+                                                                            size="small"
+                                                                            sx={{
+                                                                                bgcolor: '#094d42',
+                                                                                color: '#ffffff',
+                                                                                fontWeight: 800,
+                                                                                fontSize: '0.68rem',
+                                                                                height: 22,
+                                                                            }}
+                                                                        />
+                                                                    )}
+                                                                    <Chip
+                                                                        label={catMeta.label}
+                                                                        size="small"
+                                                                        sx={{
+                                                                            bgcolor: catMeta.bg,
+                                                                            color: catMeta.color,
+                                                                            border: `1px solid ${catMeta.border}`,
+                                                                            fontWeight: 800,
+                                                                            fontSize: '0.68rem',
+                                                                            height: 22,
+                                                                        }}
+                                                                    />
+                                                                    <Typography sx={{ fontFamily: 'monospace', fontWeight: 800, fontSize: '0.78rem', color: '#64748b' }}>
+                                                                        {member.ticket_code}
+                                                                    </Typography>
+                                                                </Box>
+
+                                                                <Typography sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.05rem', lineHeight: 1.2 }}>
+                                                                    {member.visitor_name}
+                                                                    {member.is_group_leader && (
+                                                                        <span style={{ color: '#094d42', fontSize: '0.75rem', fontWeight: 800, marginLeft: 6 }}>
+                                                                            (Leader / PIC)
+                                                                        </span>
+                                                                    )}
+                                                                </Typography>
+
+                                                                <Typography variant="caption" sx={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: 0.6, mt: 0.3 }}>
+                                                                    <EmailIcon sx={{ fontSize: 13 }} /> {member.visitor_email || '-'}
+                                                                    {member.visitor_institution && (
+                                                                        <> • <BusinessIcon sx={{ fontSize: 13 }} /> {member.visitor_institution}</>
+                                                                    )}
+                                                                </Typography>
+                                                            </Box>
+
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                                                {member.checked_in ? (
+                                                                    <Chip
+                                                                        icon={<CheckCircleIcon sx={{ fontSize: 14 }} />}
+                                                                        label="CHECKED IN"
+                                                                        size="small"
+                                                                        color="success"
+                                                                        sx={{ fontWeight: 800, fontSize: '0.72rem', height: 26 }}
+                                                                    />
+                                                                ) : (
+                                                                    <Button
+                                                                        size="small"
+                                                                        variant="outlined"
+                                                                        color="warning"
+                                                                        onClick={() => handleToggleMemberCheckIn(member)}
+                                                                        sx={{
+                                                                            fontSize: '0.72rem',
+                                                                            fontWeight: 800,
+                                                                            py: 0.3,
+                                                                            px: 1.2,
+                                                                            textTransform: 'none',
+                                                                            borderRadius: '8px',
+                                                                        }}
+                                                                    >
+                                                                        Check In
+                                                                    </Button>
+                                                                )}
+
+                                                                <Button
+                                                                    component="a"
+                                                                    href={route('admin.visitorTickets.printBadge', member.id)}
+                                                                    target="_blank"
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    startIcon={<PrintIcon sx={{ fontSize: 14 }} />}
+                                                                    sx={{
+                                                                        fontSize: '0.72rem',
+                                                                        fontWeight: 800,
+                                                                        py: 0.3,
+                                                                        px: 1.2,
+                                                                        textTransform: 'none',
+                                                                        borderRadius: '8px',
+                                                                        borderColor: '#cbd5e1',
+                                                                        color: '#334155',
+                                                                        bgcolor: '#ffffff',
+                                                                        '&:hover': { bgcolor: '#f1f5f9' },
+                                                                    }}
+                                                                >
+                                                                    Cetak 1 ID
+                                                                </Button>
+                                                            </Box>
+                                                        </Box>
+                                                    </Paper>
+                                                );
+                                            })}
                                         </Box>
 
-                                        <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.15rem' }}>
-                                            {scanResult.ticket.visitor_name}
-                                        </Typography>
-                                        <Typography variant="body2" sx={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.4 }}>
-                                            <EmailIcon sx={{ fontSize: 15 }} /> {scanResult.ticket.visitor_email}
-                                        </Typography>
-
-                                        {scanResult.ticket.visitor_institution && (
-                                            <Typography variant="body2" sx={{ color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.4 }}>
-                                                <BusinessIcon sx={{ fontSize: 15 }} /> {scanResult.ticket.visitor_institution}
-                                            </Typography>
+                                        {/* Auto-Print Status Banner */}
+                                        {autoPrint && scanResult.success && (
+                                            <Box sx={{ mb: 1.5, p: 1.2, bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '10px', textAlign: 'center' }}>
+                                                <Typography sx={{ color: '#047857', fontWeight: 800, fontSize: '0.78rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.8 }}>
+                                                    <BoltIcon sx={{ fontSize: 16 }} /> Auto-Print aktif: Perintah cetak seluruh {scanResult.group_tickets.length} ID card rombongan telah dikirim ke printer.
+                                                </Typography>
+                                            </Box>
                                         )}
-                                    </Paper>
-                                )}
 
-                                {/* Auto-Print Status Banner */}
-                                {autoPrint && scanResult.success && (
-                                    <Box sx={{ mb: 1.5, p: 1.2, bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '10px', textAlign: 'center' }}>
-                                        <Typography sx={{ color: '#047857', fontWeight: 800, fontSize: '0.78rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.8 }}>
-                                            <BoltIcon sx={{ fontSize: 16 }} /> Auto-Print aktif: Perintah cetak badge telah dikirim ke printer.
-                                        </Typography>
+                                        {/* Action: Print ALL Badges for Group */}
+                                        <Button
+                                            component="a"
+                                            href={route('admin.visitorTickets.printBadgesBulk') + `?ids=${scanResult.group_tickets.map(t => t.id).join(',')}`}
+                                            target="_blank"
+                                            variant="contained"
+                                            fullWidth
+                                            startIcon={<PrintIcon />}
+                                            sx={{
+                                                background: 'linear-gradient(180deg, #094d42 0%, #06352e 100%)',
+                                                color: '#ffffff',
+                                                fontWeight: 900,
+                                                fontSize: '0.92rem',
+                                                borderRadius: '12px',
+                                                textTransform: 'none',
+                                                py: 1.4,
+                                                boxShadow: '0 4px 0 #04221d',
+                                                mb: 1.5,
+                                                '&:hover': { transform: 'translateY(-1px)' },
+                                                '&:active': { transform: 'translateY(2px)' },
+                                            }}
+                                        >
+                                            🖨️ CETAK SEMUA ID CARD GRUP ({scanResult.group_tickets.length} BADGE SEKALIGUS)
+                                        </Button>
+
+                                        {/* Action: Check-in remaining if any unchecked */}
+                                        {scanResult.group_tickets.some(t => !t.checked_in) && (
+                                            <Button
+                                                variant="contained"
+                                                color="success"
+                                                fullWidth
+                                                onClick={handleCheckInAllGroup}
+                                                sx={{
+                                                    borderRadius: '12px',
+                                                    fontWeight: 800,
+                                                    textTransform: 'none',
+                                                    py: 1.1,
+                                                    fontSize: '0.85rem',
+                                                    mb: 1.5,
+                                                }}
+                                            >
+                                                ✅ Check-In Seluruh Anggota Grup ({scanResult.group_tickets.length} Orang)
+                                            </Button>
+                                        )}
+
+                                        {/* Testing Helper: Reset Check-In Status */}
+                                        <Button
+                                            variant="outlined"
+                                            fullWidth
+                                            disabled={resettingCheckIn}
+                                            onClick={handleResetTicketCheckIn}
+                                            startIcon={resettingCheckIn ? <CircularProgress size={16} color="inherit" /> : <RestartAltIcon />}
+                                            sx={{
+                                                textTransform: 'none',
+                                                fontWeight: 800,
+                                                fontSize: '0.8rem',
+                                                borderRadius: '12px',
+                                                py: 1,
+                                                color: '#b45309',
+                                                borderColor: '#fde68a',
+                                                bgcolor: '#fffbeb',
+                                                '&:hover': { bgcolor: '#fef3c7', borderColor: '#f59e0b' },
+                                            }}
+                                        >
+                                            {resettingCheckIn ? 'Mereset Status Tiket Grup...' : '🔄 Reset Status Check-In Grup (Untuk Test Scan Ulang)'}
+                                        </Button>
                                     </Box>
-                                )}
+                                ) : (
+                                    <>
+                                        {scanResult.ticket && (
+                                            <Paper
+                                                elevation={0}
+                                                sx={{
+                                                    p: 2.5,
+                                                    bgcolor: '#ffffff',
+                                                    borderRadius: '16px',
+                                                    border: '1.5px solid #e2e8f0',
+                                                    textAlign: 'left',
+                                                    mb: 2.5,
+                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                                                }}
+                                            >
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+                                                    <Chip
+                                                        icon={scanResult.ticket.visitor_type === 'exclusive' ? <StarIcon sx={{ fontSize: 13, color: '#92400e !important' }} /> : undefined}
+                                                        label={getCategoryMeta(scanResult.ticket.visitor_type).label}
+                                                        size="small"
+                                                        sx={{
+                                                            bgcolor: getCategoryMeta(scanResult.ticket.visitor_type).bg,
+                                                            color: getCategoryMeta(scanResult.ticket.visitor_type).color,
+                                                            border: `1px solid ${getCategoryMeta(scanResult.ticket.visitor_type).border}`,
+                                                            fontWeight: 900,
+                                                            fontSize: '0.72rem',
+                                                            height: 24,
+                                                        }}
+                                                    />
+                                                    <Typography variant="body2" sx={{ color: '#094d42', fontFamily: 'monospace', fontWeight: 900 }}>
+                                                        {scanResult.ticket.ticket_code}
+                                                    </Typography>
+                                                </Box>
 
-                                {/* Action: Trigger Print Lanyard Card */}
-                                {scanResult.ticket && (
-                                    <Button
-                                        component="a"
-                                        href={route('admin.visitorTickets.printBadge', scanResult.ticket.id)}
-                                        target="_blank"
-                                        variant="contained"
-                                        fullWidth
-                                        startIcon={<PrintIcon />}
-                                        sx={{
-                                            background: 'linear-gradient(180deg, #094d42 0%, #06352e 100%)',
-                                            color: '#ffffff',
-                                            fontWeight: 900,
-                                            fontSize: '0.88rem',
-                                            borderRadius: '12px',
-                                            textTransform: 'none',
-                                            py: 1.3,
-                                            boxShadow: '0 4px 0 #04221d',
-                                            '&:hover': { transform: 'translateY(-1px)' },
-                                            '&:active': { transform: 'translateY(2px)' },
-                                        }}
-                                    >
-                                        🖨️ Print Lanyard Badge ({getCategoryMeta(scanResult.ticket.visitor_type).shortLabel})
-                                    </Button>
-                                )}
+                                                <Typography variant="h6" sx={{ fontWeight: 900, color: '#0f172a', fontSize: '1.15rem' }}>
+                                                    {scanResult.ticket.visitor_name}
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.4 }}>
+                                                    <EmailIcon sx={{ fontSize: 15 }} /> {scanResult.ticket.visitor_email}
+                                                </Typography>
 
-                                {/* Testing Helper: Reset Check-In Status */}
-                                {scanResult.ticket && scanResult.status === 'already_checked_in' && (
-                                    <Button
-                                        variant="outlined"
-                                        fullWidth
-                                        disabled={resettingCheckIn}
-                                        onClick={handleResetTicketCheckIn}
-                                        startIcon={resettingCheckIn ? <CircularProgress size={16} color="inherit" /> : <RestartAltIcon />}
-                                        sx={{
-                                            mt: 1.5,
-                                            textTransform: 'none',
-                                            fontWeight: 800,
-                                            fontSize: '0.8rem',
-                                            borderRadius: '12px',
-                                            py: 1,
-                                            color: '#b45309',
-                                            borderColor: '#fde68a',
-                                            bgcolor: '#fffbeb',
-                                            '&:hover': { bgcolor: '#fef3c7', borderColor: '#f59e0b' },
-                                        }}
-                                    >
-                                        {resettingCheckIn ? 'Mereset Status Tiket...' : '🔄 Reset Status Check-In (Untuk Test Scan Ulang)'}
-                                    </Button>
+                                                {scanResult.ticket.visitor_institution && (
+                                                    <Typography variant="body2" sx={{ color: '#059669', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.4 }}>
+                                                        <BusinessIcon sx={{ fontSize: 15 }} /> {scanResult.ticket.visitor_institution}
+                                                    </Typography>
+                                                )}
+                                            </Paper>
+                                        )}
+
+                                        {/* Auto-Print Status Banner */}
+                                        {autoPrint && scanResult.success && (
+                                            <Box sx={{ mb: 1.5, p: 1.2, bgcolor: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '10px', textAlign: 'center' }}>
+                                                <Typography sx={{ color: '#047857', fontWeight: 800, fontSize: '0.78rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.8 }}>
+                                                    <BoltIcon sx={{ fontSize: 16 }} /> Auto-Print aktif: Perintah cetak badge telah dikirim ke printer.
+                                                </Typography>
+                                            </Box>
+                                        )}
+
+                                        {/* Action: Trigger Print Lanyard Card */}
+                                        {scanResult.ticket && (
+                                            <Button
+                                                component="a"
+                                                href={route('admin.visitorTickets.printBadge', scanResult.ticket.id)}
+                                                target="_blank"
+                                                variant="contained"
+                                                fullWidth
+                                                startIcon={<PrintIcon />}
+                                                sx={{
+                                                    background: 'linear-gradient(180deg, #094d42 0%, #06352e 100%)',
+                                                    color: '#ffffff',
+                                                    fontWeight: 900,
+                                                    fontSize: '0.88rem',
+                                                    borderRadius: '12px',
+                                                    textTransform: 'none',
+                                                    py: 1.3,
+                                                    boxShadow: '0 4px 0 #04221d',
+                                                    '&:hover': { transform: 'translateY(-1px)' },
+                                                    '&:active': { transform: 'translateY(2px)' },
+                                                }}
+                                            >
+                                                🖨️ Print Lanyard Badge ({getCategoryMeta(scanResult.ticket.visitor_type).shortLabel})
+                                            </Button>
+                                        )}
+
+                                        {/* Testing Helper: Reset Check-In Status */}
+                                        {scanResult.ticket && scanResult.status === 'already_checked_in' && (
+                                            <Button
+                                                variant="outlined"
+                                                fullWidth
+                                                disabled={resettingCheckIn}
+                                                onClick={handleResetTicketCheckIn}
+                                                startIcon={resettingCheckIn ? <CircularProgress size={16} color="inherit" /> : <RestartAltIcon />}
+                                                sx={{
+                                                    mt: 1.5,
+                                                    textTransform: 'none',
+                                                    fontWeight: 800,
+                                                    fontSize: '0.8rem',
+                                                    borderRadius: '12px',
+                                                    py: 1,
+                                                    color: '#b45309',
+                                                    borderColor: '#fde68a',
+                                                    bgcolor: '#fffbeb',
+                                                    '&:hover': { bgcolor: '#fef3c7', borderColor: '#f59e0b' },
+                                                }}
+                                            >
+                                                {resettingCheckIn ? 'Mereset Status Tiket...' : '🔄 Reset Status Check-In (Untuk Test Scan Ulang)'}
+                                            </Button>
+                                        )}
+                                    </>
                                 )}
                             </Paper>
                         ) : (
