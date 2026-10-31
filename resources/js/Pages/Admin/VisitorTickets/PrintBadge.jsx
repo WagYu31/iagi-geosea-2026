@@ -136,7 +136,7 @@ const CATEGORY_MAP = {
     student_crowd: { label: 'STUDENT CROWD', short: 'STUDENT CROWD' },
 };
 
-export const BADGE_VERSION = '20261025_student_badge';
+export const BADGE_VERSION = '20261031_original_clean_v9';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;
