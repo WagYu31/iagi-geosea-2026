@@ -109,6 +109,16 @@ class FixBagaskaraAllCommand extends Command
         $this->line("   - Password : Juri123.");
         $this->line("   - Role     : Juri");
 
+        // 4. MIGRASI DATA PENILAIAN JURI (JIKA SUDAH PERNAH ADA INPUT)
+        $scoresCount = \App\Models\PresentationScore::where('juri_id', $user->id)->count();
+        if ($scoresCount > 0) {
+            \App\Models\PresentationScore::where('juri_id', $user->id)->update(['juri_id' => $juriUser->id]);
+            $this->info("\n4. MIGRASI DATA NILAI JURI:");
+            $this->line("   -> {$scoresCount} data penilaian yang pernah diinput berhasil dialihkan ke akun Juri baru secara utuh!");
+        } else {
+            $this->line("\n4. DATA NILAI JURI: Belum ada skor yang diinput (aman 100%).");
+        }
+
         $this->info("\n======================================================================");
         $this->info(" KESIMPULAN & KREDENSIAL YANG BISA DIBERIKAN KE PAK BAGASKARA:");
         $this->line(" 1. AKUN AUTHOR / PRESENTER (Untuk cek paper, tiket presenter & invoice):");
