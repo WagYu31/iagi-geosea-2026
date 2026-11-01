@@ -118,12 +118,18 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
-        // Debt filter
+        // Debt / Payment filter
         if ($debt = $request->input('debt')) {
             if ($debt === 'debt') {
                 $query->whereHas('payment', function ($pq) {
                     $pq->where('is_debt', true);
                 });
+            } elseif ($debt === 'fully_paid' || $debt === 'paid') {
+                $query->whereHas('payment', function ($pq) {
+                    $pq->where('is_debt', false);
+                });
+            } elseif ($debt === 'free') {
+                $query->whereDoesntHave('payment');
             } elseif ($debt === 'no_debt') {
                 $query->where(function ($q) {
                     $q->whereDoesntHave('payment')
@@ -335,6 +341,10 @@ class VisitorTicketAdminController extends Controller
             'debtCount' => VisitorTicket::whereHas('payment', function ($pq) {
                 $pq->where('is_debt', true);
             })->count(),
+            'fullyPaidCount' => VisitorTicket::whereHas('payment', function ($pq) {
+                $pq->where('is_debt', false);
+            })->count(),
+            'freeCount' => VisitorTicket::whereDoesntHave('payment')->count(),
             'debtTotalRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
             'totalRevenue' => (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount'),
             'groupRegistrationCount' => VisitorPayment::where('is_mixed_category', true)->count(),

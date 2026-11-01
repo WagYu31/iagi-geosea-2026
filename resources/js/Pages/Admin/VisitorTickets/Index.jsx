@@ -2140,7 +2140,11 @@ export default function VisitorTicketsIndex({
                             >
                                 <MenuItem value="all">All Debt Statuses</MenuItem>
                                 <MenuItem value="debt" sx={{ color: '#b45309', fontWeight: 800 }}>⚠️ Debt Tagged ({stats.debtCount || 0})</MenuItem>
-                                <MenuItem value="no_debt" sx={{ color: '#15803d', fontWeight: 700 }}>✅ Fully Paid / Free</MenuItem>
+                                <MenuItem value="fully_paid" sx={{ color: '#15803d', fontWeight: 700 }}>✅ Fully Paid ({stats.fullyPaidCount || 0})</MenuItem>
+                                <MenuItem value="free" sx={{ color: '#047857', fontWeight: 700 }}>🎟️ Free ({stats.freeCount || 0})</MenuItem>
+                                {debtFilter === 'no_debt' && (
+                                    <MenuItem value="no_debt" sx={{ display: 'none' }}>Fully Paid / Free</MenuItem>
+                                )}
                             </Select>
                         </FormControl>
 
