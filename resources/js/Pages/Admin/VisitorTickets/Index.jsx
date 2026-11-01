@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import { useTheme } from '@mui/material/styles';
-import { QRCodeSVG } from 'qrcode.react';
+import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
+import { downloadSingleQr, exportTicketsQrZip } from '@/Utils/qrCardGenerator';
 import {
     Box,
     Typography,
@@ -41,8 +42,10 @@ import {
     Paper,
     Alert,
     CircularProgress,
+    LinearProgress,
     ListItemText,
 } from '@mui/material';
+import QrCode2Icon from '@mui/icons-material/QrCode2';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -617,6 +620,14 @@ export default function VisitorTicketsIndex({
     const [emailSending, setEmailSending] = useState(false);
     const [bulkActionProcessing, setBulkActionProcessing] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
+
+    // QR Code Export Modal & State
+    const [qrModalOpen, setQrModalOpen] = useState(false);
+    const [qrExportFormat, setQrExportFormat] = useState('card'); // 'card' | 'qr_only' | 'both'
+    const [qrExportScope, setQrExportScope] = useState('selected'); // 'selected' | 'filtered'
+    const [qrExporting, setQrExporting] = useState(false);
+    const [qrExportProgress, setQrExportProgress] = useState({ current: 0, total: 0, text: '' });
+    const [singleDownloadingId, setSingleDownloadingId] = useState(null);
 
     // Import Excel Modal state
     const [importModalOpen, setImportModalOpen] = useState(false);
@@ -1439,6 +1450,64 @@ export default function VisitorTicketsIndex({
         setPrintModalOpen(false);
     };
 
+    // Single QR Code Download
+    const handleDownloadSingleQr = async (ticket) => {
+        try {
+            setSingleDownloadingId(ticket.id);
+            const qrCanvas = document.getElementById(`hidden-qr-canvas-${ticket.id}`);
+            await downloadSingleQr(ticket, qrCanvas, 'card');
+        } catch (err) {
+            console.error('Download QR error:', err);
+            alert('Gagal mengunduh QR E-Pass: ' + err.message);
+        } finally {
+            setSingleDownloadingId(null);
+        }
+    };
+
+    // Open Bulk QR Modal
+    const handleOpenQrModal = (mode = 'selected') => {
+        if (mode === 'selected' && selectedIds.length === 0) {
+            alert('Pilih setidaknya 1 tiket untuk diunduh QR-nya.');
+            return;
+        }
+        setQrExportScope(mode);
+        setQrModalOpen(true);
+    };
+
+    // Execute Bulk QR Export to ZIP
+    const handleStartBulkQrExport = async () => {
+        const targetTickets = qrExportScope === 'selected'
+            ? ticketsData.filter(t => selectedIds.includes(t.id))
+            : ticketsData;
+
+        if (targetTickets.length === 0) {
+            alert('Tidak ada tiket yang ditemukan untuk diunduh.');
+            return;
+        }
+
+        try {
+            setQrExporting(true);
+            await exportTicketsQrZip(
+                targetTickets,
+                (t) => document.getElementById(`hidden-qr-canvas-${t.id}`),
+                qrExportFormat,
+                (current, total, text) => {
+                    setQrExportProgress({ current, total, text });
+                },
+                searchTerm ? `QR_${searchTerm.trim().replace(/\s+/g, '_')}_PIT_IAGI` : 'QR_Tickets_PIT_IAGI_2026'
+            );
+            setTimeout(() => {
+                setQrModalOpen(false);
+            }, 600);
+        } catch (err) {
+            console.error('Bulk QR export error:', err);
+            alert('Gagal membuat file ZIP: ' + err.message);
+        } finally {
+            setQrExporting(false);
+            setQrExportProgress({ current: 0, total: 0, text: '' });
+        }
+    };
+
     const handleSendBulkEmail = () => {
         const payload = { mode: emailTargetMode };
         const typeStr = Array.isArray(typeFilter) ? typeFilter.join(',') : (typeFilter !== 'all' ? typeFilter : '');
@@ -1986,6 +2055,33 @@ export default function VisitorTicketsIndex({
                             }}
                         >
                             Gate Scanner
+                        </Button>
+
+                        <Button
+                            variant="outlined"
+                            startIcon={<QrCode2Icon />}
+                            onClick={() => handleOpenQrModal(selectedIds.length > 0 ? 'selected' : 'filtered')}
+                            sx={{
+                                color: '#0d9488',
+                                borderColor: '#99f6e4',
+                                bgcolor: '#f0fdfa',
+                                fontWeight: 800,
+                                fontSize: { xs: '0.75rem', sm: '0.82rem' },
+                                px: { xs: 1.5, sm: 2 },
+                                py: 0.85,
+                                borderRadius: '12px',
+                                textTransform: 'none',
+                                whiteSpace: 'nowrap',
+                                flex: { xs: '1 1 calc(50% - 8px)', sm: '0 0 auto' },
+                                boxShadow: '0 3px 0 #99f6e4',
+                                '&:hover': {
+                                    bgcolor: '#ccfbf1',
+                                    borderColor: '#5eead4',
+                                },
+                                transition: 'all 0.12s ease',
+                            }}
+                        >
+                            {selectedIds.length > 0 ? `Download QR (${selectedIds.length})` : 'Download QR ZIP'}
                         </Button>
 
                         <Button
@@ -2745,6 +2841,25 @@ export default function VisitorTicketsIndex({
                                 }}
                             >
                                 Print Badges ({selectedIds.length})
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="contained"
+                                startIcon={<QrCode2Icon />}
+                                onClick={() => handleOpenQrModal('selected')}
+                                disabled={bulkActionProcessing || qrExporting}
+                                sx={{
+                                    bgcolor: '#0d9488',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    borderRadius: '10px',
+                                    whiteSpace: 'nowrap',
+                                    boxShadow: '0 3px 0 #0f766e',
+                                    '&:hover': { bgcolor: '#0f766e' },
+                                }}
+                            >
+                                Download QR ({selectedIds.length})
                             </Button>
                             <Button
                                 size="small"
@@ -3801,6 +3916,29 @@ export default function VisitorTicketsIndex({
                                                                 sx={{ color: '#7c3aed', bgcolor: '#f5f3ff', border: '1px solid #ddd6fe', p: 0.5, borderRadius: '8px' }}
                                                             >
                                                                 <PrintIcon sx={{ fontSize: 15 }} />
+                                                            </IconButton>
+                                                        </Tooltip>
+
+                                                        {/* Download Single QR E-Pass */}
+                                                        <Tooltip title="Download QR E-Pass (PNG)">
+                                                            <IconButton
+                                                                size="small"
+                                                                onClick={() => handleDownloadSingleQr(t)}
+                                                                disabled={singleDownloadingId === t.id}
+                                                                sx={{
+                                                                    color: '#0d9488',
+                                                                    bgcolor: '#f0fdfa',
+                                                                    border: '1px solid #99f6e4',
+                                                                    p: 0.5,
+                                                                    borderRadius: '8px',
+                                                                    '&:hover': { bgcolor: '#ccfbf1' },
+                                                                }}
+                                                            >
+                                                                {singleDownloadingId === t.id ? (
+                                                                    <CircularProgress size={15} sx={{ color: '#0d9488' }} />
+                                                                ) : (
+                                                                    <QrCode2Icon sx={{ fontSize: 15 }} />
+                                                                )}
                                                             </IconButton>
                                                         </Tooltip>
 
@@ -6465,6 +6603,248 @@ export default function VisitorTicketsIndex({
                 </DialogActions>
             </Dialog>
 
+            {/* MODAL 6C: DOWNLOAD QR CODES ZIP */}
+            <Dialog 
+                open={qrModalOpen} 
+                onClose={() => !qrExporting && setQrModalOpen(false)} 
+                maxWidth="sm" 
+                fullWidth 
+                PaperProps={{ sx: { borderRadius: '20px', p: 0.5 } }}
+            >
+                <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1.5, pb: 1 }}>
+                    <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: '#f0fdfa', color: '#0d9488', border: '1px solid #99f6e4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <QrCode2Icon sx={{ fontSize: 26 }} />
+                    </Box>
+                    <Box>
+                        <Typography variant="h6" sx={{ fontWeight: 900, lineHeight: 1.2, color: '#0f172a' }}>
+                            Download QR Code E-Pass (ZIP)
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                            Unduh berkas QR siap scan & siap share via WhatsApp untuk hari-H
+                        </Typography>
+                    </Box>
+                </DialogTitle>
+
+                <DialogContent sx={{ pt: 1.5 }}>
+                    <Typography variant="body2" sx={{ color: '#475569', mb: 2, lineHeight: 1.6 }}>
+                        Sistem akan mengompilasi dan mengemas QR Code masing-masing peserta ke dalam 1 file <strong>.ZIP</strong>. Anda dapat langsung mengirimkannya ke WhatsApp peserta untuk registrasi Gate Scanner.
+                    </Typography>
+
+                    {/* Scope Selector */}
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.5, mb: 1, display: 'block' }}>
+                        Pilih Target Tiket:
+                    </Typography>
+                    <RadioGroup
+                        value={qrExportScope}
+                        onChange={(e) => setQrExportScope(e.target.value)}
+                        sx={{ mb: 2.5, gap: 1 }}
+                    >
+                        {selectedIds.length > 0 && (
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 1.5,
+                                    borderRadius: '12px',
+                                    border: qrExportScope === 'selected' ? '2px solid #0d9488' : '1px solid #e2e8f0',
+                                    bgcolor: qrExportScope === 'selected' ? '#f0fdfa' : '#ffffff',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => setQrExportScope('selected')}
+                            >
+                                <FormControlLabel
+                                    value="selected"
+                                    control={<Radio size="small" sx={{ color: '#0d9488', '&.Mui-checked': { color: '#0d9488' } }} />}
+                                    label={
+                                        <Box>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: qrExportScope === 'selected' ? '#0f766e' : '#1e293b' }}>
+                                                Hanya Tiket yang Dicentang ({selectedIds.length} Tiket)
+                                            </Typography>
+                                            <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                                Mengunduh {selectedIds.length} peserta yang Anda pilih di tabel (contoh: 33 peserta Pertamina).
+                                            </Typography>
+                                        </Box>
+                                    }
+                                    sx={{ m: 0, width: '100%' }}
+                                />
+                            </Paper>
+                        )}
+
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.5,
+                                borderRadius: '12px',
+                                border: qrExportScope === 'filtered' ? '2px solid #0d9488' : '1px solid #e2e8f0',
+                                bgcolor: qrExportScope === 'filtered' ? '#f0fdfa' : '#ffffff',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => setQrExportScope('filtered')}
+                        >
+                            <FormControlLabel
+                                value="filtered"
+                                control={<Radio size="small" sx={{ color: '#0d9488', '&.Mui-checked': { color: '#0d9488' } }} />}
+                                label={
+                                    <Box>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: qrExportScope === 'filtered' ? '#0f766e' : '#1e293b' }}>
+                                            Semua Tiket di Tampilan Tabel ({ticketsData.length} Tiket)
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                            Mengunduh seluruh tiket yang sesuai dengan pencarian & filter saat ini.
+                                        </Typography>
+                                    </Box>
+                                }
+                                sx={{ m: 0, width: '100%' }}
+                            />
+                        </Paper>
+                    </RadioGroup>
+
+                    {/* Format Selector */}
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', textTransform: 'uppercase', letterSpacing: 0.5, mb: 1, display: 'block' }}>
+                        Pilih Format Gambar:
+                    </Typography>
+                    <RadioGroup
+                        value={qrExportFormat}
+                        onChange={(e) => setQrExportFormat(e.target.value)}
+                        sx={{ gap: 1, mb: 2 }}
+                    >
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.5,
+                                borderRadius: '12px',
+                                border: qrExportFormat === 'card' ? '2px solid #0d9488' : '1px solid #e2e8f0',
+                                bgcolor: qrExportFormat === 'card' ? '#f0fdfa' : '#ffffff',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => setQrExportFormat('card')}
+                        >
+                            <FormControlLabel
+                                value="card"
+                                control={<Radio size="small" sx={{ color: '#0d9488', '&.Mui-checked': { color: '#0d9488' } }} />}
+                                label={
+                                    <Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: qrExportFormat === 'card' ? '#0f766e' : '#1e293b' }}>
+                                                Kartu Digital E-Pass (Rekomendasi WhatsApp)
+                                            </Typography>
+                                            <Chip label="Terbaik" size="small" sx={{ bgcolor: '#ccfbf1', color: '#0f766e', fontWeight: 800, height: 20, fontSize: '0.65rem' }} />
+                                        </Box>
+                                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                            Format kartu potret lengkap (Nama, Instansi, Kategori, Kode Tiket, QR Code, dan petunjuk Gate Scanner).
+                                        </Typography>
+                                    </Box>
+                                }
+                                sx={{ m: 0, width: '100%' }}
+                            />
+                        </Paper>
+
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.5,
+                                borderRadius: '12px',
+                                border: qrExportFormat === 'qr_only' ? '2px solid #0d9488' : '1px solid #e2e8f0',
+                                bgcolor: qrExportFormat === 'qr_only' ? '#f0fdfa' : '#ffffff',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => setQrExportFormat('qr_only')}
+                        >
+                            <FormControlLabel
+                                value="qr_only"
+                                control={<Radio size="small" sx={{ color: '#0d9488', '&.Mui-checked': { color: '#0d9488' } }} />}
+                                label={
+                                    <Box>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: qrExportFormat === 'qr_only' ? '#0f766e' : '#1e293b' }}>
+                                            Hanya Gambar QR Code Persegi (500×500 px)
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                            Hanya gambar QR murni dengan background putih tanpa kartu info teks.
+                                        </Typography>
+                                    </Box>
+                                }
+                                sx={{ m: 0, width: '100%' }}
+                            />
+                        </Paper>
+
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 1.5,
+                                borderRadius: '12px',
+                                border: qrExportFormat === 'both' ? '2px solid #0d9488' : '1px solid #e2e8f0',
+                                bgcolor: qrExportFormat === 'both' ? '#f0fdfa' : '#ffffff',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => setQrExportFormat('both')}
+                        >
+                            <FormControlLabel
+                                value="both"
+                                control={<Radio size="small" sx={{ color: '#0d9488', '&.Mui-checked': { color: '#0d9488' } }} />}
+                                label={
+                                    <Box>
+                                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: qrExportFormat === 'both' ? '#0f766e' : '#1e293b' }}>
+                                            Keduanya (Kartu E-Pass + Raw QR)
+                                        </Typography>
+                                        <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                            Menyertakan kedua jenis berkas dalam subfolder terpisah di dalam ZIP.
+                                        </Typography>
+                                    </Box>
+                                }
+                                sx={{ m: 0, width: '100%' }}
+                            />
+                        </Paper>
+                    </RadioGroup>
+
+                    {/* Progress Bar while downloading */}
+                    {qrExporting && (
+                        <Box sx={{ mt: 2, p: 2, bgcolor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#0f766e' }}>
+                                    {qrExportProgress.text || 'Sedang memproses...'}
+                                </Typography>
+                                <Typography variant="caption" sx={{ fontWeight: 900, color: '#0f172a' }}>
+                                    {qrExportProgress.total > 0 ? Math.round((qrExportProgress.current / qrExportProgress.total) * 100) : 0}%
+                                </Typography>
+                            </Box>
+                            <LinearProgress 
+                                variant="determinate" 
+                                value={qrExportProgress.total > 0 ? (qrExportProgress.current / qrExportProgress.total) * 100 : 0}
+                                sx={{ height: 8, borderRadius: 4, bgcolor: '#e2e8f0', '& .MuiLinearProgress-bar': { bgcolor: '#0d9488' } }}
+                            />
+                        </Box>
+                    )}
+                </DialogContent>
+
+                <DialogActions sx={{ p: 2, px: 2.5, borderTop: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between' }}>
+                    <Button 
+                        onClick={() => setQrModalOpen(false)} 
+                        disabled={qrExporting}
+                        sx={{ textTransform: 'none', color: '#64748b', fontWeight: 700 }}
+                    >
+                        Batal
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={handleStartBulkQrExport}
+                        disabled={qrExporting}
+                        startIcon={qrExporting ? <CircularProgress size={16} sx={{ color: '#fff' }} /> : <DownloadIcon />}
+                        sx={{
+                            bgcolor: '#0d9488',
+                            color: '#ffffff',
+                            fontWeight: 900,
+                            borderRadius: '10px',
+                            px: 3,
+                            py: 1,
+                            textTransform: 'none',
+                            boxShadow: '0 3px 0 #0f766e',
+                            '&:hover': { bgcolor: '#0f766e' },
+                        }}
+                    >
+                        {qrExporting ? 'Mengompresi ZIP...' : 'Mulai Unduh ZIP'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             {/* MODAL 7: BROADCAST / RESEND E-TICKETS EMAIL */}
             <Dialog open={emailModalOpen} onClose={() => !emailSending && setEmailModalOpen(false)} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: '18px' } }}>
                 <DialogTitle sx={{ fontWeight: 900, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 1.5, pb: 1 }}>
@@ -7434,6 +7814,20 @@ export default function VisitorTicketsIndex({
                     </Tooltip>
                 </Box>
             )}
+
+            {/* HIDDEN OFFSCREEN CANVAS GENERATOR FOR INSTANT QR EXPORT */}
+            <div style={{ position: 'fixed', left: -9999, top: -9999, width: 0, height: 0, overflow: 'hidden', pointerEvents: 'none' }} aria-hidden="true">
+                {ticketsData && ticketsData.map((t) => (
+                    <QRCodeCanvas
+                        key={`hidden-qr-${t.id}`}
+                        id={`hidden-qr-canvas-${t.id}`}
+                        value={t.ticket_code || `TKT-${t.id}`}
+                        size={500}
+                        level="H"
+                        includeMargin={true}
+                    />
+                ))}
+            </div>
         </SidebarLayout>
     );
 }
