@@ -154,8 +154,10 @@ class AdminController extends Controller
             $paperPaidCount = (clone $paperPaid)->count();
             $paperPendingCount = Payment::where('verified', false)->count();
 
+            $visitorPaidRevenue = (float) VisitorPayment::where('status', 'approved')->where('is_debt', false)->whereHas('tickets')->sum('total_amount');
+            $visitorDebtRevenue = (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount');
             $visitorRevenue = (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount');
-            $visitorPaidCount = VisitorTicket::where('status', 'active')->count();
+            $visitorPaidCount = VisitorTicket::where('status', 'active')->whereHas('payment', fn($pq) => $pq->where('is_debt', false))->count();
             $visitorPendingCount = VisitorPayment::where('status', 'pending')->count();
             $visitorDebtCount = VisitorTicket::whereHas('payment', fn($pq) => $pq->where('is_debt', true))->count();
 
@@ -165,6 +167,8 @@ class AdminController extends Controller
                 'paperPaidCount' => $paperPaidCount,
                 'paperPendingCount' => $paperPendingCount,
                 'visitorRevenue' => $visitorRevenue,
+                'visitorPaidRevenue' => $visitorPaidRevenue,
+                'visitorDebtRevenue' => $visitorDebtRevenue,
                 'visitorPaidCount' => $visitorPaidCount,
                 'visitorPendingCount' => $visitorPendingCount,
                 'visitorDebtCount' => $visitorDebtCount,

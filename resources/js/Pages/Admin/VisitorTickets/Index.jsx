@@ -823,7 +823,7 @@ export default function VisitorTicketsIndex({
 
     // Quick Clickable Stat Card Filter
     const handleStatCardClick = (statKey) => {
-        if (statKey === 'all') {
+        if (statKey === 'all' || statKey === 'revenue') {
             handleResetFilters();
         } else if (statKey === 'email_sent') {
             setEmailSentFilter('sent');
@@ -840,6 +840,9 @@ export default function VisitorTicketsIndex({
         } else if (statKey === 'debt') {
             setDebtFilter('debt');
             navigateFilters({ debt: 'debt', page: 1 });
+        } else if (statKey === 'paid_revenue') {
+            setDebtFilter('fully_paid');
+            navigateFilters({ debt: 'fully_paid', page: 1 });
         }
     };
 
@@ -1444,13 +1447,14 @@ export default function VisitorTicketsIndex({
     };
 
     const statCards = [
-        { key: 'all', label: 'Total Visitors', value: stats.totalVisitors || 0, icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
-        { key: 'email_sent', label: 'Email Tiket Terkirim', value: stats.emailSentCount || 0, icon: <EmailIcon />, color: '#0d9488', shadow: '#0f766e', bg: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)', badgeBg: '#14b8a6' },
-        { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
-        { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
-        { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
-        { key: 'debt', label: 'Outstanding Debt', value: `${stats.debtCount || 0} Tickets`, icon: <WarningAmberIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
-        { key: 'revenue', label: 'Total Revenue', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, icon: <AccountBalanceWalletIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
+        { key: 'all', label: 'Total Visitors', value: stats.totalVisitors || 0, subValue: 'Semua Terdaftar', icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
+        { key: 'email_sent', label: 'Email Terkirim', value: stats.emailSentCount || 0, subValue: 'E-Ticket Terkirim', icon: <EmailIcon />, color: '#0d9488', shadow: '#0f766e', bg: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)', badgeBg: '#14b8a6' },
+        { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, subValue: 'Free / Non-Exclusive', icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
+        { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, subValue: 'Hadir di Lokasi', icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
+        { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, subValue: 'Menunggu Dicek', icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
+        { key: 'debt', label: 'Outstanding Debt (Hutang)', value: `Rp ${Number(stats.debtTotalRevenue || 0).toLocaleString('id-ID')}`, subValue: `${stats.debtCount || 0} Tiket Hutang`, icon: <WarningAmberIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
+        { key: 'paid_revenue', label: 'Uang Masuk (Kas Lunas)', value: `Rp ${Number(stats.realPaidRevenue ?? (Number(stats.totalRevenue || 0) - Number(stats.debtTotalRevenue || 0))).toLocaleString('id-ID')}`, subValue: `${stats.fullyPaidCount || 0} Tiket Lunas`, icon: <AccountBalanceWalletIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
+        { key: 'revenue', label: 'Total Akumulasi', value: `Rp ${Number(stats.totalRevenue || 0).toLocaleString('id-ID')}`, subValue: 'Lunas + Tagihan Hutang', icon: <ReceiptLongIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
 
     const hasActiveFilters = searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || (perPageFilter && String(perPageFilter) !== '25');
@@ -1977,11 +1981,11 @@ export default function VisitorTicketsIndex({
                         gridTemplateColumns: {
                             xs: 'repeat(1, 1fr)',
                             sm: 'repeat(2, 1fr)',
-                            md: 'repeat(3, 1fr)',
+                            md: 'repeat(4, 1fr)',
                             lg: 'repeat(4, 1fr)',
-                            xl: 'repeat(7, 1fr)',
+                            xl: 'repeat(8, 1fr)',
                         },
-                        gap: 2,
+                        gap: 1.5,
                         mb: 3,
                     }}
                 >
@@ -1992,7 +1996,8 @@ export default function VisitorTicketsIndex({
                             (s.key === 'non_exclusive' && typeFilter === 'non_exclusive') ||
                             (s.key === 'checked_in' && checkedInFilter === 'yes') ||
                             (s.key === 'pending' && statusFilter === 'pending') ||
-                            (s.key === 'debt' && debtFilter === 'debt');
+                            (s.key === 'debt' && debtFilter === 'debt') ||
+                            (s.key === 'paid_revenue' && (debtFilter === 'fully_paid' || debtFilter === 'paid'));
 
                         return (
                             <Paper
@@ -2000,7 +2005,7 @@ export default function VisitorTicketsIndex({
                                 elevation={0}
                                 onClick={() => handleStatCardClick(s.key)}
                                 sx={{
-                                    p: 2,
+                                    p: 1.75,
                                     borderRadius: '16px',
                                     background: s.bg,
                                     border: `1.5px solid ${isCardActive ? s.color : '#e2e8f0'}`,
@@ -2013,7 +2018,7 @@ export default function VisitorTicketsIndex({
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between',
-                                    minHeight: 90,
+                                    minHeight: 96,
                                     '&:hover': {
                                         transform: 'translateY(-2px)',
                                         boxShadow: `0 6px 0 ${s.shadow}, 0 10px 22px rgba(0,0,0,0.08)`,
@@ -2025,13 +2030,13 @@ export default function VisitorTicketsIndex({
                                     },
                                 }}
                             >
-                                <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 1.5 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 1 }}>
                                     <Typography
                                         variant="caption"
                                         sx={{
                                             color: '#475569',
                                             fontWeight: 800,
-                                            fontSize: '0.68rem',
+                                            fontSize: '0.67rem',
                                             textTransform: 'uppercase',
                                             letterSpacing: '0.02em',
                                             lineHeight: 1.2,
@@ -2043,9 +2048,9 @@ export default function VisitorTicketsIndex({
                                     </Typography>
                                     <Box
                                         sx={{
-                                            width: 28,
-                                            height: 28,
-                                            minWidth: 28,
+                                            width: 26,
+                                            height: 26,
+                                            minWidth: 26,
                                             flexShrink: 0,
                                             borderRadius: '8px',
                                             bgcolor: s.color,
@@ -2056,25 +2061,47 @@ export default function VisitorTicketsIndex({
                                             boxShadow: `0 2px 6px ${s.shadow}60`,
                                         }}
                                     >
-                                        {React.cloneElement(s.icon, { sx: { fontSize: 16 } })}
+                                        {React.cloneElement(s.icon, { sx: { fontSize: 15 } })}
                                     </Box>
                                 </Box>
 
-                                <Typography
-                                    variant="h5"
-                                    sx={{
-                                        fontWeight: 900,
-                                        color: '#0f172a',
-                                        fontSize: s.key === 'revenue' ? { xs: '0.95rem', sm: '1.05rem', xl: '1.15rem' } : { xs: '1.25rem', sm: '1.45rem' },
-                                        letterSpacing: '-0.02em',
-                                        lineHeight: 1.1,
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                    }}
-                                >
-                                    {s.value}
-                                </Typography>
+                                <Box>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{
+                                            fontWeight: 900,
+                                            color: '#0f172a',
+                                            fontSize: (s.key === 'revenue' || s.key === 'paid_revenue' || s.key === 'debt') 
+                                                ? { xs: '0.82rem', sm: '0.90rem', xl: '0.98rem' } 
+                                                : { xs: '1.25rem', sm: '1.40rem' },
+                                            letterSpacing: '-0.02em',
+                                            lineHeight: 1.15,
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                        }}
+                                    >
+                                        {s.value}
+                                    </Typography>
+                                    {s.subValue && (
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                display: 'block',
+                                                mt: 0.5,
+                                                fontSize: '0.67rem',
+                                                fontWeight: 700,
+                                                color: s.color,
+                                                lineHeight: 1.1,
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                            }}
+                                        >
+                                            {s.subValue}
+                                        </Typography>
+                                    )}
+                                </Box>
                             </Paper>
                         );
                     })}

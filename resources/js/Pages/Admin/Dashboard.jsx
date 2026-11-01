@@ -320,6 +320,8 @@ export default function AdminDashboard({
         paperPaidCount: paymentAnalytics?.paperPaidCount || analytics?.verifiedPayments || 0,
         paperPendingCount: paymentAnalytics?.paperPendingCount ?? pendingPayments ?? 0,
         visitorRevenue: paymentAnalytics?.visitorRevenue || 0,
+        visitorPaidRevenue: paymentAnalytics?.visitorPaidRevenue || 0,
+        visitorDebtRevenue: paymentAnalytics?.visitorDebtRevenue || 0,
         visitorPaidCount: paymentAnalytics?.visitorPaidCount || 0,
         visitorPendingCount: paymentAnalytics?.visitorPendingCount || 0,
         visitorDebtCount: paymentAnalytics?.visitorDebtCount || 0,
@@ -845,7 +847,6 @@ export default function AdminDashboard({
                                     lineHeight: 1.15,
                                     mt: 1,
                                     mb: 1.5,
-                                fontFamily: '"Outfit", "Inter", sans-serif',
                                 }}>
                                     <AnimatedNumber value={payStats.totalRevenue} format="currency" delay={0.52} />
                                 </Typography>
@@ -870,13 +871,23 @@ export default function AdminDashboard({
                                         </Typography>
                                     </Box>
                                     <Box>
-                                        <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: c.textMuted, textTransform: 'uppercase' }}>
-                                            Tickets (<AnimatedNumber value={payStats.visitorPaidCount} delay={0.60} />)
+                                        <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: '#059669', textTransform: 'uppercase' }}>
+                                            Tickets Lunas (<AnimatedNumber value={payStats.visitorPaidCount} delay={0.60} />)
                                         </Typography>
-                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: c.textPrimary, fontVariantNumeric: 'tabular-nums' }}>
-                                            <AnimatedNumber value={payStats.visitorRevenue} format="currency" delay={0.60} />
+                                        <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: '#059669', fontVariantNumeric: 'tabular-nums' }}>
+                                            <AnimatedNumber value={payStats.visitorPaidRevenue || payStats.visitorRevenue} format="currency" delay={0.60} />
                                         </Typography>
                                     </Box>
+                                    {(payStats.visitorDebtRevenue > 0 || payStats.visitorDebtCount > 0) && (
+                                        <Box>
+                                            <Typography sx={{ fontSize: '0.65rem', fontWeight: 700, color: '#d97706', textTransform: 'uppercase' }}>
+                                                Hutang (<AnimatedNumber value={payStats.visitorDebtCount} delay={0.62} />)
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: '#d97706', fontVariantNumeric: 'tabular-nums' }}>
+                                                <AnimatedNumber value={payStats.visitorDebtRevenue} format="currency" delay={0.62} />
+                                            </Typography>
+                                        </Box>
+                                    )}
                                 </Box>
                             </Box>
 

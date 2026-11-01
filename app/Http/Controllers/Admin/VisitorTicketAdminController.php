@@ -345,8 +345,12 @@ class VisitorTicketAdminController extends Controller
                 $pq->where('is_debt', false);
             })->count(),
             'freeCount' => VisitorTicket::whereDoesntHave('payment')->count(),
+            'realPaidRevenue' => (float) VisitorPayment::where('status', 'approved')->where('is_debt', false)->whereHas('tickets')->sum('total_amount'),
             'debtTotalRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
             'totalRevenue' => (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount'),
+            'grandTotalRevenue' => (float) VisitorPayment::where(function($q) {
+                $q->where('status', 'approved')->orWhere('is_debt', true);
+            })->whereHas('tickets')->sum('total_amount'),
             'groupRegistrationCount' => VisitorPayment::where('is_mixed_category', true)->count(),
             'unpaidExcelCount' => count($unpaidTicketIds),
             'duplicateEmailTicketsCount' => $dupEmailTicketCount,
@@ -439,13 +443,13 @@ class VisitorTicketAdminController extends Controller
                 'total' => VisitorTicket::count(),
             ],
             'paymentBreakdown' => [
-                ['id' => 0, 'label' => 'Approved (Lunas)', 'value' => VisitorPayment::where('status', 'approved')->whereHas('tickets')->count(), 'color' => '#10b981'],
+                ['id' => 0, 'label' => 'Approved (Lunas)', 'value' => VisitorPayment::where('status', 'approved')->where('is_debt', false)->whereHas('tickets')->count(), 'color' => '#10b981'],
                 ['id' => 1, 'label' => 'Pending Verification', 'value' => VisitorPayment::where('status', 'pending')->where('is_debt', false)->whereHas('tickets')->count(), 'color' => '#f59e0b'],
                 ['id' => 2, 'label' => 'Outstanding Debt', 'value' => VisitorPayment::where('is_debt', true)->whereHas('tickets')->count(), 'color' => '#ea580c'],
                 ['id' => 3, 'label' => 'Rejected', 'value' => VisitorPayment::where('status', 'rejected')->whereHas('tickets')->count(), 'color' => '#ef4444'],
             ],
             'revenueBreakdown' => [
-                'paidRevenue' => (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount'),
+                'paidRevenue' => (float) VisitorPayment::where('status', 'approved')->where('is_debt', false)->whereHas('tickets')->sum('total_amount'),
                 'debtRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
                 'pendingRevenue' => (float) VisitorPayment::where('status', 'pending')->where('is_debt', false)->whereHas('tickets')->sum('total_amount'),
             ],
