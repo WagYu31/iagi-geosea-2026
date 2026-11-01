@@ -2783,8 +2783,14 @@ const INITIAL_DPT = [
   {
     "npa": "02386",
     "name": "Agus Laesanpura",
-    "email": "la***@gf.itb.ac.id",
-    "email_hash": "9f81d4f4f15e127a150dd530523441624e448dafe3b04bdcdf697e2485836a9d",
+    "email": "la***@gmail.com",
+    "email_hash": "cdc486d53f9710291e42ee669c64cb5103354c7dc054966681f58816720fb7f0",
+    "alt_emails": [
+      "laesanpu@gf.itb.ac.id"
+    ],
+    "alt_email_hashes": [
+      "9f81d4f4f15e127a150dd530523441624e448dafe3b04bdcdf697e2485836a9d"
+    ],
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",

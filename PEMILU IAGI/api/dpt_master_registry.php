@@ -182,7 +182,7 @@ return [
   '02353' => ['name' => 'Sukanda Chandrahayat', 'email' => 'schayat@yahoo.com'],
   '02375' => ['name' => 'Aquardi Rachmat Suminar', 'email' => 'asuminar@gmail.com'],
   '02376' => ['name' => 'Hita Pandita', 'email' => 'hita@itny.ac.id'],
-  '02386' => ['name' => 'Agus Laesanpura', 'email' => 'laesanpu@gf.itb.ac.id'],
+  '02386' => ['name' => 'Agus Laesanpura', 'email' => 'laesanpu@gmail.com', 'alt_emails' => ['laesanpu@gf.itb.ac.id']],
   '02387' => ['name' => 'Edi Suwandi Utoro', 'email' => 'edi_suwandi@yahoo.com'],
   '02388' => ['name' => 'Milla Hayati Amlan', 'email' => 'mamlan@chevron.com'],
   '02394' => ['name' => 'Muhamad Firdaus', 'email' => 'dauz@komfreak.com'],
