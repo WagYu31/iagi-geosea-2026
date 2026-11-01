@@ -304,10 +304,14 @@ class AdminController extends Controller
         if ($search = $request->get('search')) {
             $query->where(function($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('submission_code', 'like', "%{$search}%")
+                  ->orWhere('author_full_name', 'like', "%{$search}%")
+                  ->orWhere('co_authors', 'like', "%{$search}%")
+                  ->orWhere('corresponding_author_email', 'like', "%{$search}%")
                   ->orWhereHas('user', function($q2) use ($search) {
-                      $q2->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhere('author_full_name', 'like', "%{$search}%");
+                      $q2->where('name', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%");
+                  });
             });
         }
 
