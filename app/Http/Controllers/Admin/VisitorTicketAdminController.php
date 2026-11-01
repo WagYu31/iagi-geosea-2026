@@ -1502,7 +1502,7 @@ class VisitorTicketAdminController extends Controller
                 strtoupper($t->status),
                 $p ? strtoupper($p->payment_method) : 'FREE',
                 $p ? strtoupper($p->status) : 'FREE',
-                $t->price ?? 0,
+                $t->individual_price ?? ($t->price ?? 0),
                 $p ? ($p->discount_amount ?? 0) : 0,
                 $p ? ($p->discount_notes ?? '-') : '-',
                 $p ? ($p->unique_code ?? 0) : 0,

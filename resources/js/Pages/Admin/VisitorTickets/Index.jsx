@@ -2949,50 +2949,107 @@ export default function VisitorTicketsIndex({
 
                                                 {/* PAYMENT */}
                                                 <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
-                                                    {t.payment ? (
-                                                        <Box>
-                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, flexWrap: 'nowrap' }}>
-                                                                <Typography variant="caption" sx={{ fontWeight: 900, display: 'block', color: '#0f172a', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
-                                                                    Rp {Number(t.payment.total_amount || 0).toLocaleString('id-ID')}
-                                                                </Typography>
-                                                                {Number(t.payment.unique_code || 0) > 0 && (
-                                                                    <Tooltip title={`Termasuk Kode Unik Transfer: +Rp ${Number(t.payment.unique_code).toLocaleString('id-ID')}`} arrow>
-                                                                        <Chip
-                                                                            label={`+${t.payment.unique_code}`}
-                                                                            size="small"
-                                                                            sx={{
-                                                                                height: 17,
-                                                                                fontSize: '0.58rem',
-                                                                                fontWeight: 900,
-                                                                                bgcolor: '#eff6ff',
-                                                                                color: '#1d4ed8',
-                                                                                border: '1px solid #bfdbfe',
-                                                                                px: 0.2,
-                                                                                cursor: 'help',
-                                                                            }}
-                                                                        />
-                                                                    </Tooltip>
+                                                    {t.payment ? (() => {
+                                                        const groupCount = (t.payment.tickets && t.payment.tickets.length > 0)
+                                                            ? t.payment.tickets.length
+                                                            : (Number(t.payment.total_members) || 1);
+                                                        const isGroup = groupCount > 1;
+                                                        const individualPrice = (t.individual_price && Number(t.individual_price) > 0)
+                                                            ? Number(t.individual_price)
+                                                            : (Number(t.payment.price_per_ticket) > 0
+                                                                ? Number(t.payment.price_per_ticket)
+                                                                : Math.round(Number(t.payment.total_amount || 0) / groupCount));
+                                                        const displayAmount = isGroup ? individualPrice : Number(t.payment.total_amount || 0);
+
+                                                        return (
+                                                            <Box>
+                                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, flexWrap: 'nowrap' }}>
+                                                                    <Typography variant="caption" sx={{ fontWeight: 900, display: 'block', color: '#0f172a', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                                                                        Rp {Number(displayAmount).toLocaleString('id-ID')}
+                                                                    </Typography>
+
+                                                                    {isGroup && (
+                                                                        <Tooltip
+                                                                            title={
+                                                                                <Box sx={{ p: 0.5, fontSize: '0.72rem', lineHeight: 1.4 }}>
+                                                                                    <div style={{ fontWeight: 800, marginBottom: 2 }}>👥 Registrasi Pembayaran Grup</div>
+                                                                                    <div>Nominal di atas adalah porsi tiket individu untuk peserta ini.</div>
+                                                                                    <div style={{ marginTop: 4, paddingTop: 4, borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                                                                                        <strong>Total Invoice Grup:</strong> Rp {Number(t.payment.total_amount || 0).toLocaleString('id-ID')} ({groupCount} tiket)
+                                                                                        {Number(t.payment.unique_code || 0) > 0 && ` (Termasuk kode unik: +${t.payment.unique_code})`}
+                                                                                    </div>
+                                                                                </Box>
+                                                                            }
+                                                                            arrow
+                                                                        >
+                                                                            <Chip
+                                                                                label={`Grup (${groupCount})`}
+                                                                                size="small"
+                                                                                sx={{
+                                                                                    height: 17,
+                                                                                    fontSize: '0.56rem',
+                                                                                    fontWeight: 900,
+                                                                                    bgcolor: '#f5f3ff',
+                                                                                    color: '#6d28d9',
+                                                                                    border: '1px solid #ddd6fe',
+                                                                                    px: 0.2,
+                                                                                    cursor: 'help',
+                                                                                }}
+                                                                            />
+                                                                        </Tooltip>
+                                                                    )}
+
+                                                                    {!isGroup && Number(t.payment.unique_code || 0) > 0 && (
+                                                                        <Tooltip title={`Termasuk Kode Unik Transfer: +Rp ${Number(t.payment.unique_code).toLocaleString('id-ID')}`} arrow>
+                                                                            <Chip
+                                                                                label={`+${t.payment.unique_code}`}
+                                                                                size="small"
+                                                                                sx={{
+                                                                                    height: 17,
+                                                                                    fontSize: '0.58rem',
+                                                                                    fontWeight: 900,
+                                                                                    bgcolor: '#eff6ff',
+                                                                                    color: '#1d4ed8',
+                                                                                    border: '1px solid #bfdbfe',
+                                                                                    px: 0.2,
+                                                                                    cursor: 'help',
+                                                                                }}
+                                                                            />
+                                                                        </Tooltip>
+                                                                    )}
+
+                                                                    {Number(t.payment.discount_amount || 0) > 0 && (
+                                                                        <Tooltip title={`Diskon: -Rp ${Number(t.payment.discount_amount).toLocaleString('id-ID')} (${t.payment.discount_type === 'percent' ? `${Number(t.payment.discount_value)}%` : 'Nominal'})${t.payment.discount_notes ? ` [${t.payment.discount_notes}]` : ''}`} arrow>
+                                                                            <Chip
+                                                                                label={`Diskon -${t.payment.discount_type === 'percent' ? `${Number(t.payment.discount_value)}%` : `Rp ${(Number(t.payment.discount_amount) / 1000).toLocaleString('id-ID')}k`}`}
+                                                                                size="small"
+                                                                                sx={{
+                                                                                    height: 17,
+                                                                                    fontSize: '0.58rem',
+                                                                                    fontWeight: 900,
+                                                                                    bgcolor: '#fef3c7',
+                                                                                    color: '#b45309',
+                                                                                    border: '1px solid #fde68a',
+                                                                                    px: 0.2,
+                                                                                    cursor: 'help',
+                                                                                }}
+                                                                            />
+                                                                        </Tooltip>
+                                                                    )}
+                                                                </Box>
+
+                                                                {isGroup && (
+                                                                    <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.62rem', fontWeight: 600, display: 'block', mt: 0.1, whiteSpace: 'nowrap' }}>
+                                                                        Total grup: Rp {Number(t.payment.total_amount || 0).toLocaleString('id-ID')}
+                                                                        {Number(t.payment.unique_code || 0) > 0 && (
+                                                                            <span style={{ color: '#2563eb', fontWeight: 700, marginLeft: 3 }}>
+                                                                                (+{t.payment.unique_code})
+                                                                            </span>
+                                                                        )}
+                                                                    </Typography>
                                                                 )}
-                                                                {Number(t.payment.discount_amount || 0) > 0 && (
-                                                                    <Tooltip title={`Diskon: -Rp ${Number(t.payment.discount_amount).toLocaleString('id-ID')} (${t.payment.discount_type === 'percent' ? `${Number(t.payment.discount_value)}%` : 'Nominal'})${t.payment.discount_notes ? ` [${t.payment.discount_notes}]` : ''}`} arrow>
-                                                                        <Chip
-                                                                            label={`Diskon -${t.payment.discount_type === 'percent' ? `${Number(t.payment.discount_value)}%` : `Rp ${(Number(t.payment.discount_amount) / 1000).toLocaleString('id-ID')}k`}`}
-                                                                            size="small"
-                                                                            sx={{
-                                                                                height: 17,
-                                                                                fontSize: '0.58rem',
-                                                                                fontWeight: 900,
-                                                                                bgcolor: '#fef3c7',
-                                                                                color: '#b45309',
-                                                                                border: '1px solid #fde68a',
-                                                                                px: 0.2,
-                                                                                cursor: 'help',
-                                                                            }}
-                                                                        />
-                                                                    </Tooltip>
-                                                                )}
-                                                            </Box>
-                                                            <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.2, flexWrap: 'wrap' }}>
+
+                                                                <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.2, flexWrap: 'wrap' }}>
                                                                 <Tooltip title="Klik untuk ubah status pembayaran (Approved, Pending, Rejected)" arrow>
                                                                     <Chip
                                                                         label={
@@ -3123,7 +3180,8 @@ export default function VisitorTicketsIndex({
                                                                 </Typography>
                                                             )}
                                                         </Box>
-                                                    ) : (
+                                                    );
+                                                })() : (
                                                         <Typography variant="caption" sx={{ color: '#059669', fontWeight: 800, fontSize: '0.76rem', whiteSpace: 'nowrap' }}>
                                                             FREE
                                                         </Typography>
@@ -3566,6 +3624,16 @@ export default function VisitorTicketsIndex({
                                                 <span> &bull; Kode Unik: <strong style={{ color: '#1d4ed8' }}>+{detailModal.ticket.payment.unique_code}</strong></span>
                                             )} ({detailModal.ticket.payment.status.toUpperCase()})
                                         </Typography>
+                                        {((detailModal.ticket.payment.tickets && detailModal.ticket.payment.tickets.length > 1) || Number(detailModal.ticket.payment.total_members) > 1) && (
+                                            <Box sx={{ mt: 0.8, p: 1, bgcolor: '#f0fdf4', borderRadius: '6px', border: '1px solid #bbf7d0' }}>
+                                                <Typography variant="caption" sx={{ color: '#166534', fontWeight: 800, display: 'block' }}>
+                                                    👥 Nominal Tiket Ini: Rp {Number(detailModal.ticket.individual_price || (detailModal.ticket.payment.total_amount / ((detailModal.ticket.payment.tickets && detailModal.ticket.payment.tickets.length) || Number(detailModal.ticket.payment.total_members) || 1))).toLocaleString('id-ID')}
+                                                </Typography>
+                                                <Typography variant="caption" sx={{ color: '#15803d', display: 'block', fontSize: '0.67rem' }}>
+                                                    Porsi untuk 1 peserta dari total pembayaran grup Rp {Number(detailModal.ticket.payment.total_amount).toLocaleString('id-ID')} ({(detailModal.ticket.payment.tickets && detailModal.ticket.payment.tickets.length) || Number(detailModal.ticket.payment.total_members)} tiket).
+                                                </Typography>
+                                            </Box>
+                                        )}
                                         {detailModal.ticket.payment.is_mixed_category && (
                                             <Box sx={{ mt: 1, p: 1.2, bgcolor: '#f5f3ff', borderRadius: '8px', border: '1px solid #ddd6fe' }}>
                                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#6d28d9', display: 'block' }}>
