@@ -1375,7 +1375,7 @@ return [
   '07779' => ['name' => 'Jhon Philips Mulatua Sinaga', 'email' => 'philips.sinaga@gmail.com'],
   '07801' => ['name' => 'Fikri Adam Dermawan', 'email' => 'fikri.adam.derma@gmail.com'],
   '07811' => ['name' => 'Ardiansyah Marbun', 'email' => 'ardiansyahh2618@gmail.com'],
-  '07812' => ['name' => 'Rahmad Sinambela', 'email' => 'rahmad.sinambela@agincourtresources.com'],
+  '07812' => ['name' => 'Rahmad Sinambela', 'email' => 'rahmadsinambela@gmail.com', 'alt_emails' => ['rahmad.sinambela@agincourtresources.com']],
   '07813' => ['name' => 'Randy', 'email' => 'randy.darsono@gmail.com'],
   '07817' => ['name' => 'Rohmad Irvan Habibi', 'email' => 'habibumi@gmail.com'],
   '07821' => ['name' => 'Reza Dwi Adrianto', 'email' => 'rezaondo@gmail.com'],

@@ -20736,8 +20736,14 @@ const INITIAL_DPT = [
   {
     "npa": "07812",
     "name": "Rahmad Sinambela",
-    "email": "ra***@agincourtresources.com",
-    "email_hash": "9dc298c952f396d6b2a79b448bb4dcb0a7714f9456d79c87999367e786335b2c",
+    "email": "rahmadsinambela@gmail.com",
+    "email_hash": "7b028342d356b8ce179a1f17f4a55ddbd8d7cfc2f4c8bbb99a53f6b038e76d42",
+    "alt_emails": [
+      "rahmad.sinambela@agincourtresources.com"
+    ],
+    "alt_email_hashes": [
+      "9dc298c952f396d6b2a79b448bb4dcb0a7714f9456d79c87999367e786335b2c"
+    ],
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
