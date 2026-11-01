@@ -1112,8 +1112,14 @@ const INITIAL_DPT = [
   {
     "npa": "01350",
     "name": "Bambang Irawan",
-    "email": "b.***@gmail.com",
-    "email_hash": "5bc087bc7e83a4521beacca8dbb491f61ba380351db4a2b8685929c206ed803f",
+    "email": "bi***@yahoo.com",
+    "email_hash": "51d3336f27931a7d5608dea28741fcbbc4d1fbae9aa5521d3876be73b883a3ee",
+    "alt_emails": [
+      "b.irawan.gea@gmail.com"
+    ],
+    "alt_email_hashes": [
+      "5bc087bc7e83a4521beacca8dbb491f61ba380351db4a2b8685929c206ed803f"
+    ],
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",

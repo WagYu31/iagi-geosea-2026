@@ -71,7 +71,7 @@ return [
   '01333' => ['name' => 'Indra Jaya', 'email' => 'indrajaya02@gmail.com'],
   '01337' => ['name' => 'Kuncoro Kukuh', 'email' => 'kuncoro_kukuh@yahoo.com'],
   '01339' => ['name' => 'ALukito Notoprodjo', 'email' => 'lukiton@cbn.net.id'],
-  '01350' => ['name' => 'Bambang Irawan', 'email' => 'b.irawan.gea@gmail.com'],
+  '01350' => ['name' => 'Bambang Irawan', 'email' => 'birawan2013@yahoo.com', 'alt_emails' => ['b.irawan.gea@gmail.com']],
   '01355' => ['name' => 'Adi Maryono', 'email' => 'maryono.adi@gmail.com'],
   '01360' => ['name' => 'Eddy A Subroto', 'email' => 'eddysubroto73@gmail.com'],
   '01362' => ['name' => 'Edy Sunardi', 'email' => 'edy.sunardi@unpad.ac.id'],
