@@ -246,6 +246,7 @@ class VisitorTicketAdminController extends Controller
      */
     public function index(Request $request)
     {
+        $statsQuery = $this->filterTicketsQuery($request);
         $query = $this->filterTicketsQuery($request);
 
         $perPageInput = $request->input('per_page', 25);
@@ -345,7 +346,7 @@ class VisitorTicketAdminController extends Controller
             ($request->filled('unpaid_excel') && $request->input('unpaid_excel') !== 'all');
 
         // Fetch tickets matching the active query (or all tickets if no filter) with payment relations
-        $ticketsForStats = (clone $query)->with('payment')->get();
+        $ticketsForStats = $statsQuery->with('payment')->get();
 
         $statsTotalVisitors = $ticketsForStats->count();
         $statsExclusivePaidCount = 0;

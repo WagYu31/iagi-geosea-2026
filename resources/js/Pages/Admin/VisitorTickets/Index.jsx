@@ -1564,11 +1564,12 @@ export default function VisitorTicketsIndex({
     };
 
     const isTypeFilterActive = Array.isArray(typeFilter) ? typeFilter.length > 0 : (typeFilter && typeFilter !== 'all');
-    const hasActiveFilters = Boolean(searchTerm || isTypeFilterActive || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || (perPageFilter && String(perPageFilter) !== '25'));
+    const hasActiveFilters = Boolean(searchTerm || isTypeFilterActive || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all');
     const isFiltered = Boolean(stats.isFiltered || hasActiveFilters);
+    const overallTotal = Number(globalStats.totalVisitors || totalItems || stats.totalVisitors || 0);
 
     const statCards = [
-        { key: 'all', label: 'Total Visitors', value: stats.totalVisitors || 0, subValue: isFiltered ? `Hasil Filter (${globalStats.totalVisitors || 852} total)` : 'Semua Terdaftar', icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
+        { key: 'all', label: 'Total Visitors', value: isFiltered ? (stats.totalVisitors || 0) : overallTotal, subValue: isFiltered ? `Hasil Filter (${overallTotal} total)` : 'Semua Terdaftar', icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
         { key: 'email_sent', label: 'Email Terkirim', value: stats.emailSentCount || 0, subValue: isFiltered ? 'Filter Aktif' : 'E-Ticket Terkirim', icon: <EmailIcon />, color: '#0d9488', shadow: '#0f766e', bg: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)', badgeBg: '#14b8a6' },
         { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, subValue: isFiltered ? 'Filter Aktif' : 'Free / Non-Exclusive', icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
         { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, subValue: isFiltered ? 'Hadir (Filter)' : 'Hadir di Lokasi', icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
@@ -2140,7 +2141,7 @@ export default function VisitorTicketsIndex({
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <FilterListIcon sx={{ fontSize: 18, color: '#16a34a' }} />
                             <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: '#166534' }}>
-                                <strong>Mode Filter Aktif:</strong> Kartu statistik di bawah otomatis menghitung data yang sedang tersaring (<strong>{stats.totalVisitors || 0}</strong> dari {globalStats.totalVisitors || 852} pengunjung).
+                                <strong>Mode Filter Aktif:</strong> Kartu statistik di bawah otomatis menghitung data yang sedang tersaring (<strong>{stats.totalVisitors || 0}</strong> dari {overallTotal} pengunjung).
                             </Typography>
                         </Box>
                         <Button
