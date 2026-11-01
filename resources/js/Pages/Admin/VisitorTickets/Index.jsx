@@ -501,6 +501,10 @@ export default function VisitorTicketsIndex({
     // Live Nominal Calculator for selected/checked rows
     const selectedStats = useMemo(() => {
         let ticketNominal = 0;
+        let approvedNominal = 0;
+        let pendingNominal = 0;
+        let approvedCount = 0;
+        let pendingCount = 0;
         let paidCount = 0;
         let freeCount = 0;
         let debtCount = 0;
@@ -527,9 +531,12 @@ export default function VisitorTicketsIndex({
                 paymentTotal += Number(t.payment.total_amount || 0);
             }
 
-            const groupCount = (t.payment.tickets && t.payment.tickets.length > 0)
-                ? t.payment.tickets.length
-                : (Number(t.payment.total_members) || 1);
+            const groupCount = Math.max(
+                (t.payment.tickets && t.payment.tickets.length) || 0,
+                Number(t.payment.total_members) || 0,
+                1
+            );
+            const isGroup = groupCount > 1 || Boolean(t.payment.is_mixed_category);
 
             const indPrice = (t.individual_price && Number(t.individual_price) > 0)
                 ? Number(t.individual_price)
@@ -537,13 +544,25 @@ export default function VisitorTicketsIndex({
                     ? Number(t.payment.price_per_ticket)
                     : Math.round(Number(t.payment.total_amount || 0) / groupCount));
 
-            const amount = groupCount > 1 ? indPrice : Number(t.payment.total_amount || indPrice || 0);
+            const amount = isGroup ? indPrice : Number(t.payment.total_amount || indPrice || 0);
             ticketNominal += amount;
+
+            if (t.payment.status === 'approved') {
+                approvedNominal += amount;
+                approvedCount++;
+            } else {
+                pendingNominal += amount;
+                pendingCount++;
+            }
         });
 
         return {
             count: selectedIds.length,
             ticketNominal,
+            approvedNominal,
+            pendingNominal,
+            approvedCount,
+            pendingCount,
             paymentTotal,
             paymentCount: paymentIds.size,
             paidCount,
@@ -2358,13 +2377,19 @@ export default function VisitorTicketsIndex({
                                 </Box>
                                 <Tooltip
                                     title={
-                                        <Box sx={{ p: 0.5, fontSize: '0.72rem', lineHeight: 1.4 }}>
-                                            <div style={{ fontWeight: 800, marginBottom: 4 }}>📊 Rincian {selectedStats.count} Tiket Dicentang:</div>
-                                            <div>• Tiket Berbayar: <strong>{selectedStats.paidCount} tiket</strong></div>
-                                            {selectedStats.freeCount > 0 && <div>• Tiket Free (Gratis): <strong>{selectedStats.freeCount} tiket</strong></div>}
-                                            {selectedStats.debtCount > 0 && <div>• Tiket Hutang (Debt): <strong>{selectedStats.debtCount} tiket</strong></div>}
-                                            <div style={{ marginTop: 4, paddingTop: 4, borderTop: '1px solid rgba(255,255,255,0.2)' }}>
-                                                <strong>Total Nominal Tiket:</strong> Rp {Number(selectedStats.ticketNominal).toLocaleString('id-ID')}
+                                        <Box sx={{ p: 0.8, fontSize: '0.74rem', lineHeight: 1.5, minWidth: 230 }}>
+                                            <div style={{ fontWeight: 800, marginBottom: 4, color: '#38bdf8' }}>📊 Rincian {selectedStats.count} Tiket Dicentang:</div>
+                                            <div>• <strong>Approved (Lunas):</strong> {selectedStats.approvedCount} tiket (Rp {Number(selectedStats.approvedNominal).toLocaleString('id-ID')})</div>
+                                            {selectedStats.pendingCount > 0 && (
+                                                <div style={{ color: '#fcd34d' }}>• <strong>Pending (Belum Verif):</strong> {selectedStats.pendingCount} tiket (Rp {Number(selectedStats.pendingNominal).toLocaleString('id-ID')})</div>
+                                            )}
+                                            {selectedStats.freeCount > 0 && <div>• <strong>Free (Gratis):</strong> {selectedStats.freeCount} tiket</div>}
+                                            {selectedStats.debtCount > 0 && <div style={{ color: '#fb923c' }}>• <strong>Hutang (Debt):</strong> {selectedStats.debtCount} tiket</div>}
+                                            <div style={{ marginTop: 6, paddingTop: 6, borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                                                <div><strong>Total Nominal Tiket:</strong> Rp {Number(selectedStats.ticketNominal).toLocaleString('id-ID')}</div>
+                                                <div style={{ color: '#94a3b8', fontSize: '0.68rem', marginTop: 2 }}>
+                                                    Terhubung ke {selectedStats.paymentCount} invoice pembayaran unik (Total invoice: Rp {Number(selectedStats.paymentTotal).toLocaleString('id-ID')}).
+                                                </div>
                                             </div>
                                         </Box>
                                     }
@@ -3146,10 +3171,12 @@ export default function VisitorTicketsIndex({
                                                 {/* PAYMENT */}
                                                 <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
                                                     {t.payment ? (() => {
-                                                        const groupCount = (t.payment.tickets && t.payment.tickets.length > 0)
-                                                            ? t.payment.tickets.length
-                                                            : (Number(t.payment.total_members) || 1);
-                                                        const isGroup = groupCount > 1;
+                                                        const groupCount = Math.max(
+                                                            (t.payment.tickets && t.payment.tickets.length) || 0,
+                                                            Number(t.payment.total_members) || 0,
+                                                            1
+                                                        );
+                                                        const isGroup = groupCount > 1 || Boolean(t.payment.is_mixed_category);
                                                         const individualPrice = (t.individual_price && Number(t.individual_price) > 0)
                                                             ? Number(t.individual_price)
                                                             : (Number(t.payment.price_per_ticket) > 0
