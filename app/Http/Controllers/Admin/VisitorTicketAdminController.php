@@ -329,6 +329,33 @@ class VisitorTicketAdminController extends Controller
             Log::warning('Error computing duplicate stats: ' . $e->getMessage());
         }
 
+        // Compute accurate per-ticket revenue for debt tickets (matching individual group ticket pricing)
+        $debtTickets = VisitorTicket::whereHas('payment', function ($pq) {
+            $pq->where('is_debt', true);
+        })->with('payment')->get();
+
+        $debtTicketRevenue = 0;
+        foreach ($debtTickets as $t) {
+            if (!$t->payment) continue;
+            $groupCount = max(
+                $t->payment->tickets_count ?? ($t->payment->tickets ? $t->payment->tickets->count() : 0),
+                (int) ($t->payment->total_members ?? 0),
+                1
+            );
+            $isGroup = $groupCount > 1 || (bool) $t->payment->is_mixed_category;
+            $indPrice = ($t->individual_price && (float) $t->individual_price > 0)
+                ? (float) $t->individual_price
+                : (((float) ($t->payment->price_per_ticket ?? 0) > 0)
+                    ? (float) $t->payment->price_per_ticket
+                    : round((float) ($t->payment->total_amount ?? 0) / $groupCount));
+
+            $debtTicketRevenue += $isGroup ? $indPrice : (float) ($t->payment->total_amount ?? $indPrice ?? 0);
+        }
+
+        $realPaidRevenue = (float) VisitorPayment::where('status', 'approved')->where('is_debt', false)->whereHas('tickets')->sum('total_amount');
+        $finalDebtRevenue = $debtTicketRevenue > 0 ? (float) $debtTicketRevenue : (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount');
+        $grandTotalRevenue = $realPaidRevenue + $finalDebtRevenue;
+
         // Calculate global summary stats linked to actual visitor tickets
         $stats = [
             'totalVisitors' => VisitorTicket::count(),
@@ -345,12 +372,11 @@ class VisitorTicketAdminController extends Controller
                 $pq->where('is_debt', false);
             })->count(),
             'freeCount' => VisitorTicket::whereDoesntHave('payment')->count(),
-            'realPaidRevenue' => (float) VisitorPayment::where('status', 'approved')->where('is_debt', false)->whereHas('tickets')->sum('total_amount'),
-            'debtTotalRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
-            'totalRevenue' => (float) VisitorPayment::where('status', 'approved')->whereHas('tickets')->sum('total_amount'),
-            'grandTotalRevenue' => (float) VisitorPayment::where(function($q) {
-                $q->where('status', 'approved')->orWhere('is_debt', true);
-            })->whereHas('tickets')->sum('total_amount'),
+            'realPaidRevenue' => $realPaidRevenue,
+            'debtTotalRevenue' => $finalDebtRevenue,
+            'debtInvoiceRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
+            'totalRevenue' => $realPaidRevenue,
+            'grandTotalRevenue' => $grandTotalRevenue,
             'groupRegistrationCount' => VisitorPayment::where('is_mixed_category', true)->count(),
             'unpaidExcelCount' => count($unpaidTicketIds),
             'duplicateEmailTicketsCount' => $dupEmailTicketCount,
@@ -449,8 +475,10 @@ class VisitorTicketAdminController extends Controller
                 ['id' => 3, 'label' => 'Rejected', 'value' => VisitorPayment::where('status', 'rejected')->whereHas('tickets')->count(), 'color' => '#ef4444'],
             ],
             'revenueBreakdown' => [
-                'paidRevenue' => (float) VisitorPayment::where('status', 'approved')->where('is_debt', false)->whereHas('tickets')->sum('total_amount'),
-                'debtRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
+                'paidRevenue' => $realPaidRevenue,
+                'debtRevenue' => $finalDebtRevenue,
+                'debtInvoiceRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
+                'grandTotalRevenue' => $grandTotalRevenue,
                 'pendingRevenue' => (float) VisitorPayment::where('status', 'pending')->where('is_debt', false)->whereHas('tickets')->sum('total_amount'),
             ],
             'sourceDistribution' => [
