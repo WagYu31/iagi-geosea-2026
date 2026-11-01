@@ -11778,12 +11778,12 @@
 
           const timeFormatted = formatClaimFullDate(l.timestamp);
           
-          let ipCell = `<span style="color: #64748B; font-family: var(--font-mono); font-size: 0.72rem;">—</span>`;
-          if (l.ip) {
+          let ipCell = `<span style="font-family: var(--font-mono); color: #94A3B8; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;" title="Koneksi terenkripsi via reverse proxy sebelum telemetri realtime"><span style="color: #38BDF8; font-size: 0.75rem;">🔒</span> Client Encrypted</span>`;
+          if (l.ip && l.ip !== '0.0.0.0') {
             if (l.ip === '127.0.0.1') {
               ipCell = `<span style="font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem;" title="Terekam via reverse proxy lokal server (Nginx/Gateway)">127.0.0.1 <span style="font-size: 0.65rem; color: #64748B;">(Proxy)</span></span>`;
             } else if (l.ip === 'Client Encrypted') {
-              ipCell = `<span style="font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</span>`;
+              ipCell = `<span style="font-family: var(--font-mono); color: #94A3B8; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;" title="Koneksi terenkripsi via reverse proxy sebelum telemetri realtime"><span style="color: #38BDF8; font-size: 0.75rem;">🔒</span> Client Encrypted</span>`;
             } else {
               ipCell = `<span style="display: inline-block; font-family: var(--font-mono); font-weight: 700; color: #38BDF8; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.72rem;">${l.ip}</span>`;
             }
@@ -11853,7 +11853,7 @@
 
       function parseDeviceBadge(ua) {
         if (!ua) {
-          return `<span style="display: inline-flex; align-items: center; gap: 4px; background: rgba(148, 163, 184, 0.1); color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.68rem; font-family: var(--font-mono); font-weight: 500;">🌐 Web Client</span>`;
+          return `<span style="display: inline-flex; align-items: center; gap: 4px; background: rgba(148, 163, 184, 0.08); color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.68rem; font-family: var(--font-mono); font-weight: 500;" title="Terekam via Web Browser">🌐 Web Browser</span>`;
         }
         const lower = ua.toLowerCase();
         let os = 'Desktop';
@@ -11945,8 +11945,8 @@
           let npaVal = l.npa || (npaMatch ? npaMatch[1] : '-');
           let recMatch = (l.details || '').match(/Receipt:\s*([A-Za-z0-9_\-]+)/i);
           let receipt = l.receipt_hash || (recMatch ? recMatch[1] : '-');
-          const ipVal = l.ip || '127.0.0.1';
-          const uaVal = l.user_agent ? l.user_agent.replace(/"/g, '""') : '-';
+          const ipVal = (l.ip && l.ip !== '0.0.0.0') ? l.ip : 'Client Encrypted';
+          const uaVal = l.user_agent ? l.user_agent.replace(/"/g, '""') : 'Web Browser';
           const detailsClean = (l.details || '-').replace(/"/g, '""');
 
           return [

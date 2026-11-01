@@ -1961,6 +1961,10 @@ if ($action === 'get_audit_logs') {
                 $cLog['receipt_hash'] = $vItem['receipt_hash'];
             }
         }
+
+        if (empty($cLog['ip']) || $cLog['ip'] === '0.0.0.0') {
+            $cLog['ip'] = 'Client Encrypted';
+        }
     }
     unset($cLog);
 
