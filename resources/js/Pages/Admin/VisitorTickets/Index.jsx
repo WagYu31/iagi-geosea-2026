@@ -41,6 +41,7 @@ import {
     Paper,
     Alert,
     CircularProgress,
+    ListItemText,
 } from '@mui/material';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
@@ -438,8 +439,14 @@ export default function VisitorTicketsIndex({
         };
     }, []);
 
+    const parseTypeFilter = (val) => {
+        if (!val || val === 'all') return [];
+        if (Array.isArray(val)) return val.filter(v => v !== 'all' && v !== '');
+        return String(val).split(',').map(s => s.trim()).filter(v => v && v !== 'all');
+    };
+
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
-    const [typeFilter, setTypeFilter] = useState(filters.type || 'all');
+    const [typeFilter, setTypeFilter] = useState(() => parseTypeFilter(filters.type));
     const [registrationTypeFilter, setRegistrationTypeFilter] = useState(filters.registration_type || 'all');
     const [checkedInFilter, setCheckedInFilter] = useState(filters.checked_in || 'all');
     const [statusFilter, setStatusFilter] = useState(filters.status || 'all');
@@ -455,6 +462,10 @@ export default function VisitorTicketsIndex({
             setPerPageFilter(String(filters.per_page));
         }
     }, [filters.per_page]);
+
+    useEffect(() => {
+        setTypeFilter(parseTypeFilter(filters.type));
+    }, [filters.type]);
 
     // Multi-select state (persisted in localStorage so red mark doesn't disappear on refresh)
     const [selectedIds, setSelectedIds] = useState(() => {
@@ -725,9 +736,16 @@ export default function VisitorTicketsIndex({
 
     const navigateFilters = (overrides = {}) => {
         const currentPerPage = overrides.per_page !== undefined ? overrides.per_page : perPageFilter;
+        let currentType = overrides.type !== undefined ? overrides.type : typeFilter;
+        if (Array.isArray(currentType)) {
+            currentType = currentType.filter(v => v !== 'all' && v !== '').join(',');
+        } else if (currentType === 'all') {
+            currentType = '';
+        }
+
         const params = {
             search: overrides.search !== undefined ? overrides.search : searchTerm,
-            type: overrides.type !== undefined ? overrides.type : typeFilter,
+            type: currentType,
             registration_type: overrides.registration_type !== undefined ? overrides.registration_type : registrationTypeFilter,
             checked_in: overrides.checked_in !== undefined ? overrides.checked_in : checkedInFilter,
             status: overrides.status !== undefined ? overrides.status : statusFilter,
@@ -739,7 +757,7 @@ export default function VisitorTicketsIndex({
         };
 
         if (!params.search) delete params.search;
-        if (params.type === 'all') delete params.type;
+        if (!params.type || params.type === 'all') delete params.type;
         if (params.registration_type === 'all') delete params.registration_type;
         if (params.checked_in === 'all') delete params.checked_in;
         if (params.status === 'all') delete params.status;
@@ -770,9 +788,19 @@ export default function VisitorTicketsIndex({
         }, 400);
     };
 
-    const handleTypeFilterChange = (val) => {
-        setTypeFilter(val);
-        navigateFilters({ type: val, page: 1 });
+    const handleTypeFilterChange = (selectedValues) => {
+        let newSelection = Array.isArray(selectedValues) ? selectedValues : [selectedValues];
+        const clickedAll = newSelection[newSelection.length - 1] === 'all' || 
+                           (newSelection.includes('all') && !typeFilter.includes('all'));
+
+        if (clickedAll || newSelection.length === 0) {
+            newSelection = [];
+        } else {
+            newSelection = newSelection.filter(item => item !== 'all' && item !== '');
+        }
+
+        setTypeFilter(newSelection);
+        navigateFilters({ type: newSelection, page: 1 });
     };
 
     const handleRegistrationTypeFilterChange = (val) => {
@@ -807,7 +835,7 @@ export default function VisitorTicketsIndex({
 
     const handleResetFilters = () => {
         setSearchTerm('');
-        setTypeFilter('all');
+        setTypeFilter([]);
         setRegistrationTypeFilter('all');
         setCheckedInFilter('all');
         setStatusFilter('all');
@@ -815,7 +843,7 @@ export default function VisitorTicketsIndex({
         setEmailSentFilter('all');
         setDuplicateFilter('all');
         setPerPageFilter('25');
-        navigateFilters({ search: '', type: 'all', registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', duplicate: 'all', per_page: '25', page: 1 });
+        navigateFilters({ search: '', type: [], registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', duplicate: 'all', per_page: '25', page: 1 });
     };
 
     const handlePageChange = (_, page) => {
@@ -831,7 +859,8 @@ export default function VisitorTicketsIndex({
             setEmailSentFilter(nextVal);
             navigateFilters({ email_sent: nextVal, page: 1 });
         } else if (statKey === 'non_exclusive') {
-            const nextVal = typeFilter === 'non_exclusive' ? 'all' : 'non_exclusive';
+            const isNonExclusiveOnly = typeFilter.length === 1 && typeFilter[0] === 'non_exclusive';
+            const nextVal = isNonExclusiveOnly ? [] : ['non_exclusive'];
             setTypeFilter(nextVal);
             navigateFilters({ type: nextVal, page: 1 });
         } else if (statKey === 'checked_in') {
@@ -1391,7 +1420,8 @@ export default function VisitorTicketsIndex({
         } else {
             const params = { mode: 'filtered' };
             if (searchTerm) params.search = searchTerm;
-            if (typeFilter !== 'all') params.type = typeFilter;
+            const typeStr = Array.isArray(typeFilter) ? typeFilter.join(',') : (typeFilter !== 'all' ? typeFilter : '');
+            if (typeStr) params.type = typeStr;
             if (checkedInFilter !== 'all') params.checked_in = checkedInFilter;
             if (statusFilter !== 'all') params.status = statusFilter;
             window.open(route('admin.visitorTickets.printBadgesBulk', params), '_blank');
@@ -1401,10 +1431,11 @@ export default function VisitorTicketsIndex({
 
     const handleSendBulkEmail = () => {
         const payload = { mode: emailTargetMode };
+        const typeStr = Array.isArray(typeFilter) ? typeFilter.join(',') : (typeFilter !== 'all' ? typeFilter : '');
         if (emailTargetMode === 'exclude_selected') {
             payload.excluded_ids = selectedIds;
             if (searchTerm) payload.search = searchTerm;
-            if (typeFilter !== 'all') payload.type = typeFilter;
+            if (typeStr) payload.type = typeStr;
             if (registrationTypeFilter !== 'all') payload.registration_type = registrationTypeFilter;
             if (checkedInFilter !== 'all') payload.checked_in = checkedInFilter;
             if (statusFilter !== 'all') payload.status = statusFilter;
@@ -1417,7 +1448,7 @@ export default function VisitorTicketsIndex({
             payload.ticket_ids = selectedIds;
         } else {
             if (searchTerm) payload.search = searchTerm;
-            if (typeFilter !== 'all') payload.type = typeFilter;
+            if (typeStr) payload.type = typeStr;
             if (registrationTypeFilter !== 'all') payload.registration_type = registrationTypeFilter;
             if (checkedInFilter !== 'all') payload.checked_in = checkedInFilter;
             if (statusFilter !== 'all') payload.status = statusFilter;
@@ -1453,7 +1484,8 @@ export default function VisitorTicketsIndex({
         }
     };
 
-    const hasActiveFilters = Boolean(searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || (perPageFilter && String(perPageFilter) !== '25'));
+    const isTypeFilterActive = Array.isArray(typeFilter) ? typeFilter.length > 0 : (typeFilter && typeFilter !== 'all');
+    const hasActiveFilters = Boolean(searchTerm || isTypeFilterActive || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || (perPageFilter && String(perPageFilter) !== '25'));
     const isFiltered = Boolean(stats.isFiltered || hasActiveFilters);
 
     const statCards = [
@@ -2046,7 +2078,7 @@ export default function VisitorTicketsIndex({
                         const isCardActive = 
                             (s.key === 'all' && !hasActiveFilters) ||
                             (s.key === 'email_sent' && emailSentFilter === 'sent') ||
-                            (s.key === 'non_exclusive' && typeFilter === 'non_exclusive') ||
+                            (s.key === 'non_exclusive' && typeFilter.length === 1 && typeFilter[0] === 'non_exclusive') ||
                             (s.key === 'checked_in' && checkedInFilter === 'yes') ||
                             (s.key === 'pending' && statusFilter === 'pending') ||
                             (s.key === 'debt' && debtFilter === 'debt') ||
@@ -2219,51 +2251,153 @@ export default function VisitorTicketsIndex({
                         <FormControl size="small" fullWidth>
                             <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Category</InputLabel>
                             <Select
+                                multiple
                                 value={typeFilter}
                                 label="Category"
                                 onChange={(e) => handleTypeFilterChange(e.target.value)}
+                                renderValue={(selected) => {
+                                    if (!selected || selected.length === 0) {
+                                        return <Typography sx={{ fontSize: '0.82rem', color: '#64748b' }}>All Categories</Typography>;
+                                    }
+                                    if (selected.length === 1) {
+                                        const meta = CATEGORY_META[selected[0]];
+                                        return <Typography sx={{ fontSize: '0.82rem', fontWeight: 700, color: '#0f172a' }}>{meta?.shortLabel || meta?.label || selected[0]}</Typography>;
+                                    }
+                                    return (
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, overflow: 'hidden' }}>
+                                            <Chip 
+                                                size="small" 
+                                                label={`${selected.length} Kategori`} 
+                                                sx={{ height: 20, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#094d42', color: '#fff' }} 
+                                            />
+                                            <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: '#334155', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                                                {selected.map(val => CATEGORY_META[val]?.shortLabel || val).join(', ')}
+                                            </Typography>
+                                        </Box>
+                                    );
+                                }}
+                                MenuProps={{
+                                    PaperProps: {
+                                        style: {
+                                            maxHeight: 420,
+                                            width: 320,
+                                        },
+                                    },
+                                }}
                                 sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: '#f8fafc', fontWeight: 600 }}
                             >
-                                <MenuItem value="all" sx={{ fontWeight: 700 }}>All Categories</MenuItem>
+                                <MenuItem value="all" sx={{ fontWeight: 700 }}>
+                                    <Checkbox checked={typeFilter.length === 0} size="small" sx={{ p: 0.5, mr: 1 }} />
+                                    <ListItemText primary="All Categories (Pilih Semua)" primaryTypographyProps={{ fontSize: '0.82rem', fontWeight: 700 }} />
+                                </MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     1. PARTICIPANT
                                 </ListSubheader>
-                                <MenuItem value="iagi_member_professional" sx={{ pl: 3, fontSize: '0.82rem' }}>• Professional (Member)</MenuItem>
-                                <MenuItem value="non_iagi_member_professional" sx={{ pl: 3, fontSize: '0.82rem' }}>• Professional (Non-Member)</MenuItem>
-                                <MenuItem value="iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Member)</MenuItem>
-                                <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Expatriate (Non-Member)</MenuItem>
-                                <MenuItem value="student_undergraduate" sx={{ pl: 3, fontSize: '0.82rem' }}>• Student Undergraduate</MenuItem>
-                                <MenuItem value="dosen" sx={{ pl: 3, fontSize: '0.82rem' }}>• Dosen</MenuItem>
+                                <MenuItem value="iagi_member_professional" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('iagi_member_professional') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="Professional (Member)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="non_iagi_member_professional" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('non_iagi_member_professional') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="Professional (Non-Member)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="iagi_member_expatriate" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('iagi_member_expatriate') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="Expatriate (Member)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('non_iagi_member_expatriate') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="Expatriate (Non-Member)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="student_undergraduate" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('student_undergraduate') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="Student Undergraduate" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="dosen" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('dosen') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="Dosen" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     2. TECHNICAL
                                 </ListSubheader>
-                                <MenuItem value="presenter" sx={{ pl: 3, fontSize: '0.82rem' }}>1. 🎓 Presenter</MenuItem>
-                                <MenuItem value="student" sx={{ display: 'none' }}>1. 🎓 Presenter</MenuItem>
-                                <MenuItem value="invited_speaker" sx={{ pl: 3, fontSize: '0.82rem' }}>2. 🗣️ Invited Speaker</MenuItem>
-                                <MenuItem value="session_chair_judge" sx={{ pl: 3, fontSize: '0.82rem' }}>3. ⚖️ Session Chair / Judge</MenuItem>
-                                <MenuItem value="oral" sx={{ display: 'none' }}>Oral Presenter</MenuItem>
-                                <MenuItem value="poster" sx={{ display: 'none' }}>Poster Presenter</MenuItem>
+                                <MenuItem value="presenter" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('presenter') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🎓 Presenter" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="student" sx={{ display: 'none' }}>
+                                    <Checkbox checked={typeFilter.indexOf('student') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🎓 Presenter" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="invited_speaker" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('invited_speaker') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🗣️ Invited Speaker" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="session_chair_judge" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('session_chair_judge') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="⚖️ Session Chair / Judge" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="oral" sx={{ display: 'none' }}>
+                                    <Checkbox checked={typeFilter.indexOf('oral') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="Oral Presenter" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="poster" sx={{ display: 'none' }}>
+                                    <Checkbox checked={typeFilter.indexOf('poster') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="Poster Presenter" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     3. VISITOR
                                 </ListSubheader>
-                                <MenuItem value="non_exclusive" sx={{ pl: 3, fontSize: '0.82rem' }}>🎟️ Visitor Pass (Free)</MenuItem>
+                                <MenuItem value="non_exclusive" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('non_exclusive') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🎟️ Visitor Pass (Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                     4. ROLES & INVITATIONS
                                 </ListSubheader>
-                                <MenuItem value="vip" sx={{ fontSize: '0.82rem' }}>3. ⭐ VIP</MenuItem>
-                                <MenuItem value="speaker" sx={{ fontSize: '0.82rem' }}>4. 🎤 Keynote Speaker</MenuItem>
-                                <MenuItem value="panelist" sx={{ fontSize: '0.82rem' }}>5. 👥 Panelist</MenuItem>
-                                <MenuItem value="moderator" sx={{ fontSize: '0.82rem' }}>6. 🎯 Moderator</MenuItem>
-                                <MenuItem value="exhibition" sx={{ fontSize: '0.82rem' }}>7. 🏛️ Exhibition</MenuItem>
-                                <MenuItem value="committee" sx={{ fontSize: '0.82rem' }}>8. 👔 Committee</MenuItem>
-                                <MenuItem value="student_volunteer" sx={{ fontSize: '0.82rem' }}>9. 🤝 Student Volunteer</MenuItem>
-                                <MenuItem value="board" sx={{ fontSize: '0.82rem' }}>10. 🎖️ Board (Invited / Free)</MenuItem>
-                                <MenuItem value="sponsorship" sx={{ fontSize: '0.82rem' }}>11. 💎 Delegate (Invited / Free)</MenuItem>
-                                <MenuItem value="student_crowd" sx={{ fontSize: '0.82rem' }}>12. 🎓 Student Crowd (Invited / Free)</MenuItem>
+                                <MenuItem value="vip" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('vip') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="⭐ VIP" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="speaker" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('speaker') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🎤 Keynote Speaker" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="panelist" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('panelist') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="👥 Panelist" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="moderator" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('moderator') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🎯 Moderator" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="exhibition" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('exhibition') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🏛️ Exhibition" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="committee" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('committee') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="👔 Committee" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="student_volunteer" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('student_volunteer') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🤝 Student Volunteer" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="board" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('board') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🎖️ Board (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="sponsorship" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('sponsorship') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="💎 Delegate (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="student_crowd" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('student_crowd') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🎓 Student Crowd (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
                             </Select>
                         </FormControl>
 
@@ -6291,7 +6425,7 @@ export default function VisitorTicketsIndex({
                                         Mencetak semua data ({totalItems} tiket) dengan kriteria filter saat ini:
                                     </Typography>
                                     <Box sx={{ display: 'flex', gap: 0.8, mt: 0.8, flexWrap: 'wrap' }}>
-                                        <Chip label={`Kategori: ${typeFilter === 'all' ? 'Semua' : (CATEGORY_META[typeFilter]?.shortLabel || typeFilter)}`} size="small" sx={{ fontSize: '0.68rem', height: 20, bgcolor: '#e0f2fe', color: '#0369a1' }} />
+                                        <Chip label={`Kategori: ${(!typeFilter || typeFilter.length === 0 || typeFilter === 'all') ? 'Semua' : (Array.isArray(typeFilter) ? (typeFilter.length === 1 ? (CATEGORY_META[typeFilter[0]]?.shortLabel || typeFilter[0]) : `${typeFilter.length} Terpilih`) : (CATEGORY_META[typeFilter]?.shortLabel || typeFilter))}`} size="small" sx={{ fontSize: '0.68rem', height: 20, bgcolor: '#e0f2fe', color: '#0369a1' }} />
                                         <Chip label={`Gate: ${checkedInFilter === 'all' ? 'Semua' : checkedInFilter === 'yes' ? 'Checked In' : 'Belum Check In'}`} size="small" sx={{ fontSize: '0.68rem', height: 20, bgcolor: '#e0f2fe', color: '#0369a1' }} />
                                         <Chip label={`Status: ${statusFilter === 'all' ? 'Semua' : statusFilter.toUpperCase()}`} size="small" sx={{ fontSize: '0.68rem', height: 20, bgcolor: '#e0f2fe', color: '#0369a1' }} />
                                     </Box>

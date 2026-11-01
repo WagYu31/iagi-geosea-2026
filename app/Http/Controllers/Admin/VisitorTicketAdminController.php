@@ -79,10 +79,12 @@ class VisitorTicketAdminController extends Controller
             });
         }
 
-        // Visitor Type filter
+        // Visitor Type filter (supports single or multi-select comma separated or array)
         if ($type = $request->input('type')) {
-            if ($type !== 'all') {
-                $query->where('visitor_type', $type);
+            $types = is_array($type) ? $type : explode(',', (string) $type);
+            $types = array_filter(array_map('trim', $types), fn($t) => $t !== '' && $t !== 'all');
+            if (!empty($types)) {
+                $query->whereIn('visitor_type', $types);
             }
         }
 
@@ -329,8 +331,11 @@ class VisitorTicketAdminController extends Controller
             Log::warning('Error computing duplicate stats: ' . $e->getMessage());
         }
 
+        $typeInput = $request->input('type');
+        $hasTypeFilter = !empty($typeInput) && $typeInput !== 'all' && (!is_array($typeInput) || !empty(array_filter($typeInput, fn($t) => $t !== 'all' && $t !== '')));
+
         $hasFilters = $request->filled('search') ||
-            ($request->filled('type') && $request->input('type') !== 'all') ||
+            $hasTypeFilter ||
             ($request->filled('registration_type') && $request->input('registration_type') !== 'all') ||
             ($request->filled('checked_in') && $request->input('checked_in') !== 'all') ||
             ($request->filled('status') && $request->input('status') !== 'all') ||
