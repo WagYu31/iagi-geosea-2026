@@ -1116,6 +1116,23 @@ class PemiluStorage {
     }
 
     if (voter.claimed && voter.token) {
+      // Pastikan token selalu tersinkron aktif ke database server KPKU
+      try {
+        if (typeof fetch !== 'undefined') {
+          await fetch('api/vote_sync.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'register_claim',
+              npa: voter.npa,
+              token: voter.token,
+              name: voter.name,
+              email: voter.email
+            })
+          });
+        }
+      } catch (e) {}
+
       return {
         success: true,
         alreadyClaimed: true,
@@ -1137,7 +1154,7 @@ class PemiluStorage {
     // Daftarkan hash token ke server KPKU untuk validasi autentisitas coblos
     try {
       if (typeof fetch !== 'undefined') {
-        fetch('api/vote_sync.php', {
+        await fetch('api/vote_sync.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1147,7 +1164,7 @@ class PemiluStorage {
             name: voter.name,
             email: voter.email
           })
-        }).catch(() => {});
+        });
       }
     } catch (e) {}
 

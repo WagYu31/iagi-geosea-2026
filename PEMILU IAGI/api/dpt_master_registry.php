@@ -1268,7 +1268,7 @@ return [
   '07289' => ['name' => 'Joe Anderson Siadary', 'email' => 'jsiadary@gmail.com'],
   '07290' => ['name' => 'Wely Samara', 'email' => 'welygeo18@gmail.com'],
   '07292' => ['name' => 'Moch Nur Hadi', 'email' => 'mochamadnurhadi@gmail.com'],
-  '07294' => ['name' => 'Robertus Septima Luhur Simarmata', 'email' => 'robertussis@gmail.com'],
+  '07294' => ['name' => 'Robertus Septima Luhur Simarmata', 'email' => 'robertussls@gmail.com', 'alt_emails' => ['robertussis@gmail.com']],
   '07297' => ['name' => 'Dudi Hermawan', 'email' => 'doeday@gmail.com'],
   '07298' => ['name' => 'Santia Ardi Mustofa', 'email' => 'tofa_sam@yahoo.com'],
   '07299' => ['name' => 'Widya Asoka Suleman', 'email' => 'soka.xoca@gmail.com'],

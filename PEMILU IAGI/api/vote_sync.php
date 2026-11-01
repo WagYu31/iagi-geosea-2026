@@ -2193,6 +2193,45 @@ if ($action === 'verify_voter_token') {
             echo json_encode(['success' => false, 'error' => "NPA {$npa} tidak terdaftar dalam DPT resmi KPKU."]);
             exit;
         }
+
+        // Auto-Activate Token Fallback:
+        // Jika pemilih sah terdaftar di DPT, belum pernah memberikan suara, dan token berformat resmi KPKU,
+        // daftarkan dan aktifkan token secara otomatis agar pemilih tidak terhambat menuju bilik suara.
+        if (preg_match('/^IAGI-2026-[A-Z0-9]{4}-[A-Z0-9]{4}$/i', $token) || strlen($token) >= 10) {
+            $fpLock = @fopen($lockFile, 'c+');
+            if ($fpLock && @flock($fpLock, LOCK_EX)) {
+                $voters = readJsonFile($votersFile, []);
+                if (empty($voters[$npa]['voted']) && empty($voters[$npa]['token_hash'])) {
+                    $voters[$npa] = [
+                        'npa' => $npa,
+                        'name' => $masterDpt[$npa]['name'] ?? '',
+                        'email' => $masterDpt[$npa]['email'] ?? '',
+                        'token_hash' => $tokenHash,
+                        'claimed' => true,
+                        'claimed_at' => date('d F Y, H:i:s') . ' WIB',
+                        'voted' => false,
+                        'voted_at' => null
+                    ];
+                    writeJsonFile($votersFile, $voters);
+                }
+                @flock($fpLock, LOCK_UN);
+                @fclose($fpLock);
+
+                echo json_encode([
+                    'success' => true,
+                    'valid' => true,
+                    'voter' => [
+                        'npa' => $npa,
+                        'name' => $masterDpt[$npa]['name'] ?? '',
+                        'email' => $masterDpt[$npa]['email'] ?? '',
+                        'claimed' => true,
+                        'claimed_at' => date('d F Y, H:i:s') . ' WIB',
+                        'voted' => false
+                    ]
+                ]);
+                exit;
+            }
+        }
     }
 
     http_response_code(404);

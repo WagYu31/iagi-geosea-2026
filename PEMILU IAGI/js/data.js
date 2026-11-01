@@ -19131,8 +19131,14 @@ const INITIAL_DPT = [
   {
     "npa": "07294",
     "name": "Robertus Septima Luhur Simarmata",
-    "email": "ro***@gmail.com",
-    "email_hash": "0f5856e17bc42248a8101b87c22334a46a340901bb737140b5b7df345e3ab66f",
+    "email": "robertussls@gmail.com",
+    "email_hash": "c14d5de01f9958c9c712b575bc9429c2469569680cfb32f4664088f100d3fe12",
+    "alt_emails": [
+      "robertussis@gmail.com"
+    ],
+    "alt_email_hashes": [
+      "0f5856e17bc42248a8101b87c22334a46a340901bb737140b5b7df345e3ab66f"
+    ],
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",

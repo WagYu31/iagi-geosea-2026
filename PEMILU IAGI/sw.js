@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v5.4.3-realtime-auth';
+const CACHE_NAME = 'pemilu-iagi-2026-v5.4.4-realtime-auth';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
