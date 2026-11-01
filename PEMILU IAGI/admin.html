@@ -6248,6 +6248,10 @@
               <svg style="width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
               <span>🖨️ Cetak / Print Rekap</span>
             </button>
+            <button type="button" onclick="exportAuditLogsCsv()" class="btn-dpt-action" style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); color: #38BDF8; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.78rem;">
+              <svg style="width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>📥 Ekspor CSV Forensik</span>
+            </button>
           </div>
         </div>
 
@@ -6291,8 +6295,9 @@
                 <th style="padding: 10px 12px; font-weight: 700; width: 155px;">WAKTU (WIB)</th>
                 <th style="padding: 10px 12px; font-weight: 700; width: 160px;">KATEGORI AKSI</th>
                 <th style="padding: 10px 12px; font-weight: 700; width: 130px; text-align: center;">SUARA MASUK</th>
-                <th style="padding: 10px 12px; font-weight: 700; width: 100px; text-align: center;">NO. NPA</th>
-                <th style="padding: 10px 12px; font-weight: 700; width: 120px;">ALAMAT IP</th>
+                <th style="padding: 10px 12px; font-weight: 700; width: 95px; text-align: center;">NO. NPA</th>
+                <th style="padding: 10px 12px; font-weight: 700; width: 130px;">ALAMAT IP</th>
+                <th style="padding: 10px 12px; font-weight: 700; width: 140px;">PERANGKAT</th>
                 <th style="padding: 10px 12px; font-weight: 700;">RINCIAN AKTIVITAS</th>
                 <th style="padding: 10px 12px; font-weight: 700; width: 130px; text-align: center;">ALTERASI SUARA</th>
               </tr>
@@ -11722,7 +11727,7 @@
           }
 
           if (searchVal) {
-            const str = `${item.action} ${item.details} ${item.ip} ${item.timestamp} ${item._displayVoteNum ? '#' + item._displayVoteNum : ''}`.toLowerCase();
+            const str = `${item.action} ${item.details} ${item.ip} ${item.npa || ''} ${item.user_agent || ''} ${item.timestamp} ${item._displayVoteNum ? '#' + item._displayVoteNum : ''}`.toLowerCase();
             if (!str.includes(searchVal)) return false;
           }
 
@@ -11734,7 +11739,7 @@
         if (filtered.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="8" style="padding: 24px; text-align: center; color: #64748B;">
+              <td colspan="9" style="padding: 24px; text-align: center; color: #64748B;">
                 Tidak ada catatan log aktivitas yang cocok dengan filter.
               </td>
             </tr>
@@ -11772,7 +11777,17 @@
           }
 
           const timeFormatted = formatClaimFullDate(l.timestamp);
-          const ipFormatted = l.ip || '127.0.0.1';
+          
+          let ipCell = `<span style="color: #64748B; font-family: var(--font-mono); font-size: 0.72rem;">—</span>`;
+          if (l.ip) {
+            if (l.ip === '127.0.0.1') {
+              ipCell = `<span style="font-family: var(--font-mono); color: #94A3B8; font-size: 0.72rem;" title="Terekam via reverse proxy lokal server (Nginx/Gateway)">127.0.0.1 <span style="font-size: 0.65rem; color: #64748B;">(Proxy)</span></span>`;
+            } else if (l.ip === 'Client Encrypted') {
+              ipCell = `<span style="font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">Client Encrypted</span>`;
+            } else {
+              ipCell = `<span style="display: inline-block; font-family: var(--font-mono); font-weight: 700; color: #38BDF8; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.72rem;">${l.ip}</span>`;
+            }
+          }
 
           let suaraMasukCell = `<span style="color: #64748B; font-family: var(--font-mono); font-size: 0.75rem;">—</span>`;
           if (l._displayVoteNum) {
@@ -11786,6 +11801,13 @@
           let npaCell = npaVal
             ? `<span style="display: inline-block; font-family: var(--font-mono); font-weight: 800; color: #FBBF24; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); padding: 2px 7px; border-radius: 4px; font-size: 0.72rem;">${npaVal}</span>`
             : `<span style="color: #64748B; font-family: var(--font-mono); font-size: 0.75rem;">—</span>`;
+
+          const deviceBadge = parseDeviceBadge(l.user_agent);
+
+          let detailsFormatted = (l.details || '-');
+          if (detailsFormatted.includes('Receipt:')) {
+            detailsFormatted = detailsFormatted.replace(/(Receipt:\s*)([A-Za-z0-9_\-]+)/i, '$1<span style="font-family: var(--font-mono); font-weight: 700; color: #FBBF24; background: rgba(245, 158, 11, 0.15); padding: 1px 5px; border-radius: 3px; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 0.7rem;">$2</span>');
+          }
 
           const isChecked = window.selectedAuditIndices && window.selectedAuditIndices.has(idx);
 
@@ -11808,11 +11830,14 @@
               <td style="padding: 9px 12px; text-align: center;">
                 ${npaCell}
               </td>
-              <td style="padding: 9px 12px; font-family: var(--font-mono); color: #CBD5E1; font-size: 0.72rem;">
-                ${ipFormatted}
+              <td style="padding: 9px 12px; font-family: var(--font-mono); font-size: 0.72rem;">
+                ${ipCell}
+              </td>
+              <td style="padding: 9px 12px;">
+                ${deviceBadge}
               </td>
               <td style="padding: 9px 12px; color: #E2E8F0; line-height: 1.4;">
-                ${l.details || '-'}
+                ${detailsFormatted}
               </td>
               <td style="padding: 9px 12px; text-align: center;">
                 <span style="display: inline-block; background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; white-space: nowrap;">
@@ -11824,6 +11849,131 @@
         }).join('');
 
         updateAuditSelectionUI();
+      };
+
+      function parseDeviceBadge(ua) {
+        if (!ua) {
+          return `<span style="display: inline-flex; align-items: center; gap: 4px; background: rgba(148, 163, 184, 0.1); color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.68rem; font-family: var(--font-mono); font-weight: 500;">🌐 Web Client</span>`;
+        }
+        const lower = ua.toLowerCase();
+        let os = 'Desktop';
+        let icon = '💻';
+        let badgeColor = '#94A3B8';
+        let badgeBg = 'rgba(148, 163, 184, 0.12)';
+        let badgeBorder = 'rgba(148, 163, 184, 0.25)';
+
+        if (lower.includes('iphone') || lower.includes('ipad') || lower.includes('ipod')) {
+          os = 'iOS';
+          icon = '📱';
+          badgeColor = '#38BDF8';
+          badgeBg = 'rgba(56, 189, 248, 0.12)';
+          badgeBorder = 'rgba(56, 189, 248, 0.25)';
+        } else if (lower.includes('android')) {
+          os = 'Android';
+          icon = '🤖';
+          badgeColor = '#34D399';
+          badgeBg = 'rgba(52, 211, 153, 0.12)';
+          badgeBorder = 'rgba(52, 211, 153, 0.25)';
+        } else if (lower.includes('macintosh') || lower.includes('mac os')) {
+          os = 'macOS';
+          icon = '🍎';
+          badgeColor = '#A78BFA';
+          badgeBg = 'rgba(167, 139, 250, 0.12)';
+          badgeBorder = 'rgba(167, 139, 250, 0.25)';
+        } else if (lower.includes('windows')) {
+          os = 'Windows';
+          icon = '💻';
+          badgeColor = '#60A5FA';
+          badgeBg = 'rgba(96, 165, 250, 0.12)';
+          badgeBorder = 'rgba(96, 165, 250, 0.25)';
+        } else if (lower.includes('linux')) {
+          os = 'Linux';
+          icon = '🐧';
+          badgeColor = '#FBBF24';
+          badgeBg = 'rgba(251, 191, 36, 0.12)';
+          badgeBorder = 'rgba(251, 191, 36, 0.25)';
+        }
+
+        let browser = 'Browser';
+        if (lower.includes('edg/')) browser = 'Edge';
+        else if (lower.includes('chrome') || lower.includes('crios')) browser = 'Chrome';
+        else if (lower.includes('safari') && !lower.includes('chrome')) browser = 'Safari';
+        else if (lower.includes('firefox')) browser = 'Firefox';
+
+        const titleSafe = ua.replace(/"/g, '&quot;');
+        return `
+          <span title="${titleSafe}" style="display: inline-flex; align-items: center; gap: 4px; background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder}; padding: 2px 7px; border-radius: 4px; font-size: 0.69rem; font-weight: 600; white-space: nowrap;">
+            <span style="font-size: 0.8rem;">${icon}</span>
+            <span>${os} (${browser})</span>
+          </span>
+        `;
+      }
+
+      window.exportAuditLogsCsv = function() {
+        let itemsToExport = [];
+        if (window.selectedAuditIndices && window.selectedAuditIndices.size > 0) {
+          itemsToExport = Array.from(window.selectedAuditIndices).map(idx => window.currentFilteredAuditLogs[idx]).filter(Boolean);
+        } else if (window.currentFilteredAuditLogs && window.currentFilteredAuditLogs.length > 0) {
+          itemsToExport = window.currentFilteredAuditLogs;
+        } else if (window.cachedAuditLogs && window.cachedAuditLogs.length > 0) {
+          itemsToExport = window.cachedAuditLogs;
+        }
+
+        if (itemsToExport.length === 0) {
+          alert('Tidak ada data log aktivitas yang dapat diekspor.');
+          return;
+        }
+
+        const headers = [
+          'No.',
+          'Waktu (WIB)',
+          'Kategori Aksi',
+          'Suara Ke',
+          'No. NPA',
+          'Alamat IP',
+          'Perangkat (User-Agent)',
+          'Struk Validasi (Receipt Hash)',
+          'Rincian Aktivitas',
+          'Status Integritas'
+        ];
+
+        const rows = itemsToExport.map((l, index) => {
+          const timeFormatted = formatClaimFullDate(l.timestamp);
+          const act = l.action || 'LOG';
+          const voteNum = l._displayVoteNum ? '#' + l._displayVoteNum : (act.includes('GENESIS') ? '#0' : '-');
+          let npaMatch = (l.details || '').match(/NPA:\s*(\d{5})/i);
+          let npaVal = l.npa || (npaMatch ? npaMatch[1] : '-');
+          let recMatch = (l.details || '').match(/Receipt:\s*([A-Za-z0-9_\-]+)/i);
+          let receipt = l.receipt_hash || (recMatch ? recMatch[1] : '-');
+          const ipVal = l.ip || '127.0.0.1';
+          const uaVal = l.user_agent ? l.user_agent.replace(/"/g, '""') : '-';
+          const detailsClean = (l.details || '-').replace(/"/g, '""');
+
+          return [
+            index + 1,
+            `"${timeFormatted}"`,
+            `"${act}"`,
+            `"${voteNum}"`,
+            `"${npaVal}"`,
+            `"${ipVal}"`,
+            `"${uaVal}"`,
+            `"${receipt}"`,
+            `"${detailsClean}"`,
+            `"0 MUTASI (ASLI)"`
+          ].join(',');
+        });
+
+        const csvContent = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const nowStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        a.href = url;
+        a.download = `AUDIT_TRAIL_PEMILU_IAGI_2026_${nowStr}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       };
 
       window.printSelectedAuditLogs = function() {

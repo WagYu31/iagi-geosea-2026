@@ -109,18 +109,40 @@ function reconcileVotersWithBallots(&$voters, $ballots, $votersFile) {
     return;
 }
 
-// Resolusi IP Klien
+// Resolusi IP Klien (Mendukung Cloudflare, Nginx Reverse Proxy DomaiNesia, LiteSpeed, dan Load Balancer)
 function getClientIp() {
-    $clientIp = '0.0.0.0';
-    if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-        $clientIp = trim($_SERVER['HTTP_CF_CONNECTING_IP']);
-    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        $clientIp = trim($parts[0]);
-    } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
-        $clientIp = trim($_SERVER['REMOTE_ADDR']);
+    $headers = [
+        'HTTP_CF_CONNECTING_IP',     // Cloudflare
+        'HTTP_TRUE_CLIENT_IP',       // Cloudflare Enterprise / CDN
+        'HTTP_X_REAL_IP',            // Nginx reverse proxy (standar cPanel / DomaiNesia)
+        'HTTP_CLIENT_IP',            // Header gateway klien
+        'HTTP_X_FORWARDED_FOR',      // Proxy chain standar
+        'HTTP_X_FORWARDED',
+        'HTTP_X_CLUSTER_CLIENT_IP',
+        'HTTP_FORWARDED_FOR',
+        'HTTP_FORWARDED',
+        'REMOTE_ADDR'                // Fallback koneksi langsung
+    ];
+
+    foreach ($headers as $header) {
+        if (!empty($_SERVER[$header])) {
+            $raw = $_SERVER[$header];
+            $parts = explode(',', $raw);
+            foreach ($parts as $candidate) {
+                $candidate = trim($candidate);
+                // Validasi format IPv4 atau IPv6 yang sah
+                if (filter_var($candidate, FILTER_VALIDATE_IP)) {
+                    // Abaikan loopback internal lokal (127.0.0.1, ::1) jika ada IP eksternal
+                    if ($candidate !== '127.0.0.1' && $candidate !== '::1') {
+                        return $candidate;
+                    }
+                }
+            }
+        }
     }
-    return preg_replace('/[^0-9a-fA-F:\.]/', '', $clientIp);
+
+    $fallback = trim($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1');
+    return preg_replace('/[^0-9a-fA-F:\.]/', '', $fallback) ?: '127.0.0.1';
 }
 
 // Ekstraksi PIN Admin dari Header, Query, atau Payload POST
@@ -1828,11 +1850,15 @@ if ($action === 'get_audit_logs') {
             }
 
             $npaInfo = '';
+            $voterIp = null;
+            $voterUa = null;
             if (isset($votedVotersList[$i])) {
                 $vv = $votedVotersList[$i];
                 $npaKey = $vv['npa'] ?? '';
                 if ($npaKey) {
                     $npaInfo = " (NPA: {$npaKey}, Receipt: {$receiptShort})";
+                    $voterIp = $vv['ip'] ?? ($vv['claim_ip'] ?? null);
+                    $voterUa = $vv['user_agent'] ?? null;
                 }
             }
             if (!$npaInfo) {
@@ -1843,7 +1869,10 @@ if ($action === 'get_audit_logs') {
                 'id' => 'v-' . ($i + 1),
                 'action' => 'VOTE_RECORDED',
                 'details' => "Surat suara sah direkam ke kotak suara terenkripsi{$npaInfo}",
-                'ip' => 'Client Encrypted',
+                'npa' => $npaKey ?? null,
+                'ip' => $voterIp ?: 'Client Encrypted',
+                'user_agent' => $voterUa,
+                'receipt_hash' => $receiptShort,
                 'timestamp' => $tStamp,
                 'status' => 'TERVERIFIKASI SAH'
             ];
@@ -1899,15 +1928,38 @@ if ($action === 'get_audit_logs') {
         if (!$isPurge && !$isTestNpa && !$isGenesis && $isOfficialTime && (strpos($act, 'VOTE') !== false || strpos($act, 'BALLOT') !== false)) {
             $cLog['vote_number'] = $currentVoteNum;
             $cLog['is_valid_vote'] = true;
-            if (preg_match('/NPA:\s*(\d{5})/i', $det, $mNpa)) {
-                $cLog['npa'] = $mNpa[1];
-            }
             if ($currentVoteNum > 1) {
                 $currentVoteNum--;
             }
         } else {
             $cLog['vote_number'] = null;
             $cLog['is_valid_vote'] = false;
+        }
+
+        // Ekstraksi metadata forensik (NPA, Receipt Hash, IP, User Agent)
+        if (empty($cLog['npa']) && preg_match('/NPA:\s*(\d{5})/i', $det, $mNpa)) {
+            $cLog['npa'] = $mNpa[1];
+        }
+        if (empty($cLog['receipt_hash']) && preg_match('/Receipt:\s*([A-Za-z0-9_\-]+)/i', $det, $mRec)) {
+            $cLog['receipt_hash'] = $mRec[1];
+        }
+
+        $npaKey = $cLog['npa'] ?? null;
+        if ($npaKey && isset($voters[$npaKey])) {
+            $vItem = $voters[$npaKey];
+            if (empty($cLog['ip']) || $cLog['ip'] === '127.0.0.1' || $cLog['ip'] === '0.0.0.0' || $cLog['ip'] === 'Client Encrypted') {
+                if (!empty($vItem['ip']) && $vItem['ip'] !== '127.0.0.1') {
+                    $cLog['ip'] = $vItem['ip'];
+                } elseif (!empty($vItem['claim_ip']) && $vItem['claim_ip'] !== '127.0.0.1') {
+                    $cLog['ip'] = $vItem['claim_ip'];
+                }
+            }
+            if (empty($cLog['user_agent']) && !empty($vItem['user_agent'])) {
+                $cLog['user_agent'] = $vItem['user_agent'];
+            }
+            if (empty($cLog['receipt_hash']) && !empty($vItem['receipt_hash'])) {
+                $cLog['receipt_hash'] = $vItem['receipt_hash'];
+            }
         }
     }
     unset($cLog);
@@ -2373,6 +2425,8 @@ if ($action === 'register_claim') {
 
         // If the voter has not voted yet, allow re-issuing or updating the token hash seamlessly.
         // This ensures voters whose emails failed to arrive or whose sessions expired can re-claim without 409 conflict lockouts.
+        $clientIp = getClientIp();
+        $userAgent = trim($_SERVER['HTTP_USER_AGENT'] ?? ($payload['user_agent'] ?? ''));
 
         $voters[$npa] = [
             'npa' => $npa,
@@ -2381,6 +2435,9 @@ if ($action === 'register_claim') {
             'claimed' => true,
             'claimed_at' => date('d F Y, H:i:s') . ' WIB',
             'token_hash' => $tokenHash,
+            'claim_ip' => $clientIp,
+            'ip' => $clientIp,
+            'user_agent' => $userAgent,
             'voted' => false
         ];
         writeJsonFile($votersFile, $voters);
@@ -2573,6 +2630,9 @@ if ($action === 'cast_vote') {
         ];
         $timeStrWib = strtr(date('d F Y, H:i:s'), $monthsIndo) . ' WIB';
 
+        $clientIp = getClientIp();
+        $userAgent = trim($_SERVER['HTTP_USER_AGENT'] ?? ($payload['user_agent'] ?? ''));
+
         // 1. Mark voter registry as VOTED and burn token (NO candidate id is stored here!)
         $voters[$npa] = [
             'npa' => $npa,
@@ -2582,7 +2642,9 @@ if ($action === 'cast_vote') {
             'receipt_hash' => $receiptHash,
             'claimed' => true,
             'token_hash' => null, // Token burned immediately on server
-            'token' => null
+            'token' => null,
+            'ip' => $clientIp,
+            'user_agent' => $userAgent
         ];
         writeJsonFile($votersFile, $voters);
 
@@ -2607,8 +2669,13 @@ if ($action === 'cast_vote') {
             'id' => 'audit-' . bin2hex(random_bytes(4)),
             'action' => 'VOTE_RECORDED',
             'details' => "Surat suara sah direkam ke kotak suara terenkripsi (NPA: {$npa}, Receipt: {$receiptHash})",
+            'npa' => $npa,
+            'ip' => $clientIp,
+            'user_agent' => $userAgent,
+            'receipt_hash' => $receiptHash,
             'timestamp' => date('c'),
-            'vote_number' => count($ballots)
+            'vote_number' => count($ballots),
+            'status' => 'TERVERIFIKASI SAH'
         ];
         writeJsonFile($auditFile, $auditLogs);
 

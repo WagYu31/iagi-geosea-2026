@@ -784,6 +784,7 @@ class PemiluStorage {
             token: cleanToken,
             name: voter.name,
             email: voter.email,
+            user_agent: (typeof navigator !== 'undefined' ? navigator.userAgent : ''),
             is_admin: true,
             force_update: true,
             admin_pin: adminPin
@@ -1099,7 +1100,8 @@ class PemiluStorage {
               npa: voter.npa,
               token: voter.token,
               name: voter.name,
-              email: voter.email
+              email: voter.email,
+              user_agent: (typeof navigator !== 'undefined' ? navigator.userAgent : '')
             })
           });
         }
@@ -1134,7 +1136,8 @@ class PemiluStorage {
             npa: voter.npa,
             token: token,
             name: voter.name,
-            email: voter.email
+            email: voter.email,
+            user_agent: (typeof navigator !== 'undefined' ? navigator.userAgent : '')
           })
         });
       }
@@ -1261,7 +1264,8 @@ class PemiluStorage {
             candidate_id: Number(candidateId),
             name: voter.name,
             receipt_hash: receiptHash,
-            full_hash: ballotHash
+            full_hash: ballotHash,
+            user_agent: (typeof navigator !== 'undefined' ? navigator.userAgent : '')
           })
         });
         const srvData = await srvResp.json();
