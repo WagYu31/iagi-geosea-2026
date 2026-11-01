@@ -335,8 +335,8 @@ const INITIAL_DPT = [
   {
     "npa": "00689",
     "name": "Sumuyut Sarjono",
-    "email": "su***@yahoo.com",
-    "email_hash": "ae947e1583a54441d4a5754f375fcb6e93caa9c3df1de230093abffb327ce18e",
+    "email": "sarjonosumuyut@gmail.com",
+    "email_hash": "e7cc36a09d62c14d4b0325ff42d531cef386c6b5cc5b0cb94b0f84653b9234aa",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -345,7 +345,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "sumuyut12@yahoo.com"
+    ],
+    "alt_email_hashes": [
+      "ae947e1583a54441d4a5754f375fcb6e93caa9c3df1de230093abffb327ce18e"
+    ]
   },
   {
     "npa": "00691",
@@ -515,8 +521,8 @@ const INITIAL_DPT = [
   {
     "npa": "00883",
     "name": "Suyono",
-    "email": "su***@yahoo.com",
-    "email_hash": "6bfd4a138de945dc76bfee4a2dbe8c28ebdabd0c105dfca0abc7741c54f1ba12",
+    "email": "suyonolifetime28@gmail.com",
+    "email_hash": "32d1ea076097b0ddae1908f575878ac11cb777542253f67023be16adb7fbee02",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -525,7 +531,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "suyono_aw@yahoo.com"
+    ],
+    "alt_email_hashes": [
+      "6bfd4a138de945dc76bfee4a2dbe8c28ebdabd0c105dfca0abc7741c54f1ba12"
+    ]
   },
   {
     "npa": "00892",
@@ -3860,8 +3872,8 @@ const INITIAL_DPT = [
   {
     "npa": "02741",
     "name": "Syamsu Alam",
-    "email": "sy***@emp.id",
-    "email_hash": "ad08798e29f166efdb5f6d41b8933a2b3a4f22965ebe4abc31afb5b5cb1dfabb",
+    "email": "syamsu.alambps@gmail.com",
+    "email_hash": "47f01296dd7e68307041fe8f23f7aa26e6b86c498e6c360bdecbdb0c189b89cc",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3870,13 +3882,19 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "syamsu.alam@emp.id"
+    ],
+    "alt_email_hashes": [
+      "ad08798e29f166efdb5f6d41b8933a2b3a4f22965ebe4abc31afb5b5cb1dfabb"
+    ]
   },
   {
     "npa": "02769",
     "name": "Sulistiyono",
-    "email": "Zd***@yahoo.com",
-    "email_hash": "f55460f2a80e6d242abd80c7a56f473be224770e58590de28bb3798afe943f40",
+    "email": "sulis.geo96@gmail.com",
+    "email_hash": "441bd301ea1606bfb5aa497068fdcf203e3a41c9a6fa1b914e45d78160feaaa6",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3885,7 +3903,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "Zdelist2000@yahoo.com"
+    ],
+    "alt_email_hashes": [
+      "f55460f2a80e6d242abd80c7a56f473be224770e58590de28bb3798afe943f40"
+    ]
   },
   {
     "npa": "02771",
@@ -3965,8 +3989,8 @@ const INITIAL_DPT = [
   {
     "npa": "02817",
     "name": "Edward Syafron",
-    "email": "ed***@gmail.com",
-    "email_hash": "992b0127ba836dd8fdb746124e0d1e6fe2ef93e31732a0e276f6de299bad5259",
+    "email": "edosyafron12@gmail.com",
+    "email_hash": "7d71db43f43315da99b2271a2609b10c76f485305e92da9a85efe279b6dd368a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -3975,7 +3999,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "edosyafroni12@gmail.com"
+    ],
+    "alt_email_hashes": [
+      "992b0127ba836dd8fdb746124e0d1e6fe2ef93e31732a0e276f6de299bad5259"
+    ]
   },
   {
     "npa": "02825",
@@ -4475,8 +4505,8 @@ const INITIAL_DPT = [
   {
     "npa": "02985",
     "name": "Mohammad Kusuma Utama",
-    "email": "m.***@skkmigas.go.id",
-    "email_hash": "c688e7107ff506f349a0b7abeb75337b13eb321233fe7ab1c6256a2ec1b1ca16",
+    "email": "mkusuma@skkmigas.go.id",
+    "email_hash": "62756ea236b8ade986bdd12c54dee1d580e281ba6966b45804bd87cd36ef3cc5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -4485,7 +4515,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "m.kusuma@skkmigas.go.id"
+    ],
+    "alt_email_hashes": [
+      "c688e7107ff506f349a0b7abeb75337b13eb321233fe7ab1c6256a2ec1b1ca16"
+    ]
   },
   {
     "npa": "03010",
@@ -5165,14 +5201,16 @@ const INITIAL_DPT = [
   {
     "npa": "03256",
     "name": "Dedi Arwana",
-    "email": "dediarwana@gmail.com",
-    "email_hash": "9c897656c6e42a492cadab5444aaa45bf0f3ebb27d95533ee8f84c12220e1d47",
+    "email": "dedirwana@gmail.com",
+    "email_hash": "98a8cb18bdc26c5f541ad5c37eea72498af66a010bb638129d33e7c08b529de3",
     "alt_email_hashes": [
-      "98a8cb18bdc26c5f541ad5c37eea72498af66a010bb638129d33e7c08b529de3",
+      "60c18c79346e5aeeb3cd41c4499f048046a324979b84c71d10f7d1c35af5c0a1",
+      "9c897656c6e42a492cadab5444aaa45bf0f3ebb27d95533ee8f84c12220e1d47",
       "7b22c0cf3d32529d582fc7efc4a13a4409ce928222dbf8c4b82dbd3f4f79ece8"
     ],
     "alt_emails": [
-      "dedirwana@gmail.com",
+      "dediarwana@elnusadrilling.com",
+      "dediarwana@gmail.com",
       "pedirwana@gmail.com"
     ],
     "phone": "0811219202",
@@ -5368,8 +5406,8 @@ const INITIAL_DPT = [
   {
     "npa": "03317",
     "name": "Yan Indryanto",
-    "email": "ya***@pertamina.com",
-    "email_hash": "7415e6654aa90fc78f6bf642feb792dd356305c23cae108890d125877bc25ff4",
+    "email": "indryanto@pertamina.com",
+    "email_hash": "01b21dcc1f9cf85763751c94884a600326f008627e20416ef8cd40f524a60109",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -5378,7 +5416,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "yan.indryanto@pertamina.com"
+    ],
+    "alt_email_hashes": [
+      "7415e6654aa90fc78f6bf642feb792dd356305c23cae108890d125877bc25ff4"
+    ]
   },
   {
     "npa": "03318",
@@ -7438,8 +7482,8 @@ const INITIAL_DPT = [
   {
     "npa": "03857",
     "name": "Taubah Faulin",
-    "email": "tf***@skkmigas.com",
-    "email_hash": "6facbc84862cced016bc18ac848e83bd2a5e41ee828e2807235f7ebe1ce38905",
+    "email": "faulin01@gmail.com",
+    "email_hash": "69cf21c9974986bc74eac79aa496c5729579ad34305d1bf7d9d6583c79e114c9",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -7448,7 +7492,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "tfaulin@skkmigas.com"
+    ],
+    "alt_email_hashes": [
+      "6facbc84862cced016bc18ac848e83bd2a5e41ee828e2807235f7ebe1ce38905"
+    ]
   },
   {
     "npa": "03861",
@@ -8578,8 +8628,8 @@ const INITIAL_DPT = [
   {
     "npa": "04159",
     "name": "Visitasi Maria Juliana Femant",
-    "email": "fv***@yahoo.com",
-    "email_hash": "3ae190ef01fbd545a5059b20be46bb0741455df50b7464e3409a12af0359a070",
+    "email": "vfemant@gmail.com",
+    "email_hash": "dd3e7877493bb7a8b0fed5f4251dba543a5e63c671f0907c07e2a21410069d73",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -8588,7 +8638,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "fvisitasi@yahoo.com"
+    ],
+    "alt_email_hashes": [
+      "3ae190ef01fbd545a5059b20be46bb0741455df50b7464e3409a12af0359a070"
+    ]
   },
   {
     "npa": "04160",
@@ -9238,8 +9294,8 @@ const INITIAL_DPT = [
   {
     "npa": "04359",
     "name": "Julikah",
-    "email": "ju***@lemigas.esdm.go.id",
-    "email_hash": "fa290d87dc9fcce192c8f29685e673dcb1fe38c95292fa30269652f4752377af",
+    "email": "juli_lmgs@yahoo.com",
+    "email_hash": "de0792d793d2c79fd374a336ea858b42bbf9d05ba99501fe64c994790bb6333a",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -9248,7 +9304,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "julikah@lemigas.esdm.go.id"
+    ],
+    "alt_email_hashes": [
+      "fa290d87dc9fcce192c8f29685e673dcb1fe38c95292fa30269652f4752377af"
+    ]
   },
   {
     "npa": "04360",
@@ -19183,8 +19245,8 @@ const INITIAL_DPT = [
   {
     "npa": "07325",
     "name": "Arya Disiyona",
-    "email": "ad***@skkmigas.go.id",
-    "email_hash": "afb64f05daf74b4de04acc3872953926eb0aa19198bd800ead9ad16656eba883",
+    "email": "arya.disiyona@gmail.com",
+    "email_hash": "794699ce164c44c3841724f17cb162a0bf6a1a6c01db7f82e5cfb5861c09ba95",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -19193,7 +19255,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "adisiyona@skkmigas.go.id"
+    ],
+    "alt_email_hashes": [
+      "afb64f05daf74b4de04acc3872953926eb0aa19198bd800ead9ad16656eba883"
+    ]
   },
   {
     "npa": "07330",
@@ -22213,8 +22281,8 @@ const INITIAL_DPT = [
   {
     "npa": "08500",
     "name": "Syiria Latuamury",
-    "email": "sy***@gmail.com",
-    "email_hash": "1de7cd2d2bc3ff37dfe3ae180257643bbd0ce5c8a043999fa85ea9b4860a4a76",
+    "email": "syiria.latuamury@ymail.com",
+    "email_hash": "514bbbe37ebbf16ac6891d2a81a498e948329fd6784421f1fbdc0d0dd4f58067",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -22223,7 +22291,15 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "syiria.latuamury.sI@gmail.com",
+      "syiria.latuamury.si@gmail.com"
+    ],
+    "alt_email_hashes": [
+      "1de7cd2d2bc3ff37dfe3ae180257643bbd0ce5c8a043999fa85ea9b4860a4a76",
+      "1de7cd2d2bc3ff37dfe3ae180257643bbd0ce5c8a043999fa85ea9b4860a4a76"
+    ]
   },
   {
     "npa": "08515",
@@ -27073,8 +27149,8 @@ const INITIAL_DPT = [
   {
     "npa": "10916",
     "name": "Nurhikmah Supardi",
-    "email": "nu***@yahoo.com",
-    "email_hash": "4aec0b94172e379f5b8e677a55d04e4653c672112b188a6dcbcffc33f2605090",
+    "email": "nurhikmah.supardi90@gmail.com",
+    "email_hash": "916a265cb76f03e55c018a5d62fa8b239523e45e7279c6f8f0592b0913cffdb2",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -27083,7 +27159,13 @@ const INITIAL_DPT = [
     "token": null,
     "claimed_at": null,
     "voted": false,
-    "voted_at": null
+    "voted_at": null,
+    "alt_emails": [
+      "nurhikmah.supardi90@yahoo.com"
+    ],
+    "alt_email_hashes": [
+      "4aec0b94172e379f5b8e677a55d04e4653c672112b188a6dcbcffc33f2605090"
+    ]
   },
   {
     "npa": "10940",
@@ -32306,6 +32388,7 @@ const INITIAL_DPT = [
     "voted_at": null
   }
 ];
+
 const ADMIN_ACCOUNTS = [];
 
 // Attach explicitly to window for cross-script safety

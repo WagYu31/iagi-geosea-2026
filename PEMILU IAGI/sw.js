@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v5.4.0-token-instant';
+const CACHE_NAME = 'pemilu-iagi-2026-v5.4.1-reset-emails';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
