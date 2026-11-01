@@ -329,14 +329,60 @@ class VisitorTicketAdminController extends Controller
             Log::warning('Error computing duplicate stats: ' . $e->getMessage());
         }
 
-        // Compute accurate per-ticket revenue for debt tickets (matching individual group ticket pricing)
-        $debtTickets = VisitorTicket::whereHas('payment', function ($pq) {
-            $pq->where('is_debt', true);
-        })->with('payment')->get();
+        $hasFilters = $request->filled('search') ||
+            ($request->filled('type') && $request->input('type') !== 'all') ||
+            ($request->filled('registration_type') && $request->input('registration_type') !== 'all') ||
+            ($request->filled('checked_in') && $request->input('checked_in') !== 'all') ||
+            ($request->filled('status') && $request->input('status') !== 'all') ||
+            ($request->filled('debt') && $request->input('debt') !== 'all') ||
+            ($request->filled('email_sent') && $request->input('email_sent') !== 'all') ||
+            ($request->filled('duplicate') && $request->input('duplicate') !== 'all') ||
+            ($request->filled('unpaid_excel') && $request->input('unpaid_excel') !== 'all');
 
-        $debtTicketRevenue = 0;
-        foreach ($debtTickets as $t) {
-            if (!$t->payment) continue;
+        // Fetch tickets matching the active query (or all tickets if no filter) with payment relations
+        $ticketsForStats = (clone $query)->with('payment')->get();
+
+        $statsTotalVisitors = $ticketsForStats->count();
+        $statsExclusivePaidCount = 0;
+        $statsNonExclusiveCount = 0;
+        $statsCheckedInCount = 0;
+        $statsPendingVerificationCount = 0;
+        $statsEmailSentCount = 0;
+        $statsEmailUnsentCount = 0;
+        $statsDebtCount = 0;
+        $statsFullyPaidCount = 0;
+        $statsFreeCount = 0;
+        $statsGroupRegistrationCount = 0;
+
+        $statsRealPaidRevenue = 0;
+        $statsDebtTotalRevenue = 0;
+
+        foreach ($ticketsForStats as $t) {
+            if ($t->checked_in) $statsCheckedInCount++;
+            if ($t->status === 'pending') $statsPendingVerificationCount++;
+            if (!empty($t->email_sent_at)) $statsEmailSentCount++;
+            if (empty($t->email_sent_at) && $t->status === 'active' && !empty($t->visitor_email)) $statsEmailUnsentCount++;
+            if (in_array($t->visitor_type, ['non_exclusive', 'visitor'])) $statsNonExclusiveCount++;
+            if ($t->visitor_type === 'exclusive' && $t->status === 'active') $statsExclusivePaidCount++;
+
+            if (!$t->payment) {
+                $statsFreeCount++;
+                continue;
+            }
+
+            if ($t->payment->is_mixed_category) {
+                $statsGroupRegistrationCount++;
+            }
+
+            $isDebt = (bool) $t->payment->is_debt;
+            $isApproved = ($t->payment->status === 'approved');
+
+            if ($isDebt) {
+                $statsDebtCount++;
+            } else {
+                $statsFullyPaidCount++;
+            }
+
             $groupCount = max(
                 $t->payment->tickets_count ?? ($t->payment->tickets ? $t->payment->tickets->count() : 0),
                 (int) ($t->payment->total_members ?? 0),
@@ -349,39 +395,45 @@ class VisitorTicketAdminController extends Controller
                     ? (float) $t->payment->price_per_ticket
                     : round((float) ($t->payment->total_amount ?? 0) / $groupCount));
 
-            $debtTicketRevenue += $isGroup ? $indPrice : (float) ($t->payment->total_amount ?? $indPrice ?? 0);
+            $ticketPrice = $isGroup ? $indPrice : (float) ($t->payment->total_amount ?? $indPrice ?? 0);
+
+            if ($isDebt) {
+                $statsDebtTotalRevenue += $ticketPrice;
+            } elseif ($isApproved) {
+                $statsRealPaidRevenue += $ticketPrice;
+            }
         }
 
-        $realPaidRevenue = (float) VisitorPayment::where('status', 'approved')->where('is_debt', false)->whereHas('tickets')->sum('total_amount');
-        $finalDebtRevenue = $debtTicketRevenue > 0 ? (float) $debtTicketRevenue : (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount');
-        $grandTotalRevenue = $realPaidRevenue + $finalDebtRevenue;
+        $statsGrandTotalRevenue = $statsRealPaidRevenue + $statsDebtTotalRevenue;
 
-        // Calculate global summary stats linked to actual visitor tickets
+        // Calculate summary stats dynamically linked to active filters
         $stats = [
-            'totalVisitors' => VisitorTicket::count(),
-            'exclusivePaidCount' => VisitorTicket::where('visitor_type', 'exclusive')->where('status', 'active')->count(),
-            'nonExclusiveCount' => VisitorTicket::whereIn('visitor_type', ['non_exclusive', 'visitor'])->count(),
-            'checkedInCount' => VisitorTicket::where('checked_in', true)->count(),
-            'pendingVerificationCount' => VisitorTicket::where('status', 'pending')->count(),
-            'emailSentCount' => VisitorTicket::whereNotNull('email_sent_at')->count(),
-            'emailUnsentCount' => VisitorTicket::whereNull('email_sent_at')->where('status', 'active')->whereNotNull('visitor_email')->count(),
-            'debtCount' => VisitorTicket::whereHas('payment', function ($pq) {
-                $pq->where('is_debt', true);
-            })->count(),
-            'fullyPaidCount' => VisitorTicket::whereHas('payment', function ($pq) {
-                $pq->where('is_debt', false);
-            })->count(),
-            'freeCount' => VisitorTicket::whereDoesntHave('payment')->count(),
-            'realPaidRevenue' => $realPaidRevenue,
-            'debtTotalRevenue' => $finalDebtRevenue,
+            'isFiltered' => $hasFilters,
+            'totalVisitors' => $statsTotalVisitors,
+            'exclusivePaidCount' => $statsExclusivePaidCount,
+            'nonExclusiveCount' => $statsNonExclusiveCount,
+            'checkedInCount' => $statsCheckedInCount,
+            'pendingVerificationCount' => $statsPendingVerificationCount,
+            'emailSentCount' => $statsEmailSentCount,
+            'emailUnsentCount' => $statsEmailUnsentCount,
+            'debtCount' => $statsDebtCount,
+            'fullyPaidCount' => $statsFullyPaidCount,
+            'freeCount' => $statsFreeCount,
+            'realPaidRevenue' => $statsRealPaidRevenue,
+            'debtTotalRevenue' => $statsDebtTotalRevenue,
             'debtInvoiceRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
-            'totalRevenue' => $realPaidRevenue,
-            'grandTotalRevenue' => $grandTotalRevenue,
-            'groupRegistrationCount' => VisitorPayment::where('is_mixed_category', true)->count(),
+            'totalRevenue' => $statsRealPaidRevenue,
+            'grandTotalRevenue' => $statsGrandTotalRevenue,
+            'groupRegistrationCount' => $statsGroupRegistrationCount,
             'unpaidExcelCount' => count($unpaidTicketIds),
             'duplicateEmailTicketsCount' => $dupEmailTicketCount,
             'duplicateNameTicketsCount' => $dupNameTicketCount,
             'duplicateAnyTicketsCount' => $dupAnyTicketCount,
+        ];
+
+        $globalStats = [
+            'totalVisitors' => VisitorTicket::count(),
+            'checkedInCount' => VisitorTicket::where('checked_in', true)->count(),
         ];
 
         // Fetch tickets timestamp & status in memory for bulletproof, SQL-version-agnostic grouping
@@ -529,6 +581,7 @@ class VisitorTicketAdminController extends Controller
         return Inertia::render('Admin/VisitorTickets/Index', [
             'tickets' => $tickets,
             'stats' => $stats,
+            'globalStats' => $globalStats,
             'analytics' => $analytics,
             'settings' => [
                 'exclusiveTemplate' => $settings['visitor_exclusive_lanyard_template'] ?? null,

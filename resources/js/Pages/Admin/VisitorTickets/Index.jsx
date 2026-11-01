@@ -374,6 +374,7 @@ const CATEGORY_PRICES = {
 export default function VisitorTicketsIndex({
     tickets = {},
     stats = {},
+    globalStats = {},
     analytics = {},
     settings = {},
     filters = {},
@@ -821,28 +822,34 @@ export default function VisitorTicketsIndex({
         navigateFilters({ page });
     };
 
-    // Quick Clickable Stat Card Filter
+    // Quick Clickable Stat Card Filter (With smart toggle support)
     const handleStatCardClick = (statKey) => {
         if (statKey === 'all' || statKey === 'revenue') {
             handleResetFilters();
         } else if (statKey === 'email_sent') {
-            setEmailSentFilter('sent');
-            navigateFilters({ email_sent: 'sent', page: 1 });
+            const nextVal = emailSentFilter === 'sent' ? 'all' : 'sent';
+            setEmailSentFilter(nextVal);
+            navigateFilters({ email_sent: nextVal, page: 1 });
         } else if (statKey === 'non_exclusive') {
-            setTypeFilter('non_exclusive');
-            navigateFilters({ type: 'non_exclusive', page: 1 });
+            const nextVal = typeFilter === 'non_exclusive' ? 'all' : 'non_exclusive';
+            setTypeFilter(nextVal);
+            navigateFilters({ type: nextVal, page: 1 });
         } else if (statKey === 'checked_in') {
-            setCheckedInFilter('yes');
-            navigateFilters({ checked_in: 'yes', page: 1 });
+            const nextVal = checkedInFilter === 'yes' ? 'all' : 'yes';
+            setCheckedInFilter(nextVal);
+            navigateFilters({ checked_in: nextVal, page: 1 });
         } else if (statKey === 'pending') {
-            setStatusFilter('pending');
-            navigateFilters({ status: 'pending', page: 1 });
+            const nextVal = statusFilter === 'pending' ? 'all' : 'pending';
+            setStatusFilter(nextVal);
+            navigateFilters({ status: nextVal, page: 1 });
         } else if (statKey === 'debt') {
-            setDebtFilter('debt');
-            navigateFilters({ debt: 'debt', page: 1 });
+            const nextVal = debtFilter === 'debt' ? 'all' : 'debt';
+            setDebtFilter(nextVal);
+            navigateFilters({ debt: nextVal, page: 1 });
         } else if (statKey === 'paid_revenue') {
-            setDebtFilter('fully_paid');
-            navigateFilters({ debt: 'fully_paid', page: 1 });
+            const nextVal = (debtFilter === 'fully_paid' || debtFilter === 'paid') ? 'all' : 'fully_paid';
+            setDebtFilter(nextVal);
+            navigateFilters({ debt: nextVal, page: 1 });
         }
     };
 
@@ -1446,18 +1453,19 @@ export default function VisitorTicketsIndex({
         }
     };
 
+    const hasActiveFilters = Boolean(searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || (perPageFilter && String(perPageFilter) !== '25'));
+    const isFiltered = Boolean(stats.isFiltered || hasActiveFilters);
+
     const statCards = [
-        { key: 'all', label: 'Total Visitors', value: stats.totalVisitors || 0, subValue: 'Semua Terdaftar', icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
-        { key: 'email_sent', label: 'Email Terkirim', value: stats.emailSentCount || 0, subValue: 'E-Ticket Terkirim', icon: <EmailIcon />, color: '#0d9488', shadow: '#0f766e', bg: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)', badgeBg: '#14b8a6' },
-        { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, subValue: 'Free / Non-Exclusive', icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
-        { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, subValue: 'Hadir di Lokasi', icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
-        { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, subValue: 'Menunggu Dicek', icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
+        { key: 'all', label: 'Total Visitors', value: stats.totalVisitors || 0, subValue: isFiltered ? `Hasil Filter (${globalStats.totalVisitors || 852} total)` : 'Semua Terdaftar', icon: <PeopleIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
+        { key: 'email_sent', label: 'Email Terkirim', value: stats.emailSentCount || 0, subValue: isFiltered ? 'Filter Aktif' : 'E-Ticket Terkirim', icon: <EmailIcon />, color: '#0d9488', shadow: '#0f766e', bg: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)', badgeBg: '#14b8a6' },
+        { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, subValue: isFiltered ? 'Filter Aktif' : 'Free / Non-Exclusive', icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
+        { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, subValue: isFiltered ? 'Hadir (Filter)' : 'Hadir di Lokasi', icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
+        { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, subValue: isFiltered ? 'Dicek (Filter)' : 'Menunggu Dicek', icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
         { key: 'debt', label: 'Outstanding Debt (Hutang)', value: `Rp ${Number(stats.debtTotalRevenue || 0).toLocaleString('id-ID')}`, subValue: `${stats.debtCount || 0} Tiket Hutang`, icon: <WarningAmberIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
         { key: 'paid_revenue', label: 'Uang Masuk (Kas Lunas)', value: `Rp ${Number(stats.realPaidRevenue ?? stats.totalRevenue ?? 0).toLocaleString('id-ID')}`, subValue: `${stats.fullyPaidCount || 0} Tiket Lunas`, icon: <AccountBalanceWalletIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
         { key: 'revenue', label: 'Total Akumulasi', value: `Rp ${Number(stats.grandTotalRevenue ?? ((Number(stats.realPaidRevenue || stats.totalRevenue || 0)) + Number(stats.debtTotalRevenue || 0))).toLocaleString('id-ID')}`, subValue: 'Lunas + Tagihan Hutang', icon: <ReceiptLongIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
     ];
-
-    const hasActiveFilters = searchTerm || typeFilter !== 'all' || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || (perPageFilter && String(perPageFilter) !== '25');
 
     return (
         <SidebarLayout>
@@ -1973,6 +1981,51 @@ export default function VisitorTicketsIndex({
                         </Button>
                     </Box>
                 </Box>
+
+                {/* Active Filter Stat Notice */}
+                {isFiltered && (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            bgcolor: '#f0fdf4',
+                            border: '1px solid #bbf7d0',
+                            borderRadius: '12px',
+                            py: 1,
+                            px: 2,
+                            mb: 2,
+                            flexWrap: 'wrap',
+                            gap: 1,
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <FilterListIcon sx={{ fontSize: 18, color: '#16a34a' }} />
+                            <Typography sx={{ fontSize: '0.78rem', fontWeight: 700, color: '#166534' }}>
+                                <strong>Mode Filter Aktif:</strong> Kartu statistik di bawah otomatis menghitung data yang sedang tersaring (<strong>{stats.totalVisitors || 0}</strong> dari {globalStats.totalVisitors || 852} pengunjung).
+                            </Typography>
+                        </Box>
+                        <Button
+                            size="small"
+                            onClick={handleResetFilters}
+                            startIcon={<RestartAltIcon sx={{ fontSize: 14 }} />}
+                            sx={{
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                textTransform: 'none',
+                                color: '#166534',
+                                bgcolor: '#ffffff',
+                                border: '1px solid #86efac',
+                                borderRadius: '8px',
+                                py: 0.2,
+                                px: 1.2,
+                                '&:hover': { bgcolor: '#dcfce7' },
+                            }}
+                        >
+                            Reset Filter (Lihat Total Global)
+                        </Button>
+                    </Box>
+                )}
 
                 {/* 3D TACTILE STAT CARDS */}
                         <Box
