@@ -24,8 +24,10 @@ class User extends Authenticatable
         'role',
         'full_name',
         'affiliation',
+        'institution_affiliation',
         'whatsapp',
         'category',
+        'email_verified_at',
     ];
 
     /**

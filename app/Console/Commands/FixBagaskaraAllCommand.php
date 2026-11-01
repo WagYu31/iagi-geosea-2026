@@ -81,10 +81,10 @@ class FixBagaskaraAllCommand extends Command
 
         // 3. BUATKAN AKUN JURI BARU
         $juriEmail = 'juri.bagaskara@undip.ac.id';
-        $juriUser = User::where('email', $juriEmail)->first();
+        $existingJuri = DB::table('users')->where('email', $juriEmail)->first();
 
-        if (!$juriUser) {
-            $juriUser = User::create([
+        if (!$existingJuri) {
+            $juriId = DB::table('users')->insertGetId([
                 'name' => 'Bagaskara Wahyu Purnomo Putra, S.T., M.Eng (Juri)',
                 'full_name' => 'Bagaskara Wahyu Purnomo Putra, S.T., M.Eng',
                 'email' => $juriEmail,
@@ -95,16 +95,21 @@ class FixBagaskaraAllCommand extends Command
                 'category' => 'Professional',
                 'email_verified_at' => now(),
                 'whatsapp' => $user->whatsapp ?: '082230921670',
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
-            $this->info("3. AKUN JURI BARU BERHASIL DIBUAT:");
+            $this->info("3. AKUN JURI BARU BERHASIL DIBUAT (ID #{$juriId}):");
         } else {
-            $juriUser->role = 'Juri';
-            $juriUser->password = Hash::make('Juri123.');
-            $juriUser->save();
-            $this->info("3. AKUN JURI TERSEDIA & DI-UPDATE:");
+            DB::table('users')->where('email', $juriEmail)->update([
+                'password' => Hash::make('Juri123.'),
+                'role' => 'Juri',
+                'email_verified_at' => now(),
+                'updated_at' => now(),
+            ]);
+            $juriId = $existingJuri->id;
+            $this->info("3. AKUN JURI TERSEDIA & DI-UPDATE PASSWORD & VERIFIED:");
         }
 
-        $this->line("   - Nama     : {$juriUser->name}");
         $this->line("   - Email    : {$juriEmail}");
         $this->line("   - Password : Juri123.");
         $this->line("   - Role     : Juri");
@@ -112,7 +117,7 @@ class FixBagaskaraAllCommand extends Command
         // 4. MIGRASI DATA PENILAIAN JURI (JIKA SUDAH PERNAH ADA INPUT)
         $scoresCount = \App\Models\PresentationScore::where('juri_id', $user->id)->count();
         if ($scoresCount > 0) {
-            \App\Models\PresentationScore::where('juri_id', $user->id)->update(['juri_id' => $juriUser->id]);
+            \App\Models\PresentationScore::where('juri_id', $user->id)->update(['juri_id' => $juriId]);
             $this->info("\n4. MIGRASI DATA NILAI JURI:");
             $this->line("   -> {$scoresCount} data penilaian yang pernah diinput berhasil dialihkan ke akun Juri baru secara utuh!");
         } else {
