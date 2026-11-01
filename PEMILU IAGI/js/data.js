@@ -14474,8 +14474,14 @@ const INITIAL_DPT = [
   {
     "npa": "06073",
     "name": "Roni Cahya Ciputra",
-    "email": "ro***@pbrin.go.id",
-    "email_hash": "a4779399fb299660d3c46d3417fbae24a6417d4e949e2d5d718fe7dbd7490114",
+    "email": "ro***@gmail.com",
+    "email_hash": "41dd96b9445b5bfce8cb5cd4f89dc8d84e71c3ccbaea272eb06c7bb153870bab",
+    "alt_emails": [
+      "roni010@pbrin.go.id"
+    ],
+    "alt_email_hashes": [
+      "a4779399fb299660d3c46d3417fbae24a6417d4e949e2d5d718fe7dbd7490114"
+    ],
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",

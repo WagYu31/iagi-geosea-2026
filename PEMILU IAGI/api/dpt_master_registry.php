@@ -957,7 +957,7 @@ return [
   '06068' => ['name' => 'Hendrata Rachmanto', 'email' => 'hendrata@antam.com'],
   '06069' => ['name' => 'Nadia Soraya', 'email' => 'nadiasoraya_ns@yahoo.com'],
   '06072' => ['name' => 'Dian Hadiyansyah', 'email' => 'dian.hadiyansyah@gmail.com'],
-  '06073' => ['name' => 'Roni Cahya Ciputra', 'email' => 'roni010@pbrin.go.id'],
+  '06073' => ['name' => 'Roni Cahya Ciputra', 'email' => 'ronicahya@gmail.com', 'alt_emails' => ['roni010@pbrin.go.id']],
   '06075' => ['name' => 'Gilang Firmanda', 'email' => 'firmandagilang@live.com'],
   '06082' => ['name' => 'Yudhistrian Rosaviansa Putra P', 'email' => 'yudhistrianpermana@yahoo.com'],
   '06087' => ['name' => 'Aurora Rahmani Munaqusyah H', 'email' => 'aurora.rahmani@gmail.com'],
