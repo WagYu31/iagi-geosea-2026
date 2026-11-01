@@ -479,6 +479,87 @@ export default function VisitorTicketsIndex({
         }
     }, [selectedIds]);
 
+    // Ticket Cache for accurate calculation across pages/multi-select
+    const [ticketCache, setTicketCache] = useState({});
+
+    useEffect(() => {
+        if (ticketsData && ticketsData.length > 0) {
+            setTicketCache(prev => {
+                const next = { ...prev };
+                ticketsData.forEach(t => {
+                    if (t && t.id) {
+                        next[t.id] = t;
+                    }
+                });
+                return next;
+            });
+        }
+    }, [ticketsData]);
+
+    const [nominalCopied, setNominalCopied] = useState(false);
+
+    // Live Nominal Calculator for selected/checked rows
+    const selectedStats = useMemo(() => {
+        let ticketNominal = 0;
+        let paidCount = 0;
+        let freeCount = 0;
+        let debtCount = 0;
+        const paymentIds = new Set();
+        let paymentTotal = 0;
+
+        selectedIds.forEach(id => {
+            const t = ticketsData.find(item => item.id === id) || ticketCache[id];
+            if (!t) return;
+
+            if (!t.payment) {
+                freeCount++;
+                return;
+            }
+
+            if (t.payment.is_debt) {
+                debtCount++;
+            } else {
+                paidCount++;
+            }
+
+            if (t.payment.id && !paymentIds.has(t.payment.id)) {
+                paymentIds.add(t.payment.id);
+                paymentTotal += Number(t.payment.total_amount || 0);
+            }
+
+            const groupCount = (t.payment.tickets && t.payment.tickets.length > 0)
+                ? t.payment.tickets.length
+                : (Number(t.payment.total_members) || 1);
+
+            const indPrice = (t.individual_price && Number(t.individual_price) > 0)
+                ? Number(t.individual_price)
+                : (Number(t.payment.price_per_ticket) > 0
+                    ? Number(t.payment.price_per_ticket)
+                    : Math.round(Number(t.payment.total_amount || 0) / groupCount));
+
+            const amount = groupCount > 1 ? indPrice : Number(t.payment.total_amount || indPrice || 0);
+            ticketNominal += amount;
+        });
+
+        return {
+            count: selectedIds.length,
+            ticketNominal,
+            paymentTotal,
+            paymentCount: paymentIds.size,
+            paidCount,
+            freeCount,
+            debtCount,
+        };
+    }, [selectedIds, ticketsData, ticketCache]);
+
+    const handleCopySelectedNominal = () => {
+        if (navigator?.clipboard) {
+            navigator.clipboard.writeText(selectedStats.ticketNominal.toString());
+            setNominalCopied(true);
+            setTimeout(() => setNominalCopied(false), 2000);
+        }
+    };
+
     // Dialog states
     const [onsiteModalOpen, setOnsiteModalOpen] = useState(false);
     const [unpaidModalOpen, setUnpaidModalOpen] = useState(false);
@@ -2221,11 +2302,14 @@ export default function VisitorTicketsIndex({
                     </Box>
                 </Paper>
 
-                {/* FLOATING 3D BULK ACTION TOOLBAR */}
+                {/* FLOATING 3D BULK ACTION TOOLBAR WITH LIVE NOMINAL CALCULATOR */}
                 {selectedIds.length > 0 && (
                     <Paper
                         elevation={0}
                         sx={{
+                            position: 'sticky',
+                            top: 12,
+                            zIndex: 110,
                             p: 1.6,
                             px: 2.5,
                             borderRadius: '16px',
@@ -2238,16 +2322,92 @@ export default function VisitorTicketsIndex({
                             flexWrap: 'wrap',
                             gap: 1.5,
                             border: '2px solid #ef4444',
-                            boxShadow: '0 4px 0 #991b1b, 0 12px 28px rgba(239,68,68,0.25)',
+                            boxShadow: '0 8px 24px rgba(15, 23, 42, 0.4), 0 0 0 1px rgba(239,68,68,0.3)',
                         }}
                     >
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap' }}>
                             <Chip
                                 icon={<BlockIcon sx={{ fontSize: '14px !important', color: '#ffffff !important' }} />}
-                                label={`${selectedIds.length} Baris Merah (Dilewati / Tidak Dikirim Email)`}
+                                label={`${selectedIds.length} Terpilih`}
                                 size="small"
                                 sx={{ bgcolor: '#dc2626', color: '#ffffff', fontWeight: 900, fontSize: '0.75rem', px: 0.5 }}
                             />
+
+                            {/* LIVE NOMINAL CALCULATOR BOX */}
+                            <Box
+                                sx={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 1.2,
+                                    bgcolor: 'rgba(16, 185, 129, 0.15)',
+                                    border: '1.5px solid #10b981',
+                                    borderRadius: '10px',
+                                    px: 1.6,
+                                    py: 0.5,
+                                    boxShadow: '0 0 16px rgba(16, 185, 129, 0.25)',
+                                }}
+                            >
+                                <AccountBalanceWalletIcon sx={{ fontSize: 20, color: '#34d399' }} />
+                                <Box>
+                                    <Typography variant="caption" sx={{ color: '#a7f3d0', fontSize: '0.64rem', fontWeight: 800, display: 'block', lineHeight: 1, letterSpacing: '0.5px' }}>
+                                        TOTAL NOMINAL DICENTANG:
+                                    </Typography>
+                                    <Typography variant="body2" sx={{ color: '#ffffff', fontSize: '1.08rem', fontWeight: 900, fontFamily: 'monospace', lineHeight: 1.2, mt: 0.2 }}>
+                                        Rp {Number(selectedStats.ticketNominal).toLocaleString('id-ID')}
+                                    </Typography>
+                                </Box>
+                                <Tooltip
+                                    title={
+                                        <Box sx={{ p: 0.5, fontSize: '0.72rem', lineHeight: 1.4 }}>
+                                            <div style={{ fontWeight: 800, marginBottom: 4 }}>📊 Rincian {selectedStats.count} Tiket Dicentang:</div>
+                                            <div>• Tiket Berbayar: <strong>{selectedStats.paidCount} tiket</strong></div>
+                                            {selectedStats.freeCount > 0 && <div>• Tiket Free (Gratis): <strong>{selectedStats.freeCount} tiket</strong></div>}
+                                            {selectedStats.debtCount > 0 && <div>• Tiket Hutang (Debt): <strong>{selectedStats.debtCount} tiket</strong></div>}
+                                            <div style={{ marginTop: 4, paddingTop: 4, borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                                                <strong>Total Nominal Tiket:</strong> Rp {Number(selectedStats.ticketNominal).toLocaleString('id-ID')}
+                                            </div>
+                                        </Box>
+                                    }
+                                    arrow
+                                >
+                                    <Chip
+                                        label={`${selectedStats.paidCount} Bayar${selectedStats.freeCount > 0 ? ` • ${selectedStats.freeCount} Free` : ''}${selectedStats.debtCount > 0 ? ` • ${selectedStats.debtCount} Debt` : ''}`}
+                                        size="small"
+                                        sx={{
+                                            height: 20,
+                                            fontSize: '0.62rem',
+                                            fontWeight: 800,
+                                            bgcolor: 'rgba(255,255,255,0.12)',
+                                            color: '#e2e8f0',
+                                            border: '1px solid rgba(255,255,255,0.25)',
+                                            cursor: 'help',
+                                        }}
+                                    />
+                                </Tooltip>
+                                <Tooltip title="Salin nominal total yang dicentang" arrow>
+                                    <Button
+                                        size="small"
+                                        onClick={handleCopySelectedNominal}
+                                        startIcon={<ContentCopyIcon sx={{ fontSize: 12 }} />}
+                                        sx={{
+                                            color: '#34d399',
+                                            bgcolor: 'rgba(52, 211, 153, 0.1)',
+                                            border: '1px solid rgba(52, 211, 153, 0.3)',
+                                            borderRadius: '6px',
+                                            px: 0.8,
+                                            py: 0.2,
+                                            fontSize: '0.65rem',
+                                            fontWeight: 800,
+                                            minWidth: 'auto',
+                                            textTransform: 'none',
+                                            '&:hover': { bgcolor: 'rgba(52, 211, 153, 0.25)' },
+                                        }}
+                                    >
+                                        {nominalCopied ? 'Tersalin!' : 'Salin'}
+                                    </Button>
+                                </Tooltip>
+                            </Box>
+
                             <Button
                                 size="small"
                                 onClick={() => setSelectedIds([])}
@@ -2417,14 +2577,32 @@ export default function VisitorTicketsIndex({
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
                                 flexWrap: 'wrap',
-                                gap: 1,
+                                gap: 1.2,
                             }}
                         >
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
                                 <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: '#ef4444', boxShadow: '0 0 0 3px rgba(239,68,68,0.25)' }} />
                                 <Typography variant="caption" sx={{ fontWeight: 800, color: '#991b1b', fontSize: '0.8rem' }}>
-                                    Ada <strong>{selectedIds.length} baris berwarna merah</strong> (ditandai untuk dilewati / tidak menerima E-Tiket saat kirim email).
+                                    Ada <strong>{selectedIds.length} baris terpilih</strong> (ditandai merah untuk dilewati saat kirim email).
                                 </Typography>
+                                <Chip
+                                    icon={<AccountBalanceWalletIcon sx={{ fontSize: '13px !important', color: '#166534 !important' }} />}
+                                    label={
+                                        <span>
+                                            Total Nominal Dicentang: <strong>Rp {Number(selectedStats.ticketNominal).toLocaleString('id-ID')}</strong> ({selectedStats.paidCount} berbayar)
+                                        </span>
+                                    }
+                                    size="small"
+                                    sx={{
+                                        bgcolor: '#dcfce7',
+                                        color: '#166534',
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        border: '1px solid #86efac',
+                                        height: 24,
+                                        px: 0.5,
+                                    }}
+                                />
                             </Box>
                             <Button
                                 size="small"
@@ -2502,6 +2680,24 @@ export default function VisitorTicketsIndex({
                                         fontSize: '0.72rem',
                                         bgcolor: '#f1f5f9',
                                         color: '#475569',
+                                    }}
+                                />
+                            )}
+                            {selectedIds.length > 0 && (
+                                <Chip
+                                    icon={<CheckCircleIcon sx={{ fontSize: '13px !important', color: '#065f46 !important' }} />}
+                                    label={
+                                        <span>
+                                            Dicentang: <strong>{selectedIds.length}</strong> &bull; Total: <strong style={{ fontFamily: 'monospace' }}>Rp {Number(selectedStats.ticketNominal).toLocaleString('id-ID')}</strong>
+                                        </span>
+                                    }
+                                    size="small"
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.72rem',
+                                        bgcolor: '#d1fae5',
+                                        color: '#065f46',
+                                        border: '1px solid #6ee7b7',
                                     }}
                                 />
                             )}
@@ -6916,6 +7112,70 @@ export default function VisitorTicketsIndex({
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* FLOATING BOTTOM LIVE CALCULATOR PILL (Visible when scrolling) */}
+            {selectedIds.length > 0 && (
+                <Box
+                    sx={{
+                        position: 'fixed',
+                        bottom: 24,
+                        right: 28,
+                        zIndex: 1300,
+                        bgcolor: '#0f172a',
+                        color: '#ffffff',
+                        borderRadius: '16px',
+                        pl: 2.2,
+                        pr: 1.5,
+                        py: 1,
+                        boxShadow: '0 12px 32px rgba(0,0,0,0.4), 0 0 0 2px #10b981',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.8,
+                    }}
+                >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <AccountBalanceWalletIcon sx={{ color: '#34d399', fontSize: 22 }} />
+                        <Box>
+                            <Typography variant="caption" sx={{ color: '#a7f3d0', fontSize: '0.65rem', fontWeight: 800, display: 'block', lineHeight: 1 }}>
+                                TERCENTANG: {selectedStats.count} TIKET ({selectedStats.paidCount} BAYAR)
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: '#ffffff', fontWeight: 900, fontFamily: 'monospace', fontSize: '1.05rem', lineHeight: 1.2, mt: 0.2 }}>
+                                Rp {Number(selectedStats.ticketNominal).toLocaleString('id-ID')}
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <Tooltip title="Salin nominal total yang dicentang" arrow>
+                        <Button
+                            size="small"
+                            onClick={handleCopySelectedNominal}
+                            startIcon={<ContentCopyIcon sx={{ fontSize: 13 }} />}
+                            sx={{
+                                color: '#34d399',
+                                fontSize: '0.72rem',
+                                fontWeight: 800,
+                                textTransform: 'none',
+                                bgcolor: 'rgba(52, 211, 153, 0.15)',
+                                border: '1px solid rgba(52, 211, 153, 0.35)',
+                                borderRadius: '8px',
+                                px: 1.2,
+                                py: 0.4,
+                                '&:hover': { bgcolor: 'rgba(52, 211, 153, 0.3)' }
+                            }}
+                        >
+                            {nominalCopied ? 'Tersalin!' : 'Salin'}
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title="Lepas semua centang" arrow>
+                        <IconButton
+                            size="small"
+                            onClick={() => setSelectedIds([])}
+                            sx={{ color: '#f87171', p: 0.6, bgcolor: 'rgba(239, 68, 68, 0.15)', '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.35)', color: '#ffffff' } }}
+                        >
+                            <CloseIcon sx={{ fontSize: 15 }} />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            )}
         </SidebarLayout>
     );
 }
