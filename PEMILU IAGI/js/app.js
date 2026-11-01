@@ -529,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const claimAlert = document.getElementById('claim-alert');
 
   if (formClaim) {
-    formClaim.addEventListener('submit', (e) => {
+    formClaim.addEventListener('submit', async (e) => {
       e.preventDefault();
       triggerHaptic('medium');
 
@@ -546,38 +546,52 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const result = window.pemiluStorage.claimSuratSuara(npa, name, email);
-
-      if (!result.success) {
-        showAlert(claimAlert, result.error, 'error');
-        triggerHaptic('error');
-        return;
+      const submitBtn = formClaim.querySelector('button[type="submit"]');
+      const origBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span>Memverifikasi Hak Suara...</span>';
       }
 
-      // Success claiming token!
-      showAlert(claimAlert, result.message, 'success');
-      triggerHaptic('success');
-
-      // Dispatch token email in background via official server API
       try {
-        fetch('api/send_token.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            npa: result.voter.npa,
-            name: result.voter.name,
-            email: result.voter.email,
-            token: result.token
-          })
-        }).then(res => res.json()).then(data => {
-          console.log('Dispatch token email response:', data);
-        }).catch(err => {
-          console.log('Dispatch token email fetch:', err);
-        });
-      } catch (e) {}
+        const result = await window.pemiluStorage.claimSuratSuara(npa, name, email);
 
-      // Show official instant token & email dispatched confirmation modal
-      showEmailDispatchedModal(result.voter, result.token);
+        if (!result.success) {
+          showAlert(claimAlert, result.error, 'error');
+          triggerHaptic('error');
+          return;
+        }
+
+        // Success claiming token!
+        showAlert(claimAlert, result.message, 'success');
+        triggerHaptic('success');
+
+        // Dispatch token email in background via official server API
+        try {
+          fetch('api/send_token.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              npa: result.voter.npa,
+              name: result.voter.name,
+              email: result.voter.email,
+              token: result.token
+            })
+          }).then(res => res.json()).then(data => {
+            console.log('Dispatch token email response:', data);
+          }).catch(err => {
+            console.log('Dispatch token email fetch:', err);
+          });
+        } catch (e) {}
+
+        // Show official instant token & email dispatched confirmation modal
+        showEmailDispatchedModal(result.voter, result.token);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origBtnHtml;
+        }
+      }
     });
   }
 

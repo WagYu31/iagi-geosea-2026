@@ -534,6 +534,8 @@ if (empty($action) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $parsed = @json_decode($raw, true);
     if (isset($parsed['action'])) {
         $action = $parsed['action'];
+    } elseif (isset($_POST['action'])) {
+        $action = $_POST['action'];
     }
 }
 
@@ -2032,6 +2034,90 @@ if ($action === 'check_voter') {
         'voted' => false,
         'claimed' => ($voterStatus && !empty($voterStatus['claimed'])),
         'claimed_at' => ($voterStatus && isset($voterStatus['claimed_at'])) ? $voterStatus['claimed_at'] : null
+    ]);
+    exit;
+}
+
+// ================= ACTION 1C: REALTIME EMAIL MATCH VERIFICATION =================
+if ($action === 'verify_email_match') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $npa = isset($payload['npa']) ? substr(preg_replace('/\D/', '', $payload['npa']), 0, 5) : '';
+    $email = isset($payload['email']) ? strtolower(trim($payload['email'])) : '';
+
+    if (strlen($npa) !== 5 || empty($email)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'NPA dan Email wajib diisi.']);
+        exit;
+    }
+
+    $masterRegistryFile = __DIR__ . '/dpt_master_registry.php';
+    if (!file_exists($masterRegistryFile)) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Master DPT registry tidak ditemukan.']);
+        exit;
+    }
+
+    $masterDpt = require $masterRegistryFile;
+    if (!isset($masterDpt[$npa])) {
+        http_response_code(404);
+        echo json_encode(['success' => false, 'error' => "NPA {$npa} tidak terdaftar dalam DPT."]);
+        exit;
+    }
+
+    $regEmail = strtolower(trim($masterDpt[$npa]['email'] ?? ''));
+    $inputEmail = $email;
+    $regNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $regEmail);
+    $inputNorm = str_replace('@gl.itb.ac.id', '@itb.ac.id', $inputEmail);
+
+    $matched = ($regEmail === $inputEmail || $regNorm === $inputNorm);
+
+    // Check alt_emails
+    if (!$matched && !empty($masterDpt[$npa]['alt_emails']) && is_array($masterDpt[$npa]['alt_emails'])) {
+        foreach ($masterDpt[$npa]['alt_emails'] as $alt) {
+            if (strtolower(trim($alt)) === $inputEmail) {
+                $matched = true;
+                break;
+            }
+        }
+    }
+
+    // Check dynamic overrides file
+    $overridesFile = $dataDir . '/dpt_email_overrides.json';
+    if (!$matched && file_exists($overridesFile)) {
+        $overrides = @json_decode(@file_get_contents($overridesFile), true) ?: [];
+        if (isset($overrides[$npa]) && strtolower(trim($overrides[$npa])) === $inputEmail) {
+            $matched = true;
+        }
+    }
+
+    if ($matched) {
+        $emailHash = hash('sha256', $email);
+        $altHashes = [];
+        if (!empty($masterDpt[$npa]['alt_emails']) && is_array($masterDpt[$npa]['alt_emails'])) {
+            foreach ($masterDpt[$npa]['alt_emails'] as $alt) {
+                $altHashes[] = hash('sha256', strtolower(trim($alt)));
+            }
+        }
+        echo json_encode([
+            'success' => true,
+            'matched' => true,
+            'npa' => $npa,
+            'name' => $masterDpt[$npa]['name'] ?? '',
+            'email' => $email,
+            'email_hash' => $emailHash,
+            'alt_emails' => $masterDpt[$npa]['alt_emails'] ?? [],
+            'alt_email_hashes' => $altHashes
+        ]);
+        exit;
+    }
+
+    echo json_encode([
+        'success' => true,
+        'matched' => false,
+        'error' => "Alamat email '{$email}' tidak cocok dengan email resmi yang terdaftar untuk NPA {$npa} pada DPT KPKU."
     ]);
     exit;
 }

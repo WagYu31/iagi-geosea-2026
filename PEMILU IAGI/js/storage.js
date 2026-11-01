@@ -939,7 +939,7 @@ class PemiluStorage {
   }
 
   // --- Claim Surat Suara Engine ---
-  claimSuratSuara(npa, name, email) {
+  async claimSuratSuara(npa, name, email) {
     let dpt = this.getDPT();
     const cleanNpa = String(npa || '').replace(/\D/g, '').slice(0, 5);
     const cleanEmail = (email || '').trim().toLowerCase();
@@ -982,12 +982,16 @@ class PemiluStorage {
 
     const voter = dpt[voterIndex];
 
-    // Jika di cache lokal email masih kosong, perbarui dari INITIAL_DPT jika tersedia
-    if ((!voter.email || voter.email.trim() === '') && typeof INITIAL_DPT !== 'undefined') {
+    // Selalu sinkronkan email_hash, alt_emails, dan alt_email_hashes dari INITIAL_DPT jika tersedia
+    if (typeof INITIAL_DPT !== 'undefined') {
       const initVoter = INITIAL_DPT.find(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
-      if (initVoter && initVoter.email && initVoter.email.trim() !== '') {
-        voter.email = initVoter.email.trim();
-        dpt[voterIndex].email = voter.email;
+      if (initVoter) {
+        if (initVoter.email_hash) voter.email_hash = initVoter.email_hash;
+        if (initVoter.alt_emails) voter.alt_emails = initVoter.alt_emails;
+        if (initVoter.alt_email_hashes) voter.alt_email_hashes = initVoter.alt_email_hashes;
+        if (initVoter.email && !initVoter.email.includes('***')) voter.email = initVoter.email;
+        if (initVoter.name) voter.name = initVoter.name;
+        dpt[voterIndex] = voter;
         this.saveDPT(dpt);
       }
     }
@@ -996,16 +1000,6 @@ class PemiluStorage {
     const inputEmailHash = sha256Sync(cleanEmail);
     const inputEmailNormHash = sha256Sync(cleanEmail.replace('@gl.itb.ac.id', '@itb.ac.id').replace('mirzan@', 'mirzam@'));
 
-    // Check against INITIAL_DPT fallback if voter in cache doesn't have email_hash
-    if (!voter.email_hash && typeof INITIAL_DPT !== 'undefined') {
-      const initV = INITIAL_DPT.find(x => String(x.npa || '').trim().toUpperCase() === cleanNpa);
-      if (initV && initV.email_hash) {
-        voter.email_hash = initV.email_hash;
-        dpt[voterIndex].email_hash = initV.email_hash;
-        this.saveDPT(dpt);
-      }
-    }
-
     if (voter.email_hash) {
       let isHashMatched = (inputEmailHash === voter.email_hash || inputEmailNormHash === voter.email_hash);
       if (!isHashMatched && Array.isArray(voter.alt_email_hashes)) {
@@ -1013,6 +1007,36 @@ class PemiluStorage {
       }
       if (!isHashMatched && Array.isArray(voter.alt_emails)) {
         isHashMatched = voter.alt_emails.map(e => e.toLowerCase()).includes(cleanEmail);
+      }
+
+      // Realtime Server Fallback: jika hash lokal belum cocok (misal browser voter masih mencache data lama atau email baru saja direset di server)
+      if (!isHashMatched) {
+        try {
+          if (typeof fetch !== 'undefined') {
+            const checkResp = await fetch('api/vote_sync.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'verify_email_match',
+                npa: cleanNpa,
+                email: cleanEmail
+              })
+            });
+            const checkData = await checkResp.json();
+            if (checkData && checkData.success && checkData.matched) {
+              isHashMatched = true;
+              if (checkData.email_hash) voter.email_hash = checkData.email_hash;
+              if (checkData.alt_email_hashes) voter.alt_email_hashes = checkData.alt_email_hashes;
+              if (checkData.alt_emails) voter.alt_emails = checkData.alt_emails;
+              if (checkData.name) voter.name = checkData.name;
+              voter.email = cleanEmail;
+              dpt[voterIndex] = voter;
+              this.saveDPT(dpt);
+            }
+          }
+        } catch (netErr) {
+          console.warn('Realtime email check fallback notice:', netErr);
+        }
       }
 
       if (!isHashMatched) {
@@ -1033,6 +1057,31 @@ class PemiluStorage {
       let isEmailMatched = (vEmail === cleanEmail || vEmailNorm === inputEmailNorm);
       if (!isEmailMatched && Array.isArray(voter.alt_emails)) {
         isEmailMatched = voter.alt_emails.map(e => e.toLowerCase()).includes(cleanEmail);
+      }
+
+      // Realtime Server Fallback
+      if (!isEmailMatched) {
+        try {
+          if (typeof fetch !== 'undefined') {
+            const checkResp = await fetch('api/vote_sync.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                action: 'verify_email_match',
+                npa: cleanNpa,
+                email: cleanEmail
+              })
+            });
+            const checkData = await checkResp.json();
+            if (checkData && checkData.success && checkData.matched) {
+              isEmailMatched = true;
+              if (checkData.email_hash) voter.email_hash = checkData.email_hash;
+              voter.email = cleanEmail;
+              dpt[voterIndex] = voter;
+              this.saveDPT(dpt);
+            }
+          }
+        } catch (netErr) {}
       }
 
       if (!isEmailMatched) {
