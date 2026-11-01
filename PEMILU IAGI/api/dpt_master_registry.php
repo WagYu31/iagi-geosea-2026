@@ -1073,7 +1073,7 @@ return [
   '06538' => ['name' => 'Robet Wahyu Widodo', 'email' => 'rbtwidodo15@gmail.com'],
   '06553' => ['name' => 'Andy Yahya Al Hakim', 'email' => 'yahya.andy@gmail.com'],
   '06554' => ['name' => 'Dwi Grevani Hayuti', 'email' => 'dwigrevanihayuti@gmail.com'],
-  '06556' => ['name' => 'Harlan Renaldi', 'email' => 'harlanrenaldi@mail.ugm.ac.id'],
+  '06556' => ['name' => 'Harlan Renaldi', 'email' => 'harlanrenaldi@gmail.com', 'alt_emails' => ['harlanrenaldi@mail.ugm.ac.id']],
   '06557' => ['name' => '‘Sri Nangkung Vignoriva', 'email' => 'riva1247@gmail.com'],
   '06562' => ['name' => 'Wah Adi Suseno', 'email' => ''],
   '06578' => ['name' => 'Alimran', 'email' => 'alimrangeo08@gmail.com'],

@@ -16212,8 +16212,14 @@ const INITIAL_DPT = [
   {
     "npa": "06556",
     "name": "Harlan Renaldi",
-    "email": "ha***@mail.ugm.ac.id",
-    "email_hash": "5ddbc8d6a037b61803613d2770e071413feb85d4dd36ac9376475b83802fa08d",
+    "email": "ha***@gmail.com",
+    "email_hash": "b01db3aed10f7a3c36748537ba6042138180f7d39ad4fedc638b343c4a257027",
+    "alt_emails": [
+      "harlanrenaldi@mail.ugm.ac.id"
+    ],
+    "alt_email_hashes": [
+      "5ddbc8d6a037b61803613d2770e071413feb85d4dd36ac9376475b83802fa08d"
+    ],
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
