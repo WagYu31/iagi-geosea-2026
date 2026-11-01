@@ -5165,9 +5165,17 @@ const INITIAL_DPT = [
   {
     "npa": "03256",
     "name": "Dedi Arwana",
-    "email": "de***@gmail.com",
+    "email": "dediarwana@gmail.com",
     "email_hash": "9c897656c6e42a492cadab5444aaa45bf0f3ebb27d95533ee8f84c12220e1d47",
-    "phone": "",
+    "alt_email_hashes": [
+      "98a8cb18bdc26c5f541ad5c37eea72498af66a010bb638129d33e7c08b529de3",
+      "7b22c0cf3d32529d582fc7efc4a13a4409ce928222dbf8c4b82dbd3f4f79ece8"
+    ],
+    "alt_emails": [
+      "dedirwana@gmail.com",
+      "pedirwana@gmail.com"
+    ],
+    "phone": "0811219202",
     "pengda": "IAGI",
     "category": "Professional",
     "status": "AKTIF",

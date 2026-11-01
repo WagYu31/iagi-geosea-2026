@@ -342,7 +342,7 @@ return [
   '03252' => ['name' => 'Herman', 'email' => 'hermanml92@gmail.com'],
   '03254' => ['name' => 'Dasapta Erwin Irawan', 'email' => 'dasaptaerwin3@gmail.com'],
   '03255' => ['name' => 'Oky Wahastadhi', 'email' => 'oki.wahastadhi@gmail.com'],
-  '03256' => ['name' => 'Dedi Arwana', 'email' => 'dediarwana@gmail.com'],
+  '03256' => ['name' => 'Dedi Arwana', 'email' => 'dediarwana@gmail.com', 'alt_emails' => ['dedirwana@gmail.com', 'pedirwana@gmail.com']],
   '03263' => ['name' => 'Ika Riawan', 'email' => 'riawan.ik@gmail.com'],
   '03264' => ['name' => 'Dwiyoko Trah Urip Taruno', 'email' => 'dwiyoko_urip@yahoo.co.id'],
   '03266' => ['name' => 'Eddyanto RP Sitorus', 'email' => 'jci_eddy@yahoo.com'],

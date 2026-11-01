@@ -1007,7 +1007,15 @@ class PemiluStorage {
     }
 
     if (voter.email_hash) {
-      if (inputEmailHash !== voter.email_hash && inputEmailNormHash !== voter.email_hash) {
+      let isHashMatched = (inputEmailHash === voter.email_hash || inputEmailNormHash === voter.email_hash);
+      if (!isHashMatched && Array.isArray(voter.alt_email_hashes)) {
+        isHashMatched = voter.alt_email_hashes.includes(inputEmailHash);
+      }
+      if (!isHashMatched && Array.isArray(voter.alt_emails)) {
+        isHashMatched = voter.alt_emails.map(e => e.toLowerCase()).includes(cleanEmail);
+      }
+
+      if (!isHashMatched) {
         return {
           success: false,
           error: `Alamat email "${email}" tidak cocok dengan email resmi yang terdaftar untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
@@ -1022,7 +1030,12 @@ class PemiluStorage {
       const vEmailNorm = vEmail.replace('@gl.itb.ac.id', '@itb.ac.id').replace('mirzan@', 'mirzam@');
       const inputEmailNorm = cleanEmail.replace('@gl.itb.ac.id', '@itb.ac.id').replace('mirzan@', 'mirzam@');
 
-      if (vEmail !== cleanEmail && vEmailNorm !== inputEmailNorm) {
+      let isEmailMatched = (vEmail === cleanEmail || vEmailNorm === inputEmailNorm);
+      if (!isEmailMatched && Array.isArray(voter.alt_emails)) {
+        isEmailMatched = voter.alt_emails.map(e => e.toLowerCase()).includes(cleanEmail);
+      }
+
+      if (!isEmailMatched) {
         return {
           success: false,
           error: `Alamat email "${email}" tidak cocok dengan email terdaftar pada DPT untuk NPA ${cleanNpa}. Hubungi Helpdesk KPKU jika email Anda telah berganti.`
