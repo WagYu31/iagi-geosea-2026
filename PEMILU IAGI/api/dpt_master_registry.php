@@ -493,7 +493,7 @@ return [
   '03841' => ['name' => 'Murodi', 'email' => 'murodi7869@gmail.com'],
   '03850' => ['name' => 'Mauliate Agustinus H S', 'email' => 'mauliates@gmail.com'],
   '03856' => ['name' => 'Cipi Armandita', 'email' => 'mk.cipi.armandita@pertamina.com'],
-  '03857' => ['name' => 'Taubah Faulin', 'email' => 'faulin01@gmail.com', 'alt_emails' => ['tfaulin@skkmigas.com']],
+  '03857' => ['name' => 'Taubah Faulin', 'email' => 'faulin01@gmail.com', 'alt_emails' => ['tfaulin@skkmigas.go.id', 'tfaulin@skkmigas.com']],
   '03861' => ['name' => 'Ervan Kosandi', 'email' => 'ervankosandi@gmail.com'],
   '03867' => ['name' => 'Mangoloi Silalahi', 'email' => 'mangoloi.silalahigeo@gmail.com'],
   '03871' => ['name' => 'Sukarya Sanusi', 'email' => 'sukarya.sanusi@geoservices.co.id'],

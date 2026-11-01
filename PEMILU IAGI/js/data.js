@@ -7500,9 +7500,11 @@ const INITIAL_DPT = [
     "voted": false,
     "voted_at": null,
     "alt_emails": [
+      "tfaulin@skkmigas.go.id",
       "tfaulin@skkmigas.com"
     ],
     "alt_email_hashes": [
+      "b805d13812551818da46e4b4951cc49e9e16d9e4b972de681d861188133bdb74",
       "6facbc84862cced016bc18ac848e83bd2a5e41ee828e2807235f7ebe1ce38905"
     ]
   },
