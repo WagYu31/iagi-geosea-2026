@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v5.4.6-audit-telemetry';
+const CACHE_NAME = 'pemilu-iagi-2026-v5.4.7-autoheal-restore';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

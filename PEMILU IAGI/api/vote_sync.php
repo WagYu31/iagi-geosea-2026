@@ -1985,8 +1985,12 @@ if ($action === 'get_audit_logs') {
 }
 
 // ================= ACTION 1: CHECK VOTER STATUS =================
-if ($action === 'check_voter') {
-    $npa = isset($_GET['npa']) ? substr(preg_replace('/\D/', '', $_GET['npa']), 0, 5) : '';
+if ($action === 'check_voter' || $action === 'check_voter_status') {
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $npa = isset($payload['npa']) ? substr(preg_replace('/\D/', '', $payload['npa']), 0, 5) : (isset($_GET['npa']) ? substr(preg_replace('/\D/', '', $_GET['npa']), 0, 5) : '');
     if (strlen($npa) !== 5) {
         echo json_encode(['success' => false, 'error' => 'NPA harus tepat 5 digit angka (contoh: 00000).']);
         exit;
@@ -1996,6 +2000,29 @@ if ($action === 'check_voter') {
     $voterStatus = isset($voters[$npa]) ? $voters[$npa] : null;
 
     if ($voterStatus && !empty($voterStatus['voted'])) {
+        $isSynthetic = empty($voterStatus['token_hash']) || 
+                       in_array($voterStatus['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || 
+                       strpos($voterStatus['voted_at'] ?? '', 'Oktober 2026') !== false || 
+                       empty($voterStatus['voted_at']) ||
+                       strpos($voterStatus['voted_at'] ?? '', '1970') !== false;
+
+        if ($isSynthetic) {
+            // Pulihkan secara otomatis jika vote berstatus rekonsiliasi sintesis/korup
+            $voters[$npa]['voted'] = false;
+            $voters[$npa]['voted_at'] = null;
+            $voters[$npa]['receipt_hash'] = null;
+            writeJsonFile($votersFile, $voters);
+            echo json_encode([
+                'success' => true,
+                'npa' => $npa,
+                'voted' => false,
+                'claimed' => !empty($voters[$npa]['claimed']),
+                'claimed_at' => $voters[$npa]['claimed_at'] ?? null,
+                'restored' => true
+            ]);
+            exit;
+        }
+
         echo json_encode([
             'success' => true,
             'npa' => $npa,
@@ -2080,6 +2107,26 @@ if ($action === 'verify_email_match') {
                 $altHashes[] = hash('sha256', strtolower(trim($alt)));
             }
         }
+
+        // Auto-heal synthetic lock pada server jika pemilih asli menyajikan verifikasi email
+        $voters = readJsonFile($votersFile, []);
+        $srvVoted = false;
+        if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
+            $isSynthetic = empty($voters[$npa]['token_hash']) || 
+                           in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || 
+                           strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false || 
+                           empty($voters[$npa]['voted_at']) ||
+                           strpos($voters[$npa]['voted_at'] ?? '', '1970') !== false;
+            if ($isSynthetic) {
+                $voters[$npa]['voted'] = false;
+                $voters[$npa]['voted_at'] = null;
+                $voters[$npa]['receipt_hash'] = null;
+                writeJsonFile($votersFile, $voters);
+            } else {
+                $srvVoted = true;
+            }
+        }
+
         echo json_encode([
             'success' => true,
             'matched' => true,
@@ -2088,7 +2135,8 @@ if ($action === 'verify_email_match') {
             'email' => $email,
             'email_hash' => $emailHash,
             'alt_emails' => $masterDpt[$npa]['alt_emails'] ?? [],
-            'alt_email_hashes' => $altHashes
+            'alt_email_hashes' => $altHashes,
+            'server_voted' => $srvVoted
         ]);
         exit;
     }
@@ -2417,7 +2465,11 @@ if ($action === 'register_claim') {
     if ($fpLock && @flock($fpLock, LOCK_EX)) {
         // If the voter has already genuinely voted, strictly reject any token re-issue
         if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
-            $isSyntheticVote = empty($voters[$npa]['token_hash']) || in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false;
+            $isSyntheticVote = empty($voters[$npa]['token_hash']) || 
+                               in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || 
+                               strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false ||
+                               empty($voters[$npa]['voted_at']) ||
+                               strpos($voters[$npa]['voted_at'] ?? '', '1970') !== false;
             if (!$isSyntheticVote) {
                 flock($fpLock, LOCK_UN);
                 fclose($fpLock);
@@ -2552,7 +2604,11 @@ if ($action === 'cast_vote') {
 
         // CRITICAL CHECK 1: Has this NPA ALREADY voted?
         if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
-            $isSyntheticVote = empty($voters[$npa]['token_hash']) || in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false;
+            $isSyntheticVote = empty($voters[$npa]['token_hash']) || 
+                               in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || 
+                               strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false ||
+                               empty($voters[$npa]['voted_at']) ||
+                               strpos($voters[$npa]['voted_at'] ?? '', '1970') !== false;
             $hasValidFormatToken = preg_match('/^IAGI-2026-[A-Z0-9]{4}-[A-Z0-9]{4}$/i', $token) || strlen($token) >= 10;
 
             if ($isSyntheticVote && $hasValidFormatToken) {

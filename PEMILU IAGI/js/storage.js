@@ -1003,6 +1003,11 @@ class PemiluStorage {
               if (checkData.alt_emails) voter.alt_emails = checkData.alt_emails;
               if (checkData.name) voter.name = checkData.name;
               voter.email = cleanEmail;
+              if (checkData.server_voted === false) {
+                voter.voted = false;
+                voter.voted_at = null;
+                voter.receipt_hash = null;
+              }
               dpt[voterIndex] = voter;
               this.saveDPT(dpt);
             }
@@ -1050,6 +1055,11 @@ class PemiluStorage {
               isEmailMatched = true;
               if (checkData.email_hash) voter.email_hash = checkData.email_hash;
               voter.email = cleanEmail;
+              if (checkData.server_voted === false) {
+                voter.voted = false;
+                voter.voted_at = null;
+                voter.receipt_hash = null;
+              }
               dpt[voterIndex] = voter;
               this.saveDPT(dpt);
             }
@@ -1082,10 +1092,53 @@ class PemiluStorage {
     }
 
     if (voter.voted) {
-      return {
-        success: false,
-        error: `Hak suara untuk NPA ${cleanNpa} (${voter.name}) SUDAH DIGUNAKAN (VOTED) pada ${new Date(voter.voted_at).toLocaleString('id-ID')}. Suara hanya dapat diberikan satu kali.`
-      };
+      const isSyntheticOrCorrupt = !voter.voted_at || 
+                                  isNaN(new Date(voter.voted_at).getTime()) || 
+                                  new Date(voter.voted_at).getFullYear() <= 1970 ||
+                                  voter.receipt_hash === 'VERIFIED_DPT_MATCH' || 
+                                  voter.receipt_hash === 'VERIFIED_DPT_SYNC' || 
+                                  (typeof voter.voted_at === 'string' && (voter.voted_at.includes('28 Oktober') || voter.voted_at.includes('29 Oktober')));
+      
+      if (isSyntheticOrCorrupt) {
+        // Auto heal corrupt/synthetic lock in local storage!
+        voter.voted = false;
+        voter.voted_at = null;
+        voter.receipt_hash = null;
+        dpt[voterIndex].voted = false;
+        dpt[voterIndex].voted_at = null;
+        dpt[voterIndex].receipt_hash = null;
+        this.saveDPT(dpt);
+      } else {
+        // Double check with server to ensure this isn't a stale local lock
+        let genuineServerVote = true;
+        try {
+          if (typeof fetch !== 'undefined') {
+            const checkResp = await fetch('api/vote_sync.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'check_voter', npa: cleanNpa })
+            });
+            const checkData = await checkResp.json();
+            if (checkData && checkData.success && checkData.voted === false) {
+              genuineServerVote = false;
+              voter.voted = false;
+              voter.voted_at = null;
+              voter.receipt_hash = null;
+              dpt[voterIndex].voted = false;
+              dpt[voterIndex].voted_at = null;
+              dpt[voterIndex].receipt_hash = null;
+              this.saveDPT(dpt);
+            }
+          }
+        } catch (e) {}
+
+        if (genuineServerVote) {
+          return {
+            success: false,
+            error: `Hak suara untuk NPA ${cleanNpa} (${voter.name}) SUDAH DIGUNAKAN (VOTED) pada ${voter.voted_at ? new Date(voter.voted_at).toLocaleString('id-ID') : 'sesi sebelumnya'}. Suara hanya dapat diberikan satu kali.`
+          };
+        }
+      }
     }
 
     if (voter.claimed && voter.token) {
@@ -1173,7 +1226,10 @@ class PemiluStorage {
       // Auto-unlock synthetic/dummy votes from previous reconciliation
       const isSynthetic = voter.receipt_hash === 'VERIFIED_DPT_MATCH' || 
                           voter.receipt_hash === 'VERIFIED_DPT_SYNC' || 
-                          (voter.voted_at && (voter.voted_at.includes('28 Oktober') || voter.voted_at.includes('29 Oktober')));
+                          !voter.voted_at ||
+                          isNaN(new Date(voter.voted_at).getTime()) ||
+                          new Date(voter.voted_at).getFullYear() <= 1970 ||
+                          (typeof voter.voted_at === 'string' && (voter.voted_at.includes('28 Oktober') || voter.voted_at.includes('29 Oktober')));
       if (isSynthetic) {
         voter.voted = false;
         voter.voted_at = null;
@@ -1229,7 +1285,10 @@ class PemiluStorage {
     if (voter.voted) {
       const isSynthetic = voter.receipt_hash === 'VERIFIED_DPT_MATCH' || 
                           voter.receipt_hash === 'VERIFIED_DPT_SYNC' || 
-                          (voter.voted_at && (voter.voted_at.includes('28 Oktober') || voter.voted_at.includes('29 Oktober')));
+                          !voter.voted_at ||
+                          isNaN(new Date(voter.voted_at).getTime()) ||
+                          new Date(voter.voted_at).getFullYear() <= 1970 ||
+                          (typeof voter.voted_at === 'string' && (voter.voted_at.includes('28 Oktober') || voter.voted_at.includes('29 Oktober')));
       if (isSynthetic) {
         voter.voted = false;
         voter.voted_at = null;
