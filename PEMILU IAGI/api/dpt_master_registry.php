@@ -111,7 +111,7 @@ return [
   '01818' => ['name' => 'Undang Mardiana', 'email' => 'undang.mardiana@unpad.ac.id'],
   '01819' => ['name' => 'Meirince Pumama Simarmata', 'email' => ''],
   '01829' => ['name' => 'Ari Samodra', 'email' => 'arisamodra1212@gmail.com'],
-  '01838' => ['name' => 'Made Oka Iriana Pande', 'email' => 'pandeiriana@centrin.net.id'],
+  '01838' => ['name' => 'Made Oka Iriana Pande', 'email' => 'mdoka.iriana@gmail.com', 'alt_emails' => ['pandeiriana@centrin.net.id']],
   '01899' => ['name' => 'Yarmanto', 'email' => 'yarmantohardjosuparto@gmail.com'],
   '01918' => ['name' => 'Tumbur H p Nainggolan', 'email' => 'tumbur@jakarta.geoquest.slb.com'],
   '01920' => ['name' => 'Elly Evianti Guritno', 'email' => 'elly.guritno@gmail.com'],
