@@ -90,6 +90,7 @@ class VisitorTicket extends Model
             'sponsor' => 'TKT-SPN',
             'delegate' => 'TKT-DLG',
             'student_crowd' => 'TKT-CRWD',
+            'vip_companion' => 'TKT-VCMP',
             'non_exclusive' => 'TKT-VIS',
             'exclusive' => 'TKT-EXC',
             'iagi_member_professional' => 'TKT-IPRO',
@@ -171,6 +172,7 @@ class VisitorTicket extends Model
             'sponsor' => 'Delegate',
             'delegate' => 'Delegate',
             'student_crowd' => 'Student Crowd',
+            'vip_companion' => 'VIP Companion',
         ];
 
         return $map[$type] ?? ucwords(str_replace('_', ' ', $type));

@@ -333,6 +333,15 @@ const CATEGORY_META = {
         color: '#15803d',
         border: '#86efac',
     },
+
+    // 13. VIP Companion
+    vip_companion: {
+        label: 'VIP Companion',
+        shortLabel: 'VIP COMPANION',
+        bg: '#fef3c7',
+        color: '#92400e',
+        border: '#fde68a',
+    },
 };
 
 const getCategoryMeta = (type) => CATEGORY_META[type] || CATEGORY_META.non_exclusive;
@@ -360,6 +369,7 @@ const CATEGORY_PRICES = {
     'sponsor': 0,
     'delegate': 0,
     'student_crowd': 0,
+    'vip_companion': 0,
     'presenter': 0,
     'invited_speaker': 0,
     'student': 0,
@@ -2397,6 +2407,10 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="student_crowd" sx={{ pl: 2, fontSize: '0.82rem' }}>
                                     <Checkbox checked={typeFilter.indexOf('student_crowd') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
                                     <ListItemText primary="🎓 Student Crowd (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="vip_companion" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('vip_companion') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="⭐ VIP Companion (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
                                 </MenuItem>
                             </Select>
                         </FormControl>
@@ -4817,6 +4831,7 @@ export default function VisitorTicketsIndex({
                                                         <MenuItem value="board" sx={{ pl: 2.5, py: 0.8 }}>10. 🎖️ Board (Free)</MenuItem>
                                                         <MenuItem value="sponsorship" sx={{ pl: 2.5, py: 0.8 }}>11. 💎 Delegate (Free)</MenuItem>
                                                         <MenuItem value="student_crowd" sx={{ pl: 2.5, py: 0.8 }}>12. 🎓 Student Crowd (Free)</MenuItem>
+                                                        <MenuItem value="vip_companion" sx={{ pl: 2.5, py: 0.8 }}>13. ⭐ VIP Companion (Free)</MenuItem>
                                                     </Select>
                                                 </FormControl>
                                             </Grid>
@@ -5019,6 +5034,7 @@ export default function VisitorTicketsIndex({
                                         <MenuItem value="board">10. 🎖️ Board (Invited / Free)</MenuItem>
                                         <MenuItem value="sponsorship">11. 💎 Delegate (Invited / Free)</MenuItem>
                                         <MenuItem value="student_crowd">12. 🎓 Student Crowd (Invited / Free)</MenuItem>
+                                        <MenuItem value="vip_companion">13. ⭐ VIP Companion (Invited / Free)</MenuItem>
                                     </Select>
                                 </FormControl>
 
@@ -7253,6 +7269,7 @@ export default function VisitorTicketsIndex({
                     { type: 'board', label: '10. 🎖️ Board', code: 'TKT-BRD' },
                     { type: 'sponsorship', label: '11. 💎 Delegate', code: 'TKT-DLG' },
                     { type: 'student_crowd', label: '12. 🎓 Student Crowd', code: 'TKT-CRWD' },
+                    { type: 'vip_companion', label: '13. ⭐ VIP Companion', code: 'TKT-VCMP' },
                 ].map((item) => (
                     <MenuItem
                         key={item.type}

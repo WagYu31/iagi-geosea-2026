@@ -168,6 +168,16 @@ const CATEGORY_MAP = {
         tagBg: '#ecfdf5',
         tagColor: '#047857',
     },
+    vip_companion: {
+        label: 'VIP Companion',
+        badge: 'VIP COMPANION',
+        gradient: 'linear-gradient(135deg, #f59e0b 0%, #b45309 100%)',
+        border: '#f59e0b',
+        shadow: 'rgba(245, 158, 11, 0.25)',
+        textColor: '#d97706',
+        tagBg: '#fef3c7',
+        tagColor: '#92400e',
+    },
     // Conference / Standard Categories
     iagi_member_professional: {
         label: 'Professional (Member)',

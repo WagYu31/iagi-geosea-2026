@@ -64,6 +64,9 @@ export const BADGE_TEMPLATES = {
     // 12. Student Crowd
     student_crowd: '/images/badges/Student.png',
 
+    // 13. VIP Companion
+    vip_companion: '/images/badges/VIP.png',
+
     // Technical
     presenter: '/images/badges/Presenter.png',
     invited_speaker: '/images/badges/Invited_Speaker.png',
@@ -134,6 +137,9 @@ const CATEGORY_MAP = {
 
     // 13. Student Crowd
     student_crowd: { label: 'STUDENT CROWD', short: 'STUDENT CROWD' },
+
+    // 14. VIP Companion
+    vip_companion: { label: 'VIP COMPANION', short: 'VIP COMPANION' },
 };
 
 export const BADGE_VERSION = '20261031_original_clean_v9';

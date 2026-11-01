@@ -542,7 +542,7 @@ class VisitorTicketAdminController extends Controller
                 ['id' => 0, 'label' => 'Online Self-Reg', 'value' => VisitorTicket::where(function($q) { $q->where('registration_source', 'online_self')->orWhereNull('registration_source'); })->count(), 'color' => '#3b82f6'],
                 ['id' => 1, 'label' => 'Onsite Assisted', 'value' => VisitorTicket::where('registration_source', 'onsite_admin')->count(), 'color' => '#10b981'],
                 ['id' => 2, 'label' => 'Group Delegation', 'value' => VisitorTicket::whereHas('payment', fn($pq) => $pq->where('is_mixed_category', true))->count(), 'color' => '#8b5cf6'],
-                ['id' => 3, 'label' => 'Free / Invited', 'value' => VisitorTicket::whereIn('visitor_type', ['vip', 'keynote_speaker', 'speaker', 'session_chair', 'board', 'delegate', 'committee', 'student_volunteer', 'exhibition', 'student_crowd', 'non_exclusive'])->count(), 'color' => '#0d9488'],
+                ['id' => 3, 'label' => 'Free / Invited', 'value' => VisitorTicket::whereIn('visitor_type', ['vip', 'keynote_speaker', 'speaker', 'session_chair', 'board', 'delegate', 'committee', 'student_volunteer', 'exhibition', 'student_crowd', 'vip_companion', 'non_exclusive'])->count(), 'color' => '#0d9488'],
             ],
             'gateAttendance' => [
                 'checkedIn' => VisitorTicket::where('checked_in', true)->count(),
@@ -1043,6 +1043,7 @@ class VisitorTicketAdminController extends Controller
             'sponsor' => 'TKT-SPN',
             'delegate' => 'TKT-DLG',
             'student_crowd' => 'TKT-CRWD',
+            'vip_companion' => 'TKT-VCMP',
             'non_exclusive' => 'TKT-VIS',
             'exclusive' => 'TKT-EXC',
             'iagi_member_professional' => 'TKT-IPRO',
@@ -1378,6 +1379,7 @@ class VisitorTicketAdminController extends Controller
             'sponsor' => '/images/badges/Sponsorship.png',
             'delegate' => '/images/badges/Sponsorship.png',
             'student_crowd' => '/images/badges/Student.png',
+            'vip_companion' => '/images/badges/VIP.png',
             'iagi_member_professional' => '/images/badges/Participant.png',
             'non_iagi_member_professional' => '/images/badges/Participant.png',
             'iagi_member_expatriate' => '/images/badges/Participant.png',
@@ -2010,6 +2012,11 @@ class VisitorTicketAdminController extends Controller
             return 'student_crowd';
         }
 
+        // VIP Companion
+        if (str_contains($clean, 'companion') || (str_contains($clean, 'vip') && str_contains($clean, 'pendamping'))) {
+            return 'vip_companion';
+        }
+
         // Participant types
         if (str_contains($clean, 'dosen') || str_contains($clean, 'lecturer')) {
             return 'dosen';
@@ -2110,6 +2117,7 @@ class VisitorTicketAdminController extends Controller
                     'sponsor' => 'TKT-SPN',
                     'delegate' => 'TKT-DLG',
                     'student_crowd' => 'TKT-CRWD',
+                    'vip_companion' => 'TKT-VCMP',
                     'non_exclusive' => 'TKT-VIS',
                     'exclusive' => 'TKT-EXC',
                     'iagi_member_professional' => 'TKT-IPRO',
@@ -2314,6 +2322,7 @@ class VisitorTicketAdminController extends Controller
             'sponsor' => 'TKT-SPN',
             'delegate' => 'TKT-DLG',
             'student_crowd' => 'TKT-CRWD',
+            'vip_companion' => 'TKT-VCMP',
             'non_exclusive' => 'TKT-VIS',
             'exclusive' => 'TKT-EXC',
             'iagi_member_professional' => 'TKT-IPRO',
