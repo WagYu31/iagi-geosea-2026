@@ -2277,7 +2277,7 @@ if ($action === 'register_claim') {
 
     $fpLock = @fopen($lockFile, 'c+');
     if ($fpLock && @flock($fpLock, LOCK_EX)) {
-        $voters = readJsonFile($votersFile, []);
+        // If the voter has already voted, strictly reject any token re-issue
         if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
             flock($fpLock, LOCK_UN);
             fclose($fpLock);
@@ -2286,21 +2286,8 @@ if ($action === 'register_claim') {
             exit;
         }
 
-        // If already claimed, prevent token overwrite by different token UNLESS authorized by admin or re-issue request
-        $isAdmin = !empty($payload['is_admin']) || !empty($_SESSION['kpku_admin_logged_in']);
-        $forceUpdate = !empty($payload['force_update']) || $isAdmin;
-
-        if (isset($voters[$npa]) && !empty($voters[$npa]['token_hash'])) {
-            if ($voters[$npa]['token_hash'] !== $tokenHash) {
-                if (!$forceUpdate) {
-                    flock($fpLock, LOCK_UN);
-                    fclose($fpLock);
-                    http_response_code(409);
-                    echo json_encode(['success' => false, 'error' => 'Surat suara untuk NPA ini sudah diterbitkan sebelumnya. Gunakan token resmi yang telah dikirim ke email Anda.']);
-                    exit;
-                }
-            }
-        }
+        // If the voter has not voted yet, allow re-issuing or updating the token hash seamlessly.
+        // This ensures voters whose emails failed to arrive or whose sessions expired can re-claim without 409 conflict lockouts.
 
         $voters[$npa] = [
             'npa' => $npa,

@@ -576,16 +576,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       } catch (e) {}
 
-      // Show official email dispatched confirmation modal (Token is kept secret & not shown on-screen)
-      showEmailDispatchedModal(result.voter);
+      // Show official instant token & email dispatched confirmation modal
+      showEmailDispatchedModal(result.voter, result.token);
     });
   }
 
-  // Official Email Dispatched Confirmation Modal
+  // Official Email Dispatched & Instant Token Confirmation Modal
   const modalEmailSim = document.getElementById('modal-email-sim');
   const simEmailName = document.getElementById('sim-email-name');
   const simEmailNpa = document.getElementById('sim-email-npa');
   const simEmailRecipient = document.getElementById('sim-email-recipient');
+  const simEmailTokenVal = document.getElementById('sim-email-token-val');
+  const simBtnCopyToken = document.getElementById('sim-btn-copy-token');
+  const simCopyAlert = document.getElementById('sim-copy-alert');
+  const simCopyTokenLabel = document.getElementById('sim-copy-token-label');
   const simBtnOpenVote = document.getElementById('sim-btn-open-vote');
   const simBtnOpenInbox = document.getElementById('sim-btn-open-inbox');
   const simBtnResendEmail = document.getElementById('sim-btn-resend-email');
@@ -593,12 +597,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const simResendAlert = document.getElementById('sim-resend-alert');
   let resendCooldownTimer = null;
 
-  function showEmailDispatchedModal(voter) {
+  function showEmailDispatchedModal(voter, directToken = '') {
     if (!modalEmailSim) return;
+    const activeVoter = window.pemiluStorage ? window.pemiluStorage.getVoterByNpa(voter.npa) : voter;
+    const currentToken = directToken || voter.token || (activeVoter && activeVoter.token) || '';
+
     if (simEmailName) simEmailName.innerText = voter.name || '-';
     if (simEmailNpa) simEmailNpa.innerText = voter.npa || '-';
     if (simEmailRecipient) simEmailRecipient.innerText = voter.email || '-';
+    if (simEmailTokenVal) simEmailTokenVal.value = currentToken || 'IAGI-2026-TOKEN';
     if (simResendAlert) simResendAlert.style.display = 'none';
+    if (simCopyAlert) simCopyAlert.style.display = 'none';
+
+    if (simBtnCopyToken) {
+      simBtnCopyToken.onclick = () => {
+        const valToCopy = (simEmailTokenVal && simEmailTokenVal.value) ? simEmailTokenVal.value.trim() : currentToken;
+        if (!valToCopy) return;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(valToCopy);
+        } else {
+          simEmailTokenVal.select();
+          document.execCommand('copy');
+        }
+        triggerHaptic('success');
+        if (simCopyTokenLabel) simCopyTokenLabel.innerText = 'Tersalin!';
+        if (simCopyAlert) simCopyAlert.style.display = 'block';
+        setTimeout(() => {
+          if (simCopyTokenLabel) simCopyTokenLabel.innerText = 'Salin';
+          if (simCopyAlert) simCopyAlert.style.display = 'none';
+        }, 3000);
+      };
+    }
 
     if (simBtnOpenInbox) {
       simBtnOpenInbox.onclick = () => {
@@ -619,8 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
       simBtnOpenVote.onclick = () => {
         closeAllModals();
         // Navigasi ke bilik suara DENGAN token otomatis agar pemilih bisa langsung membuka kertas suara
-        const activeVoter = window.pemiluStorage ? window.pemiluStorage.getVoterByNpa(voter.npa) : voter;
-        const tokenToPass = (activeVoter && activeVoter.token) ? activeVoter.token : (voter.token || '');
+        const tokenToPass = (simEmailTokenVal && simEmailTokenVal.value) ? simEmailTokenVal.value.trim() : currentToken;
         navigateTo('vote', { npa: voter.npa, code: tokenToPass });
       };
     }
