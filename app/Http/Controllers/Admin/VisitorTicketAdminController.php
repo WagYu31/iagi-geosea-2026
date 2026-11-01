@@ -527,10 +527,10 @@ class VisitorTicketAdminController extends Controller
                 ['id' => 3, 'label' => 'Rejected', 'value' => VisitorPayment::where('status', 'rejected')->whereHas('tickets')->count(), 'color' => '#ef4444'],
             ],
             'revenueBreakdown' => [
-                'paidRevenue' => $realPaidRevenue,
-                'debtRevenue' => $finalDebtRevenue,
+                'paidRevenue' => $statsRealPaidRevenue,
+                'debtRevenue' => $statsDebtTotalRevenue,
                 'debtInvoiceRevenue' => (float) VisitorPayment::where('is_debt', true)->whereHas('tickets')->sum('total_amount'),
-                'grandTotalRevenue' => $grandTotalRevenue,
+                'grandTotalRevenue' => $statsGrandTotalRevenue,
                 'pendingRevenue' => (float) VisitorPayment::where('status', 'pending')->where('is_debt', false)->whereHas('tickets')->sum('total_amount'),
             ],
             'sourceDistribution' => [
