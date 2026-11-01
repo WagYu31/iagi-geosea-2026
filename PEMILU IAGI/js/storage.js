@@ -338,37 +338,9 @@ class PemiluStorage {
     }
   }
 
-  // Rekonsiliasi DPT lokal secara instan agar jumlah pemilih berstatus voted selalu selaras 1:1 dengan total surat suara
+  // Rekonsiliasi DPT lokal dinonaktifkan: Menjamin hak suara pemilih riil di DPT tidak pernah terkunci secara otomatis
   reconcileLocalDptWithResults(totalVotes) {
-    if (!totalVotes || totalVotes <= 0) return;
-    try {
-      const dpt = this.getDPT();
-      const currentVoted = dpt.filter(v => v && v.voted).length;
-      if (currentVoted >= totalVotes) return;
-
-      let deficit = totalVotes - currentVoted;
-      let changed = false;
-      for (let i = 0; i < dpt.length && deficit > 0; i++) {
-        if (!dpt[i].voted) {
-          dpt[i].voted = true;
-          dpt[i].claimed = true;
-          dpt[i].token = null;
-          if (!dpt[i].voted_at) {
-            dpt[i].voted_at = '28 Oktober 2026, 14:18:00 WIB';
-          }
-          if (!dpt[i].receipt_hash) {
-            dpt[i].receipt_hash = 'VERIFIED_DPT_MATCH';
-          }
-          deficit--;
-          changed = true;
-        }
-      }
-      if (changed) {
-        this.saveDPT(dpt);
-      }
-    } catch (e) {
-      console.warn('reconcileLocalDptWithResults error:', e);
-    }
+    return;
   }
 
   // Sinkronisasi hasil tabulasi & kotak suara (HANYA untuk Admin Dashboard atau Halaman Hasil Pleno Resmi)
@@ -1195,12 +1167,30 @@ class PemiluStorage {
     }
 
     if (voter.voted) {
-      const timeStr = voter.voted_at ? new Date(voter.voted_at).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' }) : '';
-      return { 
-        valid: false, 
-        alreadyVoted: true,
-        error: `Hak suara untuk NPA ${cleanNpa} (${voter.name}) SUDAH DIGUNAKAN${timeStr ? ' pada ' + timeStr : ''}. Sesuai asas LUBER-JURDIL, setiap anggota terdaftar hanya memiliki 1 (satu) hak suara yang tidak dapat digunakan berulang.` 
-      };
+      // Auto-unlock synthetic/dummy votes from previous reconciliation
+      const isSynthetic = voter.receipt_hash === 'VERIFIED_DPT_MATCH' || 
+                          voter.receipt_hash === 'VERIFIED_DPT_SYNC' || 
+                          (voter.voted_at && (voter.voted_at.includes('28 Oktober') || voter.voted_at.includes('29 Oktober')));
+      if (isSynthetic) {
+        voter.voted = false;
+        voter.voted_at = null;
+        voter.receipt_hash = null;
+        const dptList = this.getDPT();
+        const vIdx = dptList.findIndex(v => String(v.npa || '').trim().toUpperCase() === cleanNpa);
+        if (vIdx !== -1) {
+          dptList[vIdx].voted = false;
+          dptList[vIdx].voted_at = null;
+          dptList[vIdx].receipt_hash = null;
+          this.saveDPT(dptList);
+        }
+      } else {
+        const timeStr = voter.voted_at ? new Date(voter.voted_at).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' }) : '';
+        return { 
+          valid: false, 
+          alreadyVoted: true,
+          error: `Hak suara untuk NPA ${cleanNpa} (${voter.name}) SUDAH DIGUNAKAN${timeStr ? ' pada ' + timeStr : ''}. Sesuai asas LUBER-JURDIL, setiap anggota terdaftar hanya memiliki 1 (satu) hak suara yang tidak dapat digunakan berulang.` 
+        };
+      }
     }
 
     if (!voter.claimed || !voter.token) {
@@ -1234,10 +1224,23 @@ class PemiluStorage {
 
     // Double check to strictly prevent double voting
     if (voter.voted) {
-      return {
-        success: false,
-        error: `Hak suara untuk NPA ${cleanNpa} (${voter.name}) SUDAH DIGUNAKAN pada ${voter.voted_at || 'sesi sebelumnya'}. Sistem menolak pemungutan suara berulang demi integritas LUBER-JURDIL.`
-      };
+      const isSynthetic = voter.receipt_hash === 'VERIFIED_DPT_MATCH' || 
+                          voter.receipt_hash === 'VERIFIED_DPT_SYNC' || 
+                          (voter.voted_at && (voter.voted_at.includes('28 Oktober') || voter.voted_at.includes('29 Oktober')));
+      if (isSynthetic) {
+        voter.voted = false;
+        voter.voted_at = null;
+        voter.receipt_hash = null;
+        dpt[voterIndex].voted = false;
+        dpt[voterIndex].voted_at = null;
+        dpt[voterIndex].receipt_hash = null;
+        this.saveDPT(dpt);
+      } else {
+        return {
+          success: false,
+          error: `Hak suara untuk NPA ${cleanNpa} (${voter.name}) SUDAH DIGUNAKAN pada ${voter.voted_at || 'sesi sebelumnya'}. Sistem menolak pemungutan suara berulang demi integritas LUBER-JURDIL.`
+        };
+      }
     }
 
     const timestamp = Date.now();
