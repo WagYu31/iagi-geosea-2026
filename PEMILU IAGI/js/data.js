@@ -10275,8 +10275,14 @@ const INITIAL_DPT = [
   {
     "npa": "04640",
     "name": "Prof. Husnul Kausarian, M.Sc, Ph.D",
-    "email": "ka***@yahoo.com",
-    "email_hash": "ca177e8748c52782b15ad8c071c1c8864f605d021a501f05d6f3caafccb75c31",
+    "email": "husnulkausarian@eng.uir.ac.id",
+    "email_hash": "7cc5bf0ce1156d2b8a470b8a0e57db3a42b77a11a83e4a0e97243f7a0dddc1e9",
+    "alt_emails": [
+      "kausarianhusnul@yahoo.com"
+    ],
+    "alt_email_hashes": [
+      "ca177e8748c52782b15ad8c071c1c8864f605d021a501f05d6f3caafccb75c31"
+    ],
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
