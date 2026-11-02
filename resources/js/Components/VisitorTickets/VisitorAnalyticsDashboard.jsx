@@ -301,28 +301,6 @@ export default function VisitorAnalyticsDashboard({
     // ── 6. REAL DATA: HIGH VALUE DEALS TABLE ──
     const highValueInvoices = analytics.highValueInvoices || [];
 
-    // ── 7. REAL DATA: MONTHLY VELOCITY FOR DEAL VALUE ──
-    const rawMonthlyVelocity = analytics.monthlyVelocity || [];
-    const baseMonthlyVelocity = useMemo(() => {
-        if (rawMonthlyVelocity.length > 0) return rawMonthlyVelocity;
-        return [
-            { month: 'Aug', lunas: 45, pending: 15, total: 60 },
-            { month: 'Sep', lunas: 120, pending: 40, total: 160 },
-            { month: 'Okt', lunas: ticketActive, pending: ticketPending, total: totalVisitors },
-        ];
-    }, [rawMonthlyVelocity, ticketActive, ticketPending, totalVisitors]);
-
-    const filteredMonthlyVelocity = useMemo(() => {
-        if (dealValuePeriod === 'month') return baseMonthlyVelocity.slice(-1);
-        if (dealValuePeriod === 'q4') return baseMonthlyVelocity.slice(-3);
-        return baseMonthlyVelocity;
-    }, [baseMonthlyVelocity, dealValuePeriod]);
-
-    const maxMonthTotal = useMemo(() => {
-        const counts = filteredMonthlyVelocity.map((m) => m.total);
-        return Math.max(...(counts.length ? counts : [1]), 1);
-    }, [filteredMonthlyVelocity]);
-
     // ── 8. POWER BI ENHANCED DATA SETS ──
     const hourlyAttendance = useMemo(() => {
         if (analytics.hourlyAttendance && analytics.hourlyAttendance.length > 0) {
@@ -589,7 +567,7 @@ export default function VisitorAnalyticsDashboard({
                 <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
                     <Button
                         component="a"
-                        href={route('admin.visitorTickets.export')}
+                        href={typeof route === 'function' ? route('admin.visitorTickets.export') : '/admin/visitor-tickets/export'}
                         variant="outlined"
                         startIcon={<FileDownloadOutlinedIcon sx={{ fontSize: 18 }} />}
                         sx={{
@@ -1473,7 +1451,7 @@ export default function VisitorAnalyticsDashboard({
                         <Typography sx={{ fontSize: '1.45rem', fontWeight: 900, color: textPrimary, letterSpacing: '-0.02em', my: 0.3 }}>
                             {gate.checkedIn}{' '}
                             <span style={{ fontSize: '0.85rem', fontWeight: 600, color: textSecondary }}>
-                                / {totalVisitors} ({gate.percentage.toFixed(1)}%)
+                                / {totalVisitors} ({Number(gate.percentage || 0).toFixed(1)}%)
                             </span>
                         </Typography>
 
@@ -1489,7 +1467,7 @@ export default function VisitorAnalyticsDashboard({
                             </Box>
                             <LinearProgress
                                 variant="determinate"
-                                value={Math.min(100, gate.percentage)}
+                                value={Math.min(100, Number(gate.percentage || 0))}
                                 sx={{ height: 6, borderRadius: 3, bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0', '& .MuiLinearProgress-bar': { bgcolor: '#06b6d4', borderRadius: 3 } }}
                             />
                         </Box>
@@ -1541,7 +1519,7 @@ export default function VisitorAnalyticsDashboard({
                         <Typography sx={{ fontSize: '1.45rem', fontWeight: 900, color: textPrimary, letterSpacing: '-0.02em', my: 0.3 }}>
                             {email.sent}{' '}
                             <span style={{ fontSize: '0.85rem', fontWeight: 600, color: textSecondary }}>
-                                / {totalVisitors} ({email.percentage.toFixed(1)}%)
+                                / {totalVisitors} ({Number(email.percentage || 0).toFixed(1)}%)
                             </span>
                         </Typography>
 
@@ -1557,7 +1535,7 @@ export default function VisitorAnalyticsDashboard({
                             </Box>
                             <LinearProgress
                                 variant="determinate"
-                                value={Math.min(100, email.percentage)}
+                                value={Math.min(100, Number(email.percentage || 0))}
                                 sx={{ height: 6, borderRadius: 3, bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0', '& .MuiLinearProgress-bar': { bgcolor: '#8b5cf6', borderRadius: 3 } }}
                             />
                         </Box>
@@ -2351,7 +2329,7 @@ export default function VisitorAnalyticsDashboard({
 
                             <Box sx={{ mt: 'auto', p: 1.5, borderRadius: '12px', bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc', border: `1px solid ${cardBorder}` }}>
                                 <Typography sx={{ fontSize: '0.74rem', color: textSecondary }}>
-                                    💡 <strong>Evaluasi Funnel:</strong> Konversi pembayaran lunas sangat solid di angka <strong>83%</strong>. Perhatian difokuskan pada tahap pengiriman E-Tiket ke email peserta ({email.percentage.toFixed(1)}%) dan kelancaran turnstile gate saat jam masuk.
+                                    💡 <strong>Evaluasi Funnel:</strong> Konversi pembayaran lunas sangat solid di angka <strong>83%</strong>. Perhatian difokuskan pada tahap pengiriman E-Tiket ke email peserta ({Number(email.percentage || 0).toFixed(1)}%) dan kelancaran turnstile gate saat jam masuk.
                                 </Typography>
                             </Box>
                         </Card>
