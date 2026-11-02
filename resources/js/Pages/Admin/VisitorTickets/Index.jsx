@@ -10,6 +10,7 @@ import {
     Card,
     CardContent,
     Button,
+    ButtonGroup,
     Grid,
     Chip,
     Table,
@@ -88,6 +89,9 @@ import SaveIcon from '@mui/icons-material/Save';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import DiscountIcon from '@mui/icons-material/Discount';
 import PercentIcon from '@mui/icons-material/Percent';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import InsightsRoundedIcon from '@mui/icons-material/InsightsRounded';
 import TableChartRoundedIcon from '@mui/icons-material/TableChartRounded';
 import VisitorAnalyticsDashboard from '@/Components/VisitorTickets/VisitorAnalyticsDashboard';
@@ -644,6 +648,51 @@ export default function VisitorTicketsIndex({
     const [qrExporting, setQrExporting] = useState(false);
     const [qrExportProgress, setQrExportProgress] = useState({ current: 0, total: 0, text: '' });
     const [singleDownloadingId, setSingleDownloadingId] = useState(null);
+
+    // Horizontal table scroll sync & navigation refs
+    const tableContainerRef = useRef(null);
+    const topScrollRef = useRef(null);
+    const isMouseDownTable = useRef(false);
+    const startXTable = useRef(0);
+    const scrollLeftTable = useRef(0);
+
+    const handleScrollTable = (direction) => {
+        if (tableContainerRef.current) {
+            const offset = direction === 'left' ? -380 : 380;
+            tableContainerRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+        }
+    };
+
+    const handleTopScroll = (e) => {
+        if (tableContainerRef.current) {
+            tableContainerRef.current.scrollLeft = e.target.scrollLeft;
+        }
+    };
+
+    const handleTableScroll = (e) => {
+        if (topScrollRef.current) {
+            topScrollRef.current.scrollLeft = e.target.scrollLeft;
+        }
+    };
+
+    const handleMouseDownTable = (e) => {
+        if (e.target.closest('button, a, input, [role="button"], svg, td.sticky-action-cell')) return;
+        isMouseDownTable.current = true;
+        startXTable.current = e.pageX - (tableContainerRef.current?.offsetLeft || 0);
+        scrollLeftTable.current = tableContainerRef.current?.scrollLeft || 0;
+    };
+
+    const handleMouseMoveTable = (e) => {
+        if (!isMouseDownTable.current || !tableContainerRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - (tableContainerRef.current.offsetLeft || 0);
+        const walk = (x - startXTable.current) * 1.5;
+        tableContainerRef.current.scrollLeft = scrollLeftTable.current - walk;
+    };
+
+    const handleMouseUpTable = () => {
+        isMouseDownTable.current = false;
+    };
 
     // Import Excel Modal state
     const [importModalOpen, setImportModalOpen] = useState(false);
@@ -3160,20 +3209,101 @@ export default function VisitorTicketsIndex({
                                     Kembali ke 25 / hal
                                 </Button>
                             )}
+
+                            {/* Tombol Geser Tabel Horizontal Cepat */}
+                            <ButtonGroup size="small" variant="outlined" sx={{ bgcolor: '#ffffff', borderRadius: '8px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                                <Tooltip title="Geser tabel ke kiri" arrow>
+                                    <Button
+                                        onClick={() => handleScrollTable('left')}
+                                        startIcon={<ChevronLeftIcon sx={{ fontSize: 17 }} />}
+                                        sx={{
+                                            textTransform: 'none',
+                                            fontSize: '0.74rem',
+                                            fontWeight: 700,
+                                            color: '#475569',
+                                            borderColor: '#cbd5e1',
+                                            height: 32,
+                                            px: 1.2,
+                                            '&:hover': { bgcolor: '#f1f5f9', borderColor: '#94a3b8' }
+                                        }}
+                                    >
+                                        Geser Kiri
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Geser tabel ke kanan untuk melihat kolom Aksi & Cetak" arrow>
+                                    <Button
+                                        onClick={() => handleScrollTable('right')}
+                                        endIcon={<ChevronRightIcon sx={{ fontSize: 17 }} />}
+                                        sx={{
+                                            textTransform: 'none',
+                                            fontSize: '0.74rem',
+                                            fontWeight: 800,
+                                            color: '#094d42',
+                                            borderColor: '#a7f3d0',
+                                            bgcolor: '#ecfdf5',
+                                            height: 32,
+                                            px: 1.2,
+                                            '&:hover': { bgcolor: '#d1fae5', borderColor: '#6ee7b7' }
+                                        }}
+                                    >
+                                        Geser Kanan ➔
+                                    </Button>
+                                </Tooltip>
+                            </ButtonGroup>
+                        </Box>
+                    </Box>
+
+                    {/* Synchronized Top Horizontal Scrollbar (Memudahkan laptop tanpa perlu scroll ke bawah) */}
+                    <Box
+                        ref={topScrollRef}
+                        onScroll={handleTopScroll}
+                        sx={{
+                            width: '100%',
+                            overflowX: 'auto',
+                            overflowY: 'hidden',
+                            bgcolor: '#f8fafc',
+                            borderTop: '1px solid #e2e8f0',
+                            borderBottom: '1px solid #e2e8f0',
+                            py: 0.5,
+                            px: 1.5,
+                            display: 'flex',
+                            alignItems: 'center',
+                            cursor: 'ew-resize',
+                            '&::-webkit-scrollbar': { height: 10 },
+                            '&::-webkit-scrollbar-track': { bgcolor: '#e2e8f0', borderRadius: 5 },
+                            '&::-webkit-scrollbar-thumb': {
+                                bgcolor: '#094d42',
+                                borderRadius: 5,
+                                '&:hover': { bgcolor: '#063830' },
+                            },
+                        }}
+                    >
+                        <Box sx={{ minWidth: 1550, height: 16, display: 'flex', alignItems: 'center' }}>
+                            <Typography variant="caption" sx={{ color: '#475569', fontSize: '0.72rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.8 }}>
+                                <SwapHorizIcon sx={{ fontSize: 16, color: '#094d42' }} />
+                                <span><strong>Navigasi Geser:</strong> Geser scrollbar hijau ini untuk melihat kolom kanan/kiri tanpa perlu scroll ke bawah tabel (atau gunakan tombol <em>Geser Kanan</em> di atas / tahan <em>Shift + putar roda mouse</em>).</span>
+                            </Typography>
                         </Box>
                     </Box>
 
                     <TableContainer
+                        ref={tableContainerRef}
+                        onScroll={handleTableScroll}
+                        onMouseDown={handleMouseDownTable}
+                        onMouseMove={handleMouseMoveTable}
+                        onMouseUp={handleMouseUpTable}
+                        onMouseLeave={handleMouseUpTable}
                         sx={{
                             width: '100%',
                             overflowX: 'auto',
                             WebkitOverflowScrolling: 'touch',
-                            '&::-webkit-scrollbar': { height: 8 },
+                            cursor: 'default',
+                            '&::-webkit-scrollbar': { height: 10 },
                             '&::-webkit-scrollbar-track': { bgcolor: '#f1f5f9' },
                             '&::-webkit-scrollbar-thumb': {
-                                bgcolor: '#cbd5e1',
-                                borderRadius: 4,
-                                '&:hover': { bgcolor: '#94a3b8' },
+                                bgcolor: '#094d42',
+                                borderRadius: 5,
+                                '&:hover': { bgcolor: '#063830' },
                             },
                         }}
                     >
@@ -3203,7 +3333,25 @@ export default function VisitorTicketsIndex({
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>TICKET STATUS</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>PAYMENT</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>CHECK-IN GATE</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', textAlign: 'center', whiteSpace: 'nowrap' }}>ACTIONS</TableCell>
+                                    <TableCell 
+                                        sx={{ 
+                                            fontWeight: 900, 
+                                            fontSize: '0.72rem', 
+                                            color: '#094d42', 
+                                            letterSpacing: '0.05em', 
+                                            textAlign: 'center', 
+                                            whiteSpace: 'nowrap',
+                                            position: 'sticky',
+                                            right: 0,
+                                            zIndex: 4,
+                                            bgcolor: '#f1f5f9',
+                                            borderLeft: '2px solid #cbd5e1',
+                                            boxShadow: '-4px 0 8px -2px rgba(0,0,0,0.1)',
+                                            minWidth: 160,
+                                        }}
+                                    >
+                                        ACTIONS (AKSI)
+                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -3236,9 +3384,15 @@ export default function VisitorTicketsIndex({
                                                     '&:hover': {
                                                         bgcolor: isSelected ? '#fee2e2 !important' : '#f8fafc',
                                                     },
+                                                    '&:hover .sticky-action-cell': {
+                                                        bgcolor: isSelected ? '#fee2e2 !important' : '#f8fafc !important',
+                                                    },
                                                     '&.Mui-selected': {
                                                         bgcolor: '#fef2f2 !important',
                                                         '&:hover': { bgcolor: '#fee2e2 !important' },
+                                                    },
+                                                    '&.Mui-selected .sticky-action-cell': {
+                                                        bgcolor: '#fef2f2 !important',
                                                     },
                                                 }}
                                             >
@@ -3840,8 +3994,23 @@ export default function VisitorTicketsIndex({
                                                     )}
                                                 </TableCell>
 
-                                                {/* 3D ACTION BUTTONS */}
-                                                <TableCell sx={{ py: 1.2, textAlign: 'center', whiteSpace: 'nowrap', minWidth: 160 }}>
+                                                {/* 3D ACTION BUTTONS - STICKY RIGHT */}
+                                                <TableCell 
+                                                    className="sticky-action-cell"
+                                                    sx={{ 
+                                                        py: 1.2, 
+                                                        textAlign: 'center', 
+                                                        whiteSpace: 'nowrap', 
+                                                        minWidth: 160,
+                                                        position: 'sticky',
+                                                        right: 0,
+                                                        zIndex: 2,
+                                                        bgcolor: isSelected ? '#fef2f2' : '#ffffff',
+                                                        borderLeft: '2px solid #e2e8f0',
+                                                        boxShadow: '-6px 0 12px -4px rgba(0,0,0,0.12)',
+                                                        transition: 'background-color 0.15s ease',
+                                                    }}
+                                                >
                                                     <Stack direction="row" spacing={0.4} justifyContent="center" sx={{ flexWrap: 'nowrap' }}>
                                                         {/* Verify/Reject for Pending Payments */}
                                                         {t.payment && t.payment.status === 'pending' && (
