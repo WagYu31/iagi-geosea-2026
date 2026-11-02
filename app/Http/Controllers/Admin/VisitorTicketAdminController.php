@@ -644,6 +644,8 @@ class VisitorTicketAdminController extends Controller
                 'non_iagi_member_expatriate' => 7000000,
                 'student_undergraduate' => 1000000,
                 'dosen' => 1500000,
+                'professional' => 1500000,
+                'professional_1500' => 1500000,
             ];
 
             $isPaidCategory = isset($paidCategories[$type]);
@@ -1026,6 +1028,8 @@ class VisitorTicketAdminController extends Controller
             'non_iagi_member_expatriate' => 7000000,
             'student_undergraduate' => 1000000,
             'dosen' => 1500000,
+            'professional' => 1500000,
+            'professional_1500' => 1500000,
             'exclusive' => 500000,
         ];
 
@@ -1053,6 +1057,8 @@ class VisitorTicketAdminController extends Controller
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
             'dosen' => 'TKT-DOSN',
+            'professional' => 'TKT-PRO',
+            'professional_1500' => 'TKT-PRO',
             // Technical
             'student' => 'TKT-PRS',
             'presenter' => 'TKT-PRS',
@@ -1387,6 +1393,8 @@ class VisitorTicketAdminController extends Controller
             'non_iagi_member_expatriate' => '/images/badges/Participant.png',
             'student_undergraduate' => '/images/badges/Student.png',
             'dosen' => '/images/badges/Participant.png',
+            'professional' => '/images/badges/Participant.png',
+            'professional_1500' => '/images/badges/Participant.png',
             'student' => '/images/badges/Student.png',
             'student_postgraduate' => '/images/badges/Participant.png',
             'general_ticket' => '/images/badges/Participant.png',
@@ -2127,6 +2135,8 @@ class VisitorTicketAdminController extends Controller
                     'non_iagi_member_expatriate' => 'TKT-NEXP',
                     'student_undergraduate' => 'TKT-STUD',
                     'dosen' => 'TKT-DOSN',
+            'professional' => 'TKT-PRO',
+            'professional_1500' => 'TKT-PRO',
                     // Technical
                     'student' => 'TKT-PRS',
                     'presenter' => 'TKT-PRS',
@@ -2304,6 +2314,8 @@ class VisitorTicketAdminController extends Controller
             'non_iagi_member_expatriate' => 7000000,
             'student_undergraduate' => 1000000,
             'dosen' => 1500000,
+            'professional' => 1500000,
+            'professional_1500' => 1500000,
             'exclusive' => 500000,
         ];
         $indPrice = $paidCategories[$vType] ?? 0;
@@ -2332,6 +2344,8 @@ class VisitorTicketAdminController extends Controller
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
             'dosen' => 'TKT-DOSN',
+            'professional' => 'TKT-PRO',
+            'professional_1500' => 'TKT-PRO',
             // Technical
             'student' => 'TKT-PRS',
             'presenter' => 'TKT-PRS',

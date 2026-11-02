@@ -594,6 +594,8 @@ class BadgeApiController extends Controller
             'delegate' => 'DELEGATE',
             'student_undergraduate' => 'STUDENT',
             'dosen' => 'DOSEN',
+            'professional' => 'PROFESSIONAL',
+            'professional_1500' => 'PROFESSIONAL',
             'student_crowd' => 'STUDENT',
             'vip_companion' => 'VIP COMPANION',
             'student' => 'PRESENTER',
@@ -651,6 +653,8 @@ class BadgeApiController extends Controller
             'non_iagi_member_expatriate' => 'Participant.png',
             'student_postgraduate' => 'Participant.png',
             'dosen' => 'Participant.png',
+            'professional' => 'Participant.png',
+            'professional_1500' => 'Participant.png',
             'general_ticket' => 'Participant.png',
         ];
 

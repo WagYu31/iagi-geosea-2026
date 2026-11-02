@@ -99,6 +99,8 @@ class VisitorTicket extends Model
             'non_iagi_member_expatriate' => 'TKT-NEXP',
             'student_undergraduate' => 'TKT-STUD',
             'dosen' => 'TKT-DOSN',
+            'professional' => 'TKT-PRO',
+            'professional_1500' => 'TKT-PRO',
             // Technical
             'student' => 'TKT-PRS',
             'presenter' => 'TKT-PRS',
@@ -139,6 +141,8 @@ class VisitorTicket extends Model
             'non_iagi_member_expatriate' => 'Expatriate (Non-Member)',
             'student_undergraduate' => 'Student Undergraduate',
             'dosen' => 'Dosen',
+            'professional' => 'Professional',
+            'professional_1500' => 'Professional',
 
             // 2. Technical
             'student' => 'Presenter',

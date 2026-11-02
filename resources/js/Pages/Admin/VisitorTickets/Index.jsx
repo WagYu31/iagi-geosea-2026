@@ -136,6 +136,20 @@ const CATEGORY_META = {
         color: '#b45309',
         border: '#fde68a',
     },
+    professional: {
+        label: 'Participant - Professional',
+        shortLabel: 'PROFESSIONAL',
+        bg: '#ecfdf5',
+        color: '#065f46',
+        border: '#a7f3d0',
+    },
+    professional_1500: {
+        label: 'Participant - Professional',
+        shortLabel: 'PROFESSIONAL',
+        bg: '#ecfdf5',
+        color: '#065f46',
+        border: '#a7f3d0',
+    },
 
 
     // 2. Technical (Free / Invited)
@@ -356,6 +370,8 @@ const CATEGORY_PRICES = {
     'non_iagi_member_expatriate': 7000000,
     'student_undergraduate': 1000000,
     'dosen': 1500000,
+    'professional': 1500000,
+    'professional_1500': 1500000,
     'exclusive': 500000,
     'non_exclusive': 0,
     'vip': 0,
@@ -2424,6 +2440,10 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="dosen" sx={{ pl: 2, fontSize: '0.82rem' }}>
                                     <Checkbox checked={typeFilter.indexOf('dosen') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
                                     <ListItemText primary="Dosen" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="professional" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('professional') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="Professional (Rp 1.500.000)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
                                 </MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
@@ -4913,6 +4933,14 @@ export default function VisitorTicketsIndex({
                                                                 <Chip label="Rp 1.500.000" size="small" sx={{ bgcolor: '#fef3c7', color: '#b45309', fontWeight: 900, fontFamily: 'monospace', height: 20, fontSize: '0.68rem' }} />
                                                             </Box>
                                                         </MenuItem>
+                                                        <MenuItem value="professional" sx={{ pl: 2.5, py: 1 }}>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+                                                                <Typography variant="body2" sx={{ fontWeight: 700, color: '#065f46', fontSize: '0.82rem' }}>
+                                                                    • Professional
+                                                                </Typography>
+                                                                <Chip label="Rp 1.500.000" size="small" sx={{ bgcolor: '#ecfdf5', color: '#065f46', fontWeight: 900, fontFamily: 'monospace', height: 20, fontSize: '0.68rem' }} />
+                                                            </Box>
+                                                        </MenuItem>
 
                                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                                             2. TECHNICAL (FREE / INVITED)
@@ -5144,6 +5172,7 @@ export default function VisitorTicketsIndex({
                                         <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 3 }}>• Expatriate (Non-Member) - Rp 7.000.000</MenuItem>
                                         <MenuItem value="student_undergraduate" sx={{ pl: 3 }}>• Student Undergraduate - Rp 1.000.000</MenuItem>
                                         <MenuItem value="dosen" sx={{ pl: 3 }}>• Dosen - Rp 1.500.000</MenuItem>
+                                        <MenuItem value="professional" sx={{ pl: 3 }}>• Professional - Rp 1.500.000</MenuItem>
 
                                         <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
                                             2. TECHNICAL
@@ -7581,6 +7610,26 @@ export default function VisitorTicketsIndex({
                         </Box>
                         <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
                             Kode: TKT-DOSN
+                        </Typography>
+                    </Box>
+                </MenuItem>
+
+                <MenuItem
+                    onClick={() => handleSelectCategory('professional')}
+                    selected={selectedTicketForCategory?.visitor_type === 'professional'}
+                    sx={{ py: 0.8, px: 2, borderRadius: '8px', m: 0.3 }}
+                >
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#065f46', fontSize: '0.8rem' }}>
+                                Professional
+                            </Typography>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', fontFamily: 'monospace' }}>
+                                Rp 1.500.000
+                            </Typography>
+                        </Box>
+                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.68rem' }}>
+                            Kode: TKT-PRO
                         </Typography>
                     </Box>
                 </MenuItem>
