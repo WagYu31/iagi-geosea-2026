@@ -722,6 +722,7 @@ class VisitorTicketAdminController extends Controller
                     }
                 }
 
+                $isPending = ($request->payment_status === 'pending');
                 $paymentData = [
                     'payment_code' => 'ONSITE-' . date('ymd') . '-' . strtoupper(Str::random(6)),
                     'payment_method' => 'cash_onsite',
@@ -729,8 +730,11 @@ class VisitorTicketAdminController extends Controller
                     'price_per_ticket' => $price,
                     'unique_code' => $uniqueCode,
                     'total_amount' => $totalAmount,
-                    'status' => $request->payment_status === 'pending' ? 'pending' : 'approved',
-                    'verified_at' => $request->payment_status === 'pending' ? null : now(),
+                    'status' => $isPending ? 'pending' : 'approved',
+                    'is_debt' => $isPending,
+                    'debt_notes' => $isPending ? 'Registrasi Onsite Belum Bayar (Tanggungan)' : null,
+                    'debt_settled_at' => null,
+                    'verified_at' => $isPending ? null : now(),
                     'verified_by_admin_id' => Auth::id(),
                     'proof_of_payment' => $proofPath,
                     'original_file_size_kb' => $originalSize,
@@ -886,9 +890,12 @@ class VisitorTicketAdminController extends Controller
         }
 
         // Handle debt status
+        $debtSettled = false;
         if ($request->boolean('settle_debt')) {
             $dataToUpdate['is_debt'] = false;
+            $dataToUpdate['debt_notes'] = null;
             $dataToUpdate['debt_settled_at'] = now();
+            $debtSettled = true;
         } elseif ($request->has('is_debt')) {
             $isDebt = $request->boolean('is_debt');
             $dataToUpdate['is_debt'] = $isDebt;
@@ -896,23 +903,29 @@ class VisitorTicketAdminController extends Controller
                 $dataToUpdate['debt_notes'] = $request->input('debt_notes');
                 $dataToUpdate['debt_settled_at'] = null;
             } else {
+                $dataToUpdate['debt_notes'] = null;
                 $dataToUpdate['debt_settled_at'] = now();
+                $debtSettled = true;
             }
         }
 
         if ($request->filled('status')) {
             $status = $request->input('status');
             $dataToUpdate['status'] = $status;
-            if ($status === 'approved' && !$payment->verified_at) {
-                $dataToUpdate['verified_at'] = now();
-                $dataToUpdate['verified_by_admin_id'] = Auth::id();
-            }
+        } elseif ($debtSettled && ($payment->status === 'pending' || !isset($dataToUpdate['status']))) {
+            // Automatically promote to approved when debt is cleared if not rejected
+            $dataToUpdate['status'] = 'approved';
+        }
+
+        if (isset($dataToUpdate['status']) && $dataToUpdate['status'] === 'approved' && !$payment->verified_at) {
+            $dataToUpdate['verified_at'] = now();
+            $dataToUpdate['verified_by_admin_id'] = Auth::id();
         }
 
         $payment->update($dataToUpdate);
 
-        // If status is approved, ensure tickets are active
-        if ($payment->status === 'approved') {
+        // If status is approved or debt was cleared, ensure tickets are active
+        if ($payment->status === 'approved' || $debtSettled) {
             VisitorTicket::where('payment_id', $payment->id)->where('status', '!=', 'active')->update([
                 'status' => 'active',
             ]);
@@ -931,13 +944,33 @@ class VisitorTicketAdminController extends Controller
         $isDebt = $request->boolean('is_debt');
         $debtNotes = $request->input('debt_notes');
 
-        $payment->update([
+        $updateData = [
             'is_debt' => $isDebt,
             'debt_notes' => $isDebt ? $debtNotes : null,
             'debt_settled_at' => $isDebt ? null : now(),
-        ]);
+        ];
 
-        $msg = $isDebt ? 'Pembayaran berhasil ditandai sebagai HUTANG / TANGGUNGAN.' : 'Tag Hutang berhasil dicabut (Pembayaran Lunas).';
+        // When debt is cleared (Lunas / Lepas Debt Tag):
+        // Automatically approve payment and activate all tickets
+        if (!$isDebt) {
+            $updateData['status'] = 'approved';
+            if (!$payment->verified_at) {
+                $updateData['verified_at'] = now();
+                $updateData['verified_by_admin_id'] = Auth::id();
+            }
+        }
+
+        $payment->update($updateData);
+
+        if (!$isDebt) {
+            VisitorTicket::where('payment_id', $payment->id)->update([
+                'status' => 'active',
+            ]);
+        }
+
+        $msg = $isDebt 
+            ? 'Pembayaran berhasil ditandai sebagai HUTANG / TANGGUNGAN.' 
+            : 'Tag Hutang berhasil dicabut. Pembayaran LUNAS & seluruh tiket peserta otomatis AKTIF.';
         return back()->with('success', $msg);
     }
 
@@ -996,6 +1029,18 @@ class VisitorTicketAdminController extends Controller
         $newStatus = $request->status;
 
         $ticket->update(['status' => $newStatus]);
+
+        if ($newStatus === 'active' && $ticket->payment_id && $ticket->payment) {
+            $payment = $ticket->payment;
+            $hasOtherPending = VisitorTicket::where('payment_id', $payment->id)->where('id', '!=', $ticket->id)->where('status', '!=', 'active')->exists();
+            if (!$hasOtherPending && $payment->status === 'pending') {
+                $payment->update([
+                    'status' => 'approved',
+                    'verified_at' => $payment->verified_at ?: now(),
+                    'verified_by_admin_id' => Auth::id(),
+                ]);
+            }
+        }
 
         // If newly activated and has email, send E-Ticket email
         if ($newStatus === 'active' && $oldStatus !== 'active' && !empty($ticket->visitor_email)) {
@@ -1265,14 +1310,75 @@ class VisitorTicketAdminController extends Controller
             'ticket_code' => 'required|string',
         ]);
 
-        $ticketCode = trim($request->ticket_code);
+        $rawInput = trim($request->ticket_code);
         $checkinGroup = $request->boolean('checkin_group', true);
 
-        return DB::transaction(function () use ($ticketCode, $checkinGroup) {
+        // 1. Clean & extract ticket code or payment code from raw input or URL
+        $cleanCode = $rawInput;
+        if (preg_match('/(TKT-[A-Za-z0-9\-]+)/i', $rawInput, $matches)) {
+            $cleanCode = strtoupper($matches[1]);
+        } elseif (preg_match('/((?:ONSITE|INV|PY|PAY)-[A-Za-z0-9\-]+)/i', $rawInput, $matches)) {
+            $cleanCode = strtoupper($matches[1]);
+        }
+
+        return DB::transaction(function () use ($cleanCode, $rawInput, $checkinGroup) {
+            // Step 1: Direct match by ticket_code (case-insensitive)
             $ticket = VisitorTicket::with('payment')
-                ->where('ticket_code', $ticketCode)
+                ->where(DB::raw('UPPER(ticket_code)'), strtoupper($cleanCode))
                 ->lockForUpdate()
                 ->first();
+
+            // Step 2: Fallback lookup by payment_code (e.g. ONSITE-..., INV-..., or URL from Receipt)
+            if (!$ticket) {
+                $payment = VisitorPayment::where(DB::raw('UPPER(payment_code)'), strtoupper($cleanCode))
+                    ->orWhere(DB::raw('UPPER(payment_code)'), strtoupper($rawInput))
+                    ->first();
+
+                if ($payment) {
+                    $ticket = VisitorTicket::with('payment')
+                        ->where('payment_id', $payment->id)
+                        ->orderBy('is_group_leader', 'desc')
+                        ->orderBy('id', 'asc')
+                        ->lockForUpdate()
+                        ->first();
+                }
+            }
+
+            // Step 3: Fallback lookup by suffix (e.g. if category changed from TKT-VIS-26-45AEA1 to TKT-IEXP-26-45AEA1)
+            if (!$ticket) {
+                $parts = explode('-', $cleanCode);
+                if (count($parts) >= 3) {
+                    $suffix = end($parts);
+                    if (strlen($suffix) >= 4) {
+                        $ticket = VisitorTicket::with('payment')
+                            ->where('ticket_code', 'LIKE', "%-{$suffix}")
+                            ->lockForUpdate()
+                            ->first();
+                    }
+                }
+            }
+
+            // Step 4: Fallback lookup by ActivityLog (if ticket was renamed/re-categorized)
+            if (!$ticket) {
+                $renamedLog = ActivityLog::where('module', 'visitor_tickets')
+                    ->where('description', 'like', "%{$cleanCode}%")
+                    ->latest()
+                    ->first();
+                if ($renamedLog && !empty($renamedLog->target_id)) {
+                    $ticket = VisitorTicket::with('payment')
+                        ->where('id', $renamedLog->target_id)
+                        ->lockForUpdate()
+                        ->first();
+                }
+            }
+
+            // Step 5: Fallback lookup by ID if numeric
+            if (!$ticket && is_numeric($cleanCode)) {
+                $ticket = VisitorTicket::with('payment')
+                    ->where('id', (int) $cleanCode)
+                    ->lockForUpdate()
+                    ->first();
+            }
 
             if (!$ticket) {
                 return response()->json([
@@ -1280,6 +1386,13 @@ class VisitorTicketAdminController extends Controller
                     'status' => 'not_found',
                     'message' => 'Tiket tidak ditemukan dalam sistem.',
                 ], 404);
+            }
+
+            // Auto-heal: If payment is approved and debt is settled, but ticket was left as pending, activate it!
+            if ($ticket->status !== 'active') {
+                if ($ticket->payment && $ticket->payment->status === 'approved' && !$ticket->payment->is_debt) {
+                    $ticket->update(['status' => 'active']);
+                }
             }
 
             // Find all tickets belonging to the same group / payment
@@ -1300,14 +1413,17 @@ class VisitorTicketAdminController extends Controller
 
             $isGroup = $groupTickets->count() > 1;
 
-            // Check if ticket is pending/cancelled
+            // Check if ticket is still pending/cancelled
             if ($ticket->status !== 'active') {
+                $isDebt = (bool) ($ticket->payment && $ticket->payment->is_debt);
+                $msg = $ticket->status === 'pending' 
+                    ? ($isDebt ? 'Tiket masih memiliki TAG HUTANG (Belum Lunas). Harap selesaikan pembayaran di meja registrasi.' : 'Tiket masih dalam status PENDING (Pembayaran belum diverifikasi).') 
+                    : 'Tiket telah DIBATALKAN.';
+
                 return response()->json([
                     'success' => false,
                     'status' => 'inactive',
-                    'message' => $ticket->status === 'pending' 
-                        ? 'Tiket masih dalam status PENDING (Pembayaran belum diverifikasi).' 
-                        : 'Tiket telah DIBATALKAN.',
+                    'message' => $msg,
                     'ticket' => $ticket,
                     'is_group' => $isGroup,
                     'group_tickets' => $groupTickets,

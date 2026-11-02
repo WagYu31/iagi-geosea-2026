@@ -746,10 +746,13 @@ export default function GateScanner({
         if (!code) return;
         let cleanCode = code.trim();
 
-        // Auto extract ticket code if raw URL was scanned (e.g. https://pitiagi.cloud/ticket/show/TKT-...)
-        const urlMatch = cleanCode.match(/TKT-[A-Z0-9\-]+/i);
-        if (urlMatch) {
-            cleanCode = urlMatch[0].toUpperCase();
+        // Auto extract ticket code or payment/receipt code if raw URL or full path was scanned
+        const tktMatch = cleanCode.match(/TKT-[A-Za-z0-9\-]+/i);
+        const payMatch = cleanCode.match(/(?:ONSITE|INV|PY|PAY)-[A-Za-z0-9\-]+/i);
+        if (tktMatch) {
+            cleanCode = tktMatch[0].toUpperCase();
+        } else if (payMatch) {
+            cleanCode = payMatch[0].toUpperCase();
         }
 
         const now = Date.now();

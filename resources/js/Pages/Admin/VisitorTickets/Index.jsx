@@ -1031,7 +1031,8 @@ export default function VisitorTicketsIndex({
         formData.append('is_debt', editIsDebt ? '1' : '0');
         formData.append('debt_notes', editDebtNotes || '');
         formData.append('notes', editAdminNotes || '');
-        formData.append('status', editStatus || proofModal.payment.status);
+        const computedStatus = (!editIsDebt && editStatus === 'pending') ? 'approved' : (editStatus || proofModal.payment.status);
+        formData.append('status', computedStatus);
 
         router.post(route('admin.visitorTickets.updatePaymentProof', proofModal.payment.id), formData, {
             preserveScroll: true,
@@ -6532,7 +6533,12 @@ export default function VisitorTicketsIndex({
                                                         control={
                                                             <Checkbox
                                                                 checked={editIsDebt}
-                                                                onChange={(e) => setEditIsDebt(e.target.checked)}
+                                                                onChange={(e) => {
+                                                                    setEditIsDebt(e.target.checked);
+                                                                    if (!e.target.checked && editStatus === 'pending') {
+                                                                        setEditStatus('approved');
+                                                                    }
+                                                                }}
                                                                 sx={{ color: '#f59e0b', '&.Mui-checked': { color: '#d97706' } }}
                                                             />
                                                         }
