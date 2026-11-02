@@ -1784,9 +1784,9 @@ const INITIAL_DPT = [
   {
     "npa": "01921",
     "name": "Ridwan Djamaluddin",
-    "email": "ri***@esdm.go.id",
+    "email": "che230908@gmail.com",
     "email_hash": "414a9264f3fdc73429474e3d9eb837955c11313368b8080caf5e05e02546daee",
-    "phone": "",
+    "phone": "0811956265",
     "pengda": "IAGI",
     "category": "Professional",
     "status": "AKTIF",

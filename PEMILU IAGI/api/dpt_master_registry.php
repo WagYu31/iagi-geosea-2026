@@ -115,7 +115,7 @@ return [
   '01899' => ['name' => 'Yarmanto', 'email' => 'yarmantohardjosuparto@gmail.com'],
   '01918' => ['name' => 'Tumbur H p Nainggolan', 'email' => 'tumbur@jakarta.geoquest.slb.com'],
   '01920' => ['name' => 'Elly Evianti Guritno', 'email' => 'elly.guritno@gmail.com'],
-  '01921' => ['name' => 'Ridwan Djamaluddin', 'email' => 'ridwan.djamaluddin@esdm.go.id'],
+  '01921' => ['name' => 'Ridwan Djamaluddin', 'email' => 'che230908@gmail.com', 'alt_emails' => ['ridwan.djamaluddin@esdm.go.id'], 'phone' => '0811956265'],
   '01925' => ['name' => 'Retno Widiastuti', 'email' => 'retno.k.sani@gmail.com'],
   '01926' => ['name' => 'Lucilla Nugrahaningsih', 'email' => 'lnugrahaningsih@gmail.com'],
   '01935' => ['name' => 'Siswantoro M p', 'email' => 'siswantoromardis63@gmail.com'],
