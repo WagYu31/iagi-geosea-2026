@@ -498,6 +498,7 @@ class VisitorTicketAdminController extends Controller
         // Prepare Comprehensive Realtime Analytics Data (Charts & Diagrams)
         $analyticsTicketQuery = $hasFilters ? (clone $statsQuery) : VisitorTicket::query();
         $baseAnalyticsTotal = (clone $analyticsTicketQuery)->count();
+        $activeAnalyticsCount = (clone $analyticsTicketQuery)->where('status', 'active')->count();
         $checkedInAnalyticsCount = (clone $analyticsTicketQuery)->where('checked_in', true)->count();
         $sentAnalyticsCount = (clone $analyticsTicketQuery)->whereNotNull('email_sent_at')->count();
         $printedAnalyticsCount = (clone $analyticsTicketQuery)->where('card_printed', true)->count();
@@ -677,7 +678,7 @@ class VisitorTicketAdminController extends Controller
         // 7. Venue Registration Funnel
         $funnelMetrics = [
             ['stage' => '1. Total Terdaftar', 'count' => $baseAnalyticsTotal, 'pct' => 100, 'color' => '#3b82f6'],
-            ['stage' => '2. Verifikasi Lunas', 'count' => $ticketActive, 'pct' => $baseAnalyticsTotal > 0 ? round(($ticketActive / $baseAnalyticsTotal) * 100, 1) : 0, 'color' => '#10b981'],
+            ['stage' => '2. Verifikasi Lunas', 'count' => $activeAnalyticsCount, 'pct' => $baseAnalyticsTotal > 0 ? round(($activeAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0, 'color' => '#10b981'],
             ['stage' => '3. E-Tiket Terkirim', 'count' => $sentAnalyticsCount, 'pct' => $baseAnalyticsTotal > 0 ? round(($sentAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0, 'color' => '#8b5cf6'],
             ['stage' => '4. Hadir di Venue', 'count' => $checkedInAnalyticsCount, 'pct' => $baseAnalyticsTotal > 0 ? round(($checkedInAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0, 'color' => '#06b6d4'],
             ['stage' => '5. Lanyard / Badge Dicetak', 'count' => $printedAnalyticsCount, 'pct' => $baseAnalyticsTotal > 0 ? round(($printedAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0, 'color' => '#f59e0b'],
