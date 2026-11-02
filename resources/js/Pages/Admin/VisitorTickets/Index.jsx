@@ -2443,7 +2443,7 @@ export default function VisitorTicketsIndex({
                                 </MenuItem>
                                 <MenuItem value="professional" sx={{ pl: 2, fontSize: '0.82rem' }}>
                                     <Checkbox checked={typeFilter.indexOf('professional') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
-                                    <ListItemText primary="Professional (Rp 1.500.000)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                    <ListItemText primary="Professional" primaryTypographyProps={{ fontSize: '0.82rem' }} />
                                 </MenuItem>
 
                                 <ListSubheader sx={{ fontWeight: 800, color: '#094d42', bgcolor: '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
