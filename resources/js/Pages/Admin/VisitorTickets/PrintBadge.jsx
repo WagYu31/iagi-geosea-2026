@@ -142,7 +142,7 @@ const CATEGORY_MAP = {
     vip_companion: { label: 'VIP COMPANION', short: 'VIP COMPANION' },
 };
 
-export const BADGE_VERSION = '20261031_original_clean_v9';
+export const BADGE_VERSION = '20261102_aligned_pill_v10';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;
@@ -172,10 +172,22 @@ function SingleLanyardCard({
     const isVisitor = visitorType === 'non_exclusive' || visitorType === 'visitor' || (bgImage && bgImage.toLowerCase().includes('visitor.'));
 
     const nameLength = (ticket.visitor_name || '').length;
-    const nameFontSize = nameLength > 28 ? '1.05rem' : nameLength > 20 ? '1.22rem' : '1.4rem';
+    const nameFontSize = nameLength > 32 
+        ? '0.84rem' 
+        : nameLength > 25 
+            ? '0.92rem' 
+            : nameLength > 18 
+                ? '1.10rem' 
+                : '1.30rem';
 
     const institutionLength = (ticket.visitor_institution || '').length;
-    const instFontSize = institutionLength > 28 ? '0.82rem' : institutionLength > 20 ? '0.92rem' : '1.02rem';
+    const instFontSize = institutionLength > 38 
+        ? '0.70rem' 
+        : institutionLength > 26 
+            ? '0.78rem' 
+            : institutionLength > 18 
+                ? '0.88rem' 
+                : '0.98rem';
 
     return (
         <Box
@@ -257,14 +269,15 @@ function SingleLanyardCard({
                 />
             )}
 
-            {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 765.5 - 856.5 / 61.1% - 68.35% - BLACK FONT FOR VISITOR, WHITE FOR OTHERS) */}
+            {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 769.5 - 853.3 / 61.4% - 68.1% - Centered & Adaptive Scaling) */}
             <Box
                 sx={{
                     position: 'absolute',
-                    top: '61.1%',
-                    height: '7.25%',
-                    left: '15.5%',
-                    right: '15.5%',
+                    top: '61.4%',
+                    height: '6.7%',
+                    left: '14%',
+                    right: '14%',
+                    px: '4px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -280,16 +293,22 @@ function SingleLanyardCard({
                         fontSize: nameFontSize,
                         fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
                         textTransform: 'uppercase',
-                        letterSpacing: '0.03em',
-                        lineHeight: 1.15,
+                        letterSpacing: '0.025em',
+                        lineHeight: 1.08,
                         wordBreak: 'break-word',
                         textAlign: 'center',
                         width: '100%',
-                        textShadow: isVisitor ? 'none' : '0 1px 4px rgba(0,0,0,0.3)',
+                        textShadow: isVisitor ? 'none' : '0 1px 3px rgba(0,0,0,0.3)',
                         '@media print': {
                             color: isVisitor ? '#000000 !important' : '#ffffff !important',
-                            fontSize: nameLength > 28 ? '6.5pt !important' : nameLength > 20 ? '7.5pt !important' : nameLength > 14 ? '8.5pt !important' : '9.5pt !important',
-                            lineHeight: '1.15 !important',
+                            fontSize: nameLength > 32 
+                                ? '5.4pt !important' 
+                                : nameLength > 25 
+                                    ? '6.0pt !important' 
+                                    : nameLength > 18 
+                                        ? '7.2pt !important' 
+                                        : '8.5pt !important',
+                            lineHeight: '1.08 !important',
                         },
                     }}
                 >
@@ -297,19 +316,19 @@ function SingleLanyardCard({
                 </Typography>
             </Box>
 
-            {/* 2. INSTITUTION OVERLAY (Positioned BELOW the Blue Box at y: 865 - 922.6 / 68.8% - 73.6% right above underline) */}
+            {/* 2. INSTITUTION OVERLAY (Positioned Centered between the Pill Box and the Gold Diamond Underline at y: 855 - 920 / 68.2% - 73.4%) */}
             <Box
                 sx={{
                     position: 'absolute',
-                    top: '68.8%',
-                    height: '4.8%',
-                    left: '10%',
-                    right: '10%',
+                    top: '68.2%',
+                    height: '5.2%',
+                    left: '6%',
+                    right: '6%',
+                    px: '4px',
                     display: 'flex',
-                    alignItems: 'flex-end',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     textAlign: 'center',
-                    pb: '2px',
                     zIndex: 5,
                 }}
             >
@@ -321,15 +340,21 @@ function SingleLanyardCard({
                         fontSize: instFontSize,
                         fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
                         textTransform: 'uppercase',
-                        letterSpacing: '0.04em',
-                        lineHeight: 1.15,
+                        letterSpacing: '0.035em',
+                        lineHeight: 1.1,
                         wordBreak: 'break-word',
                         textAlign: 'center',
                         width: '100%',
                         '@media print': {
                             color: '#000000 !important',
-                            fontSize: institutionLength > 28 ? '5.5pt !important' : institutionLength > 20 ? '6.5pt !important' : '7.5pt !important',
-                            lineHeight: '1.15 !important',
+                            fontSize: institutionLength > 38 
+                                ? '4.8pt !important' 
+                                : institutionLength > 26 
+                                    ? '5.4pt !important' 
+                                    : institutionLength > 18 
+                                        ? '6.2pt !important' 
+                                        : '7.2pt !important',
+                            lineHeight: '1.1 !important',
                         },
                     }}
                 >
