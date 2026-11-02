@@ -273,6 +273,20 @@ export default function VisitorAnalyticsDashboard({
 
     const maxInstCount = Math.max(...(filteredInstitutions.length ? filteredInstitutions.map((i) => i.count) : [1]), 1);
 
+    const topDebtInstList = useMemo(() => {
+        return [...allInstitutions]
+            .filter((i) => Number(i.debt ?? i.debt_count ?? 0) > 0)
+            .sort((a, b) => Number(b.debt ?? b.debt_count ?? 0) - Number(a.debt ?? a.debt_count ?? 0));
+    }, [allInstitutions]);
+
+    const listTotalLunas = useMemo(() => {
+        return filteredInstitutions.reduce((acc, i) => acc + Number(i.lunas ?? i.lunas_count ?? 0), 0);
+    }, [filteredInstitutions]);
+
+    const listTotalDebt = useMemo(() => {
+        return filteredInstitutions.reduce((acc, i) => acc + Number(i.debt ?? i.debt_count ?? 0), 0);
+    }, [filteredInstitutions]);
+
     // ── 5. REAL DATA: CATEGORIES OVERVIEW (CONCENTRIC RINGS) ──
     const rawCategories = analytics.categoryDistribution || [];
     const activeCategories = useMemo(() => {
@@ -365,21 +379,21 @@ export default function VisitorAnalyticsDashboard({
             return analytics.institutionalSectors;
         }
         return [
-            { label: 'Minyak & Gas / KKKS', icon: '🛢️', count: 320, color: '#2563eb' },
-            { label: 'Pemerintah & Regulator', icon: '🏛️', count: 185, color: '#0d9488' },
-            { label: 'Universitas & Riset', icon: '🎓', count: 245, color: '#8b5cf6' },
-            { label: 'Pertambangan & Mineral', icon: '⛏️', count: 95, color: '#d97706' },
-            { label: 'Geoscience Service', icon: '🤝', count: 65, color: '#06b6d4' },
-            { label: 'Independent & Konsultan', icon: '👤', count: 36, color: '#64748b' },
+            { label: 'Minyak & Gas / KKKS', icon: '🛢️', count: 0, color: '#2563eb' },
+            { label: 'Pemerintah & Regulator', icon: '🏛️', count: 0, color: '#0d9488' },
+            { label: 'Universitas & Riset', icon: '🎓', count: 0, color: '#8b5cf6' },
+            { label: 'Pertambangan & Mineral', icon: '⛏️', count: 0, color: '#d97706' },
+            { label: 'Geoscience Service', icon: '🤝', count: 0, color: '#06b6d4' },
+            { label: 'Independent & Konsultan', icon: '👤', count: 0, color: '#64748b' },
         ];
     }, [analytics.institutionalSectors]);
 
     const demographics = useMemo(() => {
         return analytics.demographics || {
-            international: 42,
-            domestic: Math.max(0, totalVisitors - 42),
-            international_pct: 4.4,
-            domestic_pct: 95.6,
+            international: 0,
+            domestic: totalVisitors,
+            international_pct: 0,
+            domestic_pct: 100,
         };
     }, [analytics.demographics, totalVisitors]);
 
@@ -2021,7 +2035,7 @@ export default function VisitorAnalyticsDashboard({
                                             </Typography>
                                         </Box>
                                         <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#2563eb' }}>
-                                            {pillarsBreakdown.commercial?.total || 350} Pax
+                                            {pillarsBreakdown.commercial?.total ?? 0} Pax
                                         </Typography>
                                     </Box>
                                     <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
@@ -2029,10 +2043,10 @@ export default function VisitorAnalyticsDashboard({
                                     </Typography>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(37,99,235,0.12)` }}>
                                         <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
-                                            Realisasi Kas: <strong style={{ color: '#10b981' }}>{formatShortCurrency(pillarsBreakdown.commercial?.revenue || 260000000)}</strong>
+                                            Realisasi Kas: <strong style={{ color: '#10b981' }}>{formatShortCurrency(pillarsBreakdown.commercial?.revenue || 0)}</strong>
                                         </Typography>
                                         <Typography sx={{ fontSize: '0.7rem', color: '#ea580c', fontWeight: 700 }}>
-                                            Piutang: {pillarsBreakdown.commercial?.debt || 45} Orang
+                                            Piutang: {pillarsBreakdown.commercial?.debt || 0} Orang
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -2047,7 +2061,7 @@ export default function VisitorAnalyticsDashboard({
                                             </Typography>
                                         </Box>
                                         <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#8b5cf6' }}>
-                                            {pillarsBreakdown.scientific?.total || 240} Pax
+                                            {pillarsBreakdown.scientific?.total ?? 0} Pax
                                         </Typography>
                                     </Box>
                                     <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
@@ -2073,7 +2087,7 @@ export default function VisitorAnalyticsDashboard({
                                             </Typography>
                                         </Box>
                                         <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#d97706' }}>
-                                            {pillarsBreakdown.leadership?.total || 65} Pax
+                                            {pillarsBreakdown.leadership?.total ?? 0} Pax
                                         </Typography>
                                     </Box>
                                     <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
@@ -2099,7 +2113,7 @@ export default function VisitorAnalyticsDashboard({
                                             </Typography>
                                         </Box>
                                         <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#10b981' }}>
-                                            {pillarsBreakdown.expo?.total || 291} Pax
+                                            {pillarsBreakdown.expo?.total ?? 0} Pax
                                         </Typography>
                                     </Box>
                                     <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
@@ -2107,7 +2121,7 @@ export default function VisitorAnalyticsDashboard({
                                     </Typography>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(16,185,129,0.12)` }}>
                                         <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
-                                            Kas Booth: <strong style={{ color: '#10b981' }}>{formatShortCurrency(pillarsBreakdown.expo?.revenue || 50000000)}</strong>
+                                            Kas Booth: <strong style={{ color: '#10b981' }}>{formatShortCurrency(pillarsBreakdown.expo?.revenue || 0)}</strong>
                                         </Typography>
                                         <Typography sx={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700 }}>
                                             Exhibition Hall
@@ -2149,6 +2163,9 @@ export default function VisitorAnalyticsDashboard({
                                     onClose={() => setSummaryAnchor(null)}
                                     {...diboldMenuProps}
                                 >
+                                    <MenuItem onClick={() => { setSummaryFilter('top5'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'top5')}>
+                                        Top 5 Utama
+                                    </MenuItem>
                                     <MenuItem onClick={() => { setSummaryFilter('top10'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'top10')}>
                                         Top 10 Terbanyak
                                     </MenuItem>
@@ -2166,13 +2183,13 @@ export default function VisitorAnalyticsDashboard({
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7 }}>
                                     <Box sx={{ width: 10, height: 10, borderRadius: '3px', bgcolor: '#10b981' }} />
                                     <Typography sx={{ fontSize: '0.72rem', color: textSecondary, fontWeight: 700 }}>
-                                        Lunas ({ticketActive} Orang)
+                                        Lunas ({listTotalLunas} Delegasi)
                                     </Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7 }}>
                                     <Box sx={{ width: 10, height: 10, borderRadius: '3px', bgcolor: '#ea580c' }} />
                                     <Typography sx={{ fontSize: '0.72rem', color: textSecondary, fontWeight: 700 }}>
-                                        Piutang / Debt ({ticketDebt} Orang)
+                                        Piutang / Debt ({listTotalDebt} Delegasi)
                                     </Typography>
                                 </Box>
                                 <Typography sx={{ ml: 'auto', fontSize: '0.72rem', color: textMuted }}>
@@ -2182,18 +2199,20 @@ export default function VisitorAnalyticsDashboard({
 
                             {/* Stacked Horizontal Bars List */}
                             <Stack spacing={1.8}>
-                                {filteredInstitutions.slice(0, 8).map((inst, index) => {
+                                {filteredInstitutions.map((inst, index) => {
                                     const total = inst.count || 1;
-                                    const lunas = inst.lunas_count !== undefined ? inst.lunas_count : (inst.is_debt ? 0 : total);
-                                    const debt = inst.debt_count !== undefined ? inst.debt_count : (inst.is_debt ? total : 0);
-                                    const lunasPct = Math.round((lunas / total) * 100);
-                                    const debtPct = 100 - lunasPct;
+                                    const lunas = Number(inst.lunas ?? inst.lunas_count ?? 0);
+                                    const debt = Number(inst.debt ?? inst.debt_count ?? 0);
+                                    const pending = Number(inst.pending ?? inst.pending_count ?? 0);
+                                    const lunasPct = total > 0 ? Math.round((lunas / total) * 100) : 0;
+                                    const debtPct = total > 0 ? Math.round((debt / total) * 100) : 0;
+                                    const pendingPct = total > 0 ? Math.max(0, 100 - lunasPct - debtPct) : 0;
                                     const barWidthPct = Math.round((total / maxInstCount) * 100);
 
                                     return (
                                         <Box key={inst.name} sx={{ width: '100%' }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, maxWidth: '70%' }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, maxWidth: '65%' }}>
                                                     <Typography sx={{ fontSize: '0.74rem', fontWeight: 800, color: textMuted }}>
                                                         #{index + 1}
                                                     </Typography>
@@ -2202,19 +2221,47 @@ export default function VisitorAnalyticsDashboard({
                                                     </Typography>
                                                 </Box>
                                                 <Stack direction="row" spacing={1} alignItems="center">
-                                                    <Chip
-                                                        label={`${lunasPct}% Lunas`}
-                                                        size="small"
-                                                        sx={{
-                                                            height: 20,
-                                                            fontSize: '0.64rem',
-                                                            fontWeight: 800,
-                                                            bgcolor: lunasPct === 100 ? (isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5') : (isDark ? 'rgba(234,88,12,0.15)' : '#fff7ed'),
-                                                            color: lunasPct === 100 ? '#10b981' : '#ea580c',
-                                                            borderRadius: '6px',
-                                                        }}
-                                                    />
-                                                    <Typography sx={{ fontSize: '0.76rem', fontWeight: 800, color: textPrimary }}>
+                                                    {debt > 0 ? (
+                                                        <Chip
+                                                            label={`${lunas} Lunas • ${debt} Piutang`}
+                                                            size="small"
+                                                            sx={{
+                                                                height: 20,
+                                                                fontSize: '0.64rem',
+                                                                fontWeight: 800,
+                                                                bgcolor: isDark ? 'rgba(234,88,12,0.18)' : '#fff7ed',
+                                                                color: '#ea580c',
+                                                                borderRadius: '6px',
+                                                            }}
+                                                        />
+                                                    ) : pending > 0 ? (
+                                                        <Chip
+                                                            label={`${lunas} Lunas • ${pending} Pending`}
+                                                            size="small"
+                                                            sx={{
+                                                                height: 20,
+                                                                fontSize: '0.64rem',
+                                                                fontWeight: 800,
+                                                                bgcolor: isDark ? 'rgba(245,158,11,0.18)' : '#fffbeb',
+                                                                color: '#d97706',
+                                                                borderRadius: '6px',
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <Chip
+                                                            label={`${lunasPct}% Lunas`}
+                                                            size="small"
+                                                            sx={{
+                                                                height: 20,
+                                                                fontSize: '0.64rem',
+                                                                fontWeight: 800,
+                                                                bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
+                                                                color: '#10b981',
+                                                                borderRadius: '6px',
+                                                            }}
+                                                        />
+                                                    )}
+                                                    <Typography sx={{ fontSize: '0.76rem', fontWeight: 800, color: textPrimary, minWidth: '70px', textAlign: 'right' }}>
                                                         {total} Delegasi
                                                     </Typography>
                                                 </Stack>
@@ -2222,24 +2269,39 @@ export default function VisitorAnalyticsDashboard({
 
                                             {/* Bi-Color Stacked Horizontal Bar Container */}
                                             <Box sx={{ width: '100%', height: 12, bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0', borderRadius: '6px', overflow: 'hidden', display: 'flex' }}>
-                                                <Box
-                                                    sx={{
-                                                        width: `${(barWidthPct * lunasPct) / 100}%`,
-                                                        height: '100%',
-                                                        bgcolor: '#10b981',
-                                                        transition: 'width 0.4s ease',
-                                                    }}
-                                                    title={`Lunas: ${lunas} orang`}
-                                                />
-                                                <Box
-                                                    sx={{
-                                                        width: `${(barWidthPct * debtPct) / 100}%`,
-                                                        height: '100%',
-                                                        bgcolor: '#ea580c',
-                                                        transition: 'width 0.4s ease',
-                                                    }}
-                                                    title={`Piutang: ${debt} orang`}
-                                                />
+                                                {lunas > 0 && (
+                                                    <Box
+                                                        sx={{
+                                                            width: `${(barWidthPct * lunas) / total}%`,
+                                                            height: '100%',
+                                                            bgcolor: '#10b981',
+                                                            transition: 'width 0.4s ease',
+                                                        }}
+                                                        title={`Lunas: ${lunas} orang (${lunasPct}%)`}
+                                                    />
+                                                )}
+                                                {debt > 0 && (
+                                                    <Box
+                                                        sx={{
+                                                            width: `${(barWidthPct * debt) / total}%`,
+                                                            height: '100%',
+                                                            bgcolor: '#ea580c',
+                                                            transition: 'width 0.4s ease',
+                                                        }}
+                                                        title={`Piutang / Debt: ${debt} orang (${debtPct}%)`}
+                                                    />
+                                                )}
+                                                {pending > 0 && (
+                                                    <Box
+                                                        sx={{
+                                                            width: `${(barWidthPct * pending) / total}%`,
+                                                            height: '100%',
+                                                            bgcolor: '#f59e0b',
+                                                            transition: 'width 0.4s ease',
+                                                        }}
+                                                        title={`Pending: ${pending} orang (${pendingPct}%)`}
+                                                    />
+                                                )}
                                             </Box>
                                         </Box>
                                     );
@@ -2248,7 +2310,21 @@ export default function VisitorAnalyticsDashboard({
 
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 3, pt: 1.5, borderTop: `1px solid ${cardBorder}` }}>
                                 <Typography sx={{ fontSize: '0.74rem', color: textSecondary }}>
-                                    Instansi dengan piutang terbanyak: <strong>PT Pertamina Hulu Rokan & LEMIGAS</strong>
+                                    {topDebtInstList.length > 0 ? (
+                                        <>
+                                            Instansi dengan piutang terbanyak:{' '}
+                                            <strong style={{ color: '#ea580c' }}>
+                                                {topDebtInstList.slice(0, 2).map((i) => `${i.name} (${Number(i.debt ?? i.debt_count)} delegasi)`).join(' & ')}
+                                            </strong>
+                                        </>
+                                    ) : (
+                                        <>
+                                            Status Delegasi:{' '}
+                                            <strong style={{ color: '#10b981' }}>
+                                                Seluruh delegasi dari instansi teratas sudah lunas (Tidak ada tunggakan piutang).
+                                            </strong>
+                                        </>
+                                    )}
                                 </Typography>
                                 <Button
                                     size="small"

@@ -548,7 +548,7 @@ class VisitorTicketAdminController extends Controller
 
         // 2. The 4 Conference Pillars Breakdown
         $commercialTypes = ['iagi_member_professional', 'non_iagi_member_professional', 'iagi_member_expatriate', 'non_iagi_member_expatriate', 'student_undergraduate', 'dosen', 'professional', 'professional_1500', 'exclusive'];
-        $scientificTypes = ['presenter', 'invited_speaker', 'session_chair_judge', 'oral', 'oral_presenter', 'poster', 'poster_presenter', 'judge', 'session_chair'];
+        $scientificTypes = ['presenter', 'invited_speaker', 'session_chair_judge', 'oral', 'oral_presenter', 'poster', 'poster_presenter', 'judge', 'session_chair', 'student'];
         $leadershipTypes = ['vip', 'speaker', 'keynote_speech', 'keynote_speaker', 'panelist', 'moderator', 'board', 'vip_companion'];
         $expoTypes = ['exhibition', 'sponsorship', 'sponsor', 'delegate', 'committee', 'student_volunteer', 'student_crowd', 'non_exclusive'];
 
@@ -587,19 +587,19 @@ class VisitorTicketAdminController extends Controller
         // 3. Top Institutions with Real Bi-Color Stacked Data (Lunas vs Debt)
         $topInstitutionsRaw = (clone $analyticsTicketQuery)
             ->whereNotNull('visitor_institution')
-            ->where('visitor_institution', '!=', '')
-            ->where('visitor_institution', '!=', '-')
-            ->where('visitor_institution', 'not like', '%-%')
+            ->whereRaw("TRIM(visitor_institution) NOT IN ('', '-', '--', '---', 'None', 'null')")
             ->select('visitor_institution as name', DB::raw('count(*) as count'), DB::raw('sum(individual_price) as total_revenue'))
             ->groupBy('visitor_institution')
             ->orderByDesc('count')
-            ->limit(10)
+            ->limit(30)
             ->get();
 
         $topInstitutions = $topInstitutionsRaw->map(function($inst) use ($allTicketsCollection) {
-            $instTickets = $allTicketsCollection->where('visitor_institution', $inst->name);
+            $instTickets = $allTicketsCollection->filter(function($t) use ($inst) {
+                return trim(strtolower($t->visitor_institution ?? '')) === trim(strtolower($inst->name));
+            });
             $lunas = $instTickets->filter(fn($t) => $t->status === 'active' && (!$t->payment || !$t->payment->is_debt))->count();
-            $debt = $instTickets->filter(fn($t) => $t->payment && $t->payment->is_debt)->count();
+            $debt = $instTickets->filter(fn($t) => $t->payment && (bool)$t->payment->is_debt)->count();
             $pending = $instTickets->filter(fn($t) => $t->status === 'pending' && (!$t->payment || !$t->payment->is_debt))->count();
             $checkedIn = $instTickets->where('checked_in', true)->count();
 
@@ -607,8 +607,11 @@ class VisitorTicketAdminController extends Controller
                 'name' => $inst->name,
                 'count' => (int) $inst->count,
                 'lunas' => $lunas,
+                'lunas_count' => $lunas,
                 'debt' => $debt,
+                'debt_count' => $debt,
                 'pending' => $pending,
+                'pending_count' => $pending,
                 'checked_in' => $checkedIn,
                 'total_revenue' => (float) ($inst->total_revenue ?? 0),
                 'solvency_pct' => $inst->count > 0 ? round(($lunas / $inst->count) * 100) : 0,
