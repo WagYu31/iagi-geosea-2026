@@ -506,6 +506,39 @@ class PemiluStorage {
         }
       });
 
+      // Auto-reconcile phone, token, and claimed status from official INITIAL_DPT
+      if (typeof INITIAL_DPT !== 'undefined' && Array.isArray(INITIAL_DPT)) {
+        const initMap = new Map();
+        INITIAL_DPT.forEach(iv => {
+          if (iv && iv.npa) initMap.set(String(iv.npa).trim().padStart(5, '0'), iv);
+        });
+
+        dpt.forEach(v => {
+          if (!v || !v.npa) return;
+          const cleanNpa = String(v.npa).trim().padStart(5, '0');
+          const iv = initMap.get(cleanNpa);
+          if (iv) {
+            // Reconcile phone if missing locally but present in INITIAL_DPT
+            if ((!v.phone || String(v.phone).trim() === '') && iv.phone) {
+              v.phone = iv.phone;
+              updated = true;
+            }
+            // Reconcile token if missing locally but present in INITIAL_DPT
+            if (!v.token && iv.token) {
+              v.token = iv.token;
+              v.claimed = true;
+              if (iv.claimed_at && !v.claimed_at) v.claimed_at = iv.claimed_at;
+              updated = true;
+            }
+            // Reconcile email if missing locally
+            if ((!v.email || v.email === '-') && iv.email) {
+              v.email = iv.email;
+              updated = true;
+            }
+          }
+        });
+      }
+
       if (updated) {
         this.saveDPT(dpt);
       }
@@ -1724,7 +1757,7 @@ class PemiluStorage {
     if (token) localStorage.setItem('fonnte_token', token.trim());
   }
 
-  async sendWhatsAppFonnte(targetPhone, message) {
+  async sendWhatsAppFonnte(targetPhone, message, npa = '') {
     let cleanPhone = String(targetPhone || '').replace(/\D/g, '');
     if (cleanPhone.startsWith('0')) {
       cleanPhone = '62' + cleanPhone.substring(1);
@@ -1736,6 +1769,26 @@ class PemiluStorage {
       return { success: false, error: 'Nomor WhatsApp tidak valid (minimal 8 angka).' };
     }
 
+    // 1. Prioritaskan Pengiriman via Server PHP (Bebas CORS browser & bebas blokir ekstensi)
+    try {
+      const resp = await fetch('api/vote_sync.php?action=send_whatsapp_token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: cleanPhone, message: message, npa: npa })
+      });
+      const data = await resp.json();
+      if (data && (data.success === true || (data.data && data.data.status === true) || (data.detail && data.detail.includes('success')))) {
+        this.addAuditLog('FONNTE_WA_SENT', `Pesan WhatsApp terkirim via server Fonnte ke: ${cleanPhone}${npa ? ' (NPA ' + npa + ')' : ''}`);
+        return { success: true, data, target: cleanPhone };
+      }
+      if (data && data.error && !data.error.includes('404')) {
+        console.warn('Server Fonnte reported error, mencoba gateway browser langsung:', data.error);
+      }
+    } catch (e) {
+      console.warn('Pengiriman WhatsApp via server gagal, beralih ke direct client gateway:', e);
+    }
+
+    // 2. Direct browser fetch sebagai cadangan
     const token = this.getFonnteToken();
 
     try {
@@ -1754,7 +1807,7 @@ class PemiluStorage {
 
       const data = await response.json();
       if (data && (data.status === true || data.status === 'true' || (data.detail && data.detail.includes('success')))) {
-        this.addAuditLog('FONNTE_WA_SENT', `Pesan WhatsApp terkirim via Fonnte ke: ${cleanPhone}`);
+        this.addAuditLog('FONNTE_WA_SENT', `Pesan WhatsApp terkirim via direct Fonnte ke: ${cleanPhone}`);
         return { success: true, data, target: cleanPhone };
       } else {
         const errMsg = data.reason || data.detail || 'Fonnte mengembalikan status gagal.';

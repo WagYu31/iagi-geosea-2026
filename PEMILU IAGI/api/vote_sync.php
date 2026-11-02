@@ -3238,6 +3238,39 @@ if ($action === 'send_reminder_test') {
     exit;
 }
 
+// ================= ACTION: DIRECT WHATSAPP DISPATCH VIA FONNTE =================
+if ($action === 'send_whatsapp_token' || $action === 'send_whatsapp_fonnte') {
+    $rawPost = @file_get_contents('php://input');
+    $body = @json_decode($rawPost, true) ?: $_POST;
+
+    $phone = isset($body['phone']) ? trim($body['phone']) : (isset($body['target']) ? trim($body['target']) : '');
+    $message = isset($body['message']) ? trim($body['message']) : '';
+    $npa = isset($body['npa']) ? trim($body['npa']) : '';
+
+    if (empty($phone) || empty($message)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Nomor WhatsApp dan pesan wajib diisi.']);
+        exit;
+    }
+
+    $res = sendServerWhatsAppFonnte($phone, $message);
+
+    if (!empty($res['success'])) {
+        $auditLogs = readJsonFile($auditFile, []);
+        $auditLogs[] = [
+            'id' => 'wa-' . bin2hex(random_bytes(4)),
+            'timestamp' => date('Y-m-d H:i:s'),
+            'action' => 'FONNTE_WA_SENT',
+            'details' => "Pesan WhatsApp & Token dikirim otomatis via Fonnte ke: {$phone} " . ($npa ? "(NPA {$npa})" : ''),
+            'ip' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1'
+        ];
+        writeJsonFile($auditFile, $auditLogs);
+    }
+
+    echo json_encode($res);
+    exit;
+}
+
 if ($action === 'trigger_reminder_batch') {
     $isCli = (php_sapi_name() === 'cli');
     $rawPost = @file_get_contents('php://input');

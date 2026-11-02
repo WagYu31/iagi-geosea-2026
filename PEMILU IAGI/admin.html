@@ -12636,9 +12636,9 @@
         document.getElementById('import-csv-file').value = '';
       };
 
-      // WhatsApp Actions Handlers
-      window.handleSendWhatsApp = function(npa) {
-        window.guardSuperAdminFeature('row_wa', `Kirim Token via WhatsApp Resmi (NPA ${npa})`, () => {
+      // WhatsApp Actions Handlers (Otomatis Fonnte Gateway + Cadangan WA Web)
+      window.handleSendWhatsApp = async function(npa) {
+        window.guardSuperAdminFeature('row_wa', `Kirim Token via WhatsApp Resmi (NPA ${npa})`, async () => {
           const voter = window.pemiluStorage.getVoterByNpa(npa);
           if (!voter) {
             alert('Data pemilih tidak ditemukan.');
@@ -12668,10 +12668,41 @@
           }
 
           const msg = window.pemiluStorage.formatWhatsAppMessage(voter, token || 'IAGI-2026-TOKEN');
-          const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
-          
-          window.open(waUrl, '_blank');
-          refreshAll();
+
+          const confirmSend = confirm(`Kirim Surat Suara & Token Resmi secara OTOMATIS via Fonnte Gateway ke:\n\nNama: ${voter.name}\nNPA: ${voter.npa}\nNo. WhatsApp: +${cleanPhone}\nToken: ${token || '(Terbit Otomatis)'}\n\nLanjutkan pengiriman?`);
+          if (!confirmSend) return;
+
+          // Indikator loading tombol
+          const sendBtns = document.querySelectorAll(`button[onclick*="handleSendWhatsApp('${npa}')"]`);
+          sendBtns.forEach(btn => {
+            btn.dataset.origHtml = btn.innerHTML;
+            btn.innerHTML = `<span>⏳ Mengirim...</span>`;
+            btn.disabled = true;
+          });
+
+          try {
+            const res = await window.pemiluStorage.sendWhatsAppFonnte(cleanPhone, msg, npa);
+            if (res && res.success) {
+              alert(`✓ BERHASIL TERKIRIM OTOMATIS!\n\nPesan surat suara & token resmi berhasil dikirimkan via WhatsApp Gateway Fonnte ke nomor +${cleanPhone} (${voter.name}).`);
+            } else {
+              const errMsg = res ? (res.error || res.reason || 'Koneksi Fonnte mengalami kendala') : 'Gagal';
+              const openFallback = confirm(`⚠️ Pengiriman otomatis Fonnte mengalami kendala: ${errMsg}\n\nApakah Anda ingin membuka WhatsApp Web manual sebagai alternatif?`);
+              if (openFallback) {
+                const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+                window.open(waUrl, '_blank');
+              }
+            }
+          } catch (e) {
+            console.error('Fonnte dispatch error:', e);
+            const waUrl = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+          } finally {
+            sendBtns.forEach(btn => {
+              if (btn.dataset.origHtml) btn.innerHTML = btn.dataset.origHtml;
+              btn.disabled = false;
+            });
+            refreshAll();
+          }
         }, `NPA: ${npa}`);
       };
 
