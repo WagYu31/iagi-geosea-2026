@@ -13435,10 +13435,10 @@ const INITIAL_DPT = [
   },
   {
     "npa": "05771",
-    "name": "Imisha Gheamarsa",
-    "email": "ir***@geoservices.co.id",
+    "name": "Irnisha Gheamarsa",
+    "email": "irnishagheamarsa@gmail.com",
     "email_hash": "691af863dbb015ef5a4cd0ed67c5152de7f9409c28370c2560e6f952a8a7d11a",
-    "phone": "",
+    "phone": "082131311105",
     "pengda": "IAGI",
     "category": "Professional",
     "status": "AKTIF",

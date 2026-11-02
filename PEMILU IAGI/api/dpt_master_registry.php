@@ -887,7 +887,7 @@ return [
   '05759' => ['name' => 'Nadya Fauzia Puspitasari', 'email' => 'nadya.fauzia@gmail.com'],
   '05763' => ['name' => 'Arief Ismanto', 'email' => 'arief.ismanto@gmail.com'],
   '05768' => ['name' => 'Alamsyah Anas', 'email' => 'syahalam_geologist@yahoo.com'],
-  '05771' => ['name' => 'Imisha Gheamarsa', 'email' => 'irnisha.g@geoservices.co.id'],
+  '05771' => ['name' => 'Irnisha Gheamarsa', 'email' => 'irnishagheamarsa@gmail.com', 'alt_emails' => ['irnisha.g@geoservices.co.id'], 'phone' => '082131311105'],
   '05773' => ['name' => 'Kartika Palupi Savitri', 'email' => 'kartika.palupi.s@ugm.ac.id'],
   '05776' => ['name' => 'Ronny Setyawan Wijayanto', 'email' => 'ronnysetyawan@yahoo.com'],
   '05781' => ['name' => 'Nofhy Gumelar Nurdaen', 'email' => 'nofhy1983@gmail.com'],
