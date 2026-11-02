@@ -443,7 +443,8 @@ class VisitorTicketAdminController extends Controller
         ];
 
         // Fetch tickets timestamp & status in memory for bulletproof, SQL-version-agnostic grouping
-        $allTicketTimestamps = VisitorTicket::select('created_at', 'status')
+        $allTicketTimestamps = ($hasFilters ? (clone $statsQuery) : VisitorTicket::query())
+            ->select('created_at', 'status')
             ->whereNotNull('created_at')
             ->get();
 
@@ -495,8 +496,23 @@ class VisitorTicketAdminController extends Controller
             ->toArray();
 
         // Prepare Comprehensive Realtime Analytics Data (Charts & Diagrams)
+        $analyticsTicketQuery = $hasFilters ? (clone $statsQuery) : VisitorTicket::query();
+        $baseAnalyticsTotal = (clone $analyticsTicketQuery)->count();
+        $checkedInAnalyticsCount = (clone $analyticsTicketQuery)->where('checked_in', true)->count();
+        $sentAnalyticsCount = (clone $analyticsTicketQuery)->whereNotNull('email_sent_at')->count();
+
+        $matchingPaymentIds = $hasFilters 
+            ? (clone $statsQuery)->whereNotNull('payment_id')->pluck('payment_id')->unique()->toArray() 
+            : null;
+
+        $highValueQuery = VisitorPayment::withCount('tickets')->where('total_amount', '>', 0);
+        if ($hasFilters && $matchingPaymentIds !== null) {
+            $highValueQuery->whereIn('id', $matchingPaymentIds);
+        }
+
         $analytics = [
-            'categoryDistribution' => VisitorTicket::select('visitor_type', DB::raw('count(*) as count'), DB::raw('sum(individual_price) as est_revenue'))
+            'categoryDistribution' => (clone $analyticsTicketQuery)
+                ->select('visitor_type', DB::raw('count(*) as count'), DB::raw('sum(individual_price) as est_revenue'))
                 ->groupBy('visitor_type')
                 ->orderByDesc('count')
                 ->get()
@@ -508,7 +524,8 @@ class VisitorTicketAdminController extends Controller
                         'est_revenue' => (float) ($c->est_revenue ?? 0),
                     ];
                 }),
-            'topInstitutions' => VisitorTicket::whereNotNull('visitor_institution')
+            'topInstitutions' => (clone $analyticsTicketQuery)
+                ->whereNotNull('visitor_institution')
                 ->where('visitor_institution', '!=', '')
                 ->where('visitor_institution', '!=', '-')
                 ->where('visitor_institution', 'not like', '%-%')
@@ -521,10 +538,10 @@ class VisitorTicketAdminController extends Controller
             'dailyVelocity' => $dailyVelocity,
             'monthlyVelocity' => $monthlyVelocity,
             'ticketStatusBreakdown' => [
-                'active' => VisitorTicket::where('status', 'active')->count(),
-                'pending' => VisitorTicket::where('status', 'pending')->count(),
-                'debt' => VisitorTicket::whereHas('payment', fn($pq) => $pq->where('is_debt', true))->count(),
-                'total' => VisitorTicket::count(),
+                'active' => (clone $analyticsTicketQuery)->where('status', 'active')->count(),
+                'pending' => (clone $analyticsTicketQuery)->where('status', 'pending')->count(),
+                'debt' => (clone $analyticsTicketQuery)->whereHas('payment', fn($pq) => $pq->where('is_debt', true))->count(),
+                'total' => $baseAnalyticsTotal,
             ],
             'paymentBreakdown' => [
                 ['id' => 0, 'label' => 'Approved (Lunas)', 'value' => VisitorPayment::where('status', 'approved')->where('is_debt', false)->whereHas('tickets')->count(), 'color' => '#10b981'],
@@ -540,26 +557,23 @@ class VisitorTicketAdminController extends Controller
                 'pendingRevenue' => (float) VisitorPayment::where('status', 'pending')->where('is_debt', false)->whereHas('tickets')->sum('total_amount'),
             ],
             'sourceDistribution' => [
-                ['id' => 0, 'label' => 'Online Self-Reg', 'value' => VisitorTicket::where(function($q) { $q->where('registration_source', 'online_self')->orWhereNull('registration_source'); })->count(), 'color' => '#3b82f6'],
-                ['id' => 1, 'label' => 'Onsite Assisted', 'value' => VisitorTicket::where('registration_source', 'onsite_admin')->count(), 'color' => '#10b981'],
-                ['id' => 2, 'label' => 'Group Delegation', 'value' => VisitorTicket::whereHas('payment', fn($pq) => $pq->where('is_mixed_category', true))->count(), 'color' => '#8b5cf6'],
-                ['id' => 3, 'label' => 'Free / Invited', 'value' => VisitorTicket::whereIn('visitor_type', ['vip', 'keynote_speaker', 'speaker', 'session_chair', 'board', 'delegate', 'committee', 'student_volunteer', 'exhibition', 'student_crowd', 'vip_companion', 'non_exclusive'])->count(), 'color' => '#0d9488'],
+                ['id' => 0, 'label' => 'Online Self-Reg', 'value' => (clone $analyticsTicketQuery)->where(function($q) { $q->where('registration_source', 'online_self')->orWhereNull('registration_source'); })->count(), 'color' => '#3b82f6'],
+                ['id' => 1, 'label' => 'Onsite Assisted', 'value' => (clone $analyticsTicketQuery)->where('registration_source', 'onsite_admin')->count(), 'color' => '#10b981'],
+                ['id' => 2, 'label' => 'Group Delegation', 'value' => (clone $analyticsTicketQuery)->whereHas('payment', fn($pq) => $pq->where('is_mixed_category', true))->count(), 'color' => '#8b5cf6'],
+                ['id' => 3, 'label' => 'Free / Invited', 'value' => (clone $analyticsTicketQuery)->whereIn('visitor_type', ['vip', 'keynote_speaker', 'speaker', 'session_chair', 'board', 'delegate', 'committee', 'student_volunteer', 'exhibition', 'student_crowd', 'vip_companion', 'non_exclusive'])->count(), 'color' => '#0d9488'],
             ],
             'gateAttendance' => [
-                'checkedIn' => VisitorTicket::where('checked_in', true)->count(),
-                'notCheckedIn' => VisitorTicket::where('checked_in', false)->count(),
-                'total' => VisitorTicket::count(),
-                'percentage' => VisitorTicket::count() > 0 ? round((VisitorTicket::where('checked_in', true)->count() / VisitorTicket::count()) * 100, 1) : 0,
+                'checkedIn' => $checkedInAnalyticsCount,
+                'notCheckedIn' => max(0, $baseAnalyticsTotal - $checkedInAnalyticsCount),
+                'total' => $baseAnalyticsTotal,
+                'percentage' => $baseAnalyticsTotal > 0 ? round(($checkedInAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0,
             ],
             'emailDelivery' => [
-                'sent' => VisitorTicket::whereNotNull('email_sent_at')->count(),
-                'unsent' => VisitorTicket::whereNull('email_sent_at')->where('status', 'active')->whereNotNull('visitor_email')->count(),
-                'percentage' => (VisitorTicket::whereNotNull('email_sent_at')->count() + VisitorTicket::whereNull('email_sent_at')->where('status', 'active')->whereNotNull('visitor_email')->count()) > 0 
-                    ? round((VisitorTicket::whereNotNull('email_sent_at')->count() / (VisitorTicket::whereNotNull('email_sent_at')->count() + VisitorTicket::whereNull('email_sent_at')->where('status', 'active')->whereNotNull('visitor_email')->count())) * 100, 1) 
-                    : 0,
+                'sent' => $sentAnalyticsCount,
+                'unsent' => max(0, $baseAnalyticsTotal - $sentAnalyticsCount),
+                'percentage' => $baseAnalyticsTotal > 0 ? round(($sentAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0,
             ],
-            'highValueInvoices' => VisitorPayment::withCount('tickets')
-                ->where('total_amount', '>', 0)
+            'highValueInvoices' => $highValueQuery
                 ->orderByDesc('total_amount')
                 ->limit(6)
                 ->get()

@@ -423,7 +423,26 @@ export default function VisitorTicketsIndex({
     const isDark = theme.palette.mode === 'dark';
 
     // View Mode: 'table' (Data & Management Table) | 'analytics' (Executive Analytics Dashboard)
-    const [viewMode, setViewMode] = useState('table');
+    const [viewMode, setViewMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('view') === 'analytics') return 'analytics';
+        }
+        return 'table';
+    });
+
+    const handleSetViewMode = (mode) => {
+        setViewMode(mode);
+        if (typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            if (mode === 'analytics') {
+                url.searchParams.set('view', 'analytics');
+            } else {
+                url.searchParams.delete('view');
+            }
+            window.history.replaceState({}, '', url.toString());
+        }
+    };
 
     const ticketsData = tickets.data || [];
     const totalItems = tickets.total || 0;
@@ -853,6 +872,9 @@ export default function VisitorTicketsIndex({
         if (params.duplicate === 'all') delete params.duplicate;
         if (String(params.per_page) === '25') delete params.per_page;
         if (params.page === 1) delete params.page;
+        if (viewMode === 'analytics') {
+            params.view = 'analytics';
+        }
 
         router.get(route('admin.visitorTickets'), params, {
             preserveState: true,
@@ -1806,7 +1828,7 @@ export default function VisitorTicketsIndex({
                 >
                     <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                         <Button
-                            onClick={() => setViewMode('table')}
+                            onClick={() => handleSetViewMode('table')}
                             startIcon={<TableChartRoundedIcon sx={{ fontSize: 18 }} />}
                             sx={{
                                 borderRadius: '12px',
@@ -1828,7 +1850,7 @@ export default function VisitorTicketsIndex({
                         </Button>
 
                         <Button
-                            onClick={() => setViewMode('analytics')}
+                            onClick={() => handleSetViewMode('analytics')}
                             startIcon={<InsightsRoundedIcon sx={{ fontSize: 18 }} />}
                             sx={{
                                 borderRadius: '12px',
@@ -1874,9 +1896,30 @@ export default function VisitorTicketsIndex({
                     <VisitorAnalyticsDashboard
                         analytics={analytics}
                         stats={stats}
+                        globalStats={globalStats}
                         isDark={isDark}
-                        onSwitchToTable={() => setViewMode('table')}
+                        onSwitchToTable={() => handleSetViewMode('table')}
                         onTriggerGateScanner={() => router.visit(route('admin.gateScanner'))}
+                        // Filter States & Handlers (matching Gambar 2)
+                        searchTerm={searchTerm}
+                        onSearchChange={handleSearchChange}
+                        typeFilter={typeFilter}
+                        onTypeFilterChange={handleTypeFilterChange}
+                        registrationTypeFilter={registrationTypeFilter}
+                        onRegistrationTypeFilterChange={handleRegistrationTypeFilterChange}
+                        checkedInFilter={checkedInFilter}
+                        onCheckedInFilterChange={handleCheckedInFilterChange}
+                        statusFilter={statusFilter}
+                        onStatusFilterChange={handleStatusFilterChange}
+                        debtFilter={debtFilter}
+                        onDebtFilterChange={handleDebtFilterChange}
+                        emailSentFilter={emailSentFilter}
+                        onEmailSentFilterChange={handleEmailSentFilterChange}
+                        duplicateFilter={duplicateFilter}
+                        onDuplicateFilterChange={handleDuplicateFilterChange}
+                        onResetFilters={handleResetFilters}
+                        hasActiveFilters={hasActiveFilters}
+                        CATEGORY_META={CATEGORY_META}
                     />
                 ) : (
                     <>

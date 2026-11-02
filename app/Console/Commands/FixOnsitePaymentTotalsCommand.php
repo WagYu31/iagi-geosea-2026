@@ -105,3 +105,4 @@ class FixOnsitePaymentTotalsCommand extends Command
         return 0;
     }
 }
+

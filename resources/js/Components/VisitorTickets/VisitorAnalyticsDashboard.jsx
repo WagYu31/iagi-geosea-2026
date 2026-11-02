@@ -20,9 +20,25 @@ import {
     Menu,
     MenuItem,
     Divider,
+    TextField,
+    InputAdornment,
+    IconButton,
+    FormControl,
+    InputLabel,
+    Select,
+    Checkbox,
+    ListItemText,
+    ListSubheader,
+    Paper,
+    Tooltip,
 } from '@mui/material';
 
 // Icons
+import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import TuneIcon from '@mui/icons-material/Tune';
+import FlashOnIcon from '@mui/icons-material/FlashOn';
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 import TableChartRoundedIcon from '@mui/icons-material/TableChartRounded';
@@ -56,9 +72,30 @@ const formatShortCurrency = (val) => {
 export default function VisitorAnalyticsDashboard({
     analytics = {},
     stats = {},
+    globalStats = {},
     isDark = false,
     onSwitchToTable = () => {},
     onTriggerGateScanner = () => {},
+    // Filter controls (matching Gambar 2)
+    searchTerm = '',
+    onSearchChange = () => {},
+    typeFilter = [],
+    onTypeFilterChange = () => {},
+    registrationTypeFilter = 'all',
+    onRegistrationTypeFilterChange = () => {},
+    checkedInFilter = 'all',
+    onCheckedInFilterChange = () => {},
+    statusFilter = 'all',
+    onStatusFilterChange = () => {},
+    debtFilter = 'all',
+    onDebtFilterChange = () => {},
+    emailSentFilter = 'all',
+    onEmailSentFilterChange = () => {},
+    duplicateFilter = 'all',
+    onDuplicateFilterChange = () => {},
+    onResetFilters = () => {},
+    hasActiveFilters = false,
+    CATEGORY_META = {},
 }) {
     const theme = useTheme();
 
@@ -410,6 +447,607 @@ export default function VisitorAnalyticsDashboard({
                 </Stack>
             </Box>
 
+            {/* ── FILTER & SEARCH SECTION (MATCHING GAMBAR 2 + ENHANCED) ── */}
+            <Paper
+                elevation={0}
+                sx={{
+                    p: { xs: 2, sm: 2.5 },
+                    mb: 3,
+                    borderRadius: '18px',
+                    bgcolor: cardBg,
+                    border: `1px solid ${cardBorder}`,
+                    boxShadow: isDark
+                        ? '0 10px 30px rgba(0,0,0,0.3)'
+                        : '0 4px 20px rgba(0,0,0,0.03)',
+                }}
+            >
+                {/* Header row of Filter Box */}
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                        <Box
+                            sx={{
+                                width: 34,
+                                height: 34,
+                                borderRadius: '10px',
+                                bgcolor: isDark ? 'rgba(37,99,235,0.2)' : '#eff6ff',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <TuneIcon sx={{ fontSize: 19, color: '#2563eb' }} />
+                        </Box>
+                        <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Typography sx={{ fontSize: '0.94rem', fontWeight: 800, color: textPrimary, letterSpacing: '-0.01em' }}>
+                                    Filter & Search Analytics
+                                </Typography>
+                                {hasActiveFilters ? (
+                                    <Chip
+                                        label="Filter Aktif"
+                                        size="small"
+                                        sx={{
+                                            height: 20,
+                                            fontSize: '0.68rem',
+                                            fontWeight: 800,
+                                            bgcolor: '#2563eb',
+                                            color: '#ffffff',
+                                        }}
+                                    />
+                                ) : (
+                                    <Chip
+                                        label="Semua Data (Live)"
+                                        size="small"
+                                        sx={{
+                                            height: 20,
+                                            fontSize: '0.68rem',
+                                            fontWeight: 700,
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                            color: textSecondary,
+                                        }}
+                                    />
+                                )}
+                            </Box>
+                            <Typography sx={{ fontSize: '0.74rem', color: textSecondary }}>
+                                Sesuaikan metrik, grafik, dan tabel performa berdasarkan kriteria delegasi secara realtime
+                            </Typography>
+                        </Box>
+                    </Box>
+
+                    {hasActiveFilters && (
+                        <Button
+                            size="small"
+                            variant="text"
+                            onClick={onResetFilters}
+                            startIcon={<RestartAltIcon sx={{ fontSize: 16 }} />}
+                            sx={{
+                                color: '#ef4444',
+                                fontWeight: 800,
+                                fontSize: '0.75rem',
+                                textTransform: 'none',
+                                '&:hover': { bgcolor: isDark ? 'rgba(239,68,68,0.1)' : '#fef2f2' },
+                            }}
+                        >
+                            Reset Semua Filter
+                        </Button>
+                    )}
+                </Box>
+
+                {/* Main Filter Grid (Gambar 2 layout) */}
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: {
+                            xs: '1fr',
+                            sm: 'repeat(2, 1fr)',
+                            md: 'repeat(3, 1fr)',
+                            lg: 'repeat(4, 1fr)',
+                            xl: '1.8fr 1.05fr 0.9fr 0.9fr 0.9fr 0.9fr 0.95fr 1.1fr auto',
+                        },
+                        gap: 1.5,
+                        alignItems: 'center',
+                    }}
+                >
+                    {/* 1. Search */}
+                    <TextField
+                        placeholder="Search name, email, ticket code..."
+                        value={searchTerm || ''}
+                        onChange={(e) => onSearchChange(e.target.value)}
+                        size="small"
+                        fullWidth
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon sx={{ color: '#2563eb', fontSize: 19 }} />
+                                </InputAdornment>
+                            ),
+                            endAdornment: searchTerm ? (
+                                <InputAdornment position="end">
+                                    <IconButton size="small" onClick={() => onSearchChange('')} sx={{ p: 0.2 }}>
+                                        <CloseIcon sx={{ fontSize: 16, color: textSecondary }} />
+                                    </IconButton>
+                                </InputAdornment>
+                            ) : null,
+                        }}
+                        sx={{
+                            gridColumn: { sm: 'span 2', md: 'span 3', lg: 'span 1' },
+                            '& .MuiOutlinedInput-root': {
+                                borderRadius: '10px',
+                                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                fontSize: '0.84rem',
+                                color: textPrimary,
+                            },
+                        }}
+                    />
+
+                    {/* 2. Category Dropdown */}
+                    <FormControl size="small" fullWidth>
+                        <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Category</InputLabel>
+                        <Select
+                            multiple
+                            value={typeFilter || []}
+                            label="Category"
+                            onChange={(e) => onTypeFilterChange(e.target.value)}
+                            renderValue={(selected) => {
+                                if (!selected || selected.length === 0) {
+                                    return <Typography sx={{ fontSize: '0.82rem', color: textSecondary }}>All Categories</Typography>;
+                                }
+                                if (selected.length === 1) {
+                                    const meta = CATEGORY_META[selected[0]];
+                                    return <Typography sx={{ fontSize: '0.82rem', fontWeight: 700, color: textPrimary }}>{meta?.shortLabel || meta?.label || selected[0]}</Typography>;
+                                }
+                                return (
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, overflow: 'hidden' }}>
+                                        <Chip 
+                                            size="small" 
+                                            label={`${selected.length} Kat`} 
+                                            sx={{ height: 20, fontSize: '0.7rem', fontWeight: 800, bgcolor: '#2563eb', color: '#fff' }} 
+                                        />
+                                        <Typography sx={{ fontSize: '0.76rem', fontWeight: 600, color: textSecondary, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                                            {selected.map(val => CATEGORY_META[val]?.shortLabel || val).join(', ')}
+                                        </Typography>
+                                    </Box>
+                                );
+                            }}
+                            MenuProps={{
+                                PaperProps: {
+                                    style: {
+                                        maxHeight: 420,
+                                        width: 320,
+                                        backgroundColor: cardBg,
+                                        color: textPrimary,
+                                    },
+                                },
+                            }}
+                            sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', fontWeight: 600, color: textPrimary }}
+                        >
+                            <MenuItem value="all" sx={{ fontWeight: 700 }}>
+                                <Checkbox checked={!typeFilter || typeFilter.length === 0} size="small" sx={{ p: 0.5, mr: 1 }} />
+                                <ListItemText primary="All Categories (Pilih Semua)" primaryTypographyProps={{ fontSize: '0.82rem', fontWeight: 700 }} />
+                            </MenuItem>
+
+                            <ListSubheader sx={{ fontWeight: 800, color: '#2563eb', bgcolor: isDark ? '#1e293b' : '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                1. PARTICIPANT
+                            </ListSubheader>
+                            <MenuItem value="iagi_member_professional" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('iagi_member_professional') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="Professional (Member)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="non_iagi_member_professional" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('non_iagi_member_professional') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="Professional (Non-Member)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="iagi_member_expatriate" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('iagi_member_expatriate') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="Expatriate (Member)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="non_iagi_member_expatriate" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('non_iagi_member_expatriate') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="Expatriate (Non-Member)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="student_undergraduate" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('student_undergraduate') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="Student Undergraduate" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="dosen" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('dosen') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="Dosen" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="professional" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('professional') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="Professional (Rp 1.500.000)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+
+                            <ListSubheader sx={{ fontWeight: 800, color: '#2563eb', bgcolor: isDark ? '#1e293b' : '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                2. TECHNICAL
+                            </ListSubheader>
+                            <MenuItem value="presenter" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('presenter') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="🎓 Presenter" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="invited_speaker" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('invited_speaker') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="🗣️ Invited Speaker" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="session_chair_judge" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('session_chair_judge') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="⚖️ Session Chair / Judge" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+
+                            <ListSubheader sx={{ fontWeight: 800, color: '#2563eb', bgcolor: isDark ? '#1e293b' : '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                3. VISITOR
+                            </ListSubheader>
+                            <MenuItem value="non_exclusive" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('non_exclusive') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="🎟️ Visitor Pass (Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+
+                            <ListSubheader sx={{ fontWeight: 800, color: '#2563eb', bgcolor: isDark ? '#1e293b' : '#f1f5f9', lineHeight: '30px', fontSize: '0.74rem', letterSpacing: '0.04em' }}>
+                                4. ROLES & INVITATIONS
+                            </ListSubheader>
+                            <MenuItem value="vip" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('vip') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="⭐ VIP" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="speaker" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('speaker') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="🎤 Keynote Speaker" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="panelist" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('panelist') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="👥 Panelist" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="moderator" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('moderator') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="🎯 Moderator" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="exhibition" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('exhibition') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="🏛️ Exhibition" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="committee" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('committee') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="👔 Committee" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="student_volunteer" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('student_volunteer') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="🤝 Student Volunteer" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="board" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('board') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="🎖️ Board (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="sponsorship" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('sponsorship') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="💎 Delegate (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="student_crowd" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('student_crowd') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="🎓 Student Crowd (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                            <MenuItem value="vip_companion" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('vip_companion') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="⭐ VIP Companion (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* 3. Reg. Type */}
+                    <FormControl size="small" fullWidth>
+                        <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Reg. Type</InputLabel>
+                        <Select
+                            value={registrationTypeFilter || 'all'}
+                            label="Reg. Type"
+                            onChange={(e) => onRegistrationTypeFilterChange(e.target.value)}
+                            sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', fontWeight: 600, color: textPrimary }}
+                        >
+                            <MenuItem value="all">All Types</MenuItem>
+                            <MenuItem value="individual">👤 Individual</MenuItem>
+                            <MenuItem value="mixed">🏢 Group / Mixed ({stats.groupRegistrationCount || 0})</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* 4. Gate Status */}
+                    <FormControl size="small" fullWidth>
+                        <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Gate Status</InputLabel>
+                        <Select
+                            value={checkedInFilter || 'all'}
+                            label="Gate Status"
+                            onChange={(e) => onCheckedInFilterChange(e.target.value)}
+                            sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', fontWeight: 600, color: textPrimary }}
+                        >
+                            <MenuItem value="all">All Statuses</MenuItem>
+                            <MenuItem value="yes">✅ Checked In ({stats.checkedInCount || gate.checkedIn})</MenuItem>
+                            <MenuItem value="no">⏳ Not Checked In</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* 5. Ticket Status */}
+                    <FormControl size="small" fullWidth>
+                        <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Ticket Status</InputLabel>
+                        <Select
+                            value={statusFilter || 'all'}
+                            label="Ticket Status"
+                            onChange={(e) => onStatusFilterChange(e.target.value)}
+                            sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', fontWeight: 600, color: textPrimary }}
+                        >
+                            <MenuItem value="all">All Statuses</MenuItem>
+                            <MenuItem value="active">Active ({ticketActive})</MenuItem>
+                            <MenuItem value="pending">Pending Payment ({ticketPending})</MenuItem>
+                            <MenuItem value="cancelled">Cancelled</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* 6. Debt Status */}
+                    <FormControl size="small" fullWidth>
+                        <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Debt Status</InputLabel>
+                        <Select
+                            value={debtFilter || 'all'}
+                            label="Debt Status"
+                            onChange={(e) => onDebtFilterChange(e.target.value)}
+                            sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', fontWeight: 600, color: textPrimary }}
+                        >
+                            <MenuItem value="all">All Debt Statuses</MenuItem>
+                            <MenuItem value="debt" sx={{ color: '#ea580c', fontWeight: 800 }}>⚠️ Debt Tagged ({stats.debtCount || ticketDebt})</MenuItem>
+                            <MenuItem value="fully_paid" sx={{ color: '#16a34a', fontWeight: 700 }}>✅ Fully Paid ({stats.fullyPaidCount || 0})</MenuItem>
+                            <MenuItem value="free" sx={{ color: '#0d9488', fontWeight: 700 }}>🎟️ Free ({stats.freeCount || 0})</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* 7. Email Status */}
+                    <FormControl size="small" fullWidth>
+                        <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Email Status</InputLabel>
+                        <Select
+                            value={emailSentFilter || 'all'}
+                            label="Email Status"
+                            onChange={(e) => onEmailSentFilterChange(e.target.value)}
+                            sx={{ borderRadius: '10px', fontSize: '0.82rem', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc', fontWeight: 600, color: textPrimary }}
+                        >
+                            <MenuItem value="all">All Email Status</MenuItem>
+                            <MenuItem value="sent" sx={{ color: '#0284c7', fontWeight: 700 }}>📨 Email Sent ({stats.emailSentCount || email.sent})</MenuItem>
+                            <MenuItem value="not_sent" sx={{ color: textSecondary, fontWeight: 700 }}>⏳ Not Sent Yet ({stats.emailNotSentCount || email.unsent})</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* 8. Duplikat / Dobel */}
+                    <FormControl size="small" fullWidth>
+                        <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Duplikat / Dobel</InputLabel>
+                        <Select
+                            value={duplicateFilter || 'all'}
+                            label="Duplikat / Dobel"
+                            onChange={(e) => onDuplicateFilterChange(e.target.value)}
+                            sx={{
+                                borderRadius: '10px',
+                                fontSize: '0.82rem',
+                                bgcolor: duplicateFilter !== 'all' ? (isDark ? 'rgba(239,68,68,0.1)' : '#fef2f2') : (isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc'),
+                                fontWeight: duplicateFilter !== 'all' ? 800 : 600,
+                                color: duplicateFilter !== 'all' ? '#ef4444' : textPrimary,
+                            }}
+                        >
+                            <MenuItem value="all">Semua Data (Bukan Dobel)</MenuItem>
+                            <MenuItem value="email" sx={{ color: '#ef4444', fontWeight: 700 }}>👥 Email Dobel ({stats.duplicateEmailTicketsCount || 0})</MenuItem>
+                            <MenuItem value="name" sx={{ color: '#f59e0b', fontWeight: 700 }}>👤 Nama Dobel ({stats.duplicateNameTicketsCount || 0})</MenuItem>
+                            <MenuItem value="any" sx={{ color: '#dc2626', fontWeight: 800 }}>⚠️ Email / Nama Dobel ({stats.duplicateAnyTicketsCount || 0})</MenuItem>
+                            <MenuItem value="both" sx={{ color: '#991b1b', fontWeight: 900 }}>🚨 Email & Nama Persis Sama</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    {/* 9. Reset Button */}
+                    <Button
+                        fullWidth
+                        variant="outlined"
+                        onClick={onResetFilters}
+                        disabled={!hasActiveFilters}
+                        startIcon={<RestartAltIcon />}
+                        size="small"
+                        sx={{
+                            height: 40,
+                            borderRadius: '10px',
+                            borderColor: cardBorder,
+                            color: textPrimary,
+                            textTransform: 'none',
+                            fontWeight: 700,
+                            fontSize: '0.78rem',
+                            whiteSpace: 'nowrap',
+                            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                            '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9' },
+                        }}
+                    >
+                        Reset
+                    </Button>
+                </Box>
+
+                {/* Quick Presets Row */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mt: 2, pt: 1.5, borderTop: `1px dashed ${cardBorder}` }}>
+                    <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: textSecondary, textTransform: 'uppercase', mr: 0.5, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <FlashOnIcon sx={{ fontSize: 16, color: '#2563eb' }} /> Quick Presets:
+                    </Typography>
+
+                    <Chip
+                        clickable
+                        size="small"
+                        label={`🌟 Semua (${Number(globalStats.totalVisitors || totalVisitors).toLocaleString('id-ID')})`}
+                        onClick={onResetFilters}
+                        sx={{
+                            fontWeight: !hasActiveFilters ? 800 : 600,
+                            fontSize: '0.72rem',
+                            bgcolor: !hasActiveFilters ? (isDark ? 'rgba(37,99,235,0.2)' : '#eff6ff') : 'transparent',
+                            color: !hasActiveFilters ? '#2563eb' : textSecondary,
+                            border: `1px solid ${!hasActiveFilters ? '#2563eb' : cardBorder}`,
+                        }}
+                    />
+
+                    <Chip
+                        clickable
+                        size="small"
+                        label={`✅ Lunas (${stats.fullyPaidCount || ticketActive})`}
+                        onClick={() => onDebtFilterChange('fully_paid')}
+                        sx={{
+                            fontWeight: debtFilter === 'fully_paid' ? 800 : 600,
+                            fontSize: '0.72rem',
+                            bgcolor: debtFilter === 'fully_paid' ? (isDark ? 'rgba(22,163,74,0.2)' : '#f0fdf4') : 'transparent',
+                            color: debtFilter === 'fully_paid' ? '#16a34a' : textSecondary,
+                            border: `1px solid ${debtFilter === 'fully_paid' ? '#16a34a' : cardBorder}`,
+                        }}
+                    />
+
+                    <Chip
+                        clickable
+                        size="small"
+                        label={`⚠️ Debt / Hutang (${stats.debtCount || ticketDebt})`}
+                        onClick={() => onDebtFilterChange('debt')}
+                        sx={{
+                            fontWeight: debtFilter === 'debt' ? 800 : 600,
+                            fontSize: '0.72rem',
+                            bgcolor: debtFilter === 'debt' ? (isDark ? 'rgba(234,88,12,0.2)' : '#fff7ed') : 'transparent',
+                            color: debtFilter === 'debt' ? '#ea580c' : textSecondary,
+                            border: `1px solid ${debtFilter === 'debt' ? '#ea580c' : cardBorder}`,
+                        }}
+                    />
+
+                    <Chip
+                        clickable
+                        size="small"
+                        label={`⏳ Pending (${stats.pendingVerificationCount || ticketPending})`}
+                        onClick={() => onStatusFilterChange('pending')}
+                        sx={{
+                            fontWeight: statusFilter === 'pending' ? 800 : 600,
+                            fontSize: '0.72rem',
+                            bgcolor: statusFilter === 'pending' ? (isDark ? 'rgba(245,158,11,0.2)' : '#fffbeb') : 'transparent',
+                            color: statusFilter === 'pending' ? '#d97706' : textSecondary,
+                            border: `1px solid ${statusFilter === 'pending' ? '#d97706' : cardBorder}`,
+                        }}
+                    />
+
+                    <Chip
+                        clickable
+                        size="small"
+                        label={`🚪 Checked In (${gate.checkedIn})`}
+                        onClick={() => onCheckedInFilterChange('yes')}
+                        sx={{
+                            fontWeight: checkedInFilter === 'yes' ? 800 : 600,
+                            fontSize: '0.72rem',
+                            bgcolor: checkedInFilter === 'yes' ? (isDark ? 'rgba(6,182,212,0.2)' : '#ecfeff') : 'transparent',
+                            color: checkedInFilter === 'yes' ? '#0891b2' : textSecondary,
+                            border: `1px solid ${checkedInFilter === 'yes' ? '#0891b2' : cardBorder}`,
+                        }}
+                    />
+
+                    <Chip
+                        clickable
+                        size="small"
+                        label={`🏢 Group Delegation (${stats.groupRegistrationCount || 0})`}
+                        onClick={() => onRegistrationTypeFilterChange('mixed')}
+                        sx={{
+                            fontWeight: registrationTypeFilter === 'mixed' ? 800 : 600,
+                            fontSize: '0.72rem',
+                            bgcolor: registrationTypeFilter === 'mixed' ? (isDark ? 'rgba(139,92,246,0.2)' : '#f5f3ff') : 'transparent',
+                            color: registrationTypeFilter === 'mixed' ? '#7c3aed' : textSecondary,
+                            border: `1px solid ${registrationTypeFilter === 'mixed' ? '#7c3aed' : cardBorder}`,
+                        }}
+                    />
+
+                    <Chip
+                        clickable
+                        size="small"
+                        label="🎓 Presenter"
+                        onClick={() => onTypeFilterChange(['presenter'])}
+                        sx={{
+                            fontWeight: typeFilter?.includes('presenter') ? 800 : 600,
+                            fontSize: '0.72rem',
+                            bgcolor: typeFilter?.includes('presenter') ? (isDark ? 'rgba(16,185,129,0.2)' : '#ecfdf5') : 'transparent',
+                            color: typeFilter?.includes('presenter') ? '#059669' : textSecondary,
+                            border: `1px solid ${typeFilter?.includes('presenter') ? '#059669' : cardBorder}`,
+                        }}
+                    />
+                </Box>
+
+                {/* Active Filter Strip */}
+                {hasActiveFilters && (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            flexWrap: 'wrap',
+                            gap: 1,
+                            mt: 1.8,
+                            p: 1.2,
+                            borderRadius: '12px',
+                            bgcolor: isDark ? 'rgba(37,99,235,0.08)' : '#eff6ff',
+                            border: `1px solid ${isDark ? 'rgba(37,99,235,0.2)' : '#bfdbfe'}`,
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                            <Typography sx={{ fontSize: '0.74rem', fontWeight: 800, color: '#2563eb' }}>
+                                🔍 Menampilkan hasil analisis terfilter:
+                            </Typography>
+                            <Chip
+                                label={`${Number(totalVisitors).toLocaleString('id-ID')} Delegasi Terpilih`}
+                                size="small"
+                                sx={{ height: 22, fontSize: '0.7rem', fontWeight: 900, bgcolor: '#2563eb', color: '#fff' }}
+                            />
+                            {searchTerm && (
+                                <Chip
+                                    size="small"
+                                    label={`Cari: "${searchTerm}"`}
+                                    onDelete={() => onSearchChange('')}
+                                    sx={{ height: 22, fontSize: '0.7rem', fontWeight: 700 }}
+                                />
+                            )}
+                            {typeFilter?.length > 0 && (
+                                <Chip
+                                    size="small"
+                                    label={`Kategori: ${typeFilter.map(k => CATEGORY_META[k]?.shortLabel || k).join(', ')}`}
+                                    onDelete={() => onTypeFilterChange([])}
+                                    sx={{ height: 22, fontSize: '0.7rem', fontWeight: 700 }}
+                                />
+                            )}
+                            {debtFilter !== 'all' && (
+                                <Chip
+                                    size="small"
+                                    label={`Debt: ${debtFilter}`}
+                                    onDelete={() => onDebtFilterChange('all')}
+                                    sx={{ height: 22, fontSize: '0.7rem', fontWeight: 700 }}
+                                />
+                            )}
+                            {statusFilter !== 'all' && (
+                                <Chip
+                                    size="small"
+                                    label={`Status: ${statusFilter}`}
+                                    onDelete={() => onStatusFilterChange('all')}
+                                    sx={{ height: 22, fontSize: '0.7rem', fontWeight: 700 }}
+                                />
+                            )}
+                            {checkedInFilter !== 'all' && (
+                                <Chip
+                                    size="small"
+                                    label={`Gate: ${checkedInFilter === 'yes' ? 'Checked In' : 'Not Checked In'}`}
+                                    onDelete={() => onCheckedInFilterChange('all')}
+                                    sx={{ height: 22, fontSize: '0.7rem', fontWeight: 700 }}
+                                />
+                            )}
+                            {registrationTypeFilter !== 'all' && (
+                                <Chip
+                                    size="small"
+                                    label={`Reg: ${registrationTypeFilter}`}
+                                    onDelete={() => onRegistrationTypeFilterChange('all')}
+                                    sx={{ height: 22, fontSize: '0.7rem', fontWeight: 700 }}
+                                />
+                            )}
+                        </Box>
+
+                        <Button
+                            size="small"
+                            onClick={onResetFilters}
+                            sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#2563eb', textTransform: 'none', p: 0.3 }}
+                        >
+                            Bersihkan Filter
+                        </Button>
+                    </Box>
+                )}
+            </Paper>
+
             {/* ── ROW 1: 4 TOP QUICK HIGHLIGHT CARDS (100% REAL DATA) ── */}
             <Grid container spacing={2.5} sx={{ mb: 3 }}>
                 {/* 1. Total Registered Delegates */}
@@ -417,15 +1055,17 @@ export default function VisitorAnalyticsDashboard({
                     <Card elevation={0} sx={diboldCardSx}>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
                             <Chip
+                                icon={<Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#2563eb', boxShadow: '0 0 8px #2563eb', ml: 0.8 }} />}
                                 label="Live Database"
                                 size="small"
                                 sx={{
-                                    height: 22,
+                                    height: 24,
                                     fontSize: '0.68rem',
                                     fontWeight: 800,
                                     bgcolor: isDark ? 'rgba(37,99,235,0.15)' : '#eff6ff',
                                     color: '#2563eb',
                                     borderRadius: '12px',
+                                    pl: 0.2,
                                 }}
                             />
                             <AvatarGroup max={3} sx={{ '& .MuiAvatar-root': { width: 22, height: 22, fontSize: '0.65rem' } }}>
@@ -462,15 +1102,17 @@ export default function VisitorAnalyticsDashboard({
                     <Card elevation={0} sx={diboldCardSx}>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
                             <Chip
+                                icon={<Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#16a34a', boxShadow: '0 0 8px #16a34a', ml: 0.8 }} />}
                                 label="Updated Realtime"
                                 size="small"
                                 sx={{
-                                    height: 22,
+                                    height: 24,
                                     fontSize: '0.68rem',
                                     fontWeight: 800,
                                     bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#f0fdf4',
                                     color: '#16a34a',
                                     borderRadius: '12px',
+                                    pl: 0.2,
                                 }}
                             />
                             <AvatarGroup max={2} sx={{ '& .MuiAvatar-root': { width: 22, height: 22, fontSize: '0.65rem' } }}>
@@ -506,15 +1148,17 @@ export default function VisitorAnalyticsDashboard({
                     <Card elevation={0} sx={diboldCardSx}>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
                             <Chip
+                                icon={<Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#9333ea', boxShadow: '0 0 8px #9333ea', ml: 0.8 }} />}
                                 label="Venue Turnstile"
                                 size="small"
                                 sx={{
-                                    height: 22,
+                                    height: 24,
                                     fontSize: '0.68rem',
                                     fontWeight: 800,
                                     bgcolor: isDark ? 'rgba(147,51,234,0.15)' : '#faf5ff',
                                     color: '#9333ea',
                                     borderRadius: '12px',
+                                    pl: 0.2,
                                 }}
                             />
                             <AvatarGroup max={2} sx={{ '& .MuiAvatar-root': { width: 22, height: 22, fontSize: '0.65rem' } }}>
@@ -549,15 +1193,17 @@ export default function VisitorAnalyticsDashboard({
                     <Card elevation={0} sx={diboldCardSx}>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
                             <Chip
+                                icon={<Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#d97706', boxShadow: '0 0 8px #d97706', ml: 0.8 }} />}
                                 label="Delivery Queue"
                                 size="small"
                                 sx={{
-                                    height: 22,
+                                    height: 24,
                                     fontSize: '0.68rem',
                                     fontWeight: 800,
                                     bgcolor: isDark ? 'rgba(217,119,6,0.15)' : '#fffbeb',
                                     color: '#d97706',
                                     borderRadius: '12px',
+                                    pl: 0.2,
                                 }}
                             />
                             <AvatarGroup max={2} sx={{ '& .MuiAvatar-root': { width: 22, height: 22, fontSize: '0.65rem' } }}>
