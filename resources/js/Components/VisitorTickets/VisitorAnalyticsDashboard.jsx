@@ -66,6 +66,9 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
+import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
+import ViewListRoundedIcon from '@mui/icons-material/ViewListRounded';
+import { PieChart } from '@mui/x-charts/PieChart';
 
 // Number Formatter Helper
 const formatRupiah = (val) => {
@@ -157,6 +160,8 @@ export default function VisitorAnalyticsDashboard({
     const [hourlyMode, setHourlyMode] = useState('hourly'); // 'hourly' | 'cumulative'
     const [pillarFilter, setPillarFilter] = useState('all'); // 'all' | 'commercial' | 'scientific' | 'leadership' | 'expo'
     const [hoveredHour, setHoveredHour] = useState(null);
+    const [pillarsViewMode, setPillarsViewMode] = useState('chart'); // 'chart' (Pie/Donut Chart) | 'cards' (Detail Cards)
+    const [sectorsViewMode, setSectorsViewMode] = useState('grid'); // 'grid' | 'pie'
 
     // ── 1. REAL DATA: TICKETS & PAYMENTS ──
     const totalVisitors = stats.totalVisitors || 0;
@@ -374,6 +379,38 @@ export default function VisitorAnalyticsDashboard({
         };
     }, [analytics.targetBenchmarks, paidRevenue, totalPipelineRevenue, debtRevenue, totalVisitors, gate.checkedIn]);
 
+    const totalPillarsCount = useMemo(() => {
+        const comm = Number(pillarsBreakdown.commercial?.total || 0);
+        const sci = Number(pillarsBreakdown.scientific?.total || 0);
+        const lead = Number(pillarsBreakdown.leadership?.total || 0);
+        const expo = Number(pillarsBreakdown.expo?.total || 0);
+        return comm + sci + lead + expo;
+    }, [pillarsBreakdown]);
+
+    const pillarsPieData = useMemo(() => {
+        const comm = Number(pillarsBreakdown.commercial?.total || 0);
+        const sci = Number(pillarsBreakdown.scientific?.total || 0);
+        const lead = Number(pillarsBreakdown.leadership?.total || 0);
+        const expo = Number(pillarsBreakdown.expo?.total || 0);
+        const grandTotal = comm + sci + lead + expo;
+
+        if (grandTotal === 0) {
+            return [
+                { id: 'comm', value: 1, label: 'Commercial & Paid', color: '#2563eb' },
+                { id: 'sci', value: 1, label: 'Scientific & Presenter', color: '#8b5cf6' },
+                { id: 'lead', value: 1, label: 'VIP & Leadership', color: '#f59e0b' },
+                { id: 'expo', value: 1, label: 'Expo, Booth & Crew', color: '#10b981' },
+            ];
+        }
+
+        return [
+            { id: 'comm', value: comm, label: 'Commercial & Paid', color: '#2563eb' },
+            { id: 'sci', value: sci, label: 'Scientific & Presenter', color: '#8b5cf6' },
+            { id: 'lead', value: lead, label: 'VIP & Leadership', color: '#f59e0b' },
+            { id: 'expo', value: expo, label: 'Expo, Booth & Crew', color: '#10b981' },
+        ];
+    }, [pillarsBreakdown]);
+
     const institutionalSectors = useMemo(() => {
         if (analytics.institutionalSectors && analytics.institutionalSectors.length > 0) {
             return analytics.institutionalSectors;
@@ -387,6 +424,24 @@ export default function VisitorAnalyticsDashboard({
             { label: 'Independent & Konsultan', icon: '👤', count: 0, color: '#64748b' },
         ];
     }, [analytics.institutionalSectors]);
+
+    const sectorsPieData = useMemo(() => {
+        const active = institutionalSectors.filter(s => Number(s.count || 0) > 0);
+        if (active.length === 0) {
+            return institutionalSectors.map((s, idx) => ({
+                id: `sec-${idx}`,
+                value: 1,
+                label: s.label,
+                color: s.color,
+            }));
+        }
+        return active.map((s, idx) => ({
+            id: `sec-${idx}`,
+            value: Number(s.count || 0),
+            label: s.label,
+            color: s.color,
+        }));
+    }, [institutionalSectors]);
 
     const demographics = useMemo(() => {
         return analytics.demographics || {
@@ -1986,8 +2041,8 @@ export default function VisitorAnalyticsDashboard({
                 <Grid container spacing={2.5} sx={{ mb: 3 }}>
                     {/* Left 5 Cols: The 4 Conference Pillars */}
                     <Grid size={{ xs: 12, lg: 5 }}>
-                        <Card elevation={0} sx={{ ...diboldCardSx, minHeight: 450 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                        <Card elevation={0} sx={{ ...diboldCardSx, minHeight: 450, display: 'flex', flexDirection: 'column' }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 1 }}>
                                 <Box>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                         <CorporateFareRoundedIcon sx={{ fontSize: 20, color: '#8b5cf6' }} />
@@ -2000,135 +2055,274 @@ export default function VisitorAnalyticsDashboard({
                                     </Typography>
                                 </Box>
 
-                                <Chip
-                                    label="4 Pillars"
-                                    size="small"
-                                    sx={{ height: 22, fontSize: '0.68rem', fontWeight: 800, bgcolor: isDark ? 'rgba(139,92,246,0.15)' : '#f5f3ff', color: '#8b5cf6' }}
-                                />
+                                <Box sx={{ display: 'inline-flex', p: '3px', bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', borderRadius: '8px', border: `1px solid ${cardBorder}` }}>
+                                    <Button
+                                        size="small"
+                                        onClick={() => setPillarsViewMode('chart')}
+                                        startIcon={<PieChartRoundedIcon sx={{ fontSize: '15px !important' }} />}
+                                        sx={{
+                                            minWidth: 'auto',
+                                            px: 1.2,
+                                            py: 0.35,
+                                            fontSize: '0.7rem',
+                                            fontWeight: 800,
+                                            borderRadius: '6px',
+                                            textTransform: 'none',
+                                            bgcolor: pillarsViewMode === 'chart' ? (isDark ? '#1e293b' : '#ffffff') : 'transparent',
+                                            color: pillarsViewMode === 'chart' ? '#8b5cf6' : textMuted,
+                                            boxShadow: pillarsViewMode === 'chart' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                            '&:hover': { bgcolor: pillarsViewMode === 'chart' ? (isDark ? '#1e293b' : '#ffffff') : 'transparent' }
+                                        }}
+                                    >
+                                        Pie Chart
+                                    </Button>
+                                    <Button
+                                        size="small"
+                                        onClick={() => setPillarsViewMode('cards')}
+                                        startIcon={<ViewListRoundedIcon sx={{ fontSize: '15px !important' }} />}
+                                        sx={{
+                                            minWidth: 'auto',
+                                            px: 1.2,
+                                            py: 0.35,
+                                            fontSize: '0.7rem',
+                                            fontWeight: 800,
+                                            borderRadius: '6px',
+                                            textTransform: 'none',
+                                            bgcolor: pillarsViewMode === 'cards' ? (isDark ? '#1e293b' : '#ffffff') : 'transparent',
+                                            color: pillarsViewMode === 'cards' ? '#8b5cf6' : textMuted,
+                                            boxShadow: pillarsViewMode === 'cards' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                            '&:hover': { bgcolor: pillarsViewMode === 'cards' ? (isDark ? '#1e293b' : '#ffffff') : 'transparent' }
+                                        }}
+                                    >
+                                        Detail Kartu
+                                    </Button>
+                                </Box>
                             </Box>
 
-                            {/* Composite Proportion Bar */}
-                            <Box sx={{ mb: 2.5 }}>
-                                <Box sx={{ display: 'flex', height: 10, borderRadius: '5px', overflow: 'hidden', mb: 1 }}>
-                                    <Box sx={{ width: '37%', bgcolor: '#2563eb' }} title="Commercial" />
-                                    <Box sx={{ width: '25%', bgcolor: '#8b5cf6' }} title="Scientific" />
-                                    <Box sx={{ width: '7%', bgcolor: '#f59e0b' }} title="VIP" />
-                                    <Box sx={{ width: '31%', bgcolor: '#10b981' }} title="Expo & Committee" />
-                                </Box>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 0.5 }}>
-                                    <Typography sx={{ fontSize: '0.68rem', color: '#2563eb', fontWeight: 700 }}>37% Berbayar</Typography>
-                                    <Typography sx={{ fontSize: '0.68rem', color: '#8b5cf6', fontWeight: 700 }}>25% Ilmiah</Typography>
-                                    <Typography sx={{ fontSize: '0.68rem', color: '#f59e0b', fontWeight: 700 }}>7% VIP</Typography>
-                                    <Typography sx={{ fontSize: '0.68rem', color: '#10b981', fontWeight: 700 }}>31% Expo/Crew</Typography>
-                                </Box>
-                            </Box>
-
-                            {/* 4 Detailed Pillar Cards */}
-                            <Stack spacing={1.5}>
-                                {/* Pillar 1: Commercial & Paid */}
-                                <Box sx={{ p: 1.5, borderRadius: '14px', bgcolor: isDark ? 'rgba(37,99,235,0.06)' : '#eff6ff', border: '1px solid rgba(37,99,235,0.18)' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography sx={{ fontSize: '1.1rem' }}>💼</Typography>
-                                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
-                                                Commercial & Paid Delegations
+                            {pillarsViewMode === 'chart' ? (
+                                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                                    {/* Donut / Pie Chart Container with Centered Total Metric */}
+                                    <Box sx={{ position: 'relative', width: '100%', height: 215, display: 'flex', alignItems: 'center', justifyContent: 'center', my: 0.5 }}>
+                                        <PieChart
+                                            series={[{
+                                                data: pillarsPieData,
+                                                innerRadius: 56,
+                                                outerRadius: 86,
+                                                paddingAngle: 3,
+                                                cornerRadius: 6,
+                                                highlightScope: { fade: 'global', highlight: 'item' },
+                                                faded: { innerRadius: 50, additionalRadius: -4, opacity: 0.35 },
+                                                valueFormatter: (item) => `${item.value} Pax (${totalPillarsCount > 0 ? ((item.value / totalPillarsCount) * 100).toFixed(1) : 0}%)`,
+                                            }]}
+                                            hideLegend={true}
+                                            slots={{ legend: () => null }}
+                                            margin={{ top: 5, bottom: 5, left: 5, right: 5 }}
+                                            height={215}
+                                        />
+                                        <Box sx={{
+                                            position: 'absolute',
+                                            top: '50%',
+                                            left: '50%',
+                                            transform: 'translate(-50%, -50%)',
+                                            textAlign: 'center',
+                                            pointerEvents: 'none',
+                                        }}>
+                                            <Typography sx={{ fontWeight: 900, fontSize: '1.45rem', color: textPrimary, lineHeight: 1 }}>
+                                                {totalPillarsCount}
+                                            </Typography>
+                                            <Typography sx={{ fontSize: '0.62rem', color: textMuted, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', mt: 0.3 }}>
+                                                Delegasi
                                             </Typography>
                                         </Box>
-                                        <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#2563eb' }}>
-                                            {pillarsBreakdown.commercial?.total ?? 0} Pax
-                                        </Typography>
                                     </Box>
-                                    <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
-                                        Professional Member, Non-Member, Expatriate & Mahasiswa Berbayar
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(37,99,235,0.12)` }}>
-                                        <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
-                                            Realisasi Kas: <strong style={{ color: '#10b981' }}>{formatShortCurrency(pillarsBreakdown.commercial?.revenue || 0)}</strong>
-                                        </Typography>
-                                        <Typography sx={{ fontSize: '0.7rem', color: '#ea580c', fontWeight: 700 }}>
-                                            Piutang: {pillarsBreakdown.commercial?.debt || 0} Orang
-                                        </Typography>
-                                    </Box>
-                                </Box>
 
-                                {/* Pillar 2: Scientific & Presenters */}
-                                <Box sx={{ p: 1.5, borderRadius: '14px', bgcolor: isDark ? 'rgba(139,92,246,0.06)' : '#f5f3ff', border: '1px solid rgba(139,92,246,0.18)' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography sx={{ fontSize: '1.1rem' }}>🔬</Typography>
-                                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
-                                                Scientific & Presenters (Oral / Poster)
-                                            </Typography>
-                                        </Box>
-                                        <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#8b5cf6' }}>
-                                            {pillarsBreakdown.scientific?.total ?? 0} Pax
-                                        </Typography>
-                                    </Box>
-                                    <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
-                                        Pemakalah oral, poster presenter, juri ilmiah & session chair PIT IAGI
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(139,92,246,0.12)` }}>
-                                        <Typography sx={{ fontSize: '0.7rem', color: '#8b5cf6', fontWeight: 700 }}>
-                                            100% Free Pass (Scientific Paper)
-                                        </Typography>
-                                        <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
-                                            8 Parallel Rooms
-                                        </Typography>
-                                    </Box>
-                                </Box>
+                                    {/* Executive 4-Pillar Grid Legend */}
+                                    <Grid container spacing={1.2} sx={{ mt: 1 }}>
+                                        {[
+                                            { label: 'Commercial & Paid', icon: '💼', color: '#2563eb', count: pillarsBreakdown.commercial?.total || 0, sub: `Kas: ${formatShortCurrency(pillarsBreakdown.commercial?.revenue || 0)}` },
+                                            { label: 'Scientific & Presenter', icon: '🔬', color: '#8b5cf6', count: pillarsBreakdown.scientific?.total || 0, sub: '100% Free Pass' },
+                                            { label: 'VIP & Leadership', icon: '🌟', color: '#f59e0b', count: pillarsBreakdown.leadership?.total || 0, sub: 'Undangan Khusus' },
+                                            { label: 'Expo, Booth & Crew', icon: '🏢', color: '#10b981', count: pillarsBreakdown.expo?.total || 0, sub: 'Exhibition Hall' },
+                                        ].map((item) => {
+                                            const pct = totalPillarsCount > 0 ? Math.round((item.count / totalPillarsCount) * 100) : 0;
+                                            return (
+                                                <Grid size={{ xs: 6 }} key={item.label}>
+                                                    <Box sx={{
+                                                        p: 1.2,
+                                                        borderRadius: '10px',
+                                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                                        border: `1px solid ${cardBorder}`,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 1
+                                                    }}>
+                                                        <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: item.color, flexShrink: 0 }} />
+                                                        <Box sx={{ minWidth: 0, flex: 1 }}>
+                                                            <Typography noWrap sx={{ fontSize: '0.72rem', fontWeight: 800, color: textPrimary }}>
+                                                                {item.label}
+                                                            </Typography>
+                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                <Typography sx={{ fontSize: '0.8rem', fontWeight: 900, color: item.color }}>
+                                                                    {item.count} Pax <span style={{ fontSize: '0.64rem', color: textMuted }}>({pct}%)</span>
+                                                                </Typography>
+                                                            </Box>
+                                                            <Typography noWrap sx={{ fontSize: '0.64rem', color: textMuted, mt: 0.1 }}>
+                                                                {item.sub}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Box>
+                                                </Grid>
+                                            );
+                                        })}
+                                    </Grid>
 
-                                {/* Pillar 3: VIP, Keynote & Leadership */}
-                                <Box sx={{ p: 1.5, borderRadius: '14px', bgcolor: isDark ? 'rgba(245,158,11,0.06)' : '#fffbeb', border: '1px solid rgba(245,158,11,0.2)' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography sx={{ fontSize: '1.1rem' }}>🌟</Typography>
-                                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
-                                                VIP, Keynote & Leadership
-                                            </Typography>
-                                        </Box>
-                                        <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#d97706' }}>
-                                            {pillarsBreakdown.leadership?.total ?? 0} Pax
-                                        </Typography>
-                                    </Box>
-                                    <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
-                                        Dewan Penasehat IAGI, GEOSEA Council, Pejabat Kementerian ESDM & Tamu VIP
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(245,158,11,0.12)` }}>
-                                        <Typography sx={{ fontSize: '0.7rem', color: '#d97706', fontWeight: 700 }}>
-                                            Full Access & Gala Dinner
-                                        </Typography>
-                                        <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
-                                            Undangan Resmi
-                                        </Typography>
+                                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5, pt: 1, borderTop: `1px solid ${cardBorder}` }}>
+                                        <Button
+                                            size="small"
+                                            onClick={() => setPillarsViewMode('cards')}
+                                            sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#8b5cf6', textTransform: 'none' }}
+                                        >
+                                            Buka Rincian Lengkap 4 Pilar &rarr;
+                                        </Button>
                                     </Box>
                                 </Box>
+                            ) : (
+                                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                    {/* Composite Proportion Bar */}
+                                    <Box sx={{ mb: 2.5 }}>
+                                        <Box sx={{ display: 'flex', height: 10, borderRadius: '5px', overflow: 'hidden', mb: 1 }}>
+                                            <Box sx={{ width: '37%', bgcolor: '#2563eb' }} title="Commercial" />
+                                            <Box sx={{ width: '25%', bgcolor: '#8b5cf6' }} title="Scientific" />
+                                            <Box sx={{ width: '7%', bgcolor: '#f59e0b' }} title="VIP" />
+                                            <Box sx={{ width: '31%', bgcolor: '#10b981' }} title="Expo & Committee" />
+                                        </Box>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 0.5 }}>
+                                            <Typography sx={{ fontSize: '0.68rem', color: '#2563eb', fontWeight: 700 }}>37% Berbayar</Typography>
+                                            <Typography sx={{ fontSize: '0.68rem', color: '#8b5cf6', fontWeight: 700 }}>25% Ilmiah</Typography>
+                                            <Typography sx={{ fontSize: '0.68rem', color: '#f59e0b', fontWeight: 700 }}>7% VIP</Typography>
+                                            <Typography sx={{ fontSize: '0.68rem', color: '#10b981', fontWeight: 700 }}>31% Expo/Crew</Typography>
+                                        </Box>
+                                    </Box>
 
-                                {/* Pillar 4: Expo, Industry & Crew */}
-                                <Box sx={{ p: 1.5, borderRadius: '14px', bgcolor: isDark ? 'rgba(16,185,129,0.06)' : '#ecfdf5', border: '1px solid rgba(16,185,129,0.18)' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <Typography sx={{ fontSize: '1.1rem' }}>🏢</Typography>
-                                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
-                                                Expo, Industry Booth & Crew
+                                    {/* 4 Detailed Pillar Cards */}
+                                    <Stack spacing={1.5} sx={{ flex: 1 }}>
+                                        {/* Pillar 1: Commercial & Paid */}
+                                        <Box sx={{ p: 1.5, borderRadius: '14px', bgcolor: isDark ? 'rgba(37,99,235,0.06)' : '#eff6ff', border: '1px solid rgba(37,99,235,0.18)' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <Typography sx={{ fontSize: '1.1rem' }}>💼</Typography>
+                                                    <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
+                                                        Commercial & Paid Delegations
+                                                    </Typography>
+                                                </Box>
+                                                <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#2563eb' }}>
+                                                    {pillarsBreakdown.commercial?.total ?? 0} Pax
+                                                </Typography>
+                                            </Box>
+                                            <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
+                                                Professional Member, Non-Member, Expatriate & Mahasiswa Berbayar
                                             </Typography>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(37,99,235,0.12)` }}>
+                                                <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
+                                                    Realisasi Kas: <strong style={{ color: '#10b981' }}>{formatShortCurrency(pillarsBreakdown.commercial?.revenue || 0)}</strong>
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.7rem', color: '#ea580c', fontWeight: 700 }}>
+                                                    Piutang: {pillarsBreakdown.commercial?.debt || 0} Orang
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                        <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#10b981' }}>
-                                            {pillarsBreakdown.expo?.total ?? 0} Pax
-                                        </Typography>
-                                    </Box>
-                                    <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
-                                        Petugas booth pameran, panitia pelaksana, LO & volunteer mahasiswa
-                                    </Typography>
-                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(16,185,129,0.12)` }}>
-                                        <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
-                                            Kas Booth: <strong style={{ color: '#10b981' }}>{formatShortCurrency(pillarsBreakdown.expo?.revenue || 0)}</strong>
-                                        </Typography>
-                                        <Typography sx={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700 }}>
-                                            Exhibition Hall
-                                        </Typography>
+
+                                        {/* Pillar 2: Scientific & Presenters */}
+                                        <Box sx={{ p: 1.5, borderRadius: '14px', bgcolor: isDark ? 'rgba(139,92,246,0.06)' : '#f5f3ff', border: '1px solid rgba(139,92,246,0.18)' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <Typography sx={{ fontSize: '1.1rem' }}>🔬</Typography>
+                                                    <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
+                                                        Scientific & Presenters (Oral / Poster)
+                                                    </Typography>
+                                                </Box>
+                                                <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#8b5cf6' }}>
+                                                    {pillarsBreakdown.scientific?.total ?? 0} Pax
+                                                </Typography>
+                                            </Box>
+                                            <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
+                                                Pemakalah oral, poster presenter, juri ilmiah & session chair PIT IAGI
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(139,92,246,0.12)` }}>
+                                                <Typography sx={{ fontSize: '0.7rem', color: '#8b5cf6', fontWeight: 700 }}>
+                                                    100% Free Pass (Scientific Paper)
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
+                                                    8 Parallel Rooms
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        {/* Pillar 3: VIP, Keynote & Leadership */}
+                                        <Box sx={{ p: 1.5, borderRadius: '14px', bgcolor: isDark ? 'rgba(245,158,11,0.06)' : '#fffbeb', border: '1px solid rgba(245,158,11,0.2)' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <Typography sx={{ fontSize: '1.1rem' }}>🌟</Typography>
+                                                    <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
+                                                        VIP, Keynote & Leadership
+                                                    </Typography>
+                                                </Box>
+                                                <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#d97706' }}>
+                                                    {pillarsBreakdown.leadership?.total ?? 0} Pax
+                                                </Typography>
+                                            </Box>
+                                            <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
+                                                Dewan Penasehat IAGI, GEOSEA Council, Pejabat Kementerian ESDM & Tamu VIP
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(245,158,11,0.12)` }}>
+                                                <Typography sx={{ fontSize: '0.7rem', color: '#d97706', fontWeight: 700 }}>
+                                                    Full Access & Gala Dinner
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
+                                                    Undangan Resmi
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        {/* Pillar 4: Expo, Industry & Crew */}
+                                        <Box sx={{ p: 1.5, borderRadius: '14px', bgcolor: isDark ? 'rgba(16,185,129,0.06)' : '#ecfdf5', border: '1px solid rgba(16,185,129,0.18)' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                    <Typography sx={{ fontSize: '1.1rem' }}>🏢</Typography>
+                                                    <Typography sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
+                                                        Expo, Industry Booth & Crew
+                                                    </Typography>
+                                                </Box>
+                                                <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: '#10b981' }}>
+                                                    {pillarsBreakdown.expo?.total ?? 0} Pax
+                                                </Typography>
+                                            </Box>
+                                            <Typography sx={{ fontSize: '0.72rem', color: textSecondary, mb: 0.8 }}>
+                                                Petugas booth pameran, panitia pelaksana, LO & volunteer mahasiswa
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pt: 0.6, borderTop: `1px solid rgba(16,185,129,0.12)` }}>
+                                                <Typography sx={{ fontSize: '0.7rem', color: textSecondary }}>
+                                                    Kas Booth: <strong style={{ color: '#10b981' }}>{formatShortCurrency(pillarsBreakdown.expo?.revenue || 0)}</strong>
+                                                </Typography>
+                                                <Typography sx={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 700 }}>
+                                                    Exhibition Hall
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+                                    </Stack>
+
+                                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5, pt: 1, borderTop: `1px solid ${cardBorder}` }}>
+                                        <Button
+                                            size="small"
+                                            onClick={() => setPillarsViewMode('chart')}
+                                            startIcon={<PieChartRoundedIcon sx={{ fontSize: 16 }} />}
+                                            sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#8b5cf6', textTransform: 'none' }}
+                                        >
+                                            Tampilkan Mode Donut / Pie Chart &rarr;
+                                        </Button>
                                     </Box>
                                 </Box>
-                            </Stack>
+                            )}
                         </Card>
                     </Grid>
 
@@ -2427,37 +2621,111 @@ export default function VisitorAnalyticsDashboard({
                                     </Typography>
                                 </Box>
 
-                                <Chip
-                                    label="6 Sektor"
-                                    size="small"
-                                    sx={{ height: 22, fontSize: '0.68rem', fontWeight: 800, bgcolor: isDark ? 'rgba(13,148,136,0.15)' : '#f0fdfa', color: '#0d9488' }}
-                                />
+                                <Box sx={{ display: 'inline-flex', p: '3px', bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', borderRadius: '8px', border: `1px solid ${cardBorder}` }}>
+                                    <Button
+                                        size="small"
+                                        onClick={() => setSectorsViewMode('grid')}
+                                        sx={{
+                                            minWidth: 'auto',
+                                            px: 1.1,
+                                            py: 0.35,
+                                            fontSize: '0.68rem',
+                                            fontWeight: 800,
+                                            borderRadius: '6px',
+                                            textTransform: 'none',
+                                            bgcolor: sectorsViewMode === 'grid' ? (isDark ? '#1e293b' : '#ffffff') : 'transparent',
+                                            color: sectorsViewMode === 'grid' ? '#0d9488' : textMuted,
+                                            boxShadow: sectorsViewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                            '&:hover': { bgcolor: sectorsViewMode === 'grid' ? (isDark ? '#1e293b' : '#ffffff') : 'transparent' }
+                                        }}
+                                    >
+                                        Grid Sektor
+                                    </Button>
+                                    <Button
+                                        size="small"
+                                        onClick={() => setSectorsViewMode('pie')}
+                                        startIcon={<PieChartRoundedIcon sx={{ fontSize: '14px !important' }} />}
+                                        sx={{
+                                            minWidth: 'auto',
+                                            px: 1.1,
+                                            py: 0.35,
+                                            fontSize: '0.68rem',
+                                            fontWeight: 800,
+                                            borderRadius: '6px',
+                                            textTransform: 'none',
+                                            bgcolor: sectorsViewMode === 'pie' ? (isDark ? '#1e293b' : '#ffffff') : 'transparent',
+                                            color: sectorsViewMode === 'pie' ? '#0d9488' : textMuted,
+                                            boxShadow: sectorsViewMode === 'pie' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                            '&:hover': { bgcolor: sectorsViewMode === 'pie' ? (isDark ? '#1e293b' : '#ffffff') : 'transparent' }
+                                        }}
+                                    >
+                                        Pie Chart
+                                    </Button>
+                                </Box>
                             </Box>
 
-                            {/* Top: 6 Sektor Industri Grid */}
-                            <Typography sx={{ fontSize: '0.76rem', fontWeight: 800, color: textPrimary, mb: 1.2 }}>
-                                Distribusi Sektor Industri Delegasi
-                            </Typography>
-                            <Grid container spacing={1.5} sx={{ mb: 2.5 }}>
-                                {institutionalSectors.map((sector) => {
-                                    const sectorPct = Math.round(((sector.count || 0) / (totalVisitors || 1)) * 100);
-                                    return (
-                                        <Grid size={{ xs: 6, sm: 4 }} key={sector.label}>
-                                            <Box sx={{ p: 1.2, borderRadius: '12px', bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc', border: `1px solid ${cardBorder}` }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, mb: 0.4 }}>
-                                                    <Typography sx={{ fontSize: '0.95rem' }}>{sector.icon}</Typography>
-                                                    <Typography noWrap sx={{ fontSize: '0.72rem', fontWeight: 800, color: textPrimary }}>
-                                                        {sector.label}
-                                                    </Typography>
-                                                </Box>
-                                                <Typography sx={{ fontSize: '1.05rem', fontWeight: 900, color: sector.color }}>
-                                                    {sector.count} <span style={{ fontSize: '0.68rem', fontWeight: 600, color: textSecondary }}>({sectorPct}%)</span>
-                                                </Typography>
-                                            </Box>
-                                        </Grid>
-                                    );
-                                })}
-                            </Grid>
+                            {/* Top: 6 Sektor Industri Grid OR Pie Chart */}
+                            {sectorsViewMode === 'pie' ? (
+                                <Box sx={{ position: 'relative', width: '100%', height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                                    <PieChart
+                                        series={[{
+                                            data: sectorsPieData,
+                                            innerRadius: 46,
+                                            outerRadius: 72,
+                                            paddingAngle: 3,
+                                            cornerRadius: 5,
+                                            highlightScope: { fade: 'global', highlight: 'item' },
+                                            faded: { innerRadius: 42, additionalRadius: -3, opacity: 0.35 },
+                                            valueFormatter: (item) => `${item.value} Orang (${totalVisitors > 0 ? ((item.value / totalVisitors) * 100).toFixed(1) : 0}%)`,
+                                        }]}
+                                        hideLegend={true}
+                                        slots={{ legend: () => null }}
+                                        margin={{ top: 5, bottom: 5, left: 5, right: 5 }}
+                                        height={180}
+                                    />
+                                    <Box sx={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        textAlign: 'center',
+                                        pointerEvents: 'none',
+                                    }}>
+                                        <Typography sx={{ fontWeight: 900, fontSize: '1.25rem', color: textPrimary, lineHeight: 1 }}>
+                                            {totalVisitors}
+                                        </Typography>
+                                        <Typography sx={{ fontSize: '0.58rem', color: textMuted, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', mt: 0.2 }}>
+                                            Delegasi
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            ) : (
+                                <>
+                                    <Typography sx={{ fontSize: '0.76rem', fontWeight: 800, color: textPrimary, mb: 1.2 }}>
+                                        Distribusi Sektor Industri Delegasi
+                                    </Typography>
+                                    <Grid container spacing={1.5} sx={{ mb: 2.5 }}>
+                                        {institutionalSectors.map((sector) => {
+                                            const sectorPct = Math.round(((sector.count || 0) / (totalVisitors || 1)) * 100);
+                                            return (
+                                                <Grid size={{ xs: 6, sm: 4 }} key={sector.label}>
+                                                    <Box sx={{ p: 1.2, borderRadius: '12px', bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc', border: `1px solid ${cardBorder}` }}>
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6, mb: 0.4 }}>
+                                                            <Typography sx={{ fontSize: '0.95rem' }}>{sector.icon}</Typography>
+                                                            <Typography noWrap sx={{ fontSize: '0.72rem', fontWeight: 800, color: textPrimary }}>
+                                                                {sector.label}
+                                                            </Typography>
+                                                        </Box>
+                                                        <Typography sx={{ fontSize: '1.05rem', fontWeight: 900, color: sector.color }}>
+                                                            {sector.count} <span style={{ fontSize: '0.68rem', fontWeight: 600, color: textSecondary }}>({sectorPct}%)</span>
+                                                        </Typography>
+                                                    </Box>
+                                                </Grid>
+                                            );
+                                        })}
+                                    </Grid>
+                                </>
+                            )}
 
                             <Divider sx={{ my: 1.5, borderColor: cardBorder }} />
 
