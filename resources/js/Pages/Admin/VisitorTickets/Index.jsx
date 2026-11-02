@@ -648,6 +648,7 @@ export default function VisitorTicketsIndex({
     // Import Excel Modal state
     const [importModalOpen, setImportModalOpen] = useState(false);
     const [importFile, setImportFile] = useState(null);
+    const [isDraggingImport, setIsDraggingImport] = useState(false);
     const [importSendEmail, setImportSendEmail] = useState(false);
     const [importProcessing, setImportProcessing] = useState(false);
 
@@ -5904,10 +5905,44 @@ export default function VisitorTicketsIndex({
                         </Typography>
                         <Box
                             component="label"
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDraggingImport(true);
+                            }}
+                            onDragEnter={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDraggingImport(true);
+                            }}
+                            onDragLeave={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDraggingImport(false);
+                            }}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setIsDraggingImport(false);
+                                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                                    const file = e.dataTransfer.files[0];
+                                    const fileName = file.name.toLowerCase();
+                                    if (fileName.endsWith('.numbers')) {
+                                        alert('Perhatian: File format Apple Numbers (.numbers) tidak dapat dibaca oleh sistem web.\n\nSilakan buka file tersebut di Numbers Mac, lalu pilih menu: File > Export To > Excel (.xlsx) atau CSV.');
+                                        return;
+                                    }
+                                    if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls') && !fileName.endsWith('.csv') && !fileName.endsWith('.txt')) {
+                                        alert('Format file tidak didukung. Harap upload file Excel (.xlsx / .xls) atau CSV (.csv).');
+                                        return;
+                                    }
+                                    setImportFile(file);
+                                }
+                            }}
                             sx={{
                                 border: '2px dashed',
-                                borderColor: importFile ? '#0284c7' : '#cbd5e1',
-                                bgcolor: importFile ? '#f0f9ff' : '#fafafa',
+                                borderColor: isDraggingImport ? '#0284c7' : (importFile ? '#059669' : '#cbd5e1'),
+                                bgcolor: isDraggingImport ? '#e0f2fe' : (importFile ? '#f0fdf4' : '#fafafa'),
+                                transform: isDraggingImport ? 'scale(1.01)' : 'none',
                                 borderRadius: '16px',
                                 p: 3,
                                 textAlign: 'center',
@@ -5926,27 +5961,42 @@ export default function VisitorTicketsIndex({
                                 style={{ display: 'none' }}
                                 onChange={(e) => {
                                     if (e.target.files && e.target.files[0]) {
-                                        setImportFile(e.target.files[0]);
+                                        const file = e.target.files[0];
+                                        const fileName = file.name.toLowerCase();
+                                        if (fileName.endsWith('.numbers')) {
+                                            alert('Perhatian: File format Apple Numbers (.numbers) tidak dapat dibaca oleh sistem web.\n\nSilakan buka file tersebut di Numbers Mac, lalu pilih menu: File > Export To > Excel (.xlsx) atau CSV.');
+                                            return;
+                                        }
+                                        setImportFile(file);
                                     }
                                 }}
                             />
-                            <CloudUploadIcon sx={{ fontSize: 44, color: importFile ? '#0284c7' : '#94a3b8', mb: 1 }} />
-                            {importFile ? (
+                            <CloudUploadIcon sx={{ fontSize: 48, color: isDraggingImport ? '#0284c7' : (importFile ? '#059669' : '#94a3b8'), mb: 1, transition: 'transform 0.2s', transform: isDraggingImport ? 'scale(1.15)' : 'none' }} />
+                            {isDraggingImport ? (
                                 <Box>
-                                    <Typography variant="body1" sx={{ fontWeight: 800, color: '#0369a1' }}>
-                                        {importFile.name}
+                                    <Typography variant="body1" sx={{ fontWeight: 800, color: '#0284c7' }}>
+                                        Lepaskan file di sini untuk mengupload
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#0369a1' }}>
+                                        File Excel (.xlsx) atau .csv
+                                    </Typography>
+                                </Box>
+                            ) : importFile ? (
+                                <Box>
+                                    <Typography variant="body1" sx={{ fontWeight: 800, color: '#166534' }}>
+                                        ✓ {importFile.name}
                                     </Typography>
                                     <Typography variant="caption" sx={{ color: '#64748b' }}>
-                                        {(importFile.size / 1024).toFixed(1)} KB • Klik untuk ganti file
+                                        {(importFile.size / 1024).toFixed(1)} KB • Klik atau drag file lain untuk mengganti
                                     </Typography>
                                 </Box>
                             ) : (
                                 <Box>
                                     <Typography variant="body2" sx={{ fontWeight: 700, color: '#334155' }}>
-                                        Klik untuk memilih file Excel (.xlsx) atau CSV
+                                        Drag & drop file ke sini, atau klik untuk memilih file
                                     </Typography>
-                                    <Typography variant="caption" sx={{ color: '#94a3b8' }}>
-                                        Mendukung hingga ribuan data sekaligus (maksimal 15 MB)
+                                    <Typography variant="caption" sx={{ color: '#64748b' }}>
+                                        Format: Excel (.xlsx) atau CSV (.csv) • Maksimal 15 MB
                                     </Typography>
                                 </Box>
                             )}
