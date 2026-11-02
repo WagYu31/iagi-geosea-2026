@@ -482,7 +482,7 @@ return [
   '03786' => ['name' => 'Dumex Pasaribu', 'email' => 'dumex.pasaribu@gmail.com'],
   '03790' => ['name' => 'Sirozuddin', 'email' => 'sirozuddin@yahoo.com'],
   '03792' => ['name' => 'Henrikus Panjaitan', 'email' => 'henrikusp@yahoo.com'],
-  '03793' => ['name' => 'Julianta Parlindungan Panjaitan', 'email' => 'julianta.panjaitan2@gmail.com', 'alt_emails' => ['julianta.p.panjaitan@medcoenergi.com']],
+  '03793' => ['name' => 'Julianta Parlindungan Panjaitan', 'email' => 'julianta.panjaitan2@gmail.com', 'alt_emails' => ['julianta.p.panjaitan@medcoenergi.com'], 'phone' => '081802602808'],
   '03804' => ['name' => 'Fanny Rosdiawan', 'email' => 'fanny.rosdiawan@pertamina.com'],
   '03805' => ['name' => 'Nugroho Imam Setiawan', 'email' => 'nusetiawan@gmail.com'],
   '03807' => ['name' => 'Bayu Sapta Fitriana', 'email' => 'bayu.fitriana@pertamina.com'],
