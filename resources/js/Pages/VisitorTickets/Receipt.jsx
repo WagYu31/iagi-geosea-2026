@@ -69,6 +69,18 @@ const CATEGORY_MAP = {
     non_exclusive: { label: 'Visitor Pass (Free)', badge: 'VISITOR PASS (FREE)' },
 };
 
+const CATEGORY_PRICES = {
+    iagi_member_professional: 3000000,
+    non_iagi_member_professional: 4000000,
+    iagi_member_expatriate: 6000000,
+    non_iagi_member_expatriate: 7000000,
+    student_undergraduate: 1000000,
+    dosen: 1500000,
+    professional: 1500000,
+    professional_1500: 1500000,
+    exclusive: 500000,
+};
+
 function numberToWordsEn(num) {
     num = Math.floor(Math.abs(num));
     if (num === 0) return 'Zero';
@@ -128,7 +140,27 @@ export default function Receipt({
     const isPending = payment.status === 'pending' || !payment.status;
 
     const primaryTicket = tickets[0] || {};
-    const totalAmount = Number(payment.total_amount || 0);
+
+    // Dynamically calculate accurate subtotal from each participant
+    const rawCalculatedSubtotal = React.useMemo(() => {
+        return (tickets || []).reduce((acc, t) => {
+            const ind = Number(t.individual_price || 0);
+            if (ind > 0) return acc + ind;
+            const catPrice = CATEGORY_PRICES[t.visitor_type];
+            if (catPrice !== undefined) return acc + catPrice;
+            const fallbackPrice = Number(payment.price_per_ticket || 0);
+            return acc + fallbackPrice;
+        }, 0);
+    }, [tickets, payment]);
+
+    const storedSubtotal = Math.max(0, Number(payment.total_amount || 0) - Number(payment.unique_code || 0) + Number(payment.discount_amount || 0));
+    const effectiveSubtotal = (rawCalculatedSubtotal > 0 && (tickets.length > 1 || storedSubtotal === 0) && rawCalculatedSubtotal > storedSubtotal)
+        ? rawCalculatedSubtotal
+        : (storedSubtotal > 0 ? storedSubtotal : rawCalculatedSubtotal);
+
+    const discountAmount = Number(payment.discount_amount || 0);
+    const uniqueCode = Number(payment.unique_code || 0);
+    const totalAmount = Math.max(0, effectiveSubtotal - discountAmount) + uniqueCode;
     const amountInWords = totalAmount > 0 ? (numberToWordsEn(totalAmount).trim() + ' Rupiah') : 'Zero Rupiah';
 
     const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
@@ -421,7 +453,7 @@ export default function Receipt({
                                             const cat = CATEGORY_MAP[t.visitor_type] || CATEGORY_MAP.non_exclusive;
                                             const price = Number(t.individual_price && Number(t.individual_price) > 0 
                                                 ? t.individual_price 
-                                                : (payment.price_per_ticket || (totalAmount / (tickets.length || 1))));
+                                                : (CATEGORY_PRICES[t.visitor_type] || payment.price_per_ticket || (totalAmount / (tickets.length || 1))));
                                             return (
                                                 <TableRow key={t.id || idx} sx={{ '&:nth-of-type(even)': { bgcolor: '#f8fafc' } }}>
                                                     <TableCell sx={{ fontWeight: 700, fontSize: '0.76rem', py: { xs: 0.8, sm: 1 }, '@media print': { py: '4px !important' } }}>{idx + 1}</TableCell>
@@ -473,7 +505,7 @@ export default function Receipt({
                                                         Subtotal ({tickets.length} Participants):
                                                     </TableCell>
                                                     <TableCell align="right" sx={{ fontWeight: 700, color: '#64748b', fontSize: '0.76rem', py: 0.6 }}>
-                                                        IDR {(totalAmount - Number(payment.unique_code)).toLocaleString('id-ID')}
+                                                        IDR {effectiveSubtotal.toLocaleString('id-ID')}
                                                     </TableCell>
                                                 </TableRow>
                                                 <TableRow sx={{ bgcolor: '#fafafa' }}>

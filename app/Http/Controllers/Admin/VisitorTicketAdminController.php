@@ -746,6 +746,7 @@ class VisitorTicketAdminController extends Controller
                 'visitor_institution' => $request->visitor_institution,
                 'ticket_code' => VisitorTicket::generateTicketCode($type),
                 'visitor_type' => $type,
+                'individual_price' => $isPaidCategory ? $price : 0,
                 'is_group_leader' => true,
                 'status' => ($isPaidCategory && $request->payment_status === 'pending') ? 'pending' : 'active',
                 'checked_in' => false,
@@ -2108,6 +2109,8 @@ class VisitorTicketAdminController extends Controller
                     'non_iagi_member_expatriate' => 7000000,
                     'student_undergraduate' => 1000000,
                     'dosen' => 1500000,
+                    'professional' => 1500000,
+                    'professional_1500' => 1500000,
                     'exclusive' => 500000,
                 ];
 
@@ -2279,9 +2282,19 @@ class VisitorTicketAdminController extends Controller
                     $updatePayment['unique_code'] = $uniqueCode;
 
                     if ($request->boolean('recalculate_total', true)) {
-                        $subtotal = $paymentTickets->sum('individual_price');
+                        $freshTickets = $payment->tickets()->get();
+                        $subtotal = 0;
+                        foreach ($freshTickets as $ft) {
+                            $itemPrice = (float) $ft->individual_price;
+                            if ($itemPrice <= 0 && isset($paidCategories[$ft->visitor_type])) {
+                                $itemPrice = (float) $paidCategories[$ft->visitor_type];
+                                $ft->update(['individual_price' => $itemPrice]);
+                            }
+                            $subtotal += $itemPrice;
+                        }
                         if ($subtotal > 0) {
-                            $updatePayment['total_amount'] = $subtotal + $uniqueCode;
+                            $discountAmount = (float) ($payment->discount_amount ?? 0);
+                            $updatePayment['total_amount'] = max(0, $subtotal - $discountAmount) + $uniqueCode;
                         }
                     }
 
