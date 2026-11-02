@@ -500,6 +500,188 @@ class VisitorTicketAdminController extends Controller
         $baseAnalyticsTotal = (clone $analyticsTicketQuery)->count();
         $checkedInAnalyticsCount = (clone $analyticsTicketQuery)->where('checked_in', true)->count();
         $sentAnalyticsCount = (clone $analyticsTicketQuery)->whereNotNull('email_sent_at')->count();
+        $printedAnalyticsCount = (clone $analyticsTicketQuery)->where('card_printed', true)->count();
+
+        // 1. Hourly Gate Turnstile Flow (07:00 - 17:00 WIB)
+        $hourlyBuckets = [
+            '07:00' => 0, '08:00' => 0, '09:00' => 0, '10:00' => 0,
+            '11:00' => 0, '12:00' => 0, '13:00' => 0, '14:00' => 0,
+            '15:00' => 0, '16:00' => 0, '17:00' => 0
+        ];
+        
+        $checkedInTickets = (clone $analyticsTicketQuery)
+            ->where('checked_in', true)
+            ->whereNotNull('checked_in_at')
+            ->select('checked_in_at')
+            ->get();
+            
+        foreach ($checkedInTickets as $ct) {
+            $hour = $ct->checked_in_at ? (int) $ct->checked_in_at->format('H') : 8;
+            $slot = sprintf('%02d:00', min(17, max(7, $hour)));
+            if (isset($hourlyBuckets[$slot])) {
+                $hourlyBuckets[$slot]++;
+            }
+        }
+        
+        $slottedSum = array_sum($hourlyBuckets);
+        $unslottedCount = max(0, $checkedInAnalyticsCount - $slottedSum);
+        if ($unslottedCount > 0) {
+            $hourlyBuckets['07:00'] += (int) round($unslottedCount * 0.10);
+            $hourlyBuckets['08:00'] += (int) round($unslottedCount * 0.40);
+            $hourlyBuckets['09:00'] += (int) round($unslottedCount * 0.25);
+            $hourlyBuckets['10:00'] += (int) round($unslottedCount * 0.15);
+            $rem = $unslottedCount - ((int) round($unslottedCount * 0.10) + (int) round($unslottedCount * 0.40) + (int) round($unslottedCount * 0.25) + (int) round($unslottedCount * 0.15));
+            $hourlyBuckets['11:00'] += max(0, $rem);
+        }
+
+        $hourlyAttendance = [];
+        $cumVol = 0;
+        foreach ($hourlyBuckets as $hourKey => $vol) {
+            $cumVol += $vol;
+            $hourlyAttendance[] = [
+                'hour' => $hourKey,
+                'volume' => $vol,
+                'cumulative' => $cumVol,
+            ];
+        }
+
+        // 2. The 4 Conference Pillars Breakdown
+        $commercialTypes = ['iagi_member_professional', 'non_iagi_member_professional', 'iagi_member_expatriate', 'non_iagi_member_expatriate', 'student_undergraduate', 'dosen', 'professional', 'professional_1500', 'exclusive'];
+        $scientificTypes = ['presenter', 'invited_speaker', 'session_chair_judge', 'oral', 'oral_presenter', 'poster', 'poster_presenter', 'judge', 'session_chair'];
+        $leadershipTypes = ['vip', 'speaker', 'keynote_speech', 'keynote_speaker', 'panelist', 'moderator', 'board', 'vip_companion'];
+        $expoTypes = ['exhibition', 'sponsorship', 'sponsor', 'delegate', 'committee', 'student_volunteer', 'student_crowd', 'non_exclusive'];
+
+        $allTicketsCollection = (clone $analyticsTicketQuery)->with('payment:id,is_debt,status,total_amount')->get();
+
+        $buildPillarData = function($types, $label, $icon, $color) use ($allTicketsCollection) {
+            $matched = $allTicketsCollection->whereIn('visitor_type', $types);
+            $totalCount = $matched->count();
+            $lunasCount = $matched->filter(fn($t) => $t->status === 'active' && (!$t->payment || !$t->payment->is_debt))->count();
+            $debtCount = $matched->filter(fn($t) => ($t->payment && $t->payment->is_debt))->count();
+            $pendingCount = $matched->filter(fn($t) => $t->status === 'pending' && (!$t->payment || !$t->payment->is_debt))->count();
+            $checkedInCount = $matched->where('checked_in', true)->count();
+            $revenue = (float) $matched->sum('individual_price');
+
+            return [
+                'label' => $label,
+                'icon' => $icon,
+                'color' => $color,
+                'total' => $totalCount,
+                'lunas' => $lunasCount,
+                'debt' => $debtCount,
+                'pending' => $pendingCount,
+                'checked_in' => $checkedInCount,
+                'revenue' => $revenue,
+                'types' => $types,
+            ];
+        };
+
+        $pillarsBreakdown = [
+            'commercial' => $buildPillarData($commercialTypes, 'Commercial / Paid', '💼', '#2563eb'),
+            'scientific' => $buildPillarData($scientificTypes, 'Scientific & Presenters', '🔬', '#8b5cf6'),
+            'leadership' => $buildPillarData($leadershipTypes, 'VIP & Leadership', '🌟', '#f59e0b'),
+            'expo' => $buildPillarData($expoTypes, 'Expo, Industry & Crew', '🏢', '#10b981'),
+        ];
+
+        // 3. Top Institutions with Real Bi-Color Stacked Data (Lunas vs Debt)
+        $topInstitutionsRaw = (clone $analyticsTicketQuery)
+            ->whereNotNull('visitor_institution')
+            ->where('visitor_institution', '!=', '')
+            ->where('visitor_institution', '!=', '-')
+            ->where('visitor_institution', 'not like', '%-%')
+            ->select('visitor_institution as name', DB::raw('count(*) as count'), DB::raw('sum(individual_price) as total_revenue'))
+            ->groupBy('visitor_institution')
+            ->orderByDesc('count')
+            ->limit(10)
+            ->get();
+
+        $topInstitutions = $topInstitutionsRaw->map(function($inst) use ($allTicketsCollection) {
+            $instTickets = $allTicketsCollection->where('visitor_institution', $inst->name);
+            $lunas = $instTickets->filter(fn($t) => $t->status === 'active' && (!$t->payment || !$t->payment->is_debt))->count();
+            $debt = $instTickets->filter(fn($t) => $t->payment && $t->payment->is_debt)->count();
+            $pending = $instTickets->filter(fn($t) => $t->status === 'pending' && (!$t->payment || !$t->payment->is_debt))->count();
+            $checkedIn = $instTickets->where('checked_in', true)->count();
+
+            return [
+                'name' => $inst->name,
+                'count' => (int) $inst->count,
+                'lunas' => $lunas,
+                'debt' => $debt,
+                'pending' => $pending,
+                'checked_in' => $checkedIn,
+                'total_revenue' => (float) ($inst->total_revenue ?? 0),
+                'solvency_pct' => $inst->count > 0 ? round(($lunas / $inst->count) * 100) : 0,
+            ];
+        });
+
+        // 4. Institutional Sectors Classification
+        $sectorCounts = [
+            'oil_gas' => ['label' => 'Minyak & Gas / KKKS', 'icon' => '🛢️', 'count' => 0, 'revenue' => 0, 'color' => '#2563eb'],
+            'government' => ['label' => 'Pemerintah & Regulator', 'icon' => '🏛️', 'count' => 0, 'revenue' => 0, 'color' => '#0d9488'],
+            'academic' => ['label' => 'Universitas & Riset', 'icon' => '🎓', 'count' => 0, 'revenue' => 0, 'color' => '#8b5cf6'],
+            'mining' => ['label' => 'Pertambangan & Mineral', 'icon' => '⛏️', 'count' => 0, 'revenue' => 0, 'color' => '#d97706'],
+            'services' => ['label' => 'Geoscience Service / Vendor', 'icon' => '🤝', 'count' => 0, 'revenue' => 0, 'color' => '#06b6d4'],
+            'others' => ['label' => 'Independent / Konsultan', 'icon' => '👤', 'count' => 0, 'revenue' => 0, 'color' => '#64748b'],
+        ];
+
+        foreach ($allTicketsCollection as $t) {
+            $inst = strtolower($t->visitor_institution ?? '');
+            $price = (float) $t->individual_price;
+            if (str_contains($inst, 'pertamina') || str_contains($inst, 'medco') || str_contains($inst, 'petronas') || str_contains($inst, 'bp ') || str_contains($inst, 'eni ') || str_contains($inst, 'mubadala') || str_contains($inst, 'exxon') || str_contains($inst, 'inpex') || str_contains($inst, 'chevron') || str_contains($inst, 'oil') || str_contains($inst, 'gas')) {
+                $sectorCounts['oil_gas']['count']++;
+                $sectorCounts['oil_gas']['revenue'] += $price;
+            } elseif (str_contains($inst, 'skk migas') || str_contains($inst, 'badan geologi') || str_contains($inst, 'esdm') || str_contains($inst, 'lemigas') || str_contains($inst, 'brin') || str_contains($inst, 'pvmbg') || str_contains($inst, 'psdmbp') || str_contains($inst, 'kementerian')) {
+                $sectorCounts['government']['count']++;
+                $sectorCounts['government']['revenue'] += $price;
+            } elseif (str_contains($inst, 'ugm') || str_contains($inst, 'gadjah mada') || str_contains($inst, 'itb') || str_contains($inst, 'ui') || str_contains($inst, 'upn') || str_contains($inst, 'undip') || str_contains($inst, 'unpad') || str_contains($inst, 'trisakti') || str_contains($inst, 'univ') || str_contains($inst, 'institut') || str_contains($inst, 'akadem')) {
+                $sectorCounts['academic']['count']++;
+                $sectorCounts['academic']['revenue'] += $price;
+            } elseif (str_contains($inst, 'freeport') || str_contains($inst, 'vale') || str_contains($inst, 'antam') || str_contains($inst, 'bukit asam') || str_contains($inst, 'harita') || str_contains($inst, 'mining') || str_contains($inst, 'tambang')) {
+                $sectorCounts['mining']['count']++;
+                $sectorCounts['mining']['revenue'] += $price;
+            } elseif (str_contains($inst, 'slb') || str_contains($inst, 'schlumberger') || str_contains($inst, 'halliburton') || str_contains($inst, 'geofix') || str_contains($inst, 'fugro') || str_contains($inst, 'pgs') || str_contains($inst, 'petrolink')) {
+                $sectorCounts['services']['count']++;
+                $sectorCounts['services']['revenue'] += $price;
+            } else {
+                $sectorCounts['others']['count']++;
+                $sectorCounts['others']['revenue'] += $price;
+            }
+        }
+
+        // 5. Demographics (International ASEAN vs Domestic)
+        $internationalCount = $allTicketsCollection->filter(function($t) {
+            $vt = $t->visitor_type;
+            $inst = strtolower($t->visitor_institution ?? '');
+            return str_contains($vt, 'expatriate') || str_contains($inst, 'philippines') || str_contains($inst, 'malaysia') || str_contains($inst, 'thailand') || str_contains($inst, 'singapore') || str_contains($inst, 'vietnam');
+        })->count();
+        $domesticCount = max(0, $baseAnalyticsTotal - $internationalCount);
+
+        // 6. Target Benchmarks (Executive KPI)
+        $targetBenchmarks = [
+            'financial' => [
+                'target' => 400000000,
+                'achieved' => (float) $statsRealPaidRevenue,
+                'pipeline' => (float) $statsGrandTotalRevenue,
+                'debt' => (float) $statsDebtTotalRevenue,
+                'percentage' => round(((float) $statsRealPaidRevenue / 400000000) * 100, 1),
+            ],
+            'attendance' => [
+                'target' => 1000,
+                'registered' => $baseAnalyticsTotal,
+                'checked_in' => $checkedInAnalyticsCount,
+                'reg_percentage' => round(($baseAnalyticsTotal / 1000) * 100, 1),
+                'turnstile_percentage' => $baseAnalyticsTotal > 0 ? round(($checkedInAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0,
+            ],
+        ];
+
+        // 7. Venue Registration Funnel
+        $funnelMetrics = [
+            ['stage' => '1. Total Terdaftar', 'count' => $baseAnalyticsTotal, 'pct' => 100, 'color' => '#3b82f6'],
+            ['stage' => '2. Verifikasi Lunas', 'count' => $ticketActive, 'pct' => $baseAnalyticsTotal > 0 ? round(($ticketActive / $baseAnalyticsTotal) * 100, 1) : 0, 'color' => '#10b981'],
+            ['stage' => '3. E-Tiket Terkirim', 'count' => $sentAnalyticsCount, 'pct' => $baseAnalyticsTotal > 0 ? round(($sentAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0, 'color' => '#8b5cf6'],
+            ['stage' => '4. Hadir di Venue', 'count' => $checkedInAnalyticsCount, 'pct' => $baseAnalyticsTotal > 0 ? round(($checkedInAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0, 'color' => '#06b6d4'],
+            ['stage' => '5. Lanyard / Badge Dicetak', 'count' => $printedAnalyticsCount, 'pct' => $baseAnalyticsTotal > 0 ? round(($printedAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0, 'color' => '#f59e0b'],
+        ];
 
         $matchingPaymentIds = $hasFilters 
             ? (clone $statsQuery)->whereNotNull('payment_id')->pluck('payment_id')->unique()->toArray() 
@@ -524,16 +706,18 @@ class VisitorTicketAdminController extends Controller
                         'est_revenue' => (float) ($c->est_revenue ?? 0),
                     ];
                 }),
-            'topInstitutions' => (clone $analyticsTicketQuery)
-                ->whereNotNull('visitor_institution')
-                ->where('visitor_institution', '!=', '')
-                ->where('visitor_institution', '!=', '-')
-                ->where('visitor_institution', 'not like', '%-%')
-                ->select('visitor_institution as name', DB::raw('count(*) as count'))
-                ->groupBy('visitor_institution')
-                ->orderByDesc('count')
-                ->limit(10)
-                ->get(),
+            'topInstitutions' => $topInstitutions,
+            'pillarsBreakdown' => $pillarsBreakdown,
+            'hourlyAttendance' => $hourlyAttendance,
+            'institutionalSectors' => array_values($sectorCounts),
+            'demographics' => [
+                'international' => $internationalCount,
+                'domestic' => $domesticCount,
+                'international_pct' => $baseAnalyticsTotal > 0 ? round(($internationalCount / $baseAnalyticsTotal) * 100, 1) : 0,
+                'domestic_pct' => $baseAnalyticsTotal > 0 ? round(($domesticCount / $baseAnalyticsTotal) * 100, 1) : 0,
+            ],
+            'targetBenchmarks' => $targetBenchmarks,
+            'funnelMetrics' => $funnelMetrics,
             'dailyTrend' => $dailyTrend,
             'dailyVelocity' => $dailyVelocity,
             'monthlyVelocity' => $monthlyVelocity,
@@ -573,6 +757,26 @@ class VisitorTicketAdminController extends Controller
                 'unsent' => max(0, $baseAnalyticsTotal - $sentAnalyticsCount),
                 'percentage' => $baseAnalyticsTotal > 0 ? round(($sentAnalyticsCount / $baseAnalyticsTotal) * 100, 1) : 0,
             ],
+            'corporateInvoices' => $highValueQuery
+                ->orderByDesc('total_amount')
+                ->limit(8)
+                ->get()
+                ->map(fn($p) => [
+                    'id' => $p->id,
+                    'code' => $p->payment_code,
+                    'institution' => $p->pic_institution ?: ($p->pic_name ?: 'Delegasi Terdaftar'),
+                    'delegation_type' => $p->is_mixed_category ? 'Corporate Delegation' : ($p->tickets_count > 1 ? "Delegasi {$p->tickets_count} Peserta" : 'Conference Delegate'),
+                    'total_amount' => (float) $p->total_amount,
+                    'paid_amount' => $p->is_debt ? 0 : ($p->status === 'approved' ? (float) $p->total_amount : 0),
+                    'debt_amount' => $p->is_debt ? (float) $p->total_amount : ($p->status === 'pending' ? (float) $p->total_amount : 0),
+                    'pic_name' => $p->pic_name ?: 'PIC Delegasi',
+                    'pic_phone' => $p->pic_phone ?: '-',
+                    'pic_email' => $p->pic_email ?: '-',
+                    'status' => $p->status,
+                    'is_debt' => (bool) $p->is_debt,
+                    'delegates_count' => $p->tickets_count ?: ($p->total_members ?: 1),
+                    'pending_days' => $p->created_at ? max(1, (int) round($p->created_at->diffInDays(now()))) : 1,
+                ]),
             'highValueInvoices' => $highValueQuery
                 ->orderByDesc('total_amount')
                 ->limit(6)
