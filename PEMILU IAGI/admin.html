@@ -8884,9 +8884,9 @@
   </div>
 
   <!-- Include Core Logic Scripts -->
-  <script src="js/data.js?v=5.1.0"></script>
-  <script src="js/storage.js?v=5.1.0"></script>
-  <script src="js/guard.js?v=5.2.0"></script>
+  <script src="js/data.js?v=5.5.0"></script>
+  <script src="js/storage.js?v=5.5.0"></script>
+  <script src="js/guard.js?v=5.5.0"></script>
 
   <script>
     // =========================================================================
@@ -10837,10 +10837,18 @@
           btn.innerHTML = '<span>⏳ Sinkronisasi...</span>';
         }
 
+        try {
+          localStorage.removeItem('kpku_server_results');
+          localStorage.removeItem('kpku_ballots_cache');
+        } catch (e) {}
+
         if (window.pemiluStorage && typeof window.pemiluStorage.syncWithServer === 'function') {
           await window.pemiluStorage.syncWithServer();
         }
         refreshAll();
+        if (typeof renderAuditLogs === 'function') {
+          await renderAuditLogs();
+        }
         if (typeof renderResumePlenoSection === 'function') {
           renderResumePlenoSection();
         }
@@ -11547,6 +11555,24 @@
               const discVal = Number(srvData.discrepancy !== undefined ? srvData.discrepancy : (validCount - dptVoted));
               if (elDisc) {
                 elDisc.innerText = (discVal === 0) ? 'Selisih: 0 (Zero Discrepancy / 100% Sah)' : `Selisih: ${discVal} (Simulasi Pra-Pleno Teruji)`;
+              }
+
+              // Update Executive Ribbon Top Cards Immediately from Authoritative Server Data
+              if (validCount > 0) {
+                const elTotVotes = document.getElementById('stat-total-votes');
+                if (elTotVotes) elTotVotes.innerText = validCount.toLocaleString('id-ID');
+                const elTurnoutPct = document.getElementById('stat-turnout-pct');
+                if (elTurnoutPct) elTurnoutPct.innerText = `${((validCount / 2143) * 100).toFixed(1)}%`;
+                const elTurnoutSub = document.getElementById('stat-turnout-sub');
+                const rawTotal = Number(srvData.total_ballots_raw || validCount);
+                const voidDiff = (rawTotal > validCount) ? (rawTotal - validCount) : 0;
+                if (elTurnoutSub) {
+                  if (voidDiff > 0) {
+                    elTurnoutSub.innerHTML = `<span style="color:#10B981; font-weight:700;">${validCount.toLocaleString('id-ID')} Sah</span> • <span style="color:#F59E0B; font-weight:600;">${voidDiff} Duplikat Dianulir</span>`;
+                  } else {
+                    elTurnoutSub.innerText = 'Tersimpan dalam Brankas Kriptografi';
+                  }
+                }
               }
             }
           }
