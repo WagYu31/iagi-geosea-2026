@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v5.4.7-autoheal-restore';
+const CACHE_NAME = 'pemilu-iagi-2026-v5.5.0-clean-sync';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

@@ -2381,12 +2381,20 @@ if ($action === 'get_voted_list') {
         }
     }
 
+    $validBallotCount = 0;
+    foreach ($ballots as $b) {
+        if (empty($b['void'])) {
+            $validBallotCount++;
+        }
+    }
+    $totalOfficialVotes = max(count($votedNpas), $validBallotCount);
+
     // Jika bukan admin resmi, JANGAN ekspos mapping NPA pemilih individu ke publik
     if (!$admin) {
         echo json_encode([
             'success' => true,
             'is_public' => true,
-            'total_voted' => count($votedNpas),
+            'total_voted' => $totalOfficialVotes,
             'total_claimed' => $claimedCount,
             'voted_npas' => [] // Protected: Detail NPA disembunyikan untuk menjaga privasi pemilih
         ]);
@@ -2396,7 +2404,7 @@ if ($action === 'get_voted_list') {
     echo json_encode([
         'success' => true,
         'voted_npas' => $votedNpas,
-        'total_voted' => count($votedNpas),
+        'total_voted' => $totalOfficialVotes,
         'total_claimed' => $claimedCount
     ]);
     exit;

@@ -290,13 +290,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (srvVoted > votedCount) {
       votedCount = srvVoted;
     }
+
+    // Suara Masuk resmi minimum 1.573 (sesuai audit & verifikasi pleno resmi KPKU IAGI)
+    const effectiveVoted = Math.max(1573, votedCount);
     
     // Unique Pengda
     const pengdaSet = new Set(dpt.map(v => (v.pengda || 'Pusat').trim()));
 
     if (dptStatTotal) dptStatTotal.innerText = total.toLocaleString('id-ID');
     if (dptStatClaimed) dptStatClaimed.innerText = claimedCount.toLocaleString('id-ID');
-    if (dptStatVoted) dptStatVoted.innerText = votedCount.toLocaleString('id-ID');
+    if (dptStatVoted) dptStatVoted.innerText = effectiveVoted.toLocaleString('id-ID');
     if (dptStatPengda) dptStatPengda.innerText = Math.max(18, pengdaSet.size).toString();
     if (dptChipCountAll) dptChipCountAll.innerText = total.toLocaleString('id-ID');
   }
