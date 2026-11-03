@@ -11579,10 +11579,16 @@
                   srvData.logs.forEach(it => {
                     if (!it || String(it.action || '').toUpperCase() !== 'VOTE_RECORDED') return;
                     if (/BATAL|DUPLIKAT/i.test(String(it.status || ''))) return;
+                    if (it.details && it.details.includes('99999')) return;
+                    if (it.timestamp) {
+                      const t = new Date(it.timestamp).getTime();
+                      if (!isNaN(t) && t < new Date('2026-10-25T12:00:00+07:00').getTime()) return;
+                    }
                     let n = it.npa ? String(it.npa) : '';
                     if (!n && it.details) { const m = String(it.details).match(/NPA:\s*(\d{5})/i); if (m) n = m[1]; }
                     if (!n) return;
                     n = n.padStart(5, '0');
+                    if (n === '99999') return;
                     if (!seenNpa[n]) { seenNpa[n] = true; uniqueValid++; }
                   });
                 } catch (e) { uniqueValid = 0; }
@@ -11742,7 +11748,7 @@
         const results = (window.pemiluStorage && typeof window.pemiluStorage.getResults === 'function') 
           ? window.pemiluStorage.getResults() 
           : { totalVotes: 816 };
-        let runningVoteNum = results.totalVotes || 816;
+        let runningVoteNum = (window.__kpkuLiveVotes && window.__kpkuLiveVotes.valid) || results.totalVotes || 816;
 
         // Assign vote sequence numbers in reverse chronological order
         (cachedAuditLogs || []).forEach(l => {
