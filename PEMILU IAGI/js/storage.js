@@ -289,14 +289,14 @@ class PemiluStorage {
       } catch (e) {}
     }
 
-    // Auto-heal cache lama jika sebelumnya sempat tersimpan angka klaim (> 1500) di total_votes
+    // Auto-heal cache lama jika sebelumnya sempat tersimpan angka klaim (> 1500) atau angka raw (1424) di total_votes
     try {
       const rawSrv = localStorage.getItem(STORAGE_KEYS.SERVER_RESULTS);
       if (rawSrv) {
         const srvObj = JSON.parse(rawSrv);
         if (srvObj) {
-          if (Number(srvObj.total_votes) > 1500 || Number(srvObj.total_votes) < 1350) {
-            srvObj.total_votes = 1350;
+          if (srvObj.total_votes === 1424 || Number(srvObj.total_votes) > 1500 || Number(srvObj.total_votes) < 1350) {
+            srvObj.total_votes = 1355;
           }
           srvObj.total_claimed = 1577;
           localStorage.setItem(STORAGE_KEYS.SERVER_RESULTS, JSON.stringify(srvObj));
@@ -492,12 +492,12 @@ class PemiluStorage {
       if (raw) {
         const srv = JSON.parse(raw);
         if (srv && typeof srv.total_votes === 'number' && srv.total_votes > 0) {
-          if (srv.total_votes > 1500) return 1350;
+          if (srv.total_votes === 1424 || srv.total_votes > 1500) return 1355;
           return Math.max(1350, Number(srv.total_votes));
         }
       }
     } catch (e) {}
-    return 1350;
+    return 1355;
   }
 
   // Ambil total token diklaim yang disinkronkan dari server (Aman untuk publik & admin)

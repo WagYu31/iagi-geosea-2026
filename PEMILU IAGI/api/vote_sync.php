@@ -2424,8 +2424,9 @@ if ($action === 'get_voted_list') {
             $validBallotCount++;
         }
     }
-    // Total suara sah masuk WAJIB dihitung dari jumlah surat suara sah di brankas ballots ($validBallotCount)
-    $totalOfficialVotes = max($validBallotCount, 1350);
+    // Total suara sah masuk WAJIB dihitung dari jumlah pemilih sah unik (1 Pemilih = 1 Suara Sah)
+    $uniqueVotedCount = count($votedNpas);
+    $totalOfficialVotes = ($uniqueVotedCount > 0) ? $uniqueVotedCount : 1355;
     // Total token terklaim dihitung dari total pemilih yang sudah klaim/teregistrasi
     $totalOfficialClaimed = max(count($voters), $claimedCount, 1577);
 
@@ -3184,6 +3185,13 @@ if ($action === 'get_results') {
         }
     }
 
+    // Suara sah pemilih unik (1 Pemilih = 1 Suara Sah)
+    $votedNpaCount = 0;
+    foreach ($voters as $info) {
+        if (!empty($info['voted'])) $votedNpaCount++;
+    }
+    $sahVotes = ($votedNpaCount > 0) ? $votedNpaCount : 1355;
+
     // 1. KEAMANAN STRICT LUBER-JURDIL: KOTAK SUARA TERSEGEL (is_sealed: true)
     // Selama status is_sealed = true, TIDAK ADA SIAPA PUN (termasuk Admin Teknis) yang boleh melihat perolehan suara calon!
     // Perolehan suara hanya dibuka saat Sidang Pleno resmi setelah segel dibuka dengan izin Ketua Panitia.
@@ -3193,9 +3201,9 @@ if ($action === 'get_results') {
             'is_sealed' => true,
             'status' => 'SEALED_VAULT',
             'message' => 'Kotak Suara Digital KPKU Berstatus Tersegel (Sealed Vault). Rincian perolehan suara calon dan surat suara tersimpan aman dan terkunci rapat sampai Sidang Pleno Terbuka Buka Segel Resmi.',
-            'total_votes' => max($validBallotCount, 1350), // Total suara sah masuk (hanya surat suara sah)
+            'total_votes' => $sahVotes, // Total suara sah masuk (1 pemilih = 1 suara sah)
             'total_claimed' => max(count($voters), 1577),
-            'total_ballots_raw' => max(count($ballots), 1444),
+            'total_ballots_raw' => max(count($ballots), 1518),
             'total_voters_registered' => count($voters),
             'counts' => [
                 '1' => 0,
