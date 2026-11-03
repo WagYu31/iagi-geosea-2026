@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Head, router } from '@inertiajs/react';
 import SidebarLayout from '@/Layouts/SidebarLayout';
 import {
@@ -1613,6 +1613,110 @@ export default function PresentationScores({ submissions, availableJuris = [] })
         return true;
     });
 
+    // Detect if search query matches a specific Jury evaluator
+    const searchClean = (search || '').trim().toLowerCase();
+
+    // Find all juris whose name, email, or affiliation matches the search term
+    const matchedJuris = useMemo(() => {
+        if (!searchClean || searchClean.length < 2) return [];
+
+        const juriMap = new Map();
+        availableJuris.forEach(j => {
+            if (j && (j.id || j.name)) juriMap.set(j.id || j.name, j);
+        });
+        allSubmissions.forEach(sub => {
+            (sub.presentation_scores || []).forEach(s => {
+                if (s.juri && (s.juri.id || s.juri.name) && !juriMap.has(s.juri.id || s.juri.name)) {
+                    juriMap.set(s.juri.id || s.juri.name, s.juri);
+                }
+            });
+        });
+
+        const allJurisList = Array.from(juriMap.values());
+        return allJurisList.filter(j => {
+            const name = (j.name || '').toLowerCase();
+            const email = (j.email || '').toLowerCase();
+            const affil = (j.affiliation || '').toLowerCase();
+            return name.includes(searchClean) || email.includes(searchClean) || affil.includes(searchClean);
+        });
+    }, [searchClean, availableJuris, allSubmissions]);
+
+    // Compute detailed assignment summary for the primary matched juri
+    const activeJuriSummary = useMemo(() => {
+        if (!matchedJuris || matchedJuris.length === 0) return null;
+
+        const juri = matchedJuris[0];
+        const juriNameLow = (juri.name || '').toLowerCase();
+
+        // Find all submissions assigned to this juri across the entire database
+        const assignedSubs = allSubmissions.filter(sub =>
+            (sub.presentation_scores || []).some(s =>
+                (juri.id && s.juri_id === juri.id) ||
+                (juri.id && s.juri?.id === juri.id) ||
+                (s.juri?.name && s.juri.name.toLowerCase().includes(juriNameLow)) ||
+                (s.juri?.name && s.juri.name.toLowerCase().includes(searchClean))
+            )
+        );
+
+        let oralCount = 0;
+        let posterCount = 0;
+        let completedCount = 0;
+        let draftCount = 0;
+        let pendingCount = 0;
+        const presentersSet = new Set();
+
+        assignedSubs.forEach(sub => {
+            const isOral = sub.category_submission?.toLowerCase().includes('oral');
+            if (isOral) oralCount++;
+            else posterCount++;
+
+            const pName = sub.author_full_name || sub.user?.name;
+            if (pName) presentersSet.add(pName);
+
+            // Find this specific juri's score on this paper
+            const myScore = (sub.presentation_scores || []).find(s =>
+                (juri.id && s.juri_id === juri.id) ||
+                (juri.id && s.juri?.id === juri.id) ||
+                (s.juri?.name && s.juri.name.toLowerCase().includes(juriNameLow)) ||
+                (s.juri?.name && s.juri.name.toLowerCase().includes(searchClean))
+            );
+
+            if (myScore) {
+                if (myScore.weighted_final_score && !myScore.is_draft) {
+                    completedCount++;
+                } else if (myScore.is_draft || Object.keys(myScore).some(k => (k.startsWith('poster_') || k.startsWith('manuscript_') || k === 'time_management') && myScore[k] !== null && myScore[k] !== '')) {
+                    draftCount++;
+                } else {
+                    pendingCount++;
+                }
+            } else {
+                pendingCount++;
+            }
+        });
+
+        return {
+            juri,
+            totalPapers: assignedSubs.length,
+            totalPresenters: presentersSet.size,
+            presentersList: Array.from(presentersSet),
+            oralCount,
+            posterCount,
+            completedCount,
+            draftCount,
+            pendingCount
+        };
+    }, [matchedJuris, allSubmissions, searchClean]);
+
+    // Unique presenters in currently filtered table
+    const uniquePresentersCount = useMemo(() => {
+        const set = new Set();
+        filteredSubmissions.forEach(sub => {
+            const name = sub.author_full_name || sub.user?.name;
+            if (name) set.add(name);
+        });
+        return set.size;
+    }, [filteredSubmissions]);
+
     const bdr = isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0';
 
     // ── Open Assign Juri Modal ──
@@ -2114,6 +2218,123 @@ export default function PresentationScores({ submissions, availableJuris = [] })
                             </Box>
                         </Paper>
 
+                        {/* JURI WORKLOAD & EVALUATION SPOTLIGHT BANNER */}
+                        {activeJuriSummary && (
+                            <Paper elevation={0} sx={{
+                                p: 2.2,
+                                mb: 2.2,
+                                borderRadius: '16px',
+                                background: isDark 
+                                    ? 'linear-gradient(135deg, rgba(9, 77, 66, 0.45) 0%, rgba(15, 23, 42, 0.75) 100%)' 
+                                    : 'linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #ffffff 100%)',
+                                border: '1px solid',
+                                borderColor: isDark ? 'rgba(16, 185, 129, 0.35)' : '#a7f3d0',
+                                boxShadow: '0 4px 16px -3px rgba(13, 148, 136, 0.12)',
+                                display: 'flex',
+                                flexDirection: { xs: 'column', md: 'row' },
+                                alignItems: { xs: 'flex-start', md: 'center' },
+                                justifyContent: 'space-between',
+                                gap: 2
+                            }}>
+                                {/* Left: Juri Avatar & Workload Summary */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.8 }}>
+                                    <Avatar sx={{ 
+                                        width: 52, 
+                                        height: 52, 
+                                        fontSize: '1.25rem', 
+                                        background: getAvatarGradient(activeJuriSummary.juri.name),
+                                        color: '#ffffff',
+                                        fontWeight: 900,
+                                        border: '2px solid #10b981',
+                                        boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+                                    }}>
+                                        {(activeJuriSummary.juri.name || 'J').charAt(0).toUpperCase()}
+                                    </Avatar>
+                                    <Box>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                            <Typography sx={{ fontWeight: 900, color: isDark ? '#ffffff' : '#064e3b', fontSize: '1.05rem' }}>
+                                                {activeJuriSummary.juri.name}
+                                            </Typography>
+                                            <Chip 
+                                                label="Juri Panelis" 
+                                                size="small" 
+                                                sx={{ 
+                                                    height: 20, 
+                                                    fontSize: '0.66rem', 
+                                                    fontWeight: 900, 
+                                                    bgcolor: '#10b981', 
+                                                    color: '#ffffff',
+                                                    borderRadius: '6px'
+                                                }} 
+                                            />
+                                            {activeJuriSummary.juri.affiliation && (
+                                                <Typography sx={{ fontSize: '0.78rem', color: isDark ? '#94a3b8' : '#047857', fontWeight: 600 }}>
+                                                    &bull; {activeJuriSummary.juri.affiliation}
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                        
+                                        {/* Highlight: Menilai X Paper & Y Presenter */}
+                                        <Typography sx={{ color: isDark ? '#cbd5e1' : '#065f46', fontSize: '0.86rem', fontWeight: 700, mt: 0.4 }}>
+                                            Menilai <span style={{ color: '#047857', fontSize: '1.02rem', fontWeight: 900, backgroundColor: isDark ? 'rgba(16,185,129,0.2)' : '#d1fae5', padding: '2px 8px', borderRadius: '6px' }}>{activeJuriSummary.totalPapers} Paper</span> &amp; <span style={{ color: '#047857', fontSize: '1.02rem', fontWeight: 900, backgroundColor: isDark ? 'rgba(16,185,129,0.2)' : '#d1fae5', padding: '2px 8px', borderRadius: '6px' }}>{activeJuriSummary.totalPresenters} Presenter</span>
+                                            <Typography component="span" sx={{ fontSize: '0.78rem', fontWeight: 600, color: '#64748b', ml: 1 }}>
+                                                ({activeJuriSummary.oralCount > 0 ? `${activeJuriSummary.oralCount} Oral` : ''}{activeJuriSummary.oralCount > 0 && activeJuriSummary.posterCount > 0 ? ' • ' : ''}{activeJuriSummary.posterCount > 0 ? `${activeJuriSummary.posterCount} Poster` : ''})
+                                            </Typography>
+                                        </Typography>
+                                    </Box>
+                                </Box>
+
+                                {/* Right: Progress breakdown for this jury */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                    <Chip 
+                                        icon={<CheckCircleIcon sx={{ fontSize: '16px !important', color: '#059669 !important' }} />}
+                                        label={`${activeJuriSummary.completedCount} Selesai`}
+                                        size="small"
+                                        sx={{ 
+                                            bgcolor: isDark ? 'rgba(16, 185, 129, 0.15)' : '#ecfdf5', 
+                                            color: isDark ? '#6ee7b7' : '#047857', 
+                                            border: '1px solid', 
+                                            borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : '#a7f3d0',
+                                            fontWeight: 800, 
+                                            height: 30, 
+                                            fontSize: '0.76rem',
+                                            px: 0.5
+                                        }} 
+                                    />
+                                    <Chip 
+                                        icon={<AccessTimeIcon sx={{ fontSize: '15px !important', color: '#d97706 !important' }} />}
+                                        label={`${activeJuriSummary.draftCount} Draft Sedang Dinilai`}
+                                        size="small"
+                                        sx={{ 
+                                            bgcolor: isDark ? 'rgba(245, 158, 11, 0.15)' : '#fffbeb', 
+                                            color: isDark ? '#fcd34d' : '#b45309', 
+                                            border: '1px solid', 
+                                            borderColor: isDark ? 'rgba(245, 158, 11, 0.3)' : '#fde68a',
+                                            fontWeight: 800, 
+                                            height: 30, 
+                                            fontSize: '0.76rem',
+                                            px: 0.5
+                                        }} 
+                                    />
+                                    {activeJuriSummary.pendingCount > 0 && (
+                                        <Chip 
+                                            label={`${activeJuriSummary.pendingCount} Belum Dinilai`}
+                                            size="small"
+                                            sx={{ 
+                                                bgcolor: isDark ? 'rgba(148, 163, 184, 0.15)' : '#f1f5f9', 
+                                                color: isDark ? '#94a3b8' : '#64748b', 
+                                                border: '1px solid', 
+                                                borderColor: isDark ? 'rgba(148, 163, 184, 0.3)' : '#e2e8f0',
+                                                fontWeight: 700, 
+                                                height: 30, 
+                                                fontSize: '0.76rem' 
+                                            }} 
+                                        />
+                                    )}
+                                </Box>
+                            </Paper>
+                        )}
+
                         {/* PRESENTATION SCORES TABLE */}
                         <Card elevation={0} sx={{ 
                             borderRadius: '18px', 
@@ -2131,7 +2352,7 @@ export default function PresentationScores({ submissions, availableJuris = [] })
                                 borderBottom: `1px solid ${bdr}`,
                                 bgcolor: isDark ? 'rgba(0,0,0,0.1)' : '#ffffff'
                             }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, flexWrap: 'wrap' }}>
                                     <Typography sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '0.96rem' }}>
                                         Daftar Penilaian Presentasi & Rubrik Juri
                                     </Typography>
@@ -2140,6 +2361,20 @@ export default function PresentationScores({ submissions, availableJuris = [] })
                                         size="small" 
                                         sx={{ bgcolor: '#f1f5f9', color: '#475569', fontWeight: 800, fontSize: '0.72rem', height: 22 }} 
                                     />
+                                    {uniquePresentersCount > 0 && (
+                                        <Chip 
+                                            label={`${uniquePresentersCount} Presenter`} 
+                                            size="small" 
+                                            sx={{ bgcolor: '#e0f2fe', color: '#0369a1', fontWeight: 800, fontSize: '0.72rem', height: 22 }} 
+                                        />
+                                    )}
+                                    {activeJuriSummary && (
+                                        <Chip 
+                                            label={`Penugasan Juri: ${activeJuriSummary.juri.name?.split(' ')[0]}`} 
+                                            size="small" 
+                                            sx={{ bgcolor: '#dcfce7', color: '#065f46', border: '1px solid #86efac', fontWeight: 800, fontSize: '0.72rem', height: 22 }} 
+                                        />
+                                    )}
                                 </Box>
 
                                 {(search || filter !== 'all') && (
