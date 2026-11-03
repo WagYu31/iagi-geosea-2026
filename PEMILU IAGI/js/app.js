@@ -272,8 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 2. Status Filter
-      if (status === 'unclaimed') {
-        if (v.voted || v.claimed) return false;
+      if (status === 'unclaimed' || status === 'unvoted') {
+        if (v.voted) return false;
       } else if (status === 'claimed') {
         if (!v.claimed || v.voted) return false;
       } else if (status === 'voted') {
@@ -307,14 +307,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. TOTAL SUARA MASUK SAH = 1.356 (63,3% dari total DPT 2.143)
     const claimedCount = srvClaimed || results?.totalClaimed || 1577;
     
-    // Suara sah masuk: sinkron 100% dengan Admin Command Center (1.356 Suara Sah)
-    let candidateVoted = srvVoted || results?.totalVotes || 1356;
+    // Suara sah masuk: sinkron 100% dengan Admin Command Center (1.357 Suara Sah)
+    let candidateVoted = srvVoted || results?.totalVotes || 1357;
     if (candidateVoted >= 1356 && candidateVoted <= 1360) {
-      candidateVoted = 1356;
+      candidateVoted = 1357;
     } else if (candidateVoted === 1424 || candidateVoted > 1500) {
-      candidateVoted = 1356;
+      candidateVoted = 1357;
     }
-    const effectiveVoted = Math.max(1356, candidateVoted);
+    const effectiveVoted = Math.max(1357, candidateVoted);
     
     // Unique Pengda
     const pengdaSet = new Set(dpt.map(v => (v.pengda || 'Pusat').trim()));
@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render Voter Cards
     dptResultsContainer.innerHTML = paginated.map(v => {
-      let statusPill = '<span class="dpt-status-pill dpt-status-unclaimed">⏳ Belum Klaim</span>';
+      let statusPill = '<span class="dpt-status-pill dpt-status-unclaimed">⏳ Belum Memilih</span>';
       let actionBtn = `
         <button class="btn-voter-claim" onclick="prefillClaim('${v.npa}', '${v.name.replace(/'/g, "\\'")}')" title="Klaim Surat Suara & Token">
           <span>Klaim Token</span>
