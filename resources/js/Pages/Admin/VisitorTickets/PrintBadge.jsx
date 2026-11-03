@@ -70,7 +70,7 @@ export const BADGE_TEMPLATES = {
     vip_companion: '/images/badges/VIP.png',
 
     // 14. IT Developer
-    it_developer: '/images/badges/Committee.png',
+    it_developer: '/images/badges/IT_Developer.png',
 
     // Technical
     presenter: '/images/badges/Presenter.png',
@@ -152,7 +152,7 @@ const CATEGORY_MAP = {
     it_developer: { label: 'IT DEVELOPER', short: 'IT DEVELOPER' },
 };
 
-export const BADGE_VERSION = '20261102_aligned_pill_v10';
+export const BADGE_VERSION = '20261103_it_dev_v11';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;
