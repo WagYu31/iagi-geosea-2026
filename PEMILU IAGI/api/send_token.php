@@ -207,6 +207,26 @@ $waktuKlaim = strtr(date('d F Y, H:i'), $monthsIndo) . ' WIB';
 // 3. Daftarkan hash token resmi ke registry pemilih server KPKU
 $votersFile = $dataDir . '/voters_status.json';
 $voters = @json_decode(@file_get_contents($votersFile), true) ?: [];
+
+// Strict Verification: Tolak pengiriman token jika pemilih sudah memberikan suara sah
+if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
+    $isOctoberSimulation = (
+        strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false || 
+        in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH'])
+    ) && strpos($voters[$npa]['voted_at'] ?? '', 'November 2026') === false;
+
+    if (!$isOctoberSimulation) {
+        $votedAt = !empty($voters[$npa]['voted_at']) ? $voters[$npa]['voted_at'] : 'sesi resmi sebelumnya';
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'alreadyVoted' => true,
+            'error' => "⛔ HAK SUARA HANYA 1 KALI! Hak suara untuk NPA {$npa} SUDAH DIGUNAKAN pada {$votedAt}. Pengiriman token baru ditolak mutlak!"
+        ]);
+        exit;
+    }
+}
+
 if (!isset($voters[$npa]) || empty($voters[$npa]['voted'])) {
     $voters[$npa] = [
         'npa' => $npa,
