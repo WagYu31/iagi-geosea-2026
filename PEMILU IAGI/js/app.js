@@ -47,6 +47,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Penutupan otomatis Bilik Suara (tampilan). Penolakan sebenarnya dilakukan server mulai 04 Nov 2026 00:00 WIB.
+  let votingBoothClosed = false;
+  function closeVotingBooth() {
+    if (votingBoothClosed) return;
+    votingBoothClosed = true;
+    const form = document.getElementById('form-vote-auth');
+    const ballot = document.getElementById('vote-ballot-card');
+    const alertEl = document.getElementById('vote-auth-alert');
+    if (form) form.style.display = 'none';
+    if (ballot) ballot.style.display = 'none';
+    if (alertEl) {
+      alertEl.style.display = 'block';
+      alertEl.innerHTML = '<div style="padding:14px 16px;border-radius:12px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.45);color:#FCA5A5;font-weight:700;line-height:1.5;">⛔ BILIK SUARA TELAH DITUTUP<br><span style="font-weight:500;color:#FECACA;">Pemungutan suara Pemilu Ketua Umum IAGI 2026 resmi berakhir pada Selasa, 03 November 2026 pukul 23:59:59 WIB. Terima kasih atas partisipasi Anda.</span></div>';
+    }
+  }
+
   // Master Countdown Timer
   function initCountdown() {
     const targetDate = new Date(ELECTION_CONFIG.votingEndDate).getTime();
@@ -64,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (hoursEl) hoursEl.innerText = '00';
         if (minsEl) minsEl.innerText = '00';
         if (secsEl) secsEl.innerText = '00';
+        closeVotingBooth();
         return;
       }
 

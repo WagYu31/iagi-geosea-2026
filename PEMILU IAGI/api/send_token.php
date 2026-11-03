@@ -37,6 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 date_default_timezone_set('Asia/Jakarta');
 
+// PENUTUPAN OTOMATIS: klaim token ditolak mulai 04 November 2026 00:00:00 WIB (jam server)
+if (time() >= 1793725200) {
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code(403);
+    echo json_encode(['success' => false, 'voting_closed' => true, 'error' => '⛔ BILIK SUARA TELAH DITUTUP. Pemungutan suara berakhir pada Selasa, 03 November 2026 pukul 23:59:59 WIB. Klaim token tidak lagi dapat diproses.']);
+    exit;
+}
+
 // Direktori Data Aman (Luar Web Root)
 function resolveSecureDataDir() {
     $secureDir = dirname(__DIR__, 2) . '/pemiluiagi_data';

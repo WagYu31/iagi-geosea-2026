@@ -492,6 +492,21 @@ if (php_sapi_name() === 'cli' && empty($action) && isset($argv[1])) {
     }
 }
 
+// ================= PENUTUPAN OTOMATIS BILIK SUARA =================
+// Mulai 04 November 2026 00:00:00 WIB: tidak ada suara / klaim / verifikasi token yang diterima.
+// Berdasarkan jam server (bukan jam perangkat pemilih), sehingga tidak bisa diakali dari browser.
+define('VOTING_CLOSE_EPOCH', 1793725200); // 2026-11-04 00:00:00 +07:00
+if (time() >= VOTING_CLOSE_EPOCH && in_array($action, ['cast_vote', 'verify_voter_token', 'register_claim', 'verify_email_match', 'restore_voter_vote', 'sync_voted_npas'], true)) {
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code(403);
+    echo json_encode([
+        'success' => false,
+        'voting_closed' => true,
+        'error' => '⛔ BILIK SUARA TELAH DITUTUP. Pemungutan suara Pemilu Ketua Umum IAGI 2026 resmi berakhir pada Selasa, 03 November 2026 pukul 23:59:59 WIB. Tidak ada suara yang dapat diterima setelah waktu tersebut.'
+    ]);
+    exit;
+}
+
 // ================= ACTION: SMART AUTO CALENDAR INTENT (1-CLICK DIRECT TO APP) =================
 if ($action === 'calendar_auto' || $action === 'calendar_intent') {
     $npa = trim($_GET['npa'] ?? '00000');
