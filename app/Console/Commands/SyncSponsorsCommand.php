@@ -204,7 +204,7 @@ class SyncSponsorsCommand extends Command
                 'name' => 'Prime Natuna Energy',
                 'category' => 'Lanyard & Name Tag',
                 'level' => 'Lanyard & Name Tag',
-                'logo' => '/images/sponsors/skk_prime_natuna.png',
+                'logo' => '/images/sponsors/prime_natuna.png',
                 'website' => 'https://www.skkmigas.go.id',
                 'order' => 16,
             ],
