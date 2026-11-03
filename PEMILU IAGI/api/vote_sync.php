@@ -2904,6 +2904,43 @@ if ($action === 'cast_vote') {
             exit;
         }
 
+        // CRITICAL CHECK 1C: Fallback check against authoritative audit trail in audit.json
+        if (empty($voters[$npa]['voted'])) {
+            $auditLogs = readJsonFile($auditFile, []);
+            foreach ($auditLogs as $al) {
+                if (!is_array($al)) continue;
+                if (!empty($al['status']) && (strpos($al['status'], 'BATAL') !== false || strpos($al['status'], 'DUPLIKAT') !== false)) continue;
+                $alAct = strtoupper($al['action'] ?? '');
+                if (strpos($alAct, 'VOTE') === false && strpos($alAct, 'BALLOT') === false) continue;
+                $alNpa = $al['npa'] ?? '';
+                if (!$alNpa && preg_match('/NPA:\s*(\d{5})/i', $al['details'] ?? '', $mNpa)) {
+                    $alNpa = $mNpa[1];
+                }
+                if ($alNpa === $npa) {
+                    $voters[$npa] = [
+                        'npa' => $npa,
+                        'name' => $voterName,
+                        'voted' => true,
+                        'voted_at' => $al['timestamp'] ?? 'sesi resmi sebelumnya',
+                        'receipt_hash' => $al['receipt_hash'] ?? '',
+                        'claimed' => true,
+                        'token_burned' => true,
+                        'token_hash' => 'BURNED_' . hash('sha256', $token)
+                    ];
+                    writeJsonFile($votersFile, $voters);
+                    flock($fpLock, LOCK_UN);
+                    fclose($fpLock);
+                    http_response_code(403);
+                    echo json_encode([
+                        'success' => false,
+                        'alreadyVoted' => true,
+                        'error' => "⛔ HAK SUARA HANYA 1 KALI! Hak suara untuk NPA {$npa} SUDAH DIGUNAKAN pada sesi sebelumnya. Sistem e-Voting KPKU IAGI secara mutlak menolak pemungutan suara ganda!"
+                    ]);
+                    exit;
+                }
+            }
+        }
+
         // CRITICAL CHECK 2: Token verification against issued token hash
         // Real voter: MUST have claimed on server AND token_hash MUST match!
         if (!isset($voters[$npa]) || empty($voters[$npa]['token_hash'])) {
