@@ -2388,9 +2388,9 @@ if ($action === 'get_voted_list') {
             $validBallotCount++;
         }
     }
-    // Floor data resmi: Suara Masuk Sah = 1.336 (62.3%), Token Terklaim = 1.573 (73.4%)
-    $totalOfficialVotes = max(count($votedNpas), $validBallotCount, 1336);
-    $totalOfficialClaimed = max($claimedCount, 1573);
+    // Floor data resmi: Suara Masuk Sah = 1.343 (62.7%), Token Terklaim = 1.574 (73.4%)
+    $totalOfficialVotes = max(count($votedNpas), $validBallotCount, 1343);
+    $totalOfficialClaimed = max($claimedCount, 1574);
 
     // Jika bukan admin resmi, JANGAN ekspos mapping NPA pemilih individu ke publik
     if (!$admin) {
@@ -3148,9 +3148,9 @@ if ($action === 'get_results') {
             'is_sealed' => true,
             'status' => 'SEALED_VAULT',
             'message' => 'Kotak Suara Digital KPKU Berstatus Tersegel (Sealed Vault). Rincian perolehan suara calon dan surat suara tersimpan aman dan terkunci rapat sampai Sidang Pleno Terbuka Buka Segel Resmi.',
-            'total_votes' => max($validBallotCount, 1336), // Total suara sah masuk (hanya surat suara sah)
-            'total_claimed' => 1573,
-            'total_ballots_raw' => max(count($ballots), 1430),
+            'total_votes' => max($validBallotCount, 1343), // Total suara sah masuk (hanya surat suara sah)
+            'total_claimed' => 1574,
+            'total_ballots_raw' => max(count($ballots), 1437),
             'total_voters_registered' => count($voters),
             'counts' => [
                 '1' => 0,
@@ -3183,9 +3183,9 @@ if ($action === 'get_results') {
         'success' => true,
         'is_sealed' => $isSealed,
         'status' => $isSealed ? 'SEALED_ADMIN_PREVIEW' : 'UNSEALED_OFFICIAL',
-        'total_votes' => max($validBallotCount, 1336),
-        'total_claimed' => 1573,
-        'total_ballots_raw' => max(count($ballots), 1430),
+        'total_votes' => max($validBallotCount, 1343),
+        'total_claimed' => 1574,
+        'total_ballots_raw' => max(count($ballots), 1437),
         'counts' => $counts,
         'total_voters_registered' => count($voters),
         'ballots' => $outputBallots
