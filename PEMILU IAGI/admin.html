@@ -6491,9 +6491,7 @@
         <span style="color: rgba(255,255,255,0.15);">|</span>
         <div style="color: #94A3B8;">Sudah Memilih: <strong id="dpt-mini-voted" style="color: #34D399; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
-        <div style="color: #94A3B8;">Klaim Token: <strong id="dpt-mini-claimed" style="color: #FBBF24; font-family: var(--font-mono); font-size: 0.95rem;">0</strong></div>
-        <span style="color: rgba(255,255,255,0.15);">|</span>
-        <div style="color: #94A3B8;">Belum Klaim: <strong id="dpt-mini-unclaimed" style="color: #F87171; font-family: var(--font-mono); font-size: 0.95rem;">2.143</strong></div>
+        <div style="color: #94A3B8;">Belum Memilih: <strong id="dpt-mini-unvoted" style="color: #F87171; font-family: var(--font-mono); font-size: 0.95rem;">786</strong></div>
         <span style="color: rgba(255,255,255,0.15);">|</span>
         <div style="color: #94A3B8;">Partisipasi: <strong id="dpt-mini-turnout" style="color: var(--gold-secondary); font-family: var(--font-mono); font-size: 0.95rem;">0.0%</strong></div>
       </div>
@@ -11010,6 +11008,8 @@
         if (elMiniTotal) elMiniTotal.innerText = totalDptNum.toLocaleString('id-ID');
         const elMiniVoted = document.getElementById('dpt-mini-voted');
         if (elMiniVoted) elMiniVoted.innerText = sahVotesNum.toLocaleString('id-ID');
+        const elMiniUnvoted = document.getElementById('dpt-mini-unvoted');
+        if (elMiniUnvoted) elMiniUnvoted.innerText = Math.max(0, totalDptNum - sahVotesNum).toLocaleString('id-ID');
         const elMiniClaimed = document.getElementById('dpt-mini-claimed');
         if (elMiniClaimed) elMiniClaimed.innerText = claimedNotVotedNum.toLocaleString('id-ID');
         const elMiniUnclaimed = document.getElementById('dpt-mini-unclaimed');
@@ -12514,6 +12514,8 @@
         if (elMiniTotalDyn) elMiniTotalDyn.innerText = totalDptCount.toLocaleString('id-ID');
         const elMiniVotedDyn = document.getElementById('dpt-mini-voted');
         if (elMiniVotedDyn) elMiniVotedDyn.innerText = miniVotedCount.toLocaleString('id-ID');
+        const elMiniUnvotedDyn = document.getElementById('dpt-mini-unvoted');
+        if (elMiniUnvotedDyn) elMiniUnvotedDyn.innerText = Math.max(0, totalDptCount - miniVotedCount).toLocaleString('id-ID');
         const elMiniClaimedDyn = document.getElementById('dpt-mini-claimed');
         if (elMiniClaimedDyn) elMiniClaimedDyn.innerText = miniClaimedCount.toLocaleString('id-ID');
         const elMiniUnclaimedDyn = document.getElementById('dpt-mini-unclaimed');
