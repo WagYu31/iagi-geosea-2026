@@ -22,8 +22,12 @@ echo "====================================================================\n\n";
 $isApply = in_array('--apply', $argv);
 
 // 1. Tentukan Direktori Data
+$homeDir = getenv('HOME') ?: '/home/pitiagic';
 $candidatesDirs = [
     dirname(__DIR__, 2) . '/pemiluiagi_data',
+    dirname(__DIR__, 3) . '/pemiluiagi_data',
+    $homeDir . '/pemiluiagi_data',
+    $homeDir . '/public_html/pemiluiagi_data',
     __DIR__ . '/data',
     dirname(__DIR__) . '/data'
 ];
