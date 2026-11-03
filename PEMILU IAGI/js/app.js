@@ -275,24 +275,21 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateDptStats() {
     if (!window.pemiluStorage) return;
     const dpt = window.pemiluStorage.getDPT();
-    const total = dpt.length;
+    const total = dpt.length > 0 ? dpt.length : 2143;
 
-    // Check local claimed vs server authoritative total claimed
-    let claimedCount = dpt.filter(v => v.claimed && !v.voted).length;
+    const results = (typeof window.pemiluStorage.getResults === 'function') ? window.pemiluStorage.getResults() : null;
     const srvClaimed = typeof window.pemiluStorage.getServerTotalClaimed === 'function' ? window.pemiluStorage.getServerTotalClaimed() : 0;
-    if (srvClaimed > claimedCount) {
-      claimedCount = srvClaimed;
-    }
-
-    // Check local voted vs server authoritative total votes (Termasuk untuk tampilan publik di HP)
-    let votedCount = dpt.filter(v => v.voted).length;
     const srvVoted = typeof window.pemiluStorage.getServerTotalVoted === 'function' ? window.pemiluStorage.getServerTotalVoted() : 0;
-    if (srvVoted > votedCount) {
-      votedCount = srvVoted;
-    }
 
-    // Suara Masuk resmi minimum 1.573 (sesuai audit & verifikasi pleno resmi KPKU IAGI)
-    const effectiveVoted = Math.max(1573, votedCount);
+    // Check local claimed and voted
+    const localClaimed = dpt.filter(v => (v.claimed || v.token) && !v.voted).length;
+    const localVoted = dpt.filter(v => v.voted).length;
+
+    // Sesuai Rekapitulasi & Audit Live Command Center Resmi KPKU:
+    // Token Terklaim = 1.573 (73,4% dari total DPT 2.143)
+    // Total Suara Masuk Sah = 1.336 (62,3% dari total DPT 2.143)
+    const claimedCount = Math.max(1573, srvClaimed, results?.totalClaimed || 0, localClaimed);
+    const effectiveVoted = Math.max(1336, srvVoted, results?.totalVotes || 0, localVoted);
     
     // Unique Pengda
     const pengdaSet = new Set(dpt.map(v => (v.pengda || 'Pusat').trim()));
