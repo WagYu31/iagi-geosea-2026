@@ -357,6 +357,11 @@ class PemiluStorage {
                 v.receipt_hash = serverVote.receipt_hash || 'VERIFIED';
                 changed = true;
               }
+            } else if (v.voted) {
+              v.voted = false;
+              v.voted_at = null;
+              v.receipt_hash = null;
+              changed = true;
             }
           });
           if (changed) {
