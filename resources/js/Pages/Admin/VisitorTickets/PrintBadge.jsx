@@ -158,7 +158,7 @@ const CATEGORY_MAP = {
     tesko: { label: 'TESKO', short: 'TESKO' },
 };
 
-export const BADGE_VERSION = '20261103_tesko_v12';
+export const BADGE_VERSION = '20261104_visitor_red_v1';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;
@@ -186,15 +186,20 @@ function SingleLanyardCard({
     const bgImage = appendBadgeVersion(rawBg);
 
     const isVisitor = visitorType === 'non_exclusive' || visitorType === 'visitor' || (bgImage && bgImage.toLowerCase().includes('visitor.'));
+    const isGenericVisitor = isVisitor && (!ticket.visitor_name || ticket.visitor_name.toUpperCase() === 'VISITOR');
 
     const nameLength = (ticket.visitor_name || '').length;
-    const nameFontSize = nameLength > 32 
-        ? '0.84rem' 
-        : nameLength > 25 
-            ? '0.92rem' 
-            : nameLength > 18 
-                ? '1.10rem' 
-                : '1.30rem';
+    const nameFontSize = isGenericVisitor
+        ? '1.85rem'
+        : (nameLength > 32 
+            ? '0.84rem' 
+            : nameLength > 25 
+                ? '0.92rem' 
+                : nameLength > 18 
+                    ? '1.10rem' 
+                    : isVisitor 
+                        ? '1.45rem' 
+                        : '1.30rem');
 
     const institutionLength = (ticket.visitor_institution || '').length;
     const instFontSize = institutionLength > 38 
@@ -299,32 +304,49 @@ function SingleLanyardCard({
                     justifyContent: 'center',
                     textAlign: 'center',
                     zIndex: 5,
+                    borderRadius: isVisitor ? '999px' : 0,
+                    bgcolor: isVisitor ? '#c62828' : 'transparent',
+                    backgroundImage: isVisitor ? 'linear-gradient(180deg, #E53935 0%, #8E0000 100%)' : 'none',
+                    border: isVisitor ? '1.5px solid rgba(255, 206, 110, 0.9)' : 'none',
+                    boxShadow: isVisitor ? 'inset 0 1px 2px rgba(255,255,255,0.25), 0 2px 6px rgba(0,0,0,0.25)' : 'none',
+                    '@media print': {
+                        bgcolor: isVisitor ? '#c62828 !important' : 'transparent !important',
+                        backgroundImage: isVisitor ? 'linear-gradient(180deg, #E53935 0%, #8E0000 100%) !important' : 'none !important',
+                        borderRadius: isVisitor ? '999px !important' : '0 !important',
+                        border: isVisitor ? '0.6pt solid #FFCE6E !important' : 'none !important',
+                        WebkitPrintColorAdjust: 'exact',
+                        printColorAdjust: 'exact',
+                    },
                 }}
             >
                 <Typography
                     variant="h5"
                     sx={{
                         fontWeight: 900,
-                        color: isVisitor ? '#000000' : '#ffffff',
+                        color: '#ffffff',
                         fontSize: nameFontSize,
                         fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
                         textTransform: 'uppercase',
-                        letterSpacing: '0.025em',
-                        lineHeight: 1.08,
+                        letterSpacing: isGenericVisitor ? '0.08em' : '0.025em',
+                        lineHeight: 1.0,
                         wordBreak: 'break-word',
                         textAlign: 'center',
                         width: '100%',
-                        textShadow: isVisitor ? 'none' : '0 1px 3px rgba(0,0,0,0.3)',
+                        textShadow: '0 1px 3px rgba(0,0,0,0.45)',
                         '@media print': {
-                            color: isVisitor ? '#000000 !important' : '#ffffff !important',
-                            fontSize: nameLength > 32 
-                                ? '5.4pt !important' 
-                                : nameLength > 25 
-                                    ? '6.0pt !important' 
-                                    : nameLength > 18 
-                                        ? '7.2pt !important' 
-                                        : '8.5pt !important',
-                            lineHeight: '1.08 !important',
+                            color: '#ffffff !important',
+                            fontSize: isGenericVisitor 
+                                ? '13.5pt !important' 
+                                : (nameLength > 32 
+                                    ? '5.4pt !important' 
+                                    : nameLength > 25 
+                                        ? '6.0pt !important' 
+                                        : nameLength > 18 
+                                            ? '7.2pt !important' 
+                                            : isVisitor 
+                                                ? '10.5pt !important' 
+                                                : '8.5pt !important'),
+                            lineHeight: '1.0 !important',
                         },
                     }}
                 >
