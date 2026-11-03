@@ -519,6 +519,15 @@ function getUnvotedVoterRegistry() {
     $ballots = readJsonFile($ballotsFile, []);
     $totalBallots = count($ballots);
 
+    // Cross-check audit log: NPA dengan VOTE_RECORDED dianggap sudah memilih
+    // walaupun voters_status.json belum tersinkron (mencegah pengingat salah kirim).
+    $votedFromAudit = [];
+    foreach (readJsonFile($dataDir . '/audit.json', []) as $log) {
+        if (($log['action'] ?? '') === 'VOTE_RECORDED' && !empty($log['npa'])) {
+            $votedFromAudit[(string)$log['npa']] = true;
+        }
+    }
+
     $unvotedList = [];
     $votedCount = 0;
     $validEmailCount = 0;
@@ -526,6 +535,9 @@ function getUnvotedVoterRegistry() {
     foreach ($dptMaster as $npa => $info) {
         $hasVoted = false;
         if (isset($votersStatus[$npa]) && !empty($votersStatus[$npa]['voted'])) {
+            $hasVoted = true;
+        }
+        if (isset($votedFromAudit[(string)$npa])) {
             $hasVoted = true;
         }
 
