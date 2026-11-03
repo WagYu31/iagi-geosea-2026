@@ -72,6 +72,9 @@ export const BADGE_TEMPLATES = {
     // 14. IT Developer
     it_developer: '/images/badges/IT_Developer.png',
 
+    // 15. TESKO
+    tesko: '/images/badges/Tesko.png',
+
     // Technical
     presenter: '/images/badges/Presenter.png',
     invited_speaker: '/images/badges/Invited_Speaker.png',
@@ -150,9 +153,12 @@ const CATEGORY_MAP = {
 
     // 15. IT Developer
     it_developer: { label: 'IT DEVELOPER', short: 'IT DEVELOPER' },
+
+    // 16. TESKO
+    tesko: { label: 'TESKO', short: 'TESKO' },
 };
 
-export const BADGE_VERSION = '20261103_it_dev_v11';
+export const BADGE_VERSION = '20261103_tesko_v12';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;

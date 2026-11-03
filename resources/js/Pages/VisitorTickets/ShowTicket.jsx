@@ -188,6 +188,16 @@ const CATEGORY_MAP = {
         tagBg: '#eff6ff',
         tagColor: '#1e40af',
     },
+    tesko: {
+        label: 'TESKO',
+        badge: 'TESKO',
+        gradient: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
+        border: '#14b8a6',
+        shadow: 'rgba(13, 148, 136, 0.25)',
+        textColor: '#0f766e',
+        tagBg: '#f0fdfa',
+        tagColor: '#115e59',
+    },
     // Conference / Standard Categories
     iagi_member_professional: {
         label: 'Professional (Member)',

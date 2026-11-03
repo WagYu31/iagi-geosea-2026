@@ -243,6 +243,15 @@ const CATEGORY_MAP = {
         color: '#1d4ed8',
         border: '#93c5fd',
     },
+
+    // 15. TESKO
+    tesko: {
+        label: 'TESKO',
+        shortLabel: 'TESKO',
+        bg: '#f0fdfa',
+        color: '#0f766e',
+        border: '#99f6e4',
+    },
 };
 
 const getCategoryMeta = (type) => CATEGORY_MAP[type] || CATEGORY_MAP.non_exclusive;

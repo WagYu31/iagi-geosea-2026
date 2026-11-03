@@ -56,6 +56,7 @@ const CATEGORY_MAP = {
     student_crowd: { label: 'Student Crowd', shortLabel: 'STUDENT CROWD', badge: 'STUDENT CROWD', bg: '#f0fdf4', color: '#166534', border: '#bbf7d0' },
     vip_companion: { label: 'VIP Companion', shortLabel: 'VIP COMPANION', badge: 'VIP COMPANION', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
     it_developer: { label: 'IT Developer', shortLabel: 'IT DEVELOPER', badge: 'IT DEVELOPER', bg: '#eff6ff', color: '#1d4ed8', border: '#93c5fd' },
+    tesko: { label: 'TESKO', shortLabel: 'TESKO', badge: 'TESKO', bg: '#f0fdfa', color: '#0f766e', border: '#99f6e4' },
 
     // 1. Participant
     iagi_member_professional: { label: 'Professional (Member)', shortLabel: 'PRO (MEMBER)', badge: 'PROFESSIONAL (MEMBER)', bg: '#dcfce7', color: '#15803d', border: '#86efac' },

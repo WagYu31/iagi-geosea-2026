@@ -372,6 +372,15 @@ const CATEGORY_META = {
         color: '#1d4ed8',
         border: '#93c5fd',
     },
+
+    // 15. TESKO
+    tesko: {
+        label: 'TESKO',
+        shortLabel: 'TESKO',
+        bg: '#f0fdfa',
+        color: '#0f766e',
+        border: '#99f6e4',
+    },
 };
 
 const getCategoryMeta = (type) => CATEGORY_META[type] || CATEGORY_META.non_exclusive;
@@ -403,6 +412,7 @@ const CATEGORY_PRICES = {
     'student_crowd': 0,
     'vip_companion': 0,
     'it_developer': 0,
+    'tesko': 0,
     'presenter': 0,
     'invited_speaker': 0,
     'student': 0,
@@ -2636,6 +2646,10 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="it_developer" sx={{ pl: 2, fontSize: '0.82rem' }}>
                                     <Checkbox checked={typeFilter.indexOf('it_developer') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
                                     <ListItemText primary="💻 IT Developer (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                                </MenuItem>
+                                <MenuItem value="tesko" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                    <Checkbox checked={typeFilter.indexOf('tesko') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                    <ListItemText primary="🏢 TESKO (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
                                 </MenuItem>
                             </Select>
                         </FormControl>
@@ -5228,6 +5242,7 @@ export default function VisitorTicketsIndex({
                                                         <MenuItem value="student_crowd" sx={{ pl: 2.5, py: 0.8 }}>12. 🎓 Student Crowd (Free)</MenuItem>
                                                         <MenuItem value="vip_companion" sx={{ pl: 2.5, py: 0.8 }}>13. ⭐ VIP Companion (Free)</MenuItem>
                                                         <MenuItem value="it_developer" sx={{ pl: 2.5, py: 0.8 }}>14. 💻 IT Developer (Free)</MenuItem>
+                                                        <MenuItem value="tesko" sx={{ pl: 2.5, py: 0.8 }}>15. 🏢 TESKO (Free)</MenuItem>
                                                     </Select>
                                                 </FormControl>
                                             </Grid>
@@ -5433,6 +5448,7 @@ export default function VisitorTicketsIndex({
                                         <MenuItem value="student_crowd">12. 🎓 Student Crowd (Invited / Free)</MenuItem>
                                         <MenuItem value="vip_companion">13. ⭐ VIP Companion (Invited / Free)</MenuItem>
                                         <MenuItem value="it_developer">14. 💻 IT Developer (Invited / Free)</MenuItem>
+                                        <MenuItem value="tesko">15. 🏢 TESKO (Invited / Free)</MenuItem>
                                     </Select>
                                 </FormControl>
 
@@ -7985,6 +8001,7 @@ export default function VisitorTicketsIndex({
                     { type: 'student_crowd', label: '12. 🎓 Student Crowd', code: 'TKT-CRWD' },
                     { type: 'vip_companion', label: '13. ⭐ VIP Companion', code: 'TKT-VCMP' },
                     { type: 'it_developer', label: '14. 💻 IT Developer', code: 'TKT-DEV' },
+                    { type: 'tesko', label: '15. 🏢 TESKO', code: 'TKT-TSK' },
                 ].map((item) => (
                     <MenuItem
                         key={item.type}
