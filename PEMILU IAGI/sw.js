@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v5.5.4-stats-1344';
+const CACHE_NAME = 'pemilu-iagi-2026-v5.5.5-stats-1350';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
