@@ -5717,8 +5717,8 @@ const INITIAL_DPT = [
   {
     "npa": "03377",
     "name": "Andi Noventiyanto",
-    "email": "an***@medcoenergi.com",
-    "email_hash": "953d51a342a6d6af257bf5764dadb3844275c099f395145f402d7ccd8157700b",
+    "email": "an***@gmail.com",
+    "email_hash": "9fa9d8e16e05d937f78b6c231396efb04cffd10e89d147c0e44d066c7061d80f",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",

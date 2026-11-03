@@ -374,7 +374,7 @@ return [
   '03371' => ['name' => 'Arii Ardjuna', 'email' => 'ardjuna@centrin.net.id'],
   '03373' => ['name' => 'Zuardin Azzaino', 'email' => 'z.azzaino@gmail.com'],
   '03374' => ['name' => 'Fuad Ahmadin Nasution', 'email' => 'fuad.ahmadin@gmail.com'],
-  '03377' => ['name' => 'Andi Noventiyanto', 'email' => 'andi.noventiyanto@medcoenergi.com'],
+  '03377' => ['name' => 'Andi Noventiyanto', 'email' => 'andi.noventiyanto@gmail.com'],
   '03385' => ['name' => 'Bayu Nugroho', 'email' => 'bayu.ngr@gmail.com'],
   '03386' => ['name' => 'Ahmad Sujai', 'email' => 'ahmadsujai.crc@gmail.com'],
   '03387' => ['name' => 'Totong Koesnadi Usman', 'email' => 't.usman@pertamina.com'],
