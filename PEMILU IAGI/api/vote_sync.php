@@ -2382,6 +2382,18 @@ if ($action === 'get_voted_list') {
         }
     }
 
+    // Lengkapi dari audit log (VOTE_RECORDED) bila voters_status.json belum tersinkron
+    foreach (readJsonFile($auditFile, []) as $log) {
+        if (($log['action'] ?? '') !== 'VOTE_RECORDED' || empty($log['npa'])) continue;
+        $cleanKey = str_pad(preg_replace('/\D/', '', strval($log['npa'])), 5, '0', STR_PAD_LEFT);
+        if (!isset($votedNpas[$cleanKey])) {
+            $votedNpas[$cleanKey] = [
+                'voted_at' => $log['timestamp'] ?? null,
+                'receipt_hash' => $log['receipt_hash'] ?? ''
+            ];
+        }
+    }
+
     $validBallotCount = 0;
     foreach ($ballots as $b) {
         if (empty($b['void'])) {

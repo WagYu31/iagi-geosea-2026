@@ -311,6 +311,8 @@ document.addEventListener('DOMContentLoaded', () => {
   window.updateDptStats = updateDptStats;
   window.addEventListener('pemilu:stats_updated', () => {
     updateDptStats();
+    // Gambar ulang daftar DPT agar status "Sudah Memilih" dari server langsung tampil
+    try { renderDptResults(); } catch (e) {}
   });
 
   function renderDptScreen() {
