@@ -10941,6 +10941,13 @@
         const results = window.pemiluStorage.getResults();
         const settings = window.pemiluStorage.getSettings();
 
+        // Anti-kedip: jika angka live dari server (panel audit) tersedia, itu yang dipakai
+        const live = window.__kpkuLiveVotes;
+        if (live && live.valid > 0) {
+          results.totalVotes = live.valid;
+          results.voidDuplicates = Math.max(0, live.raw - live.valid);
+          results.turnoutPercentage = ((live.valid / (results.totalDPT || 2143)) * 100).toFixed(1);
+        }
         // 1. Stats
         document.getElementById('stat-total-dpt').innerText = results.totalDPT;
         document.getElementById('stat-total-claimed').innerText = results.totalClaimed;
@@ -11559,6 +11566,7 @@
 
               // Update Executive Ribbon Top Cards Immediately from Authoritative Server Data
               if (validCount > 0) {
+                window.__kpkuLiveVotes = { valid: validCount, raw: Number(srvData.total_ballots_raw || validCount) };
                 // Simpan angka server terbaru ke cache agar refreshAll() tidak menimpa dengan angka lama (anti-kedip)
                 try {
                   const srvCache = JSON.parse(localStorage.getItem('pemilu_iagi_server_results_v1') || '{}') || {};
