@@ -11784,6 +11784,22 @@
           });
         }
 
+        // Filter Suara Masuk Sah: hanya 1 suara per NPA (catatan paling awal), tanpa yang BATAL/DUPLIKAT
+        const isBatalLog = (it) => /BATAL|DUPLIKAT/i.test(String(it && it.status || ''));
+        const firstValidLog = new Set();
+        if (currentAuditFilter === 'VOTE') {
+          const seenNpa = {};
+          cachedAuditLogs
+            .filter(it => it && String(it.action || '').toUpperCase() === 'VOTE_RECORDED' && !isBatalLog(it))
+            .slice()
+            .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+            .forEach(it => {
+              const n = getLogNpa(it);
+              if (!n) { firstValidLog.add(it); return; }
+              if (!seenNpa[n]) { seenNpa[n] = true; firstValidLog.add(it); }
+            });
+        }
+
         let filtered = cachedAuditLogs.filter(item => {
           if (!item) return false;
           const action = (item.action || '').toUpperCase();
@@ -11796,6 +11812,7 @@
             if (!action.includes('ADMIN') && !action.includes('AUTH') && !action.includes('LOGIN') && !action.includes('LOGOUT')) return false;
           } else if (currentAuditFilter === 'VOTE') {
             if (item.is_valid_vote !== true && !item._displayVoteNum) return false;
+            if (action === 'VOTE_RECORDED' && !firstValidLog.has(item)) return false;
             if (action.includes('PURGE') || action.includes('RESET') || action.includes('GENESIS')) return false;
             if (item.details && item.details.includes('99999')) return false;
             if (item.timestamp) {
