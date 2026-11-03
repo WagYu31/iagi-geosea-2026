@@ -158,7 +158,7 @@ const CATEGORY_MAP = {
     tesko: { label: 'TESKO', short: 'TESKO' },
 };
 
-export const BADGE_VERSION = '20261104_visitor_red_v2';
+export const BADGE_VERSION = '20261104_visitor_red_v3';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;
@@ -290,11 +290,11 @@ function SingleLanyardCard({
                 />
             )}
 
-            {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 750 - 870 / 59.9% - 69.5%) */}
+            {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 768 - 888 / 61.3% - 70.9% - Centered & Adaptive Scaling) */}
             <Box
                 sx={{
                     position: 'absolute',
-                    top: isVisitor ? '59.9%' : '61.4%',
+                    top: isVisitor ? '61.3%' : '61.4%',
                     height: isVisitor ? '9.6%' : '6.7%',
                     left: isVisitor ? '12.7%' : '14%',
                     right: isVisitor ? '12.7%' : '14%',
