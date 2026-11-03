@@ -158,7 +158,7 @@ const CATEGORY_MAP = {
     tesko: { label: 'TESKO', short: 'TESKO' },
 };
 
-export const BADGE_VERSION = '20261104_visitor_red_v1';
+export const BADGE_VERSION = '20261104_visitor_red_v2';
 
 export function appendBadgeVersion(url) {
     if (!url) return url;
@@ -190,7 +190,7 @@ function SingleLanyardCard({
 
     const nameLength = (ticket.visitor_name || '').length;
     const nameFontSize = isGenericVisitor
-        ? '1.85rem'
+        ? '2.55rem'
         : (nameLength > 32 
             ? '0.84rem' 
             : nameLength > 25 
@@ -198,7 +198,7 @@ function SingleLanyardCard({
                 : nameLength > 18 
                     ? '1.10rem' 
                     : isVisitor 
-                        ? '1.45rem' 
+                        ? '1.55rem' 
                         : '1.30rem');
 
     const institutionLength = (ticket.visitor_institution || '').length;
@@ -290,14 +290,14 @@ function SingleLanyardCard({
                 />
             )}
 
-            {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 769.5 - 853.3 / 61.4% - 68.1% - Centered & Adaptive Scaling) */}
+            {/* 1. VISITOR NAME OVERLAY (Positioned INSIDE the Pill Box at y: 750 - 870 / 59.9% - 69.5%) */}
             <Box
                 sx={{
                     position: 'absolute',
-                    top: '61.4%',
-                    height: '6.7%',
-                    left: '14%',
-                    right: '14%',
+                    top: isVisitor ? '59.9%' : '61.4%',
+                    height: isVisitor ? '9.6%' : '6.7%',
+                    left: isVisitor ? '12.7%' : '14%',
+                    right: isVisitor ? '12.7%' : '14%',
                     px: '4px',
                     display: 'flex',
                     alignItems: 'center',
@@ -336,7 +336,7 @@ function SingleLanyardCard({
                         '@media print': {
                             color: '#ffffff !important',
                             fontSize: isGenericVisitor 
-                                ? '13.5pt !important' 
+                                ? '18pt !important' 
                                 : (nameLength > 32 
                                     ? '5.4pt !important' 
                                     : nameLength > 25 
@@ -344,7 +344,7 @@ function SingleLanyardCard({
                                         : nameLength > 18 
                                             ? '7.2pt !important' 
                                             : isVisitor 
-                                                ? '10.5pt !important' 
+                                                ? '11.5pt !important' 
                                                 : '8.5pt !important'),
                             lineHeight: '1.0 !important',
                         },
