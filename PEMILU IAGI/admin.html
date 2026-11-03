@@ -11570,25 +11570,42 @@
 
               // Update Executive Ribbon Top Cards Immediately from Authoritative Server Data
               if (validCount > 0) {
-                window.__kpkuLiveVotes = { valid: validCount, raw: Number(srvData.total_ballots_raw || validCount) };
+                // SUARA SAH = 1 suara per NPA (catatan VOTE_RECORDED paling awal, bukan BATAL/DUPLIKAT).
+                // Semua suara ke-2 dst. dari NPA yang sama dihitung sebagai duplikat (tetap tercatat di log).
+                const rawTotal = Number(srvData.total_ballots_raw || validCount);
+                let uniqueValid = 0;
+                try {
+                  const seenNpa = {};
+                  srvData.logs.forEach(it => {
+                    if (!it || String(it.action || '').toUpperCase() !== 'VOTE_RECORDED') return;
+                    if (/BATAL|DUPLIKAT/i.test(String(it.status || ''))) return;
+                    let n = it.npa ? String(it.npa) : '';
+                    if (!n && it.details) { const m = String(it.details).match(/NPA:\s*(\d{5})/i); if (m) n = m[1]; }
+                    if (!n) return;
+                    n = n.padStart(5, '0');
+                    if (!seenNpa[n]) { seenNpa[n] = true; uniqueValid++; }
+                  });
+                } catch (e) { uniqueValid = 0; }
+                const sahCount = (uniqueValid > 0 && uniqueValid <= validCount) ? uniqueValid : validCount;
+
+                window.__kpkuLiveVotes = { valid: sahCount, raw: rawTotal };
                 // Simpan angka server terbaru ke cache agar refreshAll() tidak menimpa dengan angka lama (anti-kedip)
                 try {
                   const srvCache = JSON.parse(localStorage.getItem('pemilu_iagi_server_results_v1') || '{}') || {};
-                  srvCache.total_votes = validCount;
-                  srvCache.total_ballots_raw = Number(srvData.total_ballots_raw || validCount);
+                  srvCache.total_votes = sahCount;
+                  srvCache.total_ballots_raw = rawTotal;
                   srvCache.updated_at = Date.now();
                   localStorage.setItem('pemilu_iagi_server_results_v1', JSON.stringify(srvCache));
                 } catch (e) {}
                 const elTotVotes = document.getElementById('stat-total-votes');
-                if (elTotVotes) elTotVotes.innerText = validCount.toLocaleString('id-ID');
+                if (elTotVotes) elTotVotes.innerText = sahCount.toLocaleString('id-ID');
                 const elTurnoutPct = document.getElementById('stat-turnout-pct');
-                if (elTurnoutPct) elTurnoutPct.innerText = `${((validCount / 2143) * 100).toFixed(1)}%`;
+                if (elTurnoutPct) elTurnoutPct.innerText = `${((sahCount / 2143) * 100).toFixed(1)}%`;
                 const elTurnoutSub = document.getElementById('stat-turnout-sub');
-                const rawTotal = Number(srvData.total_ballots_raw || validCount);
-                const voidDiff = (rawTotal > validCount) ? (rawTotal - validCount) : 0;
+                const voidDiff = (rawTotal > sahCount) ? (rawTotal - sahCount) : 0;
                 if (elTurnoutSub) {
                   if (voidDiff > 0) {
-                    elTurnoutSub.innerHTML = `<span style="color:#10B981; font-weight:700;">${validCount.toLocaleString('id-ID')} Sah</span> • <span style="color:#F59E0B; font-weight:600;">${voidDiff} Duplikat Dianulir</span>`;
+                    elTurnoutSub.innerHTML = `<span style="color:#10B981; font-weight:700;">${sahCount.toLocaleString('id-ID')} Sah</span> • <span style="color:#F59E0B; font-weight:600;">${voidDiff} Duplikat Dianulir</span>`;
                   } else {
                     elTurnoutSub.innerText = 'Tersimpan dalam Brankas Kriptografi';
                   }
