@@ -474,13 +474,21 @@ function sendServerEmail($toEmail, $toName, $subject, $messageHtml) {
 }
 
 $action = isset($_GET['action']) ? $_GET['action'] : '';
-if (empty($action) && $_SERVER['REQUEST_METHOD'] === 'POST') {
+if (empty($action) && isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $raw = @file_get_contents('php://input');
     $parsed = @json_decode($raw, true);
     if (isset($parsed['action'])) {
         $action = $parsed['action'];
     } elseif (isset($_POST['action'])) {
         $action = $_POST['action'];
+    }
+}
+if (php_sapi_name() === 'cli' && empty($action) && isset($argv[1])) {
+    parse_str($argv[1], $cliArgs);
+    if (isset($cliArgs['action'])) {
+        $action = $cliArgs['action'];
+    } else {
+        $action = $argv[1];
     }
 }
 
@@ -1737,11 +1745,22 @@ if ($action === 'verify_integrity') {
     foreach ($voters as $v) {
         if (!empty($v['voted'])) $votedDptCount++;
     }
-    $discrepancy = $total - $votedDptCount;
+    $validBallotCount = 0;
+    $voidBallotCount = 0;
+    foreach ($ballots as $b) {
+        if (!empty($b['void'])) {
+            $voidBallotCount++;
+        } else {
+            $validBallotCount++;
+        }
+    }
+    $discrepancy = $validBallotCount - $votedDptCount;
 
     echo json_encode([
         'success' => true,
         'total_ballots' => $total,
+        'valid_ballots' => $validBallotCount,
+        'void_ballots' => $voidBallotCount,
         'is_tampered' => $isTampered,
         'integrity_status' => $isTampered ? 'CORRUPTED / TAMPERED' : 'VALID & UNTOUCHED',
         'chained_ballots' => $chainedCount,
@@ -1751,6 +1770,8 @@ if ($action === 'verify_integrity') {
         'latest_chain_hash' => $total > 0 ? ($ballots[$total - 1]['chain_hash'] ?? 'LEGACY_FORMAT') : $genesisHash,
         'reconciliation' => [
             'total_ballots' => $total,
+            'valid_ballots' => $validBallotCount,
+            'void_ballots' => $voidBallotCount,
             'total_voted_dpt' => $votedDptCount,
             'discrepancy' => $discrepancy,
             'status' => ($discrepancy === 0) ? '100% MATCH (ZERO DISCREPANCY)' : 'DISCREPANCY DETECTED'
@@ -1968,13 +1989,19 @@ if ($action === 'get_audit_logs') {
     }
     unset($cLog);
 
+    $validBallotCount = 0;
+    foreach ($ballots as $b) {
+        if (empty($b['void'])) $validBallotCount++;
+    }
+
     echo json_encode([
         'success' => true,
         'total_logs' => count($combinedLogs),
         'is_sealed' => ($settings['is_sealed'] !== false),
-        'total_votes' => $totalBallots,
+        'total_votes' => $validBallotCount,
+        'total_ballots_raw' => $totalBallots,
         'total_voted_dpt' => $votedDptCount,
-        'discrepancy' => $totalBallots - $votedDptCount,
+        'discrepancy' => $validBallotCount - $votedDptCount,
         'manual_edits_detected' => 0,
         'alteration_endpoints_available' => 0,
         'integrity_status' => 'VALID & UNTOUCHED',
@@ -2000,14 +2027,14 @@ if ($action === 'check_voter' || $action === 'check_voter_status') {
     $voterStatus = isset($voters[$npa]) ? $voters[$npa] : null;
 
     if ($voterStatus && !empty($voterStatus['voted'])) {
-        $isSynthetic = empty($voterStatus['token_hash']) || 
-                       in_array($voterStatus['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || 
-                       strpos($voterStatus['voted_at'] ?? '', 'Oktober 2026') !== false || 
-                       empty($voterStatus['voted_at']) ||
-                       strpos($voterStatus['voted_at'] ?? '', '1970') !== false;
+        // HANYA simulasi pra-pemilu Oktober murni (bukan suara resmi November)
+        $isOctoberSimulation = (
+            strpos($voterStatus['voted_at'] ?? '', 'Oktober 2026') !== false || 
+            in_array($voterStatus['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH'])
+        ) && strpos($voterStatus['voted_at'] ?? '', 'November 2026') === false;
 
-        if ($isSynthetic) {
-            // Pulihkan secara otomatis jika vote berstatus rekonsiliasi sintesis/korup
+        if ($isOctoberSimulation) {
+            // Pulihkan secara otomatis HANYA jika vote berstatus simulasi pra-pemilu Oktober
             $voters[$npa]['voted'] = false;
             $voters[$npa]['voted_at'] = null;
             $voters[$npa]['receipt_hash'] = null;
@@ -2108,16 +2135,16 @@ if ($action === 'verify_email_match') {
             }
         }
 
-        // Auto-heal synthetic lock pada server jika pemilih asli menyajikan verifikasi email
+        // Cek status hak suara: Hanya batalkan status jika simulasi pra-pemilu Oktober murni
         $voters = readJsonFile($votersFile, []);
         $srvVoted = false;
         if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
-            $isSynthetic = empty($voters[$npa]['token_hash']) || 
-                           in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || 
-                           strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false || 
-                           empty($voters[$npa]['voted_at']) ||
-                           strpos($voters[$npa]['voted_at'] ?? '', '1970') !== false;
-            if ($isSynthetic) {
+            $isOctoberSimulation = (
+                strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false || 
+                in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH'])
+            ) && strpos($voters[$npa]['voted_at'] ?? '', 'November 2026') === false;
+
+            if ($isOctoberSimulation) {
                 $voters[$npa]['voted'] = false;
                 $voters[$npa]['voted_at'] = null;
                 $voters[$npa]['receipt_hash'] = null;
@@ -2174,38 +2201,46 @@ if ($action === 'verify_voter_token') {
     $voterStatus = isset($voters[$npa]) ? $voters[$npa] : null;
 
     if ($voterStatus && !empty($voterStatus['voted'])) {
-        // DETEKSI REKONSILIASI SINTETIS / RESTORE:
-        $isSyntheticVote = empty($voterStatus['token_hash']) || in_array($voterStatus['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || strpos($voterStatus['voted_at'] ?? '', 'Oktober 2026') !== false;
+        // DETEKSI REKONSILIASI SIMULASI OKTOBER (HANYA SIMULASI PRA-PEMILU OKTOBER MURNI)
+        $isOctoberSimulation = (
+            strpos($voterStatus['voted_at'] ?? '', 'Oktober 2026') !== false || 
+            in_array($voterStatus['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH'])
+        ) && strpos($voterStatus['voted_at'] ?? '', 'November 2026') === false;
         $hasValidFormatToken = preg_match('/^IAGI-2026-[A-Z0-9]{4}-[A-Z0-9]{4}$/i', $token) || strlen($token) >= 10;
 
-        if ($isSyntheticVote && $hasValidFormatToken) {
+        if ($isOctoberSimulation && $hasValidFormatToken) {
             $fpLock = @fopen($lockFile, 'c+');
             if ($fpLock && @flock($fpLock, LOCK_EX)) {
                 $voters = readJsonFile($votersFile, []);
-                $voters[$npa]['voted'] = false;
-                $voters[$npa]['voted_at'] = null;
-                $voters[$npa]['receipt_hash'] = null;
-                $voters[$npa]['token_hash'] = hash('sha256', $token);
-                $voters[$npa]['claimed'] = true;
-                writeJsonFile($votersFile, $voters);
+                if (strpos($voters[$npa]['voted_at'] ?? '', 'November 2026') === false) {
+                    $voters[$npa]['voted'] = false;
+                    $voters[$npa]['voted_at'] = null;
+                    $voters[$npa]['receipt_hash'] = null;
+                    $voters[$npa]['token_hash'] = hash('sha256', $token);
+                    $voters[$npa]['claimed'] = true;
+                    writeJsonFile($votersFile, $voters);
+                }
                 @flock($fpLock, LOCK_UN);
                 @fclose($fpLock);
             }
 
-            echo json_encode([
-                'success' => true,
-                'valid' => true,
-                'restored' => true,
-                'voter' => [
-                    'npa' => $npa,
-                    'name' => $voterStatus['name'] ?? '',
-                    'email' => $voterStatus['email'] ?? '',
-                    'claimed' => true,
-                    'claimed_at' => date('d F Y, H:i:s') . ' WIB',
-                    'voted' => false
-                ]
-            ]);
-            exit;
+            $votersCheck = readJsonFile($votersFile, []);
+            if (empty($votersCheck[$npa]['voted'])) {
+                echo json_encode([
+                    'success' => true,
+                    'valid' => true,
+                    'restored' => true,
+                    'voter' => [
+                        'npa' => $npa,
+                        'name' => $voterStatus['name'] ?? '',
+                        'email' => $voterStatus['email'] ?? '',
+                        'claimed' => true,
+                        'claimed_at' => date('d F Y, H:i:s') . ' WIB',
+                        'voted' => false
+                    ]
+                ]);
+                exit;
+            }
         }
 
         $votedAt = $voterStatus['voted_at'] ?? 'sesi sebelumnya';
@@ -2213,12 +2248,22 @@ if ($action === 'verify_voter_token') {
         echo json_encode([
             'success' => false,
             'alreadyVoted' => true,
-            'error' => "Hak suara untuk NPA {$npa} SUDAH DIGUNAKAN pada {$votedAt}. Sistem KPKU menolak pemungutan suara ganda!"
+            'error' => "⛔ HAK SUARA HANYA 1 KALI! Hak suara untuk NPA {$npa} SUDAH DIGUNAKAN pada {$votedAt}. Sistem KPKU menolak pemungutan suara ganda!"
         ]);
         exit;
     }
 
     $tokenHash = hash('sha256', $token);
+
+    if ($voterStatus && (!empty($voterStatus['token_burned']) || (isset($voterStatus['token_hash']) && strpos($voterStatus['token_hash'], 'BURNED_') === 0))) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'alreadyVoted' => true,
+            'error' => "⛔ Token surat suara untuk NPA {$npa} telah hangus (burned) karena hak suara telah digunakan sebelumnya. Pemilihan ganda ditolak!"
+        ]);
+        exit;
+    }
     if ($voterStatus && !empty($voterStatus['token_hash'])) {
         if ($voterStatus['token_hash'] === $tokenHash) {
             echo json_encode([
@@ -2465,16 +2510,21 @@ if ($action === 'register_claim') {
     if ($fpLock && @flock($fpLock, LOCK_EX)) {
         // If the voter has already genuinely voted, strictly reject any token re-issue
         if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
-            $isSyntheticVote = empty($voters[$npa]['token_hash']) || 
-                               in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || 
-                               strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false ||
-                               empty($voters[$npa]['voted_at']) ||
-                               strpos($voters[$npa]['voted_at'] ?? '', '1970') !== false;
-            if (!$isSyntheticVote) {
+            $isOctoberSimulation = (
+                strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false || 
+                in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH'])
+            ) && strpos($voters[$npa]['voted_at'] ?? '', 'November 2026') === false;
+
+            if (!$isOctoberSimulation) {
+                $votedAt = $voters[$npa]['voted_at'] ?? 'sesi sebelumnya';
                 flock($fpLock, LOCK_UN);
                 fclose($fpLock);
                 http_response_code(403);
-                echo json_encode(['success' => false, 'error' => 'Hak suara untuk NPA ini sudah digunakan. Pemilihan berulang ditolak.']);
+                echo json_encode([
+                    'success' => false,
+                    'alreadyVoted' => true,
+                    'error' => "⛔ HAK SUARA HANYA 1 KALI! Hak suara untuk NPA {$npa} SUDAH DIGUNAKAN pada {$votedAt}. Anda tidak dapat melakukan klaim token baru setelah menggunakan hak suara."
+                ]);
                 exit;
             }
         }
@@ -2541,6 +2591,227 @@ if ($action === 'restore_voter_vote') {
     exit;
 }
 
+// ================= ACTION 2D: RECONCILE ELECTORAL INTEGRITY (STRICT ONE PERSON ONE VOTE) =================
+if ($action === 'reconcile_electoral_integrity') {
+    header('Content-Type: application/json; charset=utf-8');
+    $rawInput = @file_get_contents('php://input');
+    $payload = @json_decode($rawInput, true);
+    if (!$payload) $payload = $_POST;
+
+    $adminPin = getAdminPin($payload);
+    $isAdmin = isValidAdminPin($adminPin);
+    $admin = getAuthenticatedAdmin($payload);
+
+    if (!$isAdmin && !$admin && php_sapi_name() !== 'cli') {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'error' => 'Akses ditolak: Memerlukan otorisasi Panitia Pemilihan (PIN Admin atau Sesi Aktif).']);
+        exit;
+    }
+
+    $fpLock = @fopen($lockFile, 'c+');
+    if (!$fpLock || !@flock($fpLock, LOCK_EX)) {
+        http_response_code(503);
+        echo json_encode(['success' => false, 'error' => 'Server sibuk memproses lock. Coba lagi sesaat.']);
+        exit;
+    }
+
+    try {
+        $auditLogs = readJsonFile($auditFile, []);
+        $ballots = readJsonFile($ballotsFile, []);
+        $voters = readJsonFile($votersFile, []);
+
+        // Backup files before changes
+        $bakSuffix = '.' . date('Ymd_His') . '.bak';
+        @copy($auditFile, $auditFile . $bakSuffix);
+        @copy($ballotsFile, $ballotsFile . $bakSuffix);
+        @copy($votersFile, $votersFile . $bakSuffix);
+
+        // Map ballots by receipt_hash and ballot_hash
+        $ballotByReceipt = [];
+        $ballotByHash = [];
+        foreach ($ballots as $bIdx => $b) {
+            $bHash = $b['ballot_hash'] ?? '';
+            $rHash = strtoupper(substr($bHash, 0, 16));
+            if ($rHash) $ballotByReceipt[$rHash] = $bIdx;
+            if ($bHash) $ballotByHash[$bHash] = $bIdx;
+        }
+
+        // 1. Group vote events by NPA
+        $votesByNpa = [];
+        foreach ($auditLogs as $aIdx => $al) {
+            if (!is_array($al)) continue;
+            $act = strtoupper($al['action'] ?? '');
+            if (strpos($act, 'VOTE') === false && strpos($act, 'BALLOT') === false) continue;
+
+            $npa = $al['npa'] ?? null;
+            if (!$npa && preg_match('/NPA:\s*(\d{5})/i', $al['details'] ?? '', $m)) {
+                $npa = $m[1];
+            }
+            if (!$npa || strlen($npa) !== 5) continue;
+
+            $rHash = $al['receipt_hash'] ?? '';
+            if (!$rHash && preg_match('/Receipt:\s*([A-Za-z0-9_\-]+)/i', $al['details'] ?? '', $m)) {
+                $rHash = $m[1];
+            }
+
+            $tStr = $al['timestamp'] ?? '';
+            $tVal = strtotime($tStr);
+
+            $votesByNpa[$npa][] = [
+                'audit_index' => $aIdx,
+                'npa' => $npa,
+                'receipt_hash' => $rHash,
+                'timestamp_str' => $tStr,
+                'timestamp' => $tVal,
+                'vote_number' => $al['vote_number'] ?? null,
+                'is_october' => (strpos($tStr, '2026-10') !== false || strpos($al['details'] ?? '', 'Oktober') !== false)
+            ];
+        }
+
+        $duplicateReport = [];
+        $anulledBallotCount = 0;
+
+        foreach ($votesByNpa as $npa => $votes) {
+            // Sort chronologically ascending (earliest first)
+            usort($votes, function($a, $b) {
+                return ($a['timestamp'] <=> $b['timestamp']);
+            });
+
+            // Separate official November votes from October simulations
+            $officialVotes = [];
+            foreach ($votes as $v) {
+                if (!$v['is_october']) {
+                    $officialVotes[] = $v;
+                }
+            }
+
+            // Earliest official vote is THE ONLY VALID VOTE
+            $validVote = null;
+            if (!empty($officialVotes)) {
+                $validVote = $officialVotes[0];
+            } elseif (!empty($votes)) {
+                $validVote = $votes[0];
+            }
+
+            if (!$validVote) continue;
+
+            // In voters_status.json: Ensure NPA is marked as voted with the valid vote
+            $voters[$npa] = [
+                'npa' => $npa,
+                'name' => $voters[$npa]['name'] ?? '',
+                'email' => $voters[$npa]['email'] ?? '',
+                'voted' => true,
+                'voted_at' => $validVote['timestamp_str'],
+                'receipt_hash' => $validVote['receipt_hash'],
+                'claimed' => true,
+                'token_burned' => true,
+                'token_hash' => 'BURNED_' . hash('sha256', $validVote['receipt_hash'] ?: $npa)
+            ];
+
+            // Mark audit log for the valid vote
+            $auditLogs[$validVote['audit_index']]['status'] = 'TERVERIFIKASI SAH (SUARA RESMI)';
+
+            // If there are duplicate official votes (> 1)
+            if (count($officialVotes) > 1) {
+                $npaDuplicates = [];
+                for ($i = 1; $i < count($officialVotes); $i++) {
+                    $dup = $officialVotes[$i];
+                    $dupAuditIdx = $dup['audit_index'];
+                    $dupReceipt = $dup['receipt_hash'];
+
+                    // Mark audit log entry as duplicate / annulled
+                    $auditLogs[$dupAuditIdx]['status'] = 'BATAL / DUPLIKAT (DIANULIR SISTEM)';
+                    $auditLogs[$dupAuditIdx]['alterasi_suara'] = '0 MUTASI (DIANULIR SISTEM - SUARA PERTAMA SAH)';
+
+                    // Locate ballot in ballots.json and void it
+                    $foundBallotIdx = null;
+                    if ($dupReceipt && isset($ballotByReceipt[$dupReceipt])) {
+                        $foundBallotIdx = $ballotByReceipt[$dupReceipt];
+                    } elseif (!empty($dup['vote_number']) && isset($ballots[$dup['vote_number'] - 1])) {
+                        $foundBallotIdx = $dup['vote_number'] - 1;
+                    }
+
+                    if ($foundBallotIdx !== null && isset($ballots[$foundBallotIdx])) {
+                        $ballots[$foundBallotIdx]['void'] = true;
+                        $ballots[$foundBallotIdx]['void_reason'] = "DUPLICATE_VOTE_NPA_{$npa}_KEPT_FIRST_RECEIPT_{$validVote['receipt_hash']}";
+                        $ballots[$foundBallotIdx]['voided_at'] = date('c');
+                        $anulledBallotCount++;
+                    }
+
+                    $npaDuplicates[] = [
+                        'receipt_hash' => $dupReceipt,
+                        'timestamp' => $dup['timestamp_str'],
+                        'vote_number' => $dup['vote_number'],
+                        'status' => 'BATAL / DUPLIKAT (DIANULIR)'
+                    ];
+                }
+
+                $duplicateReport[$npa] = [
+                    'npa' => $npa,
+                    'name' => $voters[$npa]['name'] ?? '',
+                    'total_votes_recorded' => count($votes),
+                    'total_official_votes' => count($officialVotes),
+                    'valid_vote_retained' => [
+                        'receipt_hash' => $validVote['receipt_hash'],
+                        'timestamp' => $validVote['timestamp_str'],
+                        'vote_number' => $validVote['vote_number']
+                    ],
+                    'duplicates_annulled' => $npaDuplicates
+                ];
+            }
+        }
+
+        // Add official audit log entry for this reconciliation
+        $auditLogs[] = [
+            'id' => 'audit-recon-' . bin2hex(random_bytes(3)),
+            'action' => 'ELECTORAL_RECONCILIATION_COMPLETED',
+            'details' => "Rekonsiliasi Integritas Pemilu KPKU: 1 Pemilih = 1 Suara Sah. Sebanyak {$anulledBallotCount} surat suara duplikat berhasil dianulir dengan mempertahankan hak suara sah pertama pemilih.",
+            'npa' => 'KPKU',
+            'ip' => getClientIp(),
+            'timestamp' => date('c'),
+            'status' => 'TERVERIFIKASI SAH'
+        ];
+
+        // Save updated data atomically
+        writeJsonFile($auditFile, $auditLogs);
+        writeJsonFile($ballotsFile, $ballots);
+        writeJsonFile($votersFile, $voters);
+
+        flock($fpLock, LOCK_UN);
+        fclose($fpLock);
+
+        $validBallotCount = 0;
+        foreach ($ballots as $b) {
+            if (empty($b['void'])) $validBallotCount++;
+        }
+        $votedDptCount = 0;
+        foreach ($voters as $v) {
+            if (!empty($v['voted'])) $votedDptCount++;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Rekonsiliasi integritas 1 Anggota = 1 Suara berhasil diselesaikan!',
+            'backup_created' => $bakSuffix,
+            'total_ballots_raw' => count($ballots),
+            'valid_ballots' => $validBallotCount,
+            'void_duplicates_annulled' => $anulledBallotCount,
+            'total_voted_dpt' => $votedDptCount,
+            'discrepancy' => $validBallotCount - $votedDptCount,
+            'duplicate_npas_resolved' => $duplicateReport
+        ]);
+        exit;
+    } catch (Exception $e) {
+        if ($fpLock) {
+            @flock($fpLock, LOCK_UN);
+            @fclose($fpLock);
+        }
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Gagal rekonsiliasi: ' . $e->getMessage()]);
+        exit;
+    }
+}
+
 // ================= ACTION 3: CAST VOTE (ATOMIC & STRICT ANTI-DOUBLE VOTE) =================
 if ($action === 'cast_vote') {
     $rawInput = @file_get_contents('php://input');
@@ -2553,6 +2824,7 @@ if ($action === 'cast_vote') {
     $voterName = isset($payload['name']) ? trim($payload['name']) : '';
     $receiptHash = isset($payload['receipt_hash']) ? trim($payload['receipt_hash']) : '';
     $fullHash = isset($payload['full_hash']) ? trim($payload['full_hash']) : '';
+    $tokenHash = hash('sha256', $token);
 
     if (strlen($npa) !== 5) {
         http_response_code(400);
@@ -2603,34 +2875,33 @@ if ($action === 'cast_vote') {
         $voters = readJsonFile($votersFile, []);
 
         // CRITICAL CHECK 1: Has this NPA ALREADY voted?
+        // STRICT ONE PERSON ONE VOTE ENFORCEMENT - ZERO AUTO-RESTORE IN CAST_VOTE
         if (isset($voters[$npa]) && !empty($voters[$npa]['voted'])) {
-            $isSyntheticVote = empty($voters[$npa]['token_hash']) || 
-                               in_array($voters[$npa]['receipt_hash'] ?? '', ['VERIFIED_DPT_SYNC', 'VERIFIED_DPT_MATCH']) || 
-                               strpos($voters[$npa]['voted_at'] ?? '', 'Oktober 2026') !== false ||
-                               empty($voters[$npa]['voted_at']) ||
-                               strpos($voters[$npa]['voted_at'] ?? '', '1970') !== false;
-            $hasValidFormatToken = preg_match('/^IAGI-2026-[A-Z0-9]{4}-[A-Z0-9]{4}$/i', $token) || strlen($token) >= 10;
+            $votedAt = !empty($voters[$npa]['voted_at']) ? $voters[$npa]['voted_at'] : 'sesi sebelumnya';
+            flock($fpLock, LOCK_UN);
+            fclose($fpLock);
 
-            if ($isSyntheticVote && $hasValidFormatToken) {
-                // Auto-restore hak suara pemilih asli
-                $voters[$npa]['voted'] = false;
-                $voters[$npa]['voted_at'] = null;
-                $voters[$npa]['receipt_hash'] = null;
-                $voters[$npa]['token_hash'] = $tokenHash;
-                $voters[$npa]['claimed'] = true;
-            } else {
-                $votedAt = $voters[$npa]['voted_at'];
-                flock($fpLock, LOCK_UN);
-                fclose($fpLock);
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'alreadyVoted' => true,
+                'error' => "⛔ HAK SUARA HANYA 1 KALI! Hak suara untuk NPA {$npa} SUDAH DIGUNAKAN pada {$votedAt}. Sistem e-Voting KPKU IAGI secara mutlak menolak pemungutan suara ganda!"
+            ]);
+            exit;
+        }
 
-                http_response_code(403);
-                echo json_encode([
-                    'success' => false,
-                    'alreadyVoted' => true,
-                    'error' => "Hak suara untuk NPA {$npa} SUDAH DIGUNAKAN pada {$votedAt}. Sistem KPKU menolak pemungutan suara ganda!"
-                ]);
-                exit;
-            }
+        // CRITICAL CHECK 1B: Has this token already been burned?
+        if (!empty($voters[$npa]['token_burned']) || (isset($voters[$npa]['token_hash']) && strpos($voters[$npa]['token_hash'], 'BURNED_') === 0)) {
+            flock($fpLock, LOCK_UN);
+            fclose($fpLock);
+
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'alreadyVoted' => true,
+                'error' => "⛔ Token surat suara untuk NPA {$npa} telah hangus (burned) karena hak suara telah digunakan sebelumnya. Pemungutan suara ganda dilarang!"
+            ]);
+            exit;
         }
 
         // CRITICAL CHECK 2: Token verification against issued token hash
@@ -2652,7 +2923,6 @@ if ($action === 'cast_vote') {
             }
         }
 
-        $tokenHash = hash('sha256', $token);
         if ($tokenHash !== $voters[$npa]['token_hash']) {
             // Record failed attempt for brute force lockout
             if (!isset($voteRates[$clientIp])) {
@@ -2693,7 +2963,7 @@ if ($action === 'cast_vote') {
         $clientIp = getClientIp();
         $userAgent = trim($_SERVER['HTTP_USER_AGENT'] ?? ($payload['user_agent'] ?? ''));
 
-        // 1. Mark voter registry as VOTED and burn token (NO candidate id is stored here!)
+        // 1. Mark voter registry as VOTED and burn token permanently (NO candidate id is stored here!)
         $voters[$npa] = [
             'npa' => $npa,
             'name' => $voterName,
@@ -2701,7 +2971,8 @@ if ($action === 'cast_vote') {
             'voted_at' => $timeStrWib,
             'receipt_hash' => $receiptHash,
             'claimed' => true,
-            'token_hash' => null, // Token burned immediately on server
+            'token_burned' => true,
+            'token_hash' => 'BURNED_' . $tokenHash, // Token permanently burned with hash
             'token' => null,
             'ip' => $clientIp,
             'user_agent' => $userAgent
@@ -2710,6 +2981,15 @@ if ($action === 'cast_vote') {
 
         // 2. Decouple and append Anonymous Ballot to ballot box (Zero-Knowledge: NO NPA or Name!)
         $ballots = readJsonFile($ballotsFile, []);
+        foreach ($ballots as $eb) {
+            if (($eb['ballot_hash'] ?? '') === $fullHash) {
+                flock($fpLock, LOCK_UN);
+                fclose($fpLock);
+                http_response_code(409);
+                echo json_encode(['success' => false, 'error' => 'Surat suara dengan tanda terima ini sudah pernah direkam ke dalam Kotak Suara.']);
+                exit;
+            }
+        }
         $prevHash = !empty($ballots) ? ($ballots[count($ballots) - 1]['chain_hash'] ?? 'GENESIS_KPKU_IAGI_2026') : 'GENESIS_KPKU_IAGI_2026';
         $chainHash = hash('sha256', $prevHash . '|' . $candidateId . '|' . $nowTimestamp . '|' . $fullHash);
         $ballots[] = [
@@ -2790,6 +3070,18 @@ if ($action === 'get_results') {
     $ballots = readJsonFile($ballotsFile, []);
     $voters = readJsonFile($votersFile, []);
 
+    // Hitung surat suara sah vs batal (duplikat)
+    $validBallotCount = 0;
+    $counts = [1 => 0, 2 => 0, 3 => 0];
+    foreach ($ballots as $b) {
+        if (!empty($b['void'])) continue; // Lewati surat suara duplikat yang dianulir
+        $validBallotCount++;
+        $cId = isset($b['candidate_id']) ? intval($b['candidate_id']) : 0;
+        if (isset($counts[$cId])) {
+            $counts[$cId]++;
+        }
+    }
+
     // 1. KEAMANAN STRICT LUBER-JURDIL: KOTAK SUARA TERSEGEL (is_sealed: true)
     // Selama status is_sealed = true, TIDAK ADA SIAPA PUN (termasuk Admin Teknis) yang boleh melihat perolehan suara calon!
     // Perolehan suara hanya dibuka saat Sidang Pleno resmi setelah segel dibuka dengan izin Ketua Panitia.
@@ -2799,7 +3091,8 @@ if ($action === 'get_results') {
             'is_sealed' => true,
             'status' => 'SEALED_VAULT',
             'message' => 'Kotak Suara Digital KPKU Berstatus Tersegel (Sealed Vault). Rincian perolehan suara calon dan surat suara tersimpan aman dan terkunci rapat sampai Sidang Pleno Terbuka Buka Segel Resmi.',
-            'total_votes' => count($ballots), // Hanya total suara sah masuk (tingkat partisipasi), tanpa membocorkan pilihan calon!
+            'total_votes' => $validBallotCount, // Total suara sah masuk (hanya surat suara sah)
+            'total_ballots_raw' => count($ballots),
             'total_voters_registered' => count($voters),
             'counts' => [
                 '1' => 0,
@@ -2813,14 +3106,6 @@ if ($action === 'get_results') {
     }
 
     // 2. KOTAK SUARA TELAH DIBUKA (PLENO RESMI) ATAU DIAKSES OLEH ADMIN DENGAN PIN PLENO
-    $counts = [1 => 0, 2 => 0, 3 => 0];
-    foreach ($ballots as $b) {
-        $cId = isset($b['candidate_id']) ? intval($b['candidate_id']) : 0;
-        if (isset($counts[$cId])) {
-            $counts[$cId]++;
-        }
-    }
-
     // Jika admin terverifikasi: kirim ballots lengkap
     // Jika publik saat unsealed: kirim feed audit kriptografi (tanpa menghubungkan identitas)
     $outputBallots = $ballots;
@@ -2830,7 +3115,8 @@ if ($action === 'get_results') {
                 'id' => isset($b['id']) ? $b['id'] : ('ballot-' . ($idx + 1)),
                 'ballot_hash' => isset($b['ballot_hash']) ? $b['ballot_hash'] : '',
                 'timestamp' => isset($b['timestamp']) ? $b['timestamp'] : null,
-                'timestamp_str' => isset($b['timestamp_str']) ? $b['timestamp_str'] : ''
+                'timestamp_str' => isset($b['timestamp_str']) ? $b['timestamp_str'] : '',
+                'void' => !empty($b['void'])
             ];
         }, $ballots, array_keys($ballots));
     }
@@ -2839,7 +3125,8 @@ if ($action === 'get_results') {
         'success' => true,
         'is_sealed' => $isSealed,
         'status' => $isSealed ? 'SEALED_ADMIN_PREVIEW' : 'UNSEALED_OFFICIAL',
-        'total_votes' => count($ballots),
+        'total_votes' => $validBallotCount,
+        'total_ballots_raw' => count($ballots),
         'counts' => $counts,
         'total_voters_registered' => count($voters),
         'ballots' => $outputBallots
