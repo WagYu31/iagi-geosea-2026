@@ -523,8 +523,16 @@ function getUnvotedVoterRegistry() {
     // walaupun voters_status.json belum tersinkron (mencegah pengingat salah kirim).
     $votedFromAudit = [];
     foreach (readJsonFile($dataDir . '/audit.json', []) as $log) {
-        if (($log['action'] ?? '') === 'VOTE_RECORDED' && !empty($log['npa'])) {
-            $votedFromAudit[(string)$log['npa']] = true;
+        if (!is_array($log)) continue;
+        $act = strtoupper($log['action'] ?? '');
+        if (strpos($act, 'VOTE') === false && strpos($act, 'BALLOT') === false) continue;
+        if (!empty($log['status']) && (strpos($log['status'], 'BATAL') !== false || strpos($log['status'], 'DUPLIKAT') !== false)) continue;
+        $logNpa = $log['npa'] ?? '';
+        if (!$logNpa && preg_match('/NPA:\s*(\d{5})/i', $log['details'] ?? '', $mNpa)) {
+            $logNpa = $mNpa[1];
+        }
+        if ($logNpa) {
+            $votedFromAudit[(string)$logNpa] = true;
         }
     }
 

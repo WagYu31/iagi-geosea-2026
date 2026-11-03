@@ -2382,10 +2382,19 @@ if ($action === 'get_voted_list') {
         }
     }
 
-    // Lengkapi dari audit log (VOTE_RECORDED) bila voters_status.json belum tersinkron
+    // Lengkapi dari audit log bila voters_status.json belum tersinkron
+    // (logika sama dengan CRITICAL CHECK 1C di cast_vote)
     foreach (readJsonFile($auditFile, []) as $log) {
-        if (($log['action'] ?? '') !== 'VOTE_RECORDED' || empty($log['npa'])) continue;
-        $cleanKey = str_pad(preg_replace('/\D/', '', strval($log['npa'])), 5, '0', STR_PAD_LEFT);
+        if (!is_array($log)) continue;
+        $act = strtoupper($log['action'] ?? '');
+        if (strpos($act, 'VOTE') === false && strpos($act, 'BALLOT') === false) continue;
+        if (!empty($log['status']) && (strpos($log['status'], 'BATAL') !== false || strpos($log['status'], 'DUPLIKAT') !== false)) continue;
+        $logNpa = $log['npa'] ?? '';
+        if (!$logNpa && preg_match('/NPA:\s*(\d{5})/i', $log['details'] ?? '', $mNpa)) {
+            $logNpa = $mNpa[1];
+        }
+        if (!$logNpa) continue;
+        $cleanKey = str_pad(preg_replace('/\D/', '', strval($logNpa)), 5, '0', STR_PAD_LEFT);
         if (!isset($votedNpas[$cleanKey])) {
             $votedNpas[$cleanKey] = [
                 'voted_at' => $log['timestamp'] ?? null,
