@@ -746,7 +746,7 @@ class VisitorTicketAdminController extends Controller
             ],
             'sourceDistribution' => [
                 ['id' => 0, 'label' => 'Online Self-Reg', 'value' => (clone $analyticsTicketQuery)->where(function($q) { $q->where('registration_source', 'online_self')->orWhereNull('registration_source'); })->count(), 'color' => '#3b82f6'],
-                ['id' => 1, 'label' => 'Onsite Assisted', 'value' => (clone $analyticsTicketQuery)->where('registration_source', 'onsite_admin')->count(), 'color' => '#10b981'],
+                ['id' => 1, 'label' => 'Onsite Assisted', 'value' => (clone $analyticsTicketQuery)->whereIn('registration_source', ['admin_onsite', 'onsite_admin', 'admin_onsite_bulk'])->count(), 'color' => '#10b981'],
                 ['id' => 2, 'label' => 'Group Delegation', 'value' => (clone $analyticsTicketQuery)->whereHas('payment', fn($pq) => $pq->where('is_mixed_category', true))->count(), 'color' => '#8b5cf6'],
                 ['id' => 3, 'label' => 'Free / Invited', 'value' => (clone $analyticsTicketQuery)->whereIn('visitor_type', ['vip', 'keynote_speaker', 'speaker', 'session_chair', 'board', 'delegate', 'committee', 'student_volunteer', 'exhibition', 'student_crowd', 'vip_companion', 'it_developer', 'tesko', 'non_exclusive'])->count(), 'color' => '#0d9488'],
             ],
@@ -871,7 +871,7 @@ class VisitorTicketAdminController extends Controller
                     $ticket = VisitorTicket::create([
                         'payment_id' => null,
                         'registered_by_admin_id' => Auth::id(),
-                        'registration_source' => 'admin_onsite_bulk',
+                        'registration_source' => 'admin_onsite',
                         'visitor_name' => !empty($request->visitor_name) ? $request->visitor_name : 'VISITOR',
                         'visitor_email' => !empty($request->visitor_email) ? $request->visitor_email : ('visitor_' . strtolower(substr($ticketCode, -6)) . '_' . ($i + 1) . '@pitiagi.cloud'),
                         'visitor_phone' => $request->visitor_phone,
@@ -2150,7 +2150,7 @@ class VisitorTicketAdminController extends Controller
 
                 $ticket = VisitorTicket::create([
                     'registered_by_admin_id' => Auth::id(),
-                    'registration_source' => 'admin_import_excel',
+                    'registration_source' => 'admin_onsite',
                     'visitor_name' => $name,
                     'visitor_email' => !empty($email) ? $email : null,
                     'visitor_phone' => !empty($phone) ? $phone : null,
