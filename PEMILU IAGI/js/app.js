@@ -861,60 +861,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setupVotingScreen(params = {}) {
-    const isVotingOpen = window.pemiluStorage && typeof window.pemiluStorage.isVotingOpen === 'function'
-      ? window.pemiluStorage.isVotingOpen()
-      : true;
-
+    const voteClosedCard = document.getElementById('vote-closed-card');
     const voteLockedCard = document.getElementById('vote-locked-card');
 
-    if (!isVotingOpen) {
-      if (voteAuthCard) voteAuthCard.style.display = 'none';
-      if (voteBallotCard) voteBallotCard.style.display = 'none';
-      if (voteLockedCard) {
-        voteLockedCard.style.display = 'block';
-        updateVoteLockedCountdown();
-        if (!voteLockInterval) {
-          voteLockInterval = setInterval(updateVoteLockedCountdown, 1000);
-        }
-      }
-      return;
-    } else {
-      if (voteLockedCard) voteLockedCard.style.display = 'none';
-      if (voteLockInterval) {
-        clearInterval(voteLockInterval);
-        voteLockInterval = null;
-      }
+    // KUNCI PERMANEN: Pemungutan suara telah resmi ditutup pada 03 Nov 2026, 23:59:59 WIB
+    if (voteAuthCard) voteAuthCard.style.display = 'none';
+    if (voteBallotCard) voteBallotCard.style.display = 'none';
+    if (voteLockedCard) voteLockedCard.style.display = 'none';
+    if (voteClosedCard) voteClosedCard.style.display = 'block';
+    if (voteLockInterval) {
+      clearInterval(voteLockInterval);
+      voteLockInterval = null;
     }
-
-    // Reset state
-    selectedCandidateId = null;
-    if (btnSubmitVote) {
-      btnSubmitVote.disabled = true;
-      btnSubmitVote.innerText = 'Pilih Salah Satu Calon Ketua Umum';
-    }
-
-    const npaInput = document.getElementById('vote-npa');
-    const codeInput = document.getElementById('vote-token');
-
-    if (params.npa && npaInput) npaInput.value = params.npa;
-    if (params.code && codeInput) codeInput.value = params.code;
-
-    // Auto verify if both params exist
-    if (params.npa && params.code) {
-      handleVerifyVoteAuth(params.npa, params.code);
-    } else {
-      // Show auth form
-      if (voteAuthCard) voteAuthCard.style.display = 'block';
-      if (voteBallotCard) voteBallotCard.style.display = 'none';
-    }
+    return;
   }
 
   async function handleVerifyVoteAuth(npa, token) {
-    const cleanNpa = String(npa || '').replace(/\D/g, '').slice(0, 5);
-    const cleanToken = String(token || '').replace(/\s+/g, '').toUpperCase();
-
-    // 1. Coba verifikasi cepat di cache lokal
-    let verification = window.pemiluStorage.verifyVotingEligibility(cleanNpa, cleanToken);
+    alert('⛔ BILIK SUARA TELAH RESMI DITUTUP. Pemungutan suara Pemilu Ketua Umum IAGI 2026 resmi berakhir pada Selasa, 03 November 2026 pukul 23:59:59 WIB. Kotak suara digital telah disegel.');
+    setupVotingScreen();
+    return;
+  }
 
     // 2. Jika di lokal dinyatakan belum klaim / token tidak cocok / dibuka dari in-app browser email,
     // langsung verifikasi realtime ke database server KPKU!

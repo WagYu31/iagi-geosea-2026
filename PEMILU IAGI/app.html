@@ -56,9 +56,9 @@
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <span>Cek DPT</span>
         </button>
-        <button class="desktop-nav-item desktop-nav-vote" data-screen="vote" title="Bilik Suara Pemilihan">
-          <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
-          <span>Bilik Suara</span>
+        <button class="desktop-nav-item desktop-nav-vote" data-screen="vote" title="Bilik Suara (Resmi Ditutup)">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Bilik Suara 🔒</span>
         </button>
         <button class="desktop-nav-item" data-screen="claim" title="Klaim Surat Suara & Token">
           <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
@@ -507,48 +507,35 @@
       <!-- ================= SCREEN 4: BILIK SUARA (VOTE NOW) ================= -->
       <section id="screen-vote" class="screen">
         
-        <!-- Locked Countdown Barrier (Shown when voting is not yet open) -->
-        <div id="vote-locked-card" class="card" style="display: none; background: rgba(15, 23, 42, 0.95); border: 1.5px solid rgba(245, 186, 66, 0.35); text-align: center; padding: 32px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
-          <div style="width: 68px; height: 68px; border-radius: 50%; background: rgba(245, 186, 66, 0.15); border: 2px dashed #F5BA42; display: inline-flex; align-items: center; justify-content: center; font-size: 2.2rem; margin-bottom: 14px;">
+        <!-- Bilik Suara Resmi Ditutup Card (Status: Closed 00:00 WIB 04 Nov 2026) -->
+        <div id="vote-closed-card" class="card" style="display: block; background: rgba(15, 23, 42, 0.95); border: 1.5px solid rgba(239, 68, 68, 0.45); text-align: center; padding: 40px 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border-radius: 16px; max-width: 600px; margin: 0 auto 24px auto;">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); border: 2px dashed #EF4444; display: inline-flex; align-items: center; justify-content: center; font-size: 2.8rem; margin-bottom: 18px;">
             🔒
           </div>
-          <h3 style="font-size: 1.3rem; font-weight: 900; color: #FFFFFF; margin: 0 0 8px 0;">Bilik Suara Belum Dibuka</h3>
-          <p id="vote-locked-message" style="font-size: 0.86rem; color: #CBD5E1; line-height: 1.55; max-width: 480px; margin: 0 auto 16px auto;">
-            Sesuai jadwal resmi KPKU IAGI, bilik suara pemilihan elektronik akan aktif otomatis setelah hitung mundur selesai.
+          <h2 style="font-size: 1.5rem; font-weight: 900; color: #FFFFFF; margin: 0 0 10px 0;">Bilik Suara Resmi Ditutup</h2>
+          <div style="display: inline-block; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #FCA5A5; font-size: 0.84rem; font-weight: 800; padding: 6px 16px; border-radius: 999px; margin-bottom: 18px;">
+            WAKTU PEMUNGUTAN SUARA BERAKHIR • 03 NOV 2026, 23:59:59 WIB
+          </div>
+          <p style="font-size: 0.94rem; color: #CBD5E1; line-height: 1.65; max-width: 520px; margin: 0 auto 22px auto;">
+            Sesuai Regulasi Pemilu Ketua Umum IAGI 2026–2029, gerbang pemungutan suara elektronik telah <strong>resmi ditutup pada pukul 23:59:59 WIB</strong>. Kotak suara digital telah <strong>disegel secara kriptografis</strong> dan tidak menerima surat suara baru.
           </p>
-          
-          <div style="background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 16px 20px; display: inline-block; margin-bottom: 20px; min-width: 260px;">
-            <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px;">Waktu Pembukaan Resmi</div>
-            <div id="vote-locked-opening-time" style="font-size: 0.98rem; font-weight: 800; color: #F5BA42;">26 Oktober 2026 • 00:01 WIB</div>
-            <div id="vote-locked-countdown" style="font-family: var(--font-mono); font-size: 1.35rem; font-weight: 900; color: #38BDF8; margin-top: 8px; letter-spacing: 0.05em;">
-              -- H : -- J : -- M : -- D
-            </div>
+          <div style="background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 18px 22px; max-width: 480px; margin: 0 auto 24px auto; text-align: left;">
+            <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Tahapan Pemilu Selanjutnya:</div>
+            <div style="font-size: 1.05rem; font-weight: 900; color: #F5BA42; margin-bottom: 4px;">Sidang Pleno Terbuka KPKU IAGI</div>
+            <div style="font-size: 0.82rem; color: #38BDF8;">Pembukaan Segel Kotak Suara &amp; Rekapitulasi Perolehan Suara Calon</div>
           </div>
-
-          <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 14px 18px; margin: 0 auto 20px auto; max-width: 520px; text-align: left; font-size: 0.8rem;">
-            <div style="font-weight: 800; color: #F5BA42; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-              <span>🗓️ Agenda Resmi KPKU IAGI 2026:</span>
-            </div>
-            <ul style="margin: 0; padding-left: 18px; color: #94A3B8; line-height: 1.6; display: flex; flex-direction: column; gap: 4px;">
-              <li><strong style="color: #E2E8F0;">25 Okt 19.00 WIB:</strong> Sosialisasi &amp; demonstrasi platform e-voting</li>
-              <li><strong style="color: #FDE68A;">26 Okt 00.01 – 03 Nov 23.59 WIB:</strong> Masa e-voting pemungutan suara</li>
-              <li><strong style="color: #C4B5FD;">04 Nov Pagi:</strong> Verifikasi random check 5 nama pemilih timses</li>
-              <li><strong style="color: #34D399;">04 Nov Sore:</strong> Resume hasil pemilu 1 halaman (total sesuai DPT)</li>
-            </ul>
-          </div>
-          
-          <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-            <a href="index.html" class="btn btn-secondary" style="display: inline-flex; width: auto; padding: 10px 22px;">
-              <span>Kembali ke Beranda</span>
+          <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="#dpt" data-nav="dpt" class="btn btn-secondary" style="display: inline-flex; width: auto; padding: 12px 24px;">
+              <span>Lihat Rekapitulasi DPT</span>
             </a>
-            <a href="#claim" data-nav="claim" class="btn btn-gold" style="display: inline-flex; width: auto; padding: 10px 22px;">
-              <span>Klaim Token Surat Suara</span>
+            <a href="landing.html" class="btn btn-gold" style="display: inline-flex; width: auto; padding: 12px 24px;">
+              <span>Kembali ke Portal</span>
             </a>
           </div>
         </div>
 
-        <!-- Step 1: Auth Verification Form (Hidden if auto-verified via magic link) -->
-        <div id="vote-auth-card" class="card card-gold">
+        <!-- Step 1: Auth Verification Form (Hidden permanently after voting closes) -->
+        <div id="vote-auth-card" class="card card-gold" style="display: none;">
           <div class="card-header-flex">
             <div class="card-icon-frame">
               <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -1319,8 +1306,8 @@
 
   <!-- Scripts -->
   <script src="js/data.js?v=5.5.5"></script>
-  <script src="js/storage.js?v=5.5.9"></script>
-  <script src="js/app.js?v=5.5.9"></script>
+  <script src="js/storage.js?v=5.6.0"></script>
+  <script src="js/app.js?v=5.6.0"></script>
   <!-- Official KPKU Helpdesk Live Chat Script -->
   <script src="js/livechat.js?v=5.5.5"></script>
 </body>
