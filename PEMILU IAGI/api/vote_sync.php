@@ -2393,14 +2393,18 @@ if ($action === 'get_voted_list') {
     // Total token terklaim dihitung dari total pemilih yang sudah klaim/teregistrasi
     $totalOfficialClaimed = max(count($voters), $claimedCount, 1577);
 
-    // Jika bukan admin resmi, JANGAN ekspos mapping NPA pemilih individu ke publik
+    // Publik: tampilkan status SUDAH MEMILIH per NPA (tanpa receipt hash & tanpa pilihan paslon)
     if (!$admin) {
+        $publicVoted = [];
+        foreach ($votedNpas as $k => $v) {
+            $publicVoted[$k] = ['voted_at' => $v['voted_at']];
+        }
         echo json_encode([
             'success' => true,
             'is_public' => true,
             'total_voted' => $totalOfficialVotes,
             'total_claimed' => $totalOfficialClaimed,
-            'voted_npas' => [] // Protected: Detail NPA disembunyikan untuk menjaga privasi pemilih
+            'voted_npas' => $publicVoted
         ]);
         exit;
     }
