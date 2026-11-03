@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v5.5.6-public-voted';
+const CACHE_NAME = 'pemilu-iagi-2026-v5.5.7-no-flicker';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

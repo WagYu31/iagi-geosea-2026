@@ -8885,7 +8885,7 @@
 
   <!-- Include Core Logic Scripts -->
   <script src="js/data.js?v=5.5.0"></script>
-  <script src="js/storage.js?v=5.5.0"></script>
+  <script src="js/storage.js?v=5.5.7"></script>
   <script src="js/guard.js?v=5.5.0"></script>
 
   <script>
@@ -11559,6 +11559,14 @@
 
               // Update Executive Ribbon Top Cards Immediately from Authoritative Server Data
               if (validCount > 0) {
+                // Simpan angka server terbaru ke cache agar refreshAll() tidak menimpa dengan angka lama (anti-kedip)
+                try {
+                  const srvCache = JSON.parse(localStorage.getItem('pemilu_iagi_server_results_v1') || '{}') || {};
+                  srvCache.total_votes = validCount;
+                  srvCache.total_ballots_raw = Number(srvData.total_ballots_raw || validCount);
+                  srvCache.updated_at = Date.now();
+                  localStorage.setItem('pemilu_iagi_server_results_v1', JSON.stringify(srvCache));
+                } catch (e) {}
                 const elTotVotes = document.getElementById('stat-total-votes');
                 if (elTotVotes) elTotVotes.innerText = validCount.toLocaleString('id-ID');
                 const elTurnoutPct = document.getElementById('stat-turnout-pct');

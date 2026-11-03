@@ -331,7 +331,7 @@ class PemiluStorage {
             let vCount = Number(dataVoted.total_voted);
             if (vCount > 1500) vCount = 1350; // Filter jika tertukar dengan token
             srv.total_votes = Math.max(1350, vCount);
-            srv.total_ballots_raw = Math.max(1350, vCount);
+            // Jangan timpa total_ballots_raw (surat suara mentah termasuk duplikat) dengan jumlah suara sah
             if (typeof dataVoted.total_claimed === 'number') {
               srv.total_claimed = Math.max(1577, Number(dataVoted.total_claimed));
             } else {
