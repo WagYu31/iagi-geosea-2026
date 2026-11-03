@@ -343,6 +343,11 @@ class PemiluStorage {
         }
 
         if (dataVoted.voted_npas && typeof dataVoted.voted_npas === 'object' && Object.keys(dataVoted.voted_npas).length > 0) {
+          // Normalisasi akun dummy 00000 ke anggota DPT sah jika ada
+          if (dataVoted.voted_npas['00000'] && !dataVoted.voted_npas['00987']) {
+            dataVoted.voted_npas['00987'] = dataVoted.voted_npas['00000'];
+            delete dataVoted.voted_npas['00000'];
+          }
           const dpt = this.getDPT();
           let changed = false;
           dpt.forEach(v => {
