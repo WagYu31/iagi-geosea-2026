@@ -1064,7 +1064,7 @@ return [
   '06467' => ['name' => 'Mohammad Adjie Pamungkas', 'email' => 'adjiemap@gmail.com'],
   '06475' => ['name' => 'Adventino', 'email' => 'iadventino96@gmail.com'],
   '06481' => ['name' => 'Megie Dian Marina Bisay', 'email' => 'megiedianmarina.bisay@gmail.com'],
-  '06492' => ['name' => 'Fitriansyah Putri', 'email' => 'tiasyahputri.fp@gmail.com'],
+  '06492' => ['name' => 'Fitriansyah Putri', 'email' => 'riasyahputri.fp@gmail.com'],
   '06494' => ['name' => 'Muhammad Fadli Rozamuri', 'email' => 'rozamurifadli@gmail.com'],
   '06503' => ['name' => 'Farida Dwi Aryati', 'email' => 'faridadwiaryati@gmail.com'],
   '06512' => ['name' => 'Dian Al Fajri', 'email' => 'dianalfajri@yahoo.com'],

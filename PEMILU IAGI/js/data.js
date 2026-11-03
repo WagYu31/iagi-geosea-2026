@@ -16109,8 +16109,8 @@ const INITIAL_DPT = [
   {
     "npa": "06492",
     "name": "Fitriansyah Putri",
-    "email": "ti***@gmail.com",
-    "email_hash": "a4b7037cdc57aa45874c6c16f8e06ba9b1abc2c136bc144c91e616902906d349",
+    "email": "ri***@gmail.com",
+    "email_hash": "def6ef74ceedc19bf2bfbc0c110f399c018690e05d762d58ccaa8ac936025bce",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
