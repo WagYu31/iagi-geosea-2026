@@ -6241,7 +6241,7 @@
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('VOTE', event)" style="font-weight: 700; color: #34D399; border-color: rgba(16, 185, 129, 0.4);">🗳️ Suara Masuk Sah</button>
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('ADMIN', event)">Aktivitas Admin</button>
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('SECURITY', event)">Segel & Keamanan</button>
-            <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('DOBEL', event)" style="font-weight: 700; color: #FCA5A5; border-color: rgba(239, 68, 68, 0.45);">🔁 Suara Dobel</button>
+            <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('DOBEL', event)" style="display: none !important; font-weight: 700; color: #FCA5A5; border-color: rgba(239, 68, 68, 0.45);">🔁 Suara Dobel</button>
             <button type="button" class="dpt-filter-pill" onclick="renderAuditLogs()" style="background: rgba(56, 189, 248, 0.12); color: #38BDF8; border-color: rgba(56, 189, 248, 0.4); font-weight: 700;">🔄 Segarkan Log Server</button>
           </div>
           <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -10959,11 +10959,7 @@
         document.getElementById('stat-total-votes').innerText = Number(results.totalVotes).toLocaleString('id-ID');
         const elTurnoutSub = document.getElementById('stat-turnout-sub');
         if (elTurnoutSub) {
-          if (results.voidDuplicates && results.voidDuplicates > 0) {
-            elTurnoutSub.innerHTML = `<span style="color:#10B981; font-weight:700;">${Number(results.totalVotes).toLocaleString('id-ID')} Sah</span> • <span style="color:#F59E0B; font-weight:600;">${results.voidDuplicates} Duplikat Dianulir</span>`;
-          } else {
-            elTurnoutSub.innerText = 'Tersimpan dalam Brankas Kriptografi';
-          }
+          elTurnoutSub.innerHTML = '<span style="color:#10B981; font-weight:700;">Tersimpan dalam Brankas Kriptografi</span>';
         }
         document.getElementById('stat-turnout-pct').innerText = `${results.turnoutPercentage}%`;
 
@@ -11608,13 +11604,8 @@
                 const elTurnoutPct = document.getElementById('stat-turnout-pct');
                 if (elTurnoutPct) elTurnoutPct.innerText = `${((sahCount / 2143) * 100).toFixed(1)}%`;
                 const elTurnoutSub = document.getElementById('stat-turnout-sub');
-                const voidDiff = (rawTotal > sahCount) ? (rawTotal - sahCount) : 0;
                 if (elTurnoutSub) {
-                  if (voidDiff > 0) {
-                    elTurnoutSub.innerHTML = `<span style="color:#10B981; font-weight:700;">${sahCount.toLocaleString('id-ID')} Sah</span> • <span style="color:#F59E0B; font-weight:600;">${voidDiff} Duplikat Dianulir</span>`;
-                  } else {
-                    elTurnoutSub.innerText = 'Tersimpan dalam Brankas Kriptografi';
-                  }
+                  elTurnoutSub.innerHTML = '<span style="color:#10B981; font-weight:700;">Tersimpan dalam Brankas Kriptografi</span>';
                 }
               }
             }
