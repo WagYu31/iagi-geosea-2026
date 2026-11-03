@@ -2385,8 +2385,9 @@ if ($action === 'get_voted_list') {
     $votedNpas = [];
     $claimedCount = 0;
     foreach ($voters as $npaKey => $info) {
+        $cleanKey = str_pad(preg_replace('/\D/', '', strval($npaKey)), 5, '0', STR_PAD_LEFT);
+        if ($cleanKey === '99999') continue; // Abaikan akun simulasi panitia
         if (!empty($info['voted'])) {
-            $cleanKey = str_pad(preg_replace('/\D/', '', strval($npaKey)), 5, '0', STR_PAD_LEFT);
             $votedNpas[$cleanKey] = [
                 'voted_at' => $info['voted_at'],
                 'receipt_hash' => isset($info['receipt_hash']) ? $info['receipt_hash'] : ''
@@ -2410,6 +2411,7 @@ if ($action === 'get_voted_list') {
         }
         if (!$logNpa) continue;
         $cleanKey = str_pad(preg_replace('/\D/', '', strval($logNpa)), 5, '0', STR_PAD_LEFT);
+        if ($cleanKey === '99999') continue; // Abaikan akun simulasi panitia
         if (!isset($votedNpas[$cleanKey])) {
             $votedNpas[$cleanKey] = [
                 'voted_at' => $log['timestamp'] ?? null,
@@ -3187,10 +3189,12 @@ if ($action === 'get_results') {
 
     // Suara sah pemilih unik (1 Pemilih = 1 Suara Sah)
     $votedNpaCount = 0;
-    foreach ($voters as $info) {
+    foreach ($voters as $npaKey => $info) {
+        $cleanKey = str_pad(preg_replace('/\D/', '', strval($npaKey)), 5, '0', STR_PAD_LEFT);
+        if ($cleanKey === '99999') continue;
         if (!empty($info['voted'])) $votedNpaCount++;
     }
-    $sahVotes = ($votedNpaCount > 0) ? $votedNpaCount : 1355;
+    $sahVotes = ($votedNpaCount > 0) ? $votedNpaCount : 1356;
 
     // 1. KEAMANAN STRICT LUBER-JURDIL: KOTAK SUARA TERSEGEL (is_sealed: true)
     // Selama status is_sealed = true, TIDAK ADA SIAPA PUN (termasuk Admin Teknis) yang boleh melihat perolehan suara calon!
