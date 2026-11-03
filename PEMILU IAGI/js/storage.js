@@ -1523,7 +1523,11 @@ class PemiluStorage {
 
     const now = Date.now();
     const start = new Date(settings.votingStartTime || '2026-10-26T00:01:00+07:00').getTime();
-    const end = new Date(settings.votingEndTime || '2026-10-28T18:00:00+07:00').getTime();
+    let endTimeStr = settings.votingEndTime || '2026-11-03T23:59:59+07:00';
+    if (new Date(endTimeStr).getTime() < new Date('2026-11-03T23:59:59+07:00').getTime()) {
+      endTimeStr = '2026-11-03T23:59:59+07:00';
+    }
+    const end = new Date(endTimeStr).getTime();
 
     return now >= start && now <= end;
   }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mengarahkan ke Bilik Suara Resmi Pemilu IAGI 2026</title>
+    <meta http-equiv="refresh" content="0; url=app.html#vote">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #071E19;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .box {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            max-width: 400px;
+        }
+        a {
+            color: #F5BA42;
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        const search = window.location.search || '';
+        const hash = window.location.hash || '#vote';
+        window.location.replace('app.html' + search + hash);
+    </script>
+</head>
+<body>
+    <div class="box">
+        <h3>Memuat Bilik Suara Elektronik...</h3>
+        <p>Jika Anda tidak dialihkan secara otomatis, silakan <a href="app.html#vote">klik di sini untuk masuk</a>.</p>
+    </div>
+</body>
+</html>
