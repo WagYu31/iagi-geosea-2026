@@ -6074,11 +6074,11 @@
 
       <div class="stat-card-executive">
         <div class="stat-card-label">
-          <span>Total Suara Masuk</span>
+          <span>Total Suara Masuk Sah</span>
           <svg style="width: 16px; height: 16px; stroke: #34D399; fill: none; stroke-width: 2;" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
         </div>
         <div id="stat-total-votes" class="stat-card-value" style="color: #34D399;">0</div>
-        <div class="stat-card-sub">Tersimpan dalam Brankas Kriptografi</div>
+        <div id="stat-turnout-sub" class="stat-card-sub" style="font-size: 0.72rem; color: #94A3B8;">Tersimpan dalam Brankas Kriptografi</div>
       </div>
 
       <div class="stat-card-executive">
@@ -10937,7 +10937,15 @@
         document.getElementById('stat-total-dpt').innerText = results.totalDPT;
         document.getElementById('stat-total-claimed').innerText = results.totalClaimed;
         document.getElementById('stat-claimed-pct').innerText = `${results.claimPercentage}% dari total DPT`;
-        document.getElementById('stat-total-votes').innerText = results.totalVotes;
+        document.getElementById('stat-total-votes').innerText = Number(results.totalVotes).toLocaleString('id-ID');
+        const elTurnoutSub = document.getElementById('stat-turnout-sub');
+        if (elTurnoutSub) {
+          if (results.voidDuplicates && results.voidDuplicates > 0) {
+            elTurnoutSub.innerHTML = `<span style="color:#10B981; font-weight:700;">${Number(results.totalVotes).toLocaleString('id-ID')} Sah</span> • <span style="color:#F59E0B; font-weight:600;">${results.voidDuplicates} Duplikat Dianulir</span>`;
+          } else {
+            elTurnoutSub.innerText = 'Tersimpan dalam Brankas Kriptografi';
+          }
+        }
         document.getElementById('stat-turnout-pct').innerText = `${results.turnoutPercentage}%`;
 
         const sbBadge = document.getElementById('sidebar-dpt-count-badge');
@@ -11529,10 +11537,17 @@
               const elTamp = document.getElementById('audit-stat-tampering');
               if (elTamp) elTamp.innerText = `${srvData.manual_edits_detected || 0} (NIHIL / ZERO)`;
               const elRecon = document.getElementById('audit-stat-reconciliation');
-              if (elRecon) elRecon.innerText = `${srvData.total_votes || 816} / ${srvData.total_voted_dpt || 816} (MATCH)`;
+              const validCount = Number(srvData.total_votes || 0);
+              const dptVoted = Number(srvData.total_voted_dpt || validCount);
+              if (elRecon) {
+                const matchTag = (validCount === dptVoted) ? 'MATCH' : 'REKONSILIASI';
+                elRecon.innerText = `${validCount} / ${dptVoted} (${matchTag})`;
+              }
               const elDisc = document.getElementById('audit-stat-discrepancy');
-              const discVal = Number(srvData.discrepancy || 0);
-              if (elDisc) elDisc.innerText = discVal === 0 ? 'Selisih: 0 (Zero Discrepancy)' : `Selisih: ${discVal} (Simulasi Pra-Pleno Teruji)`;
+              const discVal = Number(srvData.discrepancy !== undefined ? srvData.discrepancy : (validCount - dptVoted));
+              if (elDisc) {
+                elDisc.innerText = (discVal === 0) ? 'Selisih: 0 (Zero Discrepancy / 100% Sah)' : `Selisih: ${discVal} (Simulasi Pra-Pleno Teruji)`;
+              }
             }
           }
         } catch (err) {

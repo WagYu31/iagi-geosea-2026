@@ -377,6 +377,7 @@ class PemiluStorage {
           // Tetap catat total suara masuk (turnout) resmi dari server, namun kosongkan counts calon
           localStorage.setItem(STORAGE_KEYS.SERVER_RESULTS, JSON.stringify({
             total_votes: Number(dataResults.total_votes || 0),
+            total_ballots_raw: Number(dataResults.total_ballots_raw || dataResults.total_votes || 0),
             counts: { 1: 0, 2: 0, 3: 0 },
             is_sealed: true,
             updated_at: Date.now()
@@ -387,6 +388,7 @@ class PemiluStorage {
           // Pasca Pleno / Admin Terotorisasi: Simpan hasil sah
           localStorage.setItem(STORAGE_KEYS.SERVER_RESULTS, JSON.stringify({
             total_votes: Number(dataResults.total_votes || 0),
+            total_ballots_raw: Number(dataResults.total_ballots_raw || dataResults.total_votes || 0),
             counts: dataResults.counts,
             updated_at: Date.now()
           }));
@@ -1427,18 +1429,24 @@ class PemiluStorage {
     const dpt = this.getDPT();
 
     let counts = { 1: 0, 2: 0, 3: 0 };
-    let totalVotes = ballots.length;
+    const validBallots = ballots.filter(b => !b.void);
+    let totalVotes = validBallots.length;
+    let totalBallotsRaw = ballots.length;
+    let voidDuplicates = ballots.filter(b => b.void).length;
 
     const isSealed = settings.isSealed !== false;
     const adminSession = (typeof this.getAdminSession === 'function') ? this.getAdminSession() : null;
 
-    // Fallback / sync from cached server results if local ballots are fewer
+    // Server results is authoritative
     try {
       const rawServer = localStorage.getItem(STORAGE_KEYS.SERVER_RESULTS);
       if (rawServer) {
         const srv = JSON.parse(rawServer);
-        if (srv && typeof srv.total_votes === 'number' && srv.total_votes > totalVotes) {
+        if (srv && typeof srv.total_votes === 'number' && srv.total_votes > 0) {
           totalVotes = srv.total_votes;
+        }
+        if (srv && typeof srv.total_ballots_raw === 'number' && srv.total_ballots_raw > 0) {
+          totalBallotsRaw = srv.total_ballots_raw;
         }
         if (srv && srv.counts && (!isSealed || adminSession)) {
           counts = {
@@ -1452,7 +1460,7 @@ class PemiluStorage {
 
     // Hitung counts hanya jika segel dibuka (Pleno) atau sedang dibuka oleh Admin resmi
     if (!isSealed || adminSession) {
-      ballots.forEach(b => {
+      validBallots.forEach(b => {
         if (counts[b.candidate_id] !== undefined) {
           counts[b.candidate_id]++;
         }
@@ -1472,10 +1480,14 @@ class PemiluStorage {
     const turnoutPercentage = totalDPT > 0 ? (Math.min(100, (totalVotes / totalDPT) * 100)).toFixed(1) : '0.0';
     const claimPercentage = totalDPT > 0 ? ((effectiveTotalClaimed / totalDPT) * 100).toFixed(1) : '0.0';
 
+    const calculatedDuplicates = (totalBallotsRaw > totalVotes) ? (totalBallotsRaw - totalVotes) : voidDuplicates;
+
     return {
       isSealed: isSealed,
       counts,
       totalVotes,
+      totalBallotsRaw,
+      voidDuplicates: calculatedDuplicates,
       totalDPT,
       totalClaimed: effectiveTotalClaimed,
       turnoutPercentage,
