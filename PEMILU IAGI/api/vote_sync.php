@@ -2453,6 +2453,10 @@ if ($action === 'sync_voted_npas') {
     }
 
     $npasList = $payload['voted_npas'] ?? [];
+    // DINONAKTIFKAN: cache browser admin tidak boleh lagi menandai NPA sebagai "sudah memilih" di server.
+    // Status memilih hanya boleh ditulis oleh cast_vote (pencoblosan asli). Penyebab 309 NPA ber-voted_at
+    // sintetis "29 Oktober 2026, 12:00:00 WIB" tanpa jejak di audit log.
+    $npasList = [];
     if (!empty($npasList) && is_array($npasList)) {
         $fpLock = @fopen($lockFile, 'c+');
         if ($fpLock && @flock($fpLock, LOCK_EX)) {
