@@ -10457,8 +10457,8 @@ const INITIAL_DPT = [
   {
     "npa": "04693",
     "name": "Dwandari Ralanarko",
-    "email": "dw***@yahoo.com",
-    "email_hash": "f9a891152e10cbb1cc190d17eba3740153a2b1f55d20b8a922d7d0ebc4b1eeb9",
+    "email": "dw***@gmail.com",
+    "email_hash": "5154daa089f7333572d3fd6470185c44f58604de50f24906cf1ef9302c3dc3ba",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -10607,8 +10607,8 @@ const INITIAL_DPT = [
   {
     "npa": "04812",
     "name": "Ragil Pratiwi",
-    "email": "ra***@geoservices.co.id",
-    "email_hash": "af64068583fa5f58b47e7b5f1d7811eb1c47026e4e0a460e9a0c20f5a6dda24a",
+    "email": "ra***@gmail.com",
+    "email_hash": "4eb910abff7ecdfa755465370f84c41a89ef4d287d483d61dd6a30a723b568e5",
     "phone": "",
     "pengda": "IAGI",
     "category": "Professional",
@@ -25487,7 +25487,7 @@ const INITIAL_DPT = [
   },
   {
     "npa": "10349",
-    "name": "Invan Winarto",
+    "name": "Irwan Winarto",
     "email": "wi***@gmail.com",
     "email_hash": "1874f364d888d8fa64750573f4f5c9ad47f18655c630f7c5746327c4d2c44013",
     "phone": "",
