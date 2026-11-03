@@ -3187,14 +3187,26 @@ if ($action === 'get_results') {
         }
     }
 
-    // Suara sah pemilih unik (1 Pemilih = 1 Suara Sah)
-    $votedNpaCount = 0;
+    // Suara sah pemilih unik (1 Pemilih = 1 Suara Sah) disinkronkan dari voters dan audit log
+    $uniqueVotedNpas = [];
     foreach ($voters as $npaKey => $info) {
         $cleanKey = str_pad(preg_replace('/\D/', '', strval($npaKey)), 5, '0', STR_PAD_LEFT);
         if ($cleanKey === '99999') continue;
-        if (!empty($info['voted'])) $votedNpaCount++;
+        if (!empty($info['voted'])) $uniqueVotedNpas[$cleanKey] = true;
     }
-    $sahVotes = ($votedNpaCount > 0) ? $votedNpaCount : 1356;
+    foreach (readJsonFile($auditFile, []) as $log) {
+        if (!is_array($log)) continue;
+        $act = strtoupper($log['action'] ?? '');
+        if (strpos($act, 'VOTE') === false && strpos($act, 'BALLOT') === false) continue;
+        if (!empty($log['status']) && (strpos($log['status'], 'BATAL') !== false || strpos($log['status'], 'DUPLIKAT') !== false)) continue;
+        $logNpa = $log['npa'] ?? '';
+        if (!$logNpa && preg_match('/NPA:\s*(\d{5})/i', $log['details'] ?? '', $mNpa)) $logNpa = $mNpa[1];
+        if (!$logNpa) continue;
+        $cleanKey = str_pad(preg_replace('/\D/', '', strval($logNpa)), 5, '0', STR_PAD_LEFT);
+        if ($cleanKey === '99999') continue;
+        $uniqueVotedNpas[$cleanKey] = true;
+    }
+    $sahVotes = count($uniqueVotedNpas);
 
     // 1. KEAMANAN STRICT LUBER-JURDIL: KOTAK SUARA TERSEGEL (is_sealed: true)
     // Selama status is_sealed = true, TIDAK ADA SIAPA PUN (termasuk Admin Teknis) yang boleh melihat perolehan suara calon!
