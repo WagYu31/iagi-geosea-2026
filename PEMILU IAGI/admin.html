@@ -6231,6 +6231,9 @@
           </div>
         </div>
 
+        <!-- Ringkasan Filter Suara Dobel -->
+        <div id="audit-dobel-summary" style="display: none; margin-bottom: 10px; padding: 10px 14px; border-radius: 10px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); font-size: 0.8rem; color: #E2E8F0; line-height: 1.5;"></div>
+
         <!-- Toolbar Filter & Search Log Audit -->
         <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 12px;">
           <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="audit-filter-pills">
@@ -6238,6 +6241,7 @@
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('VOTE', event)" style="font-weight: 700; color: #34D399; border-color: rgba(16, 185, 129, 0.4);">🗳️ Suara Masuk Sah</button>
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('ADMIN', event)">Aktivitas Admin</button>
             <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('SECURITY', event)">Segel & Keamanan</button>
+            <button type="button" class="dpt-filter-pill" onclick="setAuditLogFilter('DOBEL', event)" style="font-weight: 700; color: #FCA5A5; border-color: rgba(239, 68, 68, 0.45);">🔁 Suara Dobel</button>
             <button type="button" class="dpt-filter-pill" onclick="renderAuditLogs()" style="background: rgba(56, 189, 248, 0.12); color: #38BDF8; border-color: rgba(56, 189, 248, 0.4); font-weight: 700;">🔄 Segarkan Log Server</button>
           </div>
           <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -11765,11 +11769,30 @@
 
         const searchVal = (document.getElementById('input-search-audit-logs')?.value || '').toLowerCase().trim();
 
+        // Filter Suara Dobel: hitung jumlah catatan VOTE_RECORDED per NPA
+        const getLogNpa = (it) => {
+          let n = it && it.npa ? String(it.npa) : '';
+          if (!n && it && it.details) { const m = String(it.details).match(/NPA:\s*(\d{5})/i); if (m) n = m[1]; }
+          return n ? n.padStart(5, '0') : '';
+        };
+        const dobelCount = {};
+        if (currentAuditFilter === 'DOBEL') {
+          cachedAuditLogs.forEach(it => {
+            if (!it || String(it.action || '').toUpperCase() !== 'VOTE_RECORDED') return;
+            const n = getLogNpa(it);
+            if (n) dobelCount[n] = (dobelCount[n] || 0) + 1;
+          });
+        }
+
         let filtered = cachedAuditLogs.filter(item => {
           if (!item) return false;
           const action = (item.action || '').toUpperCase();
           
-          if (currentAuditFilter === 'ADMIN') {
+          if (currentAuditFilter === 'DOBEL') {
+            if (action !== 'VOTE_RECORDED') return false;
+            const n = getLogNpa(item);
+            if (!n || (dobelCount[n] || 0) < 2) return false;
+          } else if (currentAuditFilter === 'ADMIN') {
             if (!action.includes('ADMIN') && !action.includes('AUTH') && !action.includes('LOGIN') && !action.includes('LOGOUT')) return false;
           } else if (currentAuditFilter === 'VOTE') {
             if (item.is_valid_vote !== true && !item._displayVoteNum) return false;
@@ -11792,6 +11815,27 @@
         });
 
         window.currentFilteredAuditLogs = filtered;
+
+        // Ringkasan & urutan khusus filter Suara Dobel (dikelompokkan per NPA)
+        const dobelSummaryEl = document.getElementById('audit-dobel-summary');
+        if (currentAuditFilter === 'DOBEL') {
+          filtered.sort((a, b) => {
+            const na = getLogNpa(a), nb = getLogNpa(b);
+            if (na !== nb) return na < nb ? -1 : 1;
+            return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+          });
+          const npaDobel = Object.keys(dobelCount).filter(n => dobelCount[n] > 1);
+          const isBatal = (it) => /BATAL|DUPLIKAT/i.test(String(it.status || ''));
+          const batalCount = filtered.filter(isBatal).length;
+          const extra = npaDobel.reduce((s, n) => s + dobelCount[n] - 1, 0);
+          const belumDianulir = Math.max(0, extra - batalCount);
+          if (dobelSummaryEl) {
+            dobelSummaryEl.style.display = 'block';
+            dobelSummaryEl.innerHTML = `<b style="color:#FCA5A5;">🔁 ${npaDobel.length.toLocaleString('id-ID')} NPA mencoblos lebih dari 1x</b> • ${filtered.length.toLocaleString('id-ID')} catatan • kelebihan ${extra.toLocaleString('id-ID')} suara: <span style="color:#F59E0B;font-weight:700;">${batalCount} sudah dianulir sistem</span>, <span style="color:#EF4444;font-weight:700;">${belumDianulir} belum dianulir (perlu keputusan Pleno)</span>`;
+          }
+        } else if (dobelSummaryEl) {
+          dobelSummaryEl.style.display = 'none';
+        }
 
         if (filtered.length === 0) {
           tbody.innerHTML = `
