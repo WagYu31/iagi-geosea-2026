@@ -841,12 +841,15 @@ class VisitorTicketAdminController extends Controller
      */
     public function storeOnsite(Request $request)
     {
+        $isVisitorPass = ($request->visitor_type === 'non_exclusive');
+
         $request->validate([
-            'visitor_name' => 'required|string|max:150',
-            'visitor_email' => 'required|email|max:150',
+            'visitor_name' => $isVisitorPass ? 'nullable|string|max:150' : 'required|string|max:150',
+            'visitor_email' => $isVisitorPass ? 'nullable|email|max:150' : 'required|email|max:150',
             'visitor_phone' => 'nullable|string|max:50',
             'visitor_institution' => 'nullable|string|max:150',
             'visitor_type' => 'required|string|max:100',
+            'quantity' => 'nullable|integer|min:1|max:500',
             'payment_status' => 'nullable|in:paid_cash,free_bypass,pending',
             'proof_of_payment' => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:10240',
             'unique_code' => 'nullable|integer|min:0|max:9999',
@@ -855,9 +858,49 @@ class VisitorTicketAdminController extends Controller
             'discount_notes' => 'nullable|string|max:255',
         ]);
 
-        return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request, $isVisitorPass) {
             $paymentId = null;
             $type = $request->visitor_type;
+            $quantity = max(1, min(500, intval($request->input('quantity', 1))));
+
+            // Handling bulk creation for blank Visitor Pass
+            if ($isVisitorPass && $quantity > 1) {
+                $createdTickets = [];
+                for ($i = 0; $i < $quantity; $i++) {
+                    $ticketCode = VisitorTicket::generateTicketCode('non_exclusive');
+                    $ticket = VisitorTicket::create([
+                        'payment_id' => null,
+                        'registered_by_admin_id' => Auth::id(),
+                        'registration_source' => 'admin_onsite_bulk',
+                        'visitor_name' => !empty($request->visitor_name) ? $request->visitor_name : 'VISITOR',
+                        'visitor_email' => !empty($request->visitor_email) ? $request->visitor_email : ('visitor_' . strtolower(substr($ticketCode, -6)) . '_' . ($i + 1) . '@pitiagi.cloud'),
+                        'visitor_phone' => $request->visitor_phone,
+                        'visitor_institution' => $request->visitor_institution,
+                        'ticket_code' => $ticketCode,
+                        'visitor_type' => 'non_exclusive',
+                        'individual_price' => 0,
+                        'is_group_leader' => ($i === 0),
+                        'status' => 'active',
+                        'checked_in' => false,
+                        'card_printed' => false,
+                    ]);
+                    $createdTickets[] = $ticket->id;
+                }
+
+                ActivityLog::record(
+                    action: 'create_bulk_visitor_tickets',
+                    module: 'visitor_tickets',
+                    description: "Menerbitkan massal {$quantity} tiket Visitor Pass polos/generic",
+                    targetId: $createdTickets[0] ?? null,
+                    targetCode: "BULK-VISITOR-{$quantity}",
+                    snapshot: ['count' => $quantity, 'first_id' => $createdTickets[0] ?? null]
+                );
+
+                return redirect()->route('admin.visitorTickets.printBadgesBulk', [
+                    'mode' => 'selected',
+                    'ids' => implode(',', $createdTickets),
+                ])->with('success', "Berhasil menerbitkan {$quantity} Tiket Visitor Pass polos! Siap cetak.");
+            }
 
             $paidCategories = [
                 'iagi_member_professional' => 3000000,
@@ -962,12 +1005,15 @@ class VisitorTicketAdminController extends Controller
                 $paymentId = $payment->id;
             }
 
+            $finalName = !empty($request->visitor_name) ? $request->visitor_name : ($isVisitorPass ? 'VISITOR' : 'Visitor');
+            $finalEmail = !empty($request->visitor_email) ? $request->visitor_email : ($isVisitorPass ? ('visitor_' . strtolower(Str::random(6)) . '@pitiagi.cloud') : 'visitor@pitiagi.cloud');
+
             $ticket = VisitorTicket::create([
                 'payment_id' => $paymentId,
                 'registered_by_admin_id' => Auth::id(),
                 'registration_source' => 'admin_onsite',
-                'visitor_name' => $request->visitor_name,
-                'visitor_email' => $request->visitor_email,
+                'visitor_name' => $finalName,
+                'visitor_email' => $finalEmail,
                 'visitor_phone' => $request->visitor_phone,
                 'visitor_institution' => $request->visitor_institution,
                 'ticket_code' => VisitorTicket::generateTicketCode($type),
@@ -979,8 +1025,8 @@ class VisitorTicketAdminController extends Controller
                 'card_printed' => false,
             ]);
 
-            // Send E-Ticket email if active
-            if ($ticket->status === 'active' && !empty($ticket->visitor_email)) {
+            // Send E-Ticket email if active & real email
+            if ($ticket->status === 'active' && !empty($ticket->visitor_email) && !str_contains($ticket->visitor_email, '@pitiagi.cloud')) {
                 try {
                     $this->applySmtpSettings();
                     Mail::to($ticket->visitor_email)->send(new VisitorTicketIssued($ticket));
@@ -1000,6 +1046,11 @@ class VisitorTicketAdminController extends Controller
                 targetCode: $ticket->ticket_code,
                 snapshot: $ticket->toArray()
             );
+
+            if ($isVisitorPass) {
+                return redirect()->route('admin.visitorTickets.printBadge', $ticket->id)
+                    ->with('success', "Tiket Visitor Pass berhasil diterbitkan! Siap cetak.");
+            }
 
             return back()->with('success', "Onsite registration successful! Ticket Code: {$ticket->ticket_code}");
         });

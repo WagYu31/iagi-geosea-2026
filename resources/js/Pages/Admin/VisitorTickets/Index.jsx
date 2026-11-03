@@ -780,6 +780,7 @@ export default function VisitorTicketsIndex({
         visitor_phone: '',
         visitor_institution: '',
         visitor_type: 'non_exclusive',
+        quantity: 1,
         payment_status: 'paid_cash',
         proof_of_payment: null,
         unique_code: 0,
@@ -5452,17 +5453,101 @@ export default function VisitorTicketsIndex({
                                     </Select>
                                 </FormControl>
 
+                                {onsiteData.visitor_type === 'non_exclusive' && (
+                                    <Box sx={{ p: 2, bgcolor: '#f0fdf4', borderRadius: '14px', border: '1.5px solid #86efac' }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.2, mb: 1.5 }}>
+                                            <Box sx={{ width: 32, height: 32, borderRadius: '8px', bgcolor: '#10b981', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                <CheckCircleIcon sx={{ fontSize: 20 }} />
+                                            </Box>
+                                            <Box>
+                                                <Typography sx={{ fontWeight: 800, color: '#065f46', fontSize: '0.86rem', lineHeight: 1.3 }}>
+                                                    Mode Blank / Polos Aktif (Hanya Tulisan VISITOR)
+                                                </Typography>
+                                                <Typography sx={{ color: '#047857', fontSize: '0.74rem', mt: 0.3, lineHeight: 1.4 }}>
+                                                    Anda <b>tidak perlu mengisi nama atau email</b>. Kartu akan langsung tercetak bersih hanya dengan tulisan besar <b>VISITOR</b> (tanpa tanda strip / '-') sangat cocok untuk cetak massal.
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        {/* Bulk Quantity Selector */}
+                                        <Box sx={{ pt: 1.5, borderTop: '1px dashed #a7f3d0' }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.2, flexWrap: 'wrap', gap: 1 }}>
+                                                <Typography sx={{ fontWeight: 800, color: '#065f46', fontSize: '0.80rem' }}>
+                                                    Jumlah Tiket Diterbitkan:
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', gap: 0.8, flexWrap: 'wrap' }}>
+                                                    {[1, 50, 100, 200, 400].map((qty) => (
+                                                        <Button
+                                                            key={qty}
+                                                            size="small"
+                                                            type="button"
+                                                            onClick={() => setOnsiteData('quantity', qty)}
+                                                            variant={onsiteData.quantity === qty ? 'contained' : 'outlined'}
+                                                            sx={{
+                                                                minWidth: 42,
+                                                                py: 0.3,
+                                                                px: 1.2,
+                                                                fontSize: '0.74rem',
+                                                                fontWeight: 800,
+                                                                borderRadius: '8px',
+                                                                ...(onsiteData.quantity === qty ? {
+                                                                    bgcolor: '#059669',
+                                                                    color: '#ffffff',
+                                                                    borderColor: '#059669',
+                                                                    '&:hover': { bgcolor: '#047857' }
+                                                                } : {
+                                                                    borderColor: '#a7f3d0',
+                                                                    color: '#065f46',
+                                                                    bgcolor: '#ffffff',
+                                                                    '&:hover': { bgcolor: '#dcfce7', borderColor: '#10b981' }
+                                                                })
+                                                            }}
+                                                        >
+                                                            {qty === 400 ? '⭐ 400 Lembar' : `${qty}`}
+                                                        </Button>
+                                                    ))}
+                                                </Box>
+                                            </Box>
+
+                                            <Grid container spacing={1.2} alignItems="center">
+                                                <Grid item xs={12} sm={5}>
+                                                    <TextField
+                                                        size="small"
+                                                        type="number"
+                                                        label="Atau Jumlah Manual (1 - 500)"
+                                                        value={onsiteData.quantity || ''}
+                                                        onChange={(e) => {
+                                                            const val = e.target.value === '' ? '' : Math.max(1, Math.min(500, parseInt(e.target.value) || 1));
+                                                            setOnsiteData('quantity', val);
+                                                        }}
+                                                        fullWidth
+                                                        inputProps={{ min: 1, max: 500 }}
+                                                        sx={{ bgcolor: '#ffffff' }}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12} sm={7}>
+                                                    <Typography sx={{ fontSize: '0.72rem', color: '#047857', fontWeight: 600, lineHeight: 1.3 }}>
+                                                        {onsiteData.quantity > 1 
+                                                            ? `⚡ Akan menerbitkan ${onsiteData.quantity} tiket Visitor Pass sekaligus dan langsung membuka halaman cetak massal (Bulk Print Ready)!` 
+                                                            : '⚡ Terbitkan 1 tiket Visitor Pass polos (bisa langsung dicetak atau atur jumlah copies di dialog printer).'}
+                                                    </Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Box>
+                                    </Box>
+                                )}
+
                                 {/* 2-Column Responsive Grid for inputs */}
                                 <Grid container spacing={1.5}>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
-                                            label="Nama Lengkap"
-                                            placeholder="cth: Dr. Ir. Budi Santoso, M.T."
+                                            label={onsiteData.visitor_type === 'non_exclusive' ? 'Nama Lengkap (Opsional)' : 'Nama Lengkap'}
+                                            placeholder={onsiteData.visitor_type === 'non_exclusive' ? 'Otomatis: "VISITOR" (Boleh Dikosongkan)' : 'cth: Dr. Ir. Budi Santoso, M.T.'}
                                             value={onsiteData.visitor_name}
                                             onChange={(e) => setOnsiteData('visitor_name', e.target.value)}
                                             fullWidth
                                             size="small"
-                                            required
+                                            required={onsiteData.visitor_type !== 'non_exclusive'}
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
@@ -5475,14 +5560,14 @@ export default function VisitorTicketsIndex({
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
-                                            label="Alamat Email"
+                                            label={onsiteData.visitor_type === 'non_exclusive' ? 'Alamat Email (Opsional)' : 'Alamat Email'}
                                             type="email"
-                                            placeholder="budi@instansi.ac.id"
+                                            placeholder={onsiteData.visitor_type === 'non_exclusive' ? 'Otomatis dibuatkan sistem (Boleh Dikosongkan)' : 'budi@instansi.ac.id'}
                                             value={onsiteData.visitor_email}
                                             onChange={(e) => setOnsiteData('visitor_email', e.target.value)}
                                             fullWidth
                                             size="small"
-                                            required
+                                            required={onsiteData.visitor_type !== 'non_exclusive'}
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
@@ -5496,7 +5581,7 @@ export default function VisitorTicketsIndex({
                                     <Grid item xs={12} sm={6}>
                                         <TextField
                                             label="Nomor WhatsApp / HP"
-                                            placeholder="081234567890"
+                                            placeholder={onsiteData.visitor_type === 'non_exclusive' ? 'Opsional (Boleh Dikosongkan)' : '081234567890'}
                                             value={onsiteData.visitor_phone}
                                             onChange={(e) => setOnsiteData('visitor_phone', e.target.value)}
                                             fullWidth
@@ -5513,8 +5598,8 @@ export default function VisitorTicketsIndex({
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
-                                            label="Instansi / Organisasi"
-                                            placeholder="Universitas / Perusahaan / Lembaga"
+                                            label={onsiteData.visitor_type === 'non_exclusive' ? 'Instansi / Organisasi (Opsional)' : 'Instansi / Organisasi'}
+                                            placeholder={onsiteData.visitor_type === 'non_exclusive' ? 'Kosongkan (Hanya tampil kata VISITOR)' : 'Universitas / Perusahaan / Lembaga'}
                                             value={onsiteData.visitor_institution}
                                             onChange={(e) => setOnsiteData('visitor_institution', e.target.value)}
                                             fullWidth
@@ -6039,9 +6124,13 @@ export default function VisitorTicketsIndex({
                             >
                                 {onsiteProcessing 
                                     ? 'Menerbitkan Tiket...' 
-                                    : (liveOnsiteTotal > 0 
-                                        ? `Terbitkan Tiket • Rp ${liveOnsiteTotal.toLocaleString('id-ID')}`
-                                        : 'Terbitkan Tiket (Gratis)')}
+                                    : (onsiteData.visitor_type === 'non_exclusive' && onsiteData.quantity > 1
+                                        ? `Terbitkan ${onsiteData.quantity} Tiket Visitor (Siap Cetak)`
+                                        : (onsiteData.visitor_type === 'non_exclusive'
+                                            ? 'Terbitkan Tiket Visitor (Gratis)'
+                                            : (liveOnsiteTotal > 0 
+                                                ? `Terbitkan Tiket • Rp ${liveOnsiteTotal.toLocaleString('id-ID')}`
+                                                : 'Terbitkan Tiket (Gratis)')))}
                             </Button>
                         </Box>
                     </DialogActions>

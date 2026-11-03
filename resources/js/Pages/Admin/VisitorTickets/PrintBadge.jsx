@@ -328,55 +328,57 @@ function SingleLanyardCard({
                         },
                     }}
                 >
-                    {ticket.visitor_name}
+                    {ticket.visitor_name || (isVisitor ? 'VISITOR' : '')}
                 </Typography>
             </Box>
 
-            {/* 2. INSTITUTION OVERLAY (Positioned Centered between the Pill Box and the Gold Diamond Underline at y: 855 - 920 / 68.2% - 73.4%) */}
-            <Box
-                sx={{
-                    position: 'absolute',
-                    top: '68.2%',
-                    height: '5.2%',
-                    left: '6%',
-                    right: '6%',
-                    px: '4px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    textAlign: 'center',
-                    zIndex: 5,
-                }}
-            >
-                <Typography
-                    variant="body1"
+            {/* 2. INSTITUTION OVERLAY (Only rendered if present, never display '-' on blank visitor pass) */}
+            {ticket.visitor_institution && ticket.visitor_institution.trim() !== '' && ticket.visitor_institution !== '-' && (
+                <Box
                     sx={{
-                        fontWeight: 800,
-                        color: '#0f172a',
-                        fontSize: instFontSize,
-                        fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.035em',
-                        lineHeight: 1.1,
-                        wordBreak: 'break-word',
+                        position: 'absolute',
+                        top: '68.2%',
+                        height: '5.2%',
+                        left: '6%',
+                        right: '6%',
+                        px: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         textAlign: 'center',
-                        width: '100%',
-                        '@media print': {
-                            color: '#000000 !important',
-                            fontSize: institutionLength > 38 
-                                ? '4.8pt !important' 
-                                : institutionLength > 26 
-                                    ? '5.4pt !important' 
-                                    : institutionLength > 18 
-                                        ? '6.2pt !important' 
-                                        : '7.2pt !important',
-                            lineHeight: '1.1 !important',
-                        },
+                        zIndex: 5,
                     }}
                 >
-                    {ticket.visitor_institution || '-'}
-                </Typography>
-            </Box>
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            fontWeight: 800,
+                            color: '#0f172a',
+                            fontSize: instFontSize,
+                            fontFamily: "'Inter', 'Montserrat', 'Roboto', sans-serif",
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.035em',
+                            lineHeight: 1.1,
+                            wordBreak: 'break-word',
+                            textAlign: 'center',
+                            width: '100%',
+                            '@media print': {
+                                color: '#000000 !important',
+                                fontSize: institutionLength > 38 
+                                    ? '4.8pt !important' 
+                                    : institutionLength > 26 
+                                        ? '5.4pt !important' 
+                                        : institutionLength > 18 
+                                            ? '6.2pt !important' 
+                                            : '7.2pt !important',
+                                lineHeight: '1.1 !important',
+                            },
+                        }}
+                    >
+                        {ticket.visitor_institution}
+                    </Typography>
+                </Box>
+            )}
         </Box>
     );
 }
