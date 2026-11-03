@@ -2368,6 +2368,7 @@ if ($action === 'get_voted_list') {
     reconcileVotersWithBallots($voters, $ballots, $votersFile);
 
     $votedNpas = [];
+    $claimedCount = 0;
     foreach ($voters as $npaKey => $info) {
         if (!empty($info['voted'])) {
             $cleanKey = str_pad(preg_replace('/\D/', '', strval($npaKey)), 5, '0', STR_PAD_LEFT);
@@ -2375,6 +2376,8 @@ if ($action === 'get_voted_list') {
                 'voted_at' => $info['voted_at'],
                 'receipt_hash' => isset($info['receipt_hash']) ? $info['receipt_hash'] : ''
             ];
+        } elseif (!empty($info['claimed']) || !empty($info['token'])) {
+            $claimedCount++;
         }
     }
 
@@ -2384,12 +2387,18 @@ if ($action === 'get_voted_list') {
             'success' => true,
             'is_public' => true,
             'total_voted' => count($votedNpas),
+            'total_claimed' => $claimedCount,
             'voted_npas' => [] // Protected: Detail NPA disembunyikan untuk menjaga privasi pemilih
         ]);
         exit;
     }
 
-    echo json_encode(['success' => true, 'voted_npas' => $votedNpas, 'total_voted' => count($votedNpas)]);
+    echo json_encode([
+        'success' => true,
+        'voted_npas' => $votedNpas,
+        'total_voted' => count($votedNpas),
+        'total_claimed' => $claimedCount
+    ]);
     exit;
 }
 

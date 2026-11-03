@@ -273,10 +273,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateDptStats() {
+    if (!window.pemiluStorage) return;
     const dpt = window.pemiluStorage.getDPT();
     const total = dpt.length;
-    const claimedCount = dpt.filter(v => v.claimed && !v.voted).length;
-    const votedCount = dpt.filter(v => v.voted).length;
+
+    // Check local claimed vs server authoritative total claimed
+    let claimedCount = dpt.filter(v => v.claimed && !v.voted).length;
+    const srvClaimed = typeof window.pemiluStorage.getServerTotalClaimed === 'function' ? window.pemiluStorage.getServerTotalClaimed() : 0;
+    if (srvClaimed > claimedCount) {
+      claimedCount = srvClaimed;
+    }
+
+    // Check local voted vs server authoritative total votes (Termasuk untuk tampilan publik di HP)
+    let votedCount = dpt.filter(v => v.voted).length;
+    const srvVoted = typeof window.pemiluStorage.getServerTotalVoted === 'function' ? window.pemiluStorage.getServerTotalVoted() : 0;
+    if (srvVoted > votedCount) {
+      votedCount = srvVoted;
+    }
     
     // Unique Pengda
     const pengdaSet = new Set(dpt.map(v => (v.pengda || 'Pusat').trim()));
@@ -288,8 +301,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dptChipCountAll) dptChipCountAll.innerText = total.toLocaleString('id-ID');
   }
 
+  // Expose global callback agar bisa dipanggil saat background sync selesai
+  window.updateDptStats = updateDptStats;
+  window.addEventListener('pemilu:stats_updated', () => {
+    updateDptStats();
+  });
+
   function renderDptScreen() {
     updateDptStats();
+    if (window.pemiluStorage && typeof window.pemiluStorage.syncVotedListWithServer === 'function') {
+      window.pemiluStorage.syncVotedListWithServer();
+    }
     const dpt = window.pemiluStorage.getDPT();
     initDptPengdaDropdown(dpt);
     dptFilterState.page = 1;

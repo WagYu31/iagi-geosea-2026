@@ -308,29 +308,60 @@ class PemiluStorage {
         } : {}
       });
       const dataVoted = await respVoted.json();
-      if (dataVoted && dataVoted.success && dataVoted.voted_npas) {
-        const dpt = this.getDPT();
-        let changed = false;
-        dpt.forEach(v => {
-          const clean = String(v.npa || '').trim().toUpperCase();
-          if (dataVoted.voted_npas[clean]) {
-            const serverVote = dataVoted.voted_npas[clean];
-            if (!v.voted || !v.claimed || !v.voted_at || (serverVote.voted_at && v.voted_at !== serverVote.voted_at)) {
-              v.voted = true;
-              v.claimed = true;
-              v.token = null; // Token dibakar permanen
-              v.voted_at = serverVote.voted_at || v.voted_at || new Date().toISOString();
-              v.receipt_hash = serverVote.receipt_hash || 'VERIFIED';
-              changed = true;
+      if (dataVoted && dataVoted.success) {
+        // Catat agregat total suara sah dan token diklaim resmi dari server ke cache publik
+        if (typeof dataVoted.total_voted === 'number') {
+          try {
+            let srv = JSON.parse(localStorage.getItem(STORAGE_KEYS.SERVER_RESULTS) || '{}') || {};
+            srv.total_votes = Number(dataVoted.total_voted);
+            srv.total_ballots_raw = Number(dataVoted.total_voted);
+            if (typeof dataVoted.total_claimed === 'number') {
+              srv.total_claimed = Number(dataVoted.total_claimed);
+            }
+            srv.updated_at = Date.now();
+            localStorage.setItem(STORAGE_KEYS.SERVER_RESULTS, JSON.stringify(srv));
+          } catch (e) {}
+        }
+
+        if (dataVoted.voted_npas && typeof dataVoted.voted_npas === 'object' && Object.keys(dataVoted.voted_npas).length > 0) {
+          const dpt = this.getDPT();
+          let changed = false;
+          dpt.forEach(v => {
+            const clean = String(v.npa || '').trim().toUpperCase();
+            if (dataVoted.voted_npas[clean]) {
+              const serverVote = dataVoted.voted_npas[clean];
+              if (!v.voted || !v.claimed || !v.voted_at || (serverVote.voted_at && v.voted_at !== serverVote.voted_at)) {
+                v.voted = true;
+                v.claimed = true;
+                v.token = null; // Token dibakar permanen
+                v.voted_at = serverVote.voted_at || v.voted_at || new Date().toISOString();
+                v.receipt_hash = serverVote.receipt_hash || 'VERIFIED';
+                changed = true;
+              }
+            }
+          });
+          if (changed) {
+            this.saveDPT(dpt);
+            if (typeof window !== 'undefined') {
+              if (typeof window.renderDptTable === 'function') window.renderDptTable();
+              if (typeof window.updateBulkSelectionUI === 'function') window.updateBulkSelectionUI();
             }
           }
-        });
-        if (changed) {
-          this.saveDPT(dpt);
-          if (typeof window !== 'undefined') {
-            if (typeof window.renderDptTable === 'function') window.renderDptTable();
-            if (typeof window.updateBulkSelectionUI === 'function') window.updateBulkSelectionUI();
+        }
+
+        // Segarkan tampilan UI publik (seperti di app.html) begitu data server tiba
+        if (typeof window !== 'undefined') {
+          if (typeof window.updateDptStats === 'function') {
+            try { window.updateDptStats(); } catch (e) {}
           }
+          try {
+            window.dispatchEvent(new CustomEvent('pemilu:stats_updated', { 
+              detail: { 
+                total_voted: dataVoted.total_voted, 
+                total_claimed: dataVoted.total_claimed 
+              } 
+            }));
+          } catch (e) {}
         }
       }
     } catch (errVoted) {
@@ -433,6 +464,34 @@ class PemiluStorage {
       console.warn('Failed to update server vault seal:', e);
       return { success: false, error: e.message };
     }
+  }
+
+  // Ambil total suara masuk sah yang disinkronkan dari server (Aman untuk publik & admin)
+  getServerTotalVoted() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.SERVER_RESULTS);
+      if (raw) {
+        const srv = JSON.parse(raw);
+        if (srv && typeof srv.total_votes === 'number') {
+          return Number(srv.total_votes);
+        }
+      }
+    } catch (e) {}
+    return 0;
+  }
+
+  // Ambil total token diklaim yang disinkronkan dari server (Aman untuk publik & admin)
+  getServerTotalClaimed() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.SERVER_RESULTS);
+      if (raw) {
+        const srv = JSON.parse(raw);
+        if (srv && typeof srv.total_claimed === 'number') {
+          return Number(srv.total_claimed);
+        }
+      }
+    } catch (e) {}
+    return 0;
   }
 
   // --- DPT Management ---
