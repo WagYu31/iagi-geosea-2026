@@ -273,12 +273,14 @@ class LandingPageSettingController extends Controller
                 mkdir($uploadPath, 0777, true);
             }
 
-            // Delete old logo if exists
+            // Delete old logo if exists (ONLY IF IT'S IN STORAGE, NEVER DELETE STATIC PUBLIC IMAGES)
             if (isset($sponsors[$index]['logo']) && $sponsors[$index]['logo']) {
-                $oldLogoPath = public_path($sponsors[$index]['logo']);
-                if (file_exists($oldLogoPath)) {
-                    unlink($oldLogoPath);
-                    Log::info('Deleted old logo: ' . $oldLogoPath);
+                if (str_starts_with($sponsors[$index]['logo'], '/storage/')) {
+                    $oldLogoPath = public_path($sponsors[$index]['logo']);
+                    if (file_exists($oldLogoPath)) {
+                        @unlink($oldLogoPath);
+                        Log::info('Deleted old logo from storage: ' . $oldLogoPath);
+                    }
                 }
             }
 

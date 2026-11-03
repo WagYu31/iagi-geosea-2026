@@ -353,13 +353,26 @@ class SyncSponsorsCommand extends Command
             ],
         ];
 
-        // Verifikasi keberadaan file logo fisik di public
+        // Verifikasi keberadaan file logo fisik di public (dan pulihkan otomatis jika terhapus)
         $tableData = [];
+        $missingFiles = [];
         foreach ($sponsors as $sponsor) {
             $relPath = ltrim($sponsor['logo'], '/');
             $fullPath = public_path($relPath);
+            
+            if (!file_exists($fullPath)) {
+                // Coba pulihkan otomatis dari git repository jika file pernah terhapus
+                @exec('git checkout HEAD -- ' . escapeshellarg($fullPath));
+                @exec('git checkout HEAD -- ' . escapeshellarg($relPath));
+                @exec('git checkout HEAD -- ' . escapeshellarg("public/{$relPath}"));
+            }
+
             $exists = file_exists($fullPath);
             $size = $exists ? round(filesize($fullPath) / 1024, 1) . ' KB' : 'TIDAK DITEMUKAN';
+
+            if (!$exists) {
+                $missingFiles[] = $relPath;
+            }
 
             $tableData[] = [
                 $sponsor['name'],
@@ -370,6 +383,12 @@ class SyncSponsorsCommand extends Command
         }
 
         $this->table(['Sponsor / Partner', 'Sponsorship Item', 'Logo Path', 'Status Fisik'], $tableData);
+
+        if (!empty($missingFiles)) {
+            $this->warn("⚠️ Perhatian: Ada " . count($missingFiles) . " file logo yang berstatus MISSING di server.");
+            $this->line("Jalankan perintah ini di terminal server untuk memulihkannya:");
+            $this->line("  git checkout HEAD -- public/images/sponsors/");
+        }
 
         // Update atau Buat LandingPageSetting untuk 'sponsors'
         $setting = LandingPageSetting::updateOrCreate(
