@@ -55,6 +55,7 @@ const CATEGORY_MAP = {
     delegate: { label: 'Delegate', shortLabel: 'DELEGATE', badge: 'DELEGATE', bg: '#ecfdf5', color: '#065f46', border: '#a7f3d0' },
     student_crowd: { label: 'Student Crowd', shortLabel: 'STUDENT CROWD', badge: 'STUDENT CROWD', bg: '#f0fdf4', color: '#166534', border: '#bbf7d0' },
     vip_companion: { label: 'VIP Companion', shortLabel: 'VIP COMPANION', badge: 'VIP COMPANION', bg: '#fef3c7', color: '#92400e', border: '#fde68a' },
+    it_developer: { label: 'IT Developer', shortLabel: 'IT DEVELOPER', badge: 'IT DEVELOPER', bg: '#eff6ff', color: '#1d4ed8', border: '#93c5fd' },
 
     // 1. Participant
     iagi_member_professional: { label: 'Professional (Member)', shortLabel: 'PRO (MEMBER)', badge: 'PROFESSIONAL (MEMBER)', bg: '#dcfce7', color: '#15803d', border: '#86efac' },

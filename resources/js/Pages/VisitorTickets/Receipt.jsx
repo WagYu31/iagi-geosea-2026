@@ -42,6 +42,7 @@ const CATEGORY_MAP = {
     delegate: { label: 'Delegate', badge: 'DELEGATE' },
     student_crowd: { label: 'Student Crowd', badge: 'STUDENT CROWD' },
     vip_companion: { label: 'VIP Companion', badge: 'VIP COMPANION' },
+    it_developer: { label: 'IT Developer', badge: 'IT DEVELOPER' },
 
     // 1. Participant
     iagi_member_professional: { label: 'Professional (Member)', badge: 'PROFESSIONAL (MEMBER)' },

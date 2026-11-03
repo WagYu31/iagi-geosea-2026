@@ -1036,6 +1036,10 @@ export default function VisitorAnalyticsDashboard({
                                 <Checkbox checked={typeFilter?.indexOf('vip_companion') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
                                 <ListItemText primary="⭐ VIP Companion (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
                             </MenuItem>
+                            <MenuItem value="it_developer" sx={{ pl: 2, fontSize: '0.82rem' }}>
+                                <Checkbox checked={typeFilter?.indexOf('it_developer') > -1} size="small" sx={{ p: 0.5, mr: 0.5 }} />
+                                <ListItemText primary="💻 IT Developer (Invited / Free)" primaryTypographyProps={{ fontSize: '0.82rem' }} />
+                            </MenuItem>
                         </Select>
                     </FormControl>
 

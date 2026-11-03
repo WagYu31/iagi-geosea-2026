@@ -216,6 +216,33 @@ const CATEGORY_MAP = {
         color: '#065f46',
         border: '#a7f3d0',
     },
+
+    // 12. Student Crowd
+    student_crowd: {
+        label: 'STUDENT CROWD',
+        shortLabel: 'STUDENT CROWD',
+        bg: '#f0fdf4',
+        color: '#166534',
+        border: '#bbf7d0',
+    },
+
+    // 13. VIP Companion
+    vip_companion: {
+        label: 'VIP COMPANION',
+        shortLabel: 'VIP COMPANION',
+        bg: '#fef3c7',
+        color: '#92400e',
+        border: '#fde68a',
+    },
+
+    // 14. IT Developer
+    it_developer: {
+        label: 'IT DEVELOPER',
+        shortLabel: 'IT DEVELOPER',
+        bg: '#eff6ff',
+        color: '#1d4ed8',
+        border: '#93c5fd',
+    },
 };
 
 const getCategoryMeta = (type) => CATEGORY_MAP[type] || CATEGORY_MAP.non_exclusive;

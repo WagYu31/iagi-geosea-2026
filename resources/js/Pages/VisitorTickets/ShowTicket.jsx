@@ -178,6 +178,16 @@ const CATEGORY_MAP = {
         tagBg: '#fef3c7',
         tagColor: '#92400e',
     },
+    it_developer: {
+        label: 'IT Developer',
+        badge: 'IT DEVELOPER',
+        gradient: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+        border: '#3b82f6',
+        shadow: 'rgba(37, 99, 235, 0.25)',
+        textColor: '#1d4ed8',
+        tagBg: '#eff6ff',
+        tagColor: '#1e40af',
+    },
     // Conference / Standard Categories
     iagi_member_professional: {
         label: 'Professional (Member)',

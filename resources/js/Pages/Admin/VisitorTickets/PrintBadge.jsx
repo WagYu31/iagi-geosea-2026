@@ -69,6 +69,9 @@ export const BADGE_TEMPLATES = {
     // 13. VIP Companion
     vip_companion: '/images/badges/VIP.png',
 
+    // 14. IT Developer
+    it_developer: '/images/badges/Committee.png',
+
     // Technical
     presenter: '/images/badges/Presenter.png',
     invited_speaker: '/images/badges/Invited_Speaker.png',
@@ -144,6 +147,9 @@ const CATEGORY_MAP = {
 
     // 14. VIP Companion
     vip_companion: { label: 'VIP COMPANION', short: 'VIP COMPANION' },
+
+    // 15. IT Developer
+    it_developer: { label: 'IT DEVELOPER', short: 'IT DEVELOPER' },
 };
 
 export const BADGE_VERSION = '20261102_aligned_pill_v10';

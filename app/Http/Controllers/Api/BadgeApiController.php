@@ -404,6 +404,13 @@ class BadgeApiController extends Controller
                 'template_filename' => 'VIP.png',
                 'template_url' => url('/images/badges/VIP.png'),
             ],
+            'it_developer' => [
+                'type' => 'it_developer',
+                'label' => 'IT Developer',
+                'badge_role' => 'IT DEVELOPER',
+                'template_filename' => 'Committee.png',
+                'template_url' => url('/images/badges/Committee.png'),
+            ],
             'speaker' => [
                 'type' => 'speaker',
                 'label' => 'Keynote Speaker',
@@ -598,6 +605,7 @@ class BadgeApiController extends Controller
             'professional_1500' => 'PROFESSIONAL',
             'student_crowd' => 'STUDENT',
             'vip_companion' => 'VIP COMPANION',
+            'it_developer' => 'IT DEVELOPER',
             'student' => 'PRESENTER',
             'presenter' => 'PRESENTER',
             'oral' => 'PRESENTER',
@@ -621,6 +629,7 @@ class BadgeApiController extends Controller
         $map = [
             'vip' => 'VIP.png',
             'vip_companion' => 'VIP.png',
+            'it_developer' => 'Committee.png',
             'exclusive' => 'VIP.png',
             'speaker' => 'Speaker.png',
             'keynote_speech' => 'Speaker.png',
