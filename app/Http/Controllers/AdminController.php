@@ -1559,13 +1559,32 @@ class AdminController extends Controller
 
     public function presentationScores()
     {
-        $submissions = Submission::with([
+        $query = Submission::with([
             'user:id,name,email,affiliation',
             'presentationScores.juri:id,name,email,role,affiliation',
         ])
-            ->whereHas('presentationScores')
-            ->latest()
-            ->paginate(100);
+            ->whereHas('presentationScores');
+
+        if ($search = request('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('submission_code', 'like', "%{$search}%")
+                    ->orWhere('author_full_name', 'like', "%{$search}%")
+                    ->orWhere('paper_sub_theme', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('presentationScores.juri', function ($jq) use ($search) {
+                        $jq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('affiliation', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $submissions = $query->latest()
+            ->paginate(250)
+            ->withQueryString();
 
         $availableJuris = User::whereIn('role', ['Juri', 'Reviewer', 'Admin'])
             ->select('id', 'name', 'email', 'role', 'affiliation')

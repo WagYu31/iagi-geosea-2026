@@ -1581,14 +1581,22 @@ export default function PresentationScores({ submissions, availableJuris = [] })
         const author = (sub.author_full_name || sub.user?.name || '').toLowerCase();
         const code = (sub.submission_code || '').toLowerCase();
         const topic = (sub.paper_sub_theme || sub.topic || sub.paper_theme || '').toLowerCase();
+        const scores = sub.presentation_scores || [];
+        const juris = scores
+            .map(s => `${s.juri?.name || ''} ${s.juri?.email || ''} ${s.juri?.affiliation || ''}`)
+            .join(' ')
+            .toLowerCase();
         const searchLow = search.toLowerCase();
 
-        const matchesSearch = title.includes(searchLow) || author.includes(searchLow) || code.includes(searchLow) || topic.includes(searchLow);
+        const matchesSearch = title.includes(searchLow) 
+            || author.includes(searchLow) 
+            || code.includes(searchLow) 
+            || topic.includes(searchLow)
+            || juris.includes(searchLow);
 
         if (!matchesSearch) return false;
 
         const isOral = sub.category_submission?.toLowerCase().includes('oral');
-        const scores = sub.presentation_scores || [];
         const scored = scores.filter(s => s.weighted_final_score && !s.is_draft);
         const completedScores = scores.filter(s => s.weighted_final_score && !s.is_draft);
         const draftScores = scores.filter(s => s.is_draft || (!s.weighted_final_score && Object.keys(s).some(k => (k.startsWith('poster_') || k.startsWith('manuscript_') || k === 'time_management') && s[k] !== null && s[k] !== '')));
@@ -2020,7 +2028,7 @@ export default function PresentationScores({ submissions, availableJuris = [] })
                             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: { xs: 'stretch', md: 'center' }, justifyContent: 'space-between' }}>
                                 {/* Search Input */}
                                 <TextField 
-                                    placeholder="Cari judul paper, nama presenter, kode, atau topik..." 
+                                    placeholder="Cari judul paper, nama presenter, nama juri, kode, atau topik..." 
                                     value={search} 
                                     onChange={(e) => setSearch(e.target.value)} 
                                     size="small"
@@ -2154,8 +2162,8 @@ export default function PresentationScores({ submissions, availableJuris = [] })
                                     <Typography sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '0.95rem', mb: 0.5 }}>
                                         Tidak ada skor presentasi ditemukan
                                     </Typography>
-                                    <Typography variant="caption" sx={{ color: c.textSecondary, display: 'block', maxWidth: 360, mx: 'auto', mb: 2 }}>
-                                        Coba ubah kata kunci pencarian atau ganti filter kategori / status di atas.
+                                    <Typography variant="caption" sx={{ color: c.textSecondary, display: 'block', maxWidth: 400, mx: 'auto', mb: 2 }}>
+                                        Coba ubah kata kunci pencarian (judul paper, nama presenter, nama juri, kode, topik) atau ganti filter di atas.
                                     </Typography>
                                     <Button 
                                         size="small" 
