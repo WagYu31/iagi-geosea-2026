@@ -980,36 +980,129 @@ export default function VisitorTicketsIndex({
         navigateFilters({ page });
     };
 
-    // Quick Clickable Stat Card Filter (With smart toggle support)
+    // Quick Clickable Stat Card Filter (With smart toggle support & isolated filtering)
     const handleStatCardClick = (statKey) => {
+        const scrollToTable = () => {
+            setTimeout(() => {
+                const el = document.getElementById('tickets-table-card');
+                if (el) {
+                    const headerOffset = 65;
+                    const elementPosition = el.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({
+                        top: Math.max(0, offsetPosition),
+                        behavior: 'smooth'
+                    });
+                }
+            }, 120);
+        };
+
         if (statKey === 'all' || statKey === 'revenue') {
             handleResetFilters();
+            scrollToTable();
+            return;
+        }
+
+        const baseParams = {
+            search: '',
+            type: [],
+            registration_type: 'all',
+            checked_in: 'all',
+            status: 'all',
+            debt: 'all',
+            email_sent: 'all',
+            duplicate: 'all',
+            page: 1,
+        };
+
+        if (statKey === 'debt') {
+            if (debtFilter === 'debt') {
+                handleResetFilters();
+            } else {
+                setDebtFilter('debt');
+                setSearchTerm('');
+                setTypeFilter([]);
+                setRegistrationTypeFilter('all');
+                setCheckedInFilter('all');
+                setStatusFilter('all');
+                setEmailSentFilter('all');
+                setDuplicateFilter('all');
+                navigateFilters({ ...baseParams, debt: 'debt' });
+            }
+        } else if (statKey === 'paid_revenue') {
+            if (debtFilter === 'fully_paid' || debtFilter === 'paid') {
+                handleResetFilters();
+            } else {
+                setDebtFilter('fully_paid');
+                setSearchTerm('');
+                setTypeFilter([]);
+                setRegistrationTypeFilter('all');
+                setCheckedInFilter('all');
+                setStatusFilter('all');
+                setEmailSentFilter('all');
+                setDuplicateFilter('all');
+                navigateFilters({ ...baseParams, debt: 'fully_paid' });
+            }
+        } else if (statKey === 'pending') {
+            if (statusFilter === 'pending') {
+                handleResetFilters();
+            } else {
+                setStatusFilter('pending');
+                setSearchTerm('');
+                setTypeFilter([]);
+                setRegistrationTypeFilter('all');
+                setCheckedInFilter('all');
+                setDebtFilter('all');
+                setEmailSentFilter('all');
+                setDuplicateFilter('all');
+                navigateFilters({ ...baseParams, status: 'pending' });
+            }
+        } else if (statKey === 'checked_in') {
+            if (checkedInFilter === 'yes') {
+                handleResetFilters();
+            } else {
+                setCheckedInFilter('yes');
+                setSearchTerm('');
+                setTypeFilter([]);
+                setRegistrationTypeFilter('all');
+                setStatusFilter('all');
+                setDebtFilter('all');
+                setEmailSentFilter('all');
+                setDuplicateFilter('all');
+                navigateFilters({ ...baseParams, checked_in: 'yes' });
+            }
         } else if (statKey === 'email_sent') {
-            const nextVal = emailSentFilter === 'sent' ? 'all' : 'sent';
-            setEmailSentFilter(nextVal);
-            navigateFilters({ email_sent: nextVal, page: 1 });
+            if (emailSentFilter === 'sent') {
+                handleResetFilters();
+            } else {
+                setEmailSentFilter('sent');
+                setSearchTerm('');
+                setTypeFilter([]);
+                setRegistrationTypeFilter('all');
+                setCheckedInFilter('all');
+                setStatusFilter('all');
+                setDebtFilter('all');
+                setDuplicateFilter('all');
+                navigateFilters({ ...baseParams, email_sent: 'sent' });
+            }
         } else if (statKey === 'non_exclusive') {
             const isNonExclusiveOnly = typeFilter.length === 1 && typeFilter[0] === 'non_exclusive';
-            const nextVal = isNonExclusiveOnly ? [] : ['non_exclusive'];
-            setTypeFilter(nextVal);
-            navigateFilters({ type: nextVal, page: 1 });
-        } else if (statKey === 'checked_in') {
-            const nextVal = checkedInFilter === 'yes' ? 'all' : 'yes';
-            setCheckedInFilter(nextVal);
-            navigateFilters({ checked_in: nextVal, page: 1 });
-        } else if (statKey === 'pending') {
-            const nextVal = statusFilter === 'pending' ? 'all' : 'pending';
-            setStatusFilter(nextVal);
-            navigateFilters({ status: nextVal, page: 1 });
-        } else if (statKey === 'debt') {
-            const nextVal = debtFilter === 'debt' ? 'all' : 'debt';
-            setDebtFilter(nextVal);
-            navigateFilters({ debt: nextVal, page: 1 });
-        } else if (statKey === 'paid_revenue') {
-            const nextVal = (debtFilter === 'fully_paid' || debtFilter === 'paid') ? 'all' : 'fully_paid';
-            setDebtFilter(nextVal);
-            navigateFilters({ debt: nextVal, page: 1 });
+            if (isNonExclusiveOnly) {
+                handleResetFilters();
+            } else {
+                setTypeFilter(['non_exclusive']);
+                setSearchTerm('');
+                setRegistrationTypeFilter('all');
+                setCheckedInFilter('all');
+                setStatusFilter('all');
+                setDebtFilter('all');
+                setEmailSentFilter('all');
+                setDuplicateFilter('all');
+                navigateFilters({ ...baseParams, type: ['non_exclusive'] });
+            }
         }
+
+        scrollToTable();
     };
 
     // Open Proof of Payment Lightbox Modal
@@ -2327,6 +2420,7 @@ export default function VisitorTicketsIndex({
                                 key={s.label}
                                 elevation={0}
                                 onClick={() => handleStatCardClick(s.key)}
+                                title={isCardActive && s.key !== 'all' ? 'Sedang aktif (Klik untuk reset filter)' : `Klik untuk langsung menampilkan data ${s.label}`}
                                 sx={{
                                     p: 1.75,
                                     borderRadius: '16px',
@@ -2354,21 +2448,36 @@ export default function VisitorTicketsIndex({
                                 }}
                             >
                                 <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 1, mb: 1 }}>
-                                    <Typography
-                                        variant="caption"
-                                        sx={{
-                                            color: '#475569',
-                                            fontWeight: 800,
-                                            fontSize: '0.67rem',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.02em',
-                                            lineHeight: 1.2,
-                                            flex: 1,
-                                            wordBreak: 'break-word',
-                                        }}
-                                    >
-                                        {s.label}
-                                    </Typography>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: '#475569',
+                                                fontWeight: 800,
+                                                fontSize: '0.67rem',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.02em',
+                                                lineHeight: 1.2,
+                                                wordBreak: 'break-word',
+                                            }}
+                                        >
+                                            {s.label}
+                                        </Typography>
+                                        {isCardActive && s.key !== 'all' && (
+                                            <Typography
+                                                variant="caption"
+                                                sx={{
+                                                    fontSize: '0.6rem',
+                                                    fontWeight: 900,
+                                                    color: s.color,
+                                                    letterSpacing: '0.02em',
+                                                    mt: 0.3,
+                                                }}
+                                            >
+                                                ● Filter Aktif (Klik batal)
+                                            </Typography>
+                                        )}
+                                    </Box>
                                     <Box
                                         sx={{
                                             width: 26,
@@ -3069,6 +3178,7 @@ export default function VisitorTicketsIndex({
 
                 {/* 3D TACTILE TICKETS TABLE CONTAINER */}
                 <Paper
+                    id="tickets-table-card"
                     elevation={0}
                     sx={{
                         borderRadius: '18px',
@@ -3156,6 +3266,97 @@ export default function VisitorTicketsIndex({
                             <Typography variant="body2" sx={{ fontWeight: 800, color: '#334155', fontSize: '0.82rem' }}>
                                 Total Terdaftar: <strong style={{ color: '#094d42' }}>{totalItems}</strong> pengunjung
                             </Typography>
+                            {debtFilter === 'debt' && (
+                                <Chip
+                                    icon={<WarningAmberIcon sx={{ fontSize: '13px !important', color: '#b45309 !important' }} />}
+                                    label={`Filter Aktif: Outstanding Debt / Hutang (${totalItems} tiket)`}
+                                    size="small"
+                                    onDelete={handleResetFilters}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#fef3c7',
+                                        color: '#b45309',
+                                        border: '1.5px solid #fde68a',
+                                        boxShadow: '0 2px 4px rgba(217,119,6,0.15)',
+                                    }}
+                                />
+                            )}
+                            {(debtFilter === 'fully_paid' || debtFilter === 'paid') && (
+                                <Chip
+                                    icon={<AccountBalanceWalletIcon sx={{ fontSize: '13px !important', color: '#166534 !important' }} />}
+                                    label={`Filter Aktif: Uang Masuk Kas Lunas (${totalItems} tiket)`}
+                                    size="small"
+                                    onDelete={handleResetFilters}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#ecfdf5',
+                                        color: '#166534',
+                                        border: '1.5px solid #a7f3d0',
+                                    }}
+                                />
+                            )}
+                            {statusFilter === 'pending' && (
+                                <Chip
+                                    icon={<PaidIcon sx={{ fontSize: '13px !important', color: '#c2410c !important' }} />}
+                                    label={`Filter Aktif: Menunggu Verifikasi (${totalItems} tiket)`}
+                                    size="small"
+                                    onDelete={handleResetFilters}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#fff7ed',
+                                        color: '#c2410c',
+                                        border: '1.5px solid #fed7aa',
+                                    }}
+                                />
+                            )}
+                            {checkedInFilter === 'yes' && (
+                                <Chip
+                                    icon={<HowToRegIcon sx={{ fontSize: '13px !important', color: '#0e7490 !important' }} />}
+                                    label={`Filter Aktif: Hadir Checked-In Gate (${totalItems} tiket)`}
+                                    size="small"
+                                    onDelete={handleResetFilters}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#ecfeff',
+                                        color: '#0e7490',
+                                        border: '1.5px solid #a5f3fc',
+                                    }}
+                                />
+                            )}
+                            {emailSentFilter === 'sent' && (
+                                <Chip
+                                    icon={<EmailIcon sx={{ fontSize: '13px !important', color: '#0f766e !important' }} />}
+                                    label={`Filter Aktif: Email E-Ticket Terkirim (${totalItems} tiket)`}
+                                    size="small"
+                                    onDelete={handleResetFilters}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#f0fdfa',
+                                        color: '#0f766e',
+                                        border: '1.5px solid #99f6e4',
+                                    }}
+                                />
+                            )}
+                            {typeFilter.length === 1 && typeFilter[0] === 'non_exclusive' && (
+                                <Chip
+                                    icon={<ConfirmationNumberIcon sx={{ fontSize: '13px !important', color: '#0369a1 !important' }} />}
+                                    label={`Filter Aktif: Visitor Pass Free (${totalItems} tiket)`}
+                                    size="small"
+                                    onDelete={handleResetFilters}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#f0f9ff',
+                                        color: '#0369a1',
+                                        border: '1.5px solid #bae6fd',
+                                    }}
+                                />
+                            )}
                             {duplicateFilter !== 'all' && (
                                 <Chip
                                     icon={<WarningAmberIcon sx={{ fontSize: '13px !important', color: '#b91c1c !important' }} />}
