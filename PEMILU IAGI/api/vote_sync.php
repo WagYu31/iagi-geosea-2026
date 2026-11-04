@@ -354,7 +354,15 @@ function getAuthenticatedAdmin($payload = null) {
     return $session;
 }
 
+function isLocalhost() {
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    return strpos($host, 'localhost') !== false || strpos($host, '127.0.0.1') !== false || php_sapi_name() === 'cli';
+}
+
 function sendServerWhatsAppFonnte($phone, $message) {
+    if (isLocalhost()) {
+        return ['success' => true, 'target' => $phone, 'data' => ['mock' => true]];
+    }
     $cleanPhone = preg_replace('/\D/', '', $phone);
     if (strpos($cleanPhone, '0') === 0) {
         $cleanPhone = '62' . substr($cleanPhone, 1);
@@ -405,6 +413,9 @@ function sendServerWhatsAppFonnte($phone, $message) {
 
 // Helper: Kirim Email Resmi Sistem KPKU (Mendukung PHP mail() & Fallback Direct SSL SMTP)
 function sendServerEmail($toEmail, $toName, $subject, $messageHtml) {
+    if (isLocalhost()) {
+        return true;
+    }
     $headers = [
         'MIME-Version: 1.0',
         'Content-Type: text/html; charset=UTF-8',
@@ -1595,6 +1606,14 @@ if ($action === 'check_feature_access') {
     }
 
     $req = &$requests[$reqId];
+
+    // Auto-approve di lingkungan lokal agar pengujian mandiri lancar tanpa menyentuh server online
+    if (isLocalhost() && $req['status'] === 'PENDING') {
+        $req['status'] = 'APPROVED';
+        $req['decided_at'] = date('c');
+        $req['decided_by'] = 'Simulasi Lokal (Auto-Approved)';
+        writeJsonFile($accessRequestsFile, $requests);
+    }
 
     // Cek timeout otomatis
     if ($req['status'] === 'PENDING' && $req['expires_at'] < $now) {
