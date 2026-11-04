@@ -26,12 +26,195 @@
   <!-- Official KPKU Helpdesk Live Chat Stylesheet -->
   <link rel="stylesheet" href="css/livechat.css?v=4.5.8">
   <style>
-    /* KUNCI PERMANEN SELURUH SISTEM & MENU E-VOTING */
+    /* ========================================================
+       21ST.DEV & MINIMALIST-SKILL DESIGN SYSTEM
+       - Obsidian Glass Canvas, Restrained Micro-Bento Grid
+       - Precision Typographic Hierarchy & Subtle Ambient Glow
+       ======================================================== */
+    :root {
+      --canvas-bg: #070A0F;
+      --card-bg: rgba(13, 19, 31, 0.72);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --gold-glow: rgba(245, 186, 66, 0.16);
+      --gold-accent: #F5BA42;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-subtle: #64748B;
+    }
+
+    html, body {
+      overflow-x: hidden !important;
+      box-sizing: border-box !important;
+    }
+
+    body {
+      background-color: var(--canvas-bg) !important;
+      background-image: 
+        radial-gradient(ellipse 90% 60% at 50% -20%, rgba(245, 186, 66, 0.12) 0%, rgba(16, 185, 129, 0.03) 45%, transparent 75%),
+        radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px) !important;
+      background-size: 100% 100%, 28px 28px !important;
+      color: var(--text-main) !important;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+      -webkit-font-smoothing: antialiased !important;
+      margin: 0 !important;
+      padding: 24px 16px !important;
+      min-height: 100vh !important;
+      width: 100% !important;
+    }
+
+    /* Container: Sleek 21st.dev Glass Frame */
+    .app-container {
+      max-width: 1080px !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      margin: 0 auto !important;
+      background: rgba(10, 15, 25, 0.85) !important;
+      backdrop-filter: blur(32px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.09) !important;
+      border-radius: 24px !important;
+      box-shadow: 
+        0 30px 100px -20px rgba(0, 0, 0, 0.9),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+      overflow: hidden !important;
+      box-sizing: border-box !important;
+    }
+    }
+
+    /* Header: Minimalist Topbar */
+    .app-header {
+      background: rgba(8, 12, 20, 0.8) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+      padding: 16px 28px !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .brand-logo-frame {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .brand-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+    }
+
+    .brand-status-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(245, 186, 66, 0.1);
+      border: 1px solid rgba(245, 186, 66, 0.25);
+      color: #FDE68A;
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    /* Minimalist Segment Control (21st.dev Nav) */
+    .desktop-nav-bar {
+      display: inline-flex !important;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.6) !important;
+      border: 1px solid rgba(255, 255, 255, 0.07) !important;
+      border-radius: 999px !important;
+      padding: 4px !important;
+      gap: 2px !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+    }
+
+    .desktop-nav-item {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 15px !important;
+      border-radius: 999px !important;
+      font-size: 0.8rem !important;
+      font-weight: 500 !important;
+      color: #64748B !important;
+      border: 1px solid transparent !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .desktop-nav-item.locked-nav {
+      cursor: not-allowed !important;
+      opacity: 0.65 !important;
+    }
+
+    .desktop-nav-item.locked-nav:hover {
+      background: rgba(255, 255, 255, 0.03) !important;
+      color: #94A3B8 !important;
+    }
+
+    .desktop-nav-item.active {
+      background: rgba(245, 186, 66, 0.12) !important;
+      border-color: rgba(245, 186, 66, 0.35) !important;
+      color: #FDE68A !important;
+      font-weight: 700 !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(245, 186, 66, 0.2) !important;
+    }
+
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-portal-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #E2E8F0;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .btn-portal-pill:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    /* Screen lock enforce */
     #screen-home, #screen-dpt, #screen-claim, #screen-receipt {
       display: none !important;
     }
     #screen-vote {
       display: block !important;
+      padding: 0 !important;
     }
     #vote-closed-card {
       display: block !important;
@@ -39,14 +222,383 @@
     #vote-auth-card, #vote-ballot-card, #vote-locked-card {
       display: none !important;
     }
-    .locked-nav {
-      opacity: 0.55 !important;
-      cursor: not-allowed !important;
+
+    /* 21st.dev Vault Card */
+    .closed-hero-section {
+      max-width: 820px;
+      margin: 24px auto 44px auto;
+      padding: 0 16px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
     }
-    .locked-nav:hover {
-      background: rgba(239, 68, 68, 0.1) !important;
-      border-color: rgba(239, 68, 68, 0.3) !important;
-      color: #FCA5A5 !important;
+
+    .closed-hero-section::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(245, 186, 66, 0.14) 0%, rgba(16, 185, 129, 0.03) 45%, transparent 70%);
+      filter: blur(50px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .closed-card-vault {
+      position: relative;
+      z-index: 1;
+      background: rgba(13, 19, 31, 0.72) !important;
+      backdrop-filter: blur(28px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 
+        0 25px 70px -15px rgba(0, 0, 0, 0.8),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+      border-radius: 24px !important;
+      padding: 48px 36px 40px 36px !important;
+      text-align: center;
+    }
+
+    /* Vault Emblem 21st.dev */
+    .vault-emblem-wrapper {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 24px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .vault-outer-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px dashed rgba(245, 186, 66, 0.3);
+      animation: spin-slow 24s linear infinite;
+    }
+
+    .vault-inner-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 24px;
+      background: radial-gradient(circle, rgba(245, 186, 66, 0.25) 0%, transparent 70%);
+      filter: blur(10px);
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    .vault-glass-tile {
+      position: relative;
+      z-index: 2;
+      width: 76px;
+      height: 76px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(26, 36, 54, 0.9) 0%, rgba(13, 19, 31, 0.95) 100%);
+      border: 1px solid rgba(245, 186, 66, 0.35);
+      box-shadow: 
+        0 10px 25px -5px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 0 25px rgba(245, 186, 66, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #F5BA42;
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(0.95); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.9; }
+    }
+
+    /* Status Pill */
+    .status-sealed-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(245, 186, 66, 0.08);
+      border: 1px solid rgba(245, 186, 66, 0.25);
+      color: #FDE68A;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .status-pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+      animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .vault-heading {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      background: linear-gradient(180deg, #FFFFFF 25%, #CBD5E1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0 0 10px 0;
+      line-height: 1.25;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .vault-subheading {
+      font-size: 0.95rem;
+      color: #94A3B8;
+      max-width: 580px;
+      margin: 0 auto 28px auto;
+      line-height: 1.65;
+      word-break: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Bento Grid (21st.dev / Linear style) */
+    .bento-matrix {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      max-width: 660px;
+      margin: 0 auto 32px auto;
+      text-align: left;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 10px 8px 85px 8px !important;
+      }
+      .app-container {
+        border-radius: 16px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .desktop-nav-bar {
+        display: none !important;
+      }
+      .app-main {
+        padding: 8px 4px !important;
+      }
+      .app-header {
+        padding: 12px 14px !important;
+      }
+      .brand-title {
+        font-size: 0.88rem !important;
+      }
+      .brand-status-chip {
+        font-size: 0.62rem !important;
+        padding: 2px 6px !important;
+      }
+      .closed-hero-section {
+        padding: 0 4px !important;
+        margin: 10px auto 20px auto !important;
+      }
+      .closed-card-vault {
+        padding: 28px 14px 24px 14px !important;
+        border-radius: 18px !important;
+      }
+      .vault-heading {
+        font-size: 1.28rem !important;
+        line-height: 1.35 !important;
+      }
+      .vault-subheading {
+        font-size: 0.82rem !important;
+        line-height: 1.55 !important;
+        margin-bottom: 20px !important;
+      }
+      .status-sealed-pill {
+        font-size: 0.62rem !important;
+        padding: 4px 10px !important;
+        letter-spacing: 0.02em !important;
+        white-space: normal !important;
+        text-align: center !important;
+        line-height: 1.4 !important;
+      }
+      .btn-portal-pill {
+        padding: 5px 10px !important;
+        font-size: 0.72rem !important;
+      }
+      .bento-matrix {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+      .cta-actions-row {
+        flex-direction: column !important;
+        width: 100% !important;
+      }
+      .btn-21st-gold, .btn-21st-ghost {
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .vault-footer-strip {
+        font-size: 0.62rem !important;
+        gap: 8px !important;
+      }
+    }
+
+    .bento-item {
+      background: rgba(15, 23, 42, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 15px 18px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bento-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+    }
+
+    .bento-item:hover {
+      background: rgba(15, 23, 42, 0.65);
+      border-color: rgba(245, 186, 66, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .bento-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .bento-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #64748B;
+    }
+
+    .bento-icon {
+      width: 15px;
+      height: 15px;
+      color: #F5BA42;
+      opacity: 0.85;
+    }
+
+    .bento-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #F8FAFC;
+      margin-bottom: 2px;
+    }
+
+    .bento-sub {
+      font-size: 0.76rem;
+      color: #94A3B8;
+      line-height: 1.4;
+    }
+
+    /* 21st.dev Shimmer CTA Button */
+    .cta-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-21st-gold {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 32px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #F5BA42 0%, #E5A324 50%, #C97D10 100%);
+      color: #03130E !important;
+      font-weight: 800;
+      font-size: 0.92rem;
+      text-decoration: none;
+      box-shadow: 
+        0 0 25px rgba(245, 186, 66, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      border: 1px solid #FDE68A;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .btn-21st-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 0 35px rgba(245, 186, 66, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      color: #000000 !important;
+    }
+
+    .btn-21st-gold svg {
+      transition: transform 0.2s ease;
+    }
+
+    .btn-21st-gold:hover svg {
+      transform: translateX(3px);
+    }
+
+    .btn-21st-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 24px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #CBD5E1 !important;
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-21st-ghost:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #FFFFFF !important;
+      transform: translateY(-1px);
+    }
+
+    /* Minimalist Footer */
+    .vault-footer-strip {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: #64748B;
     }
   </style>
 </head>
@@ -57,48 +609,46 @@
 
     <!-- Top Sticky Header -->
     <header class="app-header">
-      <div class="brand-wrapper" onclick="window.location.href = 'landing.html'" style="cursor: pointer;">
+      <div class="brand-wrapper" onclick="window.location.href = 'landing.html'">
         <div class="brand-logo-frame">
-          <img src="assets/iagi-logo.png?v=iagi2026" alt="IAGI Logo" class="brand-logo">
+          <img src="assets/iagi-logo.png?v=iagi2026" alt="IAGI Logo" class="brand-logo" style="width:26px;height:26px;object-fit:contain;">
         </div>
         <div class="brand-text">
-          <span class="brand-title">PEMILU <span class="gold-accent">IAGI</span> 2026</span>
-          <span class="brand-subtitle">
-            <svg style="width:11px; height:11px; stroke:#EF4444; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <span style="color:#EF4444; font-weight:700;">PORTAL RESMI DIKUNCI</span>
-          </span>
+          <div class="brand-title">PEMILU <span class="gold-accent">IAGI</span> 2026</div>
+          <div style="margin-top:2px;">
+            <span class="brand-status-chip">
+              <svg style="width:9px; height:9px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              KPKU &bull; RESMI DISEGEL
+            </span>
+          </div>
         </div>
       </div>
 
       <!-- Desktop Executive Navigation Bar (Visible on Laptop / Desktop screens) -->
       <nav class="desktop-nav-bar" id="desktop-nav-bar" aria-label="Navigasi Utama Portal">
-        <button class="desktop-nav-item locked-nav" data-screen="home" title="Beranda (Terkunci - Pemilihan Selesai)" style="opacity: 0.6; cursor: not-allowed;">
-          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          <span>Beranda 🔒</span>
+        <button class="desktop-nav-item locked-nav" data-screen="home" title="Beranda (Terkunci - Pemilihan Selesai)">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Beranda</span>
         </button>
-        <button class="desktop-nav-item locked-nav" data-screen="dpt" title="Cek DPT (Terkunci - Pemilihan Selesai)" style="opacity: 0.6; cursor: not-allowed;">
-          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          <span>Cek DPT 🔒</span>
+        <button class="desktop-nav-item locked-nav" data-screen="dpt" title="Cek DPT (Terkunci - Pemilihan Selesai)">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Cek DPT</span>
         </button>
-        <button class="desktop-nav-item active desktop-nav-vote" data-screen="vote" title="Bilik Suara (Resmi Ditutup)" style="border-color: rgba(239, 68, 68, 0.6); background: rgba(239, 68, 68, 0.15); color: #FCA5A5;">
-          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          <span>Bilik Suara (Ditutup) 🔒</span>
+        <button class="desktop-nav-item active desktop-nav-vote" data-screen="vote" title="Bilik Suara (Resmi Ditutup)">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Bilik Suara (Ditutup)</span>
         </button>
-        <button class="desktop-nav-item locked-nav" data-screen="claim" title="Klaim Token (Terkunci - Pemilihan Selesai)" style="opacity: 0.6; cursor: not-allowed;">
-          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          <span>Klaim Token 🔒</span>
+        <button class="desktop-nav-item locked-nav" data-screen="claim" title="Klaim Token (Terkunci - Pemilihan Selesai)">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Klaim Token</span>
         </button>
       </nav>
 
       <div class="header-badges">
-        <a href="landing.html" class="live-badge" style="text-decoration:none; color:var(--gold-primary); border-color:rgba(245,186,66,0.3); display:inline-flex; align-items:center; gap:4px;">
-          <svg style="width:10px; height:10px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          Portal
+        <a href="landing.html" class="btn-portal-pill">
+          <svg style="width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Portal Utama
         </a>
-        <span class="live-badge" style="border-color: rgba(239,68,68,0.4); color:#FCA5A5;">
-          <span class="live-dot" style="background:#EF4444; box-shadow:0 0 8px #EF4444;"></span>
-          SELESAI
-        </span>
       </div>
     </header>
 
@@ -531,31 +1081,100 @@
       <!-- ================= SCREEN 4: BILIK SUARA (VOTE NOW) ================= -->
       <section id="screen-vote" class="screen active">
         
-        <!-- Bilik Suara Resmi Ditutup Card (Status: Closed 00:00 WIB 04 Nov 2026) -->
-        <div id="vote-closed-card" class="card" style="display: block; background: rgba(15, 23, 42, 0.95); border: 1.5px solid rgba(239, 68, 68, 0.45); text-align: center; padding: 36px 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border-radius: 16px; max-width: 600px; margin: 0 auto 24px auto;">
-          
-          <!-- Lottie Animation: Dineout Temp Closed (https://lottiefiles.com/free-animation/dineout-temp-closed-xRLAXz1xN9) -->
-          <div style="width: 240px; height: 190px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
-            <iframe src="https://embed.lottiefiles.com/animation/96375" style="width: 240px; height: 190px; border: 0; background: transparent; overflow: hidden; pointer-events: none;" frameborder="0" loading="eager" title="Bilik Suara Ditutup"></iframe>
-          </div>
+        <!-- 21st.dev & Minimalist Vault Sealed Card -->
+        <div id="vote-closed-card" class="closed-hero-section">
+          <div class="closed-card-vault">
+            
+            <!-- Vault Emblem Centerpiece -->
+            <div class="vault-emblem-wrapper">
+              <div class="vault-outer-ring"></div>
+              <div class="vault-inner-glow"></div>
+              <div class="vault-glass-tile">
+                <svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  <circle cx="12" cy="16" r="1.5" fill="currentColor"></circle>
+                </svg>
+              </div>
+            </div>
 
-          <h2 style="font-size: 1.5rem; font-weight: 900; color: #FFFFFF; margin: 0 0 10px 0;">Bilik Suara Resmi Ditutup</h2>
-          <div style="display: inline-block; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #FCA5A5; font-size: 0.84rem; font-weight: 800; padding: 6px 16px; border-radius: 999px; margin-bottom: 18px;">
-            WAKTU PEMUNGUTAN SUARA BERAKHIR • 03 NOV 2026, 23:59:59 WIB
-          </div>
-          <p style="font-size: 0.94rem; color: #CBD5E1; line-height: 1.65; max-width: 520px; margin: 0 auto 22px auto;">
-            Sesuai Regulasi Pemilu Ketua Umum IAGI 2026–2029, gerbang pemungutan suara elektronik telah <strong>resmi ditutup pada pukul 23:59:59 WIB</strong>. Kotak suara digital telah <strong>disegel secara kriptografis</strong> dan tidak menerima surat suara baru. Seluruh layanan pemilih (Beranda, Cek DPT, dan Klaim Token) telah dikunci.
-          </p>
-          <div style="background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 18px 22px; max-width: 480px; margin: 0 auto 24px auto; text-align: left;">
-            <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Tahapan Pemilu Selanjutnya:</div>
-            <div style="font-size: 1.05rem; font-weight: 900; color: #F5BA42; margin-bottom: 4px;">Sidang Pleno Terbuka KPKU IAGI</div>
-            <div style="font-size: 0.82rem; color: #38BDF8;">Pembukaan Segel Kotak Suara &amp; Rekapitulasi Perolehan Suara Calon</div>
-          </div>
-          <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <a href="landing.html" class="btn btn-gold" style="display: inline-flex; width: auto; padding: 14px 32px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 4px 18px rgba(245, 186, 66, 0.3);">
-              <span>Kembali ke Portal Utama</span>
-              <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </a>
+            <!-- Status Pill -->
+            <div>
+              <div class="status-sealed-pill">
+                <span class="status-pulse-dot"></span>
+                <span>VOTING TELAH RESMI DITUTUP &bull; DISEGEL</span>
+              </div>
+            </div>
+
+            <!-- Title & Subtitle -->
+            <h1 class="vault-heading">Pemilihan Ketua Umum<br>IAGI 2026–2029</h1>
+            <p class="vault-subheading">
+              Seluruh gerbang pemungutan suara elektronik (e-Voting) telah resmi ditutup pada <strong>03 November 2026 pukul 23:59:59 WIB</strong>. Kotak suara digital telah <strong>disegel secara kriptografis</strong> (SHA-256 Merkle Chain) dan seluruh layanan pemilih telah dikunci untuk menjaga kedaulatan serta kemurnian suara.
+            </p>
+
+            <!-- 21st.dev Bento Grid -->
+            <div class="bento-matrix">
+              <!-- Item 1: Status Brankas -->
+              <div class="bento-item">
+                <div class="bento-header">
+                  <span class="bento-tag">STATUS BRANKAS</span>
+                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <div class="bento-val">Disegel Kriptografis</div>
+                <div class="bento-sub">SHA-256 Merkle Chain 100% Utuh &amp; Aman</div>
+              </div>
+
+              <!-- Item 2: Waktu Penutupan -->
+              <div class="bento-item">
+                <div class="bento-header">
+                  <span class="bento-tag">WAKTU PENUTUPAN</span>
+                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                <div class="bento-val">03 Nov 2026, 23:59:59 WIB</div>
+                <div class="bento-sub">Tepat waktu sesuai SK Regulasi KPKU</div>
+              </div>
+
+              <!-- Item 3: Agenda Berikutnya -->
+              <div class="bento-item">
+                <div class="bento-header">
+                  <span class="bento-tag">TAHAPAN BERIKUTNYA</span>
+                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                </div>
+                <div class="bento-val">Sidang Pleno Terbuka</div>
+                <div class="bento-sub">Pembukaan Segel &amp; Rekapitulasi Suara</div>
+              </div>
+
+              <!-- Item 4: Integritas Sistem -->
+              <div class="bento-item">
+                <div class="bento-header">
+                  <span class="bento-tag">INTEGRITAS SISTEM</span>
+                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div class="bento-val">LUBER &amp; Zero-Tamper</div>
+                <div class="bento-sub">Terverifikasi sistematis tanpa intervensi</div>
+              </div>
+            </div>
+
+            <!-- Call to Action Buttons -->
+            <div class="cta-actions-row">
+              <a href="landing.html" class="btn-21st-gold">
+                <span>Kembali ke Portal Utama</span>
+                <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </a>
+              <a href="landing.html#kandidat" class="btn-21st-ghost">
+                <span>Profil Calon Pemimpin</span>
+              </a>
+            </div>
+
+            <!-- Verification Footer -->
+            <div class="vault-footer-strip">
+              <span>🔒 KPKU OFFICIAL E-VOTING</span>
+              <span>•</span>
+              <span>SHA-256 MERKLE SEALED</span>
+              <span>•</span>
+              <span>PIT 55TH IAGI &amp; GEOSEA XIX 2026</span>
+            </div>
+
           </div>
         </div>
 
@@ -1166,27 +1785,27 @@
     </main>
 
     <!-- Bottom Mobile Navigation Bar (Floating Ergonomic Capsule Dock) -->
-    <nav class="mobile-nav-dock">
+    <nav class="mobile-nav-dock" style="background: rgba(10, 15, 25, 0.88); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);">
       <button class="nav-item locked-nav" data-screen="home" title="Beranda (Terkunci)" style="opacity: 0.55; cursor: not-allowed;">
-        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-        <span>Beranda 🔒</span>
+        <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span style="font-size:0.68rem;">Beranda</span>
       </button>
 
       <button class="nav-item locked-nav" data-screen="dpt" title="Cek DPT (Terkunci)" style="opacity: 0.55; cursor: not-allowed;">
-        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-        <span>Cek DPT 🔒</span>
+        <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span style="font-size:0.68rem;">Cek DPT</span>
       </button>
 
       <button class="nav-item active highlight-vote" data-screen="vote" title="Bilik Suara (Resmi Ditutup)">
-        <div class="vote-icon-bubble" style="background: linear-gradient(135deg, #EF4444, #991B1B); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);">
-          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <div class="vote-icon-bubble" style="background: linear-gradient(135deg, #F5BA42, #D97706); box-shadow: 0 4px 14px rgba(245, 186, 66, 0.35); color: #021310;">
+          <svg style="width:17px;height:17px;stroke:#021310;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         </div>
-        <span style="color:#FCA5A5;">Bilik Suara 🔒</span>
+        <span style="color:#FDE68A; font-weight:700; font-size:0.68rem;">Ditutup</span>
       </button>
 
       <button class="nav-item locked-nav" data-screen="claim" title="Klaim (Terkunci)" style="opacity: 0.55; cursor: not-allowed;">
-        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-        <span>Klaim 🔒</span>
+        <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span style="font-size:0.68rem;">Klaim</span>
       </button>
     </nav>
 
