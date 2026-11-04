@@ -211,7 +211,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/visitor-tickets/bulk-action', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'bulkAction'])->name('visitorTickets.bulkAction');
             Route::get('/visitor-tickets/print-badges-bulk', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadgesBulk'])->name('visitorTickets.printBadgesBulk');
             Route::get('/visitor-tickets/{id}/print-badge', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'printBadge'])->name('visitorTickets.printBadge');
-            Route::get('/visitor-tickets/export', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'exportCsv'])->name('visitorTickets.export');
+            Route::match(['get', 'post'], '/visitor-tickets/export', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'exportCsv'])->name('visitorTickets.export');
             Route::get('/visitor-tickets/import-template', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'downloadImportTemplate'])->name('visitorTickets.importTemplate');
             Route::post('/visitor-tickets/import', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'importTickets'])->name('visitorTickets.import');
             Route::post('/visitor-tickets/upload-unpaid-excel', [App\Http\Controllers\Admin\VisitorTicketAdminController::class, 'uploadUnpaidExcel'])->name('visitorTickets.uploadUnpaidExcel');

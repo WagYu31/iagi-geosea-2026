@@ -591,33 +591,52 @@ export default function VisitorTicketsIndex({
 
     const [exportMenuAnchor, setExportMenuAnchor] = useState(null);
 
-    const buildExportUrl = (withProofs = false, explicitIds = null) => {
-        const params = new URLSearchParams();
-        if (searchTerm) params.append('search', searchTerm);
-        if (typeFilter && typeFilter.length > 0) {
-            typeFilter.forEach(t => params.append('type[]', t));
-        }
-        if (registrationTypeFilter !== 'all') params.append('registration_type', registrationTypeFilter);
-        if (checkedInFilter !== 'all') params.append('checked_in', checkedInFilter);
-        if (statusFilter !== 'all') params.append('status', statusFilter);
-        if (debtFilter !== 'all') params.append('debt', debtFilter);
-        if (emailSentFilter !== 'all') params.append('email_sent', emailSentFilter);
-        if (duplicateFilter !== 'all') params.append('duplicate', duplicateFilter);
-        if (invoiceFilter !== 'all') params.append('invoice_filter', invoiceFilter);
-        if (cardPrintedFilter !== 'all') params.append('card_printed', cardPrintedFilter);
-        if (sortFilter && sortFilter !== 'latest') params.append('sort', sortFilter);
+    const triggerExport = (withProofs = false, useSelected = false) => {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = route('admin.visitorTickets.export');
+        form.style.display = 'none';
 
-        const idsToUse = explicitIds !== null ? explicitIds : (selectedIds.length > 0 ? selectedIds : null);
-        if (idsToUse && idsToUse.length > 0) {
-            params.append('ids', idsToUse.join(','));
+        const addInput = (name, value) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        };
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') 
+            || (typeof window !== 'undefined' && window._csrf_token)
+            || '';
+        if (csrfToken) addInput('_token', csrfToken);
+
+        if (withProofs) addInput('with_proofs', '1');
+
+        if (useSelected && selectedIds.length > 0) {
+            addInput('ids', selectedIds.join(','));
+        } else {
+            if (searchTerm) addInput('search', searchTerm);
+            if (typeFilter && typeFilter.length > 0) {
+                typeFilter.forEach(t => addInput('type[]', t));
+            }
+            if (registrationTypeFilter !== 'all') addInput('registration_type', registrationTypeFilter);
+            if (checkedInFilter !== 'all') addInput('checked_in', checkedInFilter);
+            if (statusFilter !== 'all') addInput('status', statusFilter);
+            if (debtFilter !== 'all') addInput('debt', debtFilter);
+            if (emailSentFilter !== 'all') addInput('email_sent', emailSentFilter);
+            if (duplicateFilter !== 'all') addInput('duplicate', duplicateFilter);
+            if (invoiceFilter !== 'all') addInput('invoice_filter', invoiceFilter);
+            if (cardPrintedFilter !== 'all') addInput('card_printed', cardPrintedFilter);
+            if (sortFilter && sortFilter !== 'latest') addInput('sort', sortFilter);
         }
 
-        if (withProofs) {
-            params.append('with_proofs', '1');
-        }
-
-        const queryString = params.toString();
-        return route('admin.visitorTickets.export') + (queryString ? `?${queryString}` : '');
+        document.body.appendChild(form);
+        form.submit();
+        setTimeout(() => {
+            if (document.body.contains(form)) {
+                document.body.removeChild(form);
+            }
+        }, 3000);
     };
 
     // Ticket Cache for accurate calculation across pages/multi-select
@@ -2519,7 +2538,7 @@ export default function VisitorTicketsIndex({
                             <MenuItem
                                 onClick={() => {
                                     setExportMenuAnchor(null);
-                                    window.location.href = buildExportUrl(false);
+                                    triggerExport(false, false);
                                 }}
                                 sx={{ py: 1.2, px: 2, borderRadius: '10px', gap: 1.5 }}
                             >
@@ -2539,7 +2558,7 @@ export default function VisitorTicketsIndex({
                             <MenuItem
                                 onClick={() => {
                                     setExportMenuAnchor(null);
-                                    window.location.href = buildExportUrl(true);
+                                    triggerExport(true, false);
                                 }}
                                 sx={{ py: 1.2, px: 2, borderRadius: '10px', gap: 1.5, bgcolor: '#f0fdf4', '&:hover': { bgcolor: '#dcfce7' } }}
                             >
@@ -3430,9 +3449,7 @@ export default function VisitorTicketsIndex({
                                 size="small"
                                 variant="contained"
                                 startIcon={<FolderZipIcon sx={{ fontSize: '16px !important' }} />}
-                                onClick={() => {
-                                    window.location.href = buildExportUrl(true, selectedIds);
-                                }}
+                                onClick={() => triggerExport(true, true)}
                                 disabled={bulkActionProcessing}
                                 sx={{
                                     bgcolor: '#0369a1',

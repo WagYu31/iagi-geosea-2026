@@ -2224,7 +2224,22 @@ class VisitorTicketAdminController extends Controller
             $zip->addFromString('visitor_tickets_' . date('Y-m-d_His') . '.csv', $csvContent);
             $zip->close();
 
-            return response()->download($tempZipPath, $zipFilename)->deleteFileAfterSend(true);
+            if (ob_get_level()) {
+                @ob_end_clean();
+            }
+
+            $zipSize = file_exists($tempZipPath) ? filesize($tempZipPath) : 0;
+            $headers = [
+                'Content-Type' => 'application/zip',
+                'Content-Disposition' => 'attachment; filename="' . $zipFilename . '"',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ];
+            if ($zipSize > 0) {
+                $headers['Content-Length'] = $zipSize;
+            }
+
+            return response()->download($tempZipPath, $zipFilename, $headers)->deleteFileAfterSend(true);
         }
 
         // Standard CSV export (includes direct proof URLs)
@@ -2290,6 +2305,10 @@ class VisitorTicketAdminController extends Controller
         rewind($handle);
         $csv = stream_get_contents($handle);
         fclose($handle);
+
+        if (ob_get_level()) {
+            @ob_end_clean();
+        }
 
         return response($csv, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
