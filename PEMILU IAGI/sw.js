@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pemilu-iagi-2026-v5.5.8-auto-close';
+const CACHE_NAME = 'pemilu-iagi-2026-v6.0.0-locked-livechat';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -45,8 +45,8 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // ALWAYS Network-Only for data.js & storage.js to guarantee fresh data without credentials
-  if (url.pathname.includes('data.js') || url.pathname.includes('storage.js')) {
+  // ALWAYS Network-Only for data.js, storage.js, and livechat to guarantee fresh data without caching
+  if (url.pathname.includes('data.js') || url.pathname.includes('storage.js') || url.pathname.includes('livechat')) {
     event.respondWith(
       fetch(event.request, { cache: 'no-store' }).catch(() => {
         return fetch(event.request);
