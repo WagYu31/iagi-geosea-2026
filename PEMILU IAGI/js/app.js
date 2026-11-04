@@ -388,9 +388,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="btn btn-gold" style="width: auto; padding: 7px 16px; font-size: 0.78rem;" onclick="resetDptFilters()">
               <span>Reset Pencarian</span>
             </button>
-            <a href="https://wa.me/6285729456481?text=Halo%20Admin%20KPKU,%20nama%20saya%20belum%20muncul%20di%20pencarian%20DPT" target="_blank" class="btn btn-subtle" style="width: auto; padding: 7px 16px; font-size: 0.78rem;">
-              <span>Hubungi Helpdesk WhatsApp</span>
-            </a>
           </div>
         </div>
       `;

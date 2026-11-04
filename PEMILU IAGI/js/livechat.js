@@ -108,9 +108,10 @@
               <svg viewBox="0 0 24 24" style="width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.2;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
               <span>${IS_HELPDESK_LOCKED ? 'Arsip Tiket' : 'Muat Chat'}</span>
             </button>
-            <a href="https://wa.me/${KPKU_WA_NUMBER}?text=Halo%20Sekretariat%20PP%20IAGI,%20saya%20ingin%20menanyakan%20informasi%20resmi%20pasca%20Pemilu%20IAGI%202026." target="_blank" rel="noopener noreferrer" class="btn-chat-wa" title="Hubungi Sekretariat di WhatsApp">
+            ${!IS_HELPDESK_LOCKED ? `
+            <a href="https://wa.me/${KPKU_WA_NUMBER}?text=Halo%20Panitia%20KPKU%20IAGI%202026,%20saya%20butuh%20bantuan%20terkait%20Pemilu." target="_blank" rel="noopener noreferrer" class="btn-chat-wa" title="Lanjut Chat di WhatsApp">
               <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.4-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg>
-            </a>
+            </a>` : ''}
             <button type="button" class="btn-chat-close" id="btn-chat-close" aria-label="Tutup Chat">&times;</button>
           </div>
         </div>
@@ -164,15 +165,19 @@
               <span>LAYANAN RESMI SELESAI</span>
             </div>
 
-            <h3 class="chat-locked-title">Helpdesk Pemilu Telah Ditutup</h3>
+            <h3 class="chat-locked-title">Helpdesk & Hotline Ditutup</h3>
             <p class="chat-locked-desc">
-              Seluruh rangkaian pemungutan suara elektronik (e-Voting) dan Sidang Pleno Terbuka KPKU IAGI 2026–2029 telah selesai dilaksanakan. Kanal aduan & bantuan pemilih resmi dinonaktifkan.
+              Seluruh rangkaian pemungutan suara elektronik (e-Voting) dan Sidang Pleno Terbuka KPKU IAGI 2026–2029 telah selesai dilaksanakan. Kanal aduan, bantuan pemilih, dan kontak hotline WhatsApp resmi dinonaktifkan.
             </p>
 
             <div class="chat-locked-bento">
               <div class="chat-bento-item">
                 <span class="chat-bento-label">Status Helpdesk:</span>
                 <span class="chat-bento-val val-danger">● RESMI DITUTUP</span>
+              </div>
+              <div class="chat-bento-item">
+                <span class="chat-bento-label">Hotline WhatsApp:</span>
+                <span class="chat-bento-val val-danger">● NONAKTIF</span>
               </div>
               <div class="chat-bento-item">
                 <span class="chat-bento-label">Pemungutan Suara:</span>
@@ -190,18 +195,17 @@
 
             <div class="chat-locked-notice">
               <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#F5BA42" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              <span>Untuk pertanyaan administratif atau korespondensi resmi pasca-pemilu, silakan hubungi Sekretariat PP IAGI via WhatsApp.</span>
+              <span>Seluruh kanal pengaduan panitia, verifikasi DPT, klaim token, serta kontak WhatsApp resmi telah ditutup secara permanen.</span>
             </div>
 
             <div class="chat-locked-actions">
-              <a href="https://wa.me/${KPKU_WA_NUMBER}?text=Halo%20Sekretariat%20PP%20IAGI,%20saya%20ingin%20menanyakan%20informasi%20resmi%20pasca%20Pemilu%20IAGI%202026." target="_blank" rel="noopener noreferrer" class="btn-chat-wa-primary">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.4-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg>
-                <span>Hubungi Sekretariat PP IAGI (WA)</span>
+              <a href="landing.html" class="btn-chat-portal-primary">
+                <span>← Kembali ke Beranda Utama</span>
               </a>
 
-              <a href="landing.html" class="btn-chat-portal-secondary">
-                <span>Kembali ke Beranda Utama</span>
-              </a>
+              <button type="button" class="btn-chat-portal-secondary" onclick="document.getElementById('chat-window').classList.remove('active'); const o = document.getElementById('chat-overlay'); if (o) o.classList.remove('active');">
+                Tutup Jendela
+              </button>
             </div>
 
             <div class="chat-locked-footer">
@@ -1158,9 +1162,15 @@
     }
 
     // Default Fallback
+    if (IS_HELPDESK_LOCKED) {
+      return {
+        reply: `Layanan bantuan dan hotline WhatsApp resmi telah dinonaktifkan karena seluruh tahapan Pemilu dan Sidang Pleno telah selesai diselenggarakan.`,
+        chips: []
+      };
+    }
     const waUrl = `https://wa.me/${KPKU_WA_NUMBER}?text=${encodeURIComponent('Halo Panitia KPKU IAGI 2026, saya ingin menanyakan hal berikut:\n\n"' + query + '"')}`;
     return {
-      reply: `Terima kasih atas pertanyaannya. Terkait pertanyaan <em>"${escapeHtml(query)}"</em>, Anda dapat memilih panduan cepat di bawah atau terhubung langsung dengan Tim Panitia Pelaksana KPKU melalui WhatsApp resmi kami:\n\n<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="bubble-wa-cta"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.4-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg><span>Chat WhatsApp Panitia Sekarang</span></a>`,
+      reply: `Terima kasih atas pertanyaannya. Terkait pertanyaan <em>"${escapeHtml(query)}"</em>, Anda dapat memilih panduan cepat di bawah atau mengirim email ke Panitia:\n\n<a href="mailto:iagisekretariat@gmail.com" class="bubble-wa-cta"><span>Email Sekretariat</span></a>`,
       chips: ['🔍 Cek Status DPT', '🎟️ Cara Klaim Token', '🗳️ Masuk Bilik Suara']
     };
   }
@@ -1188,7 +1198,7 @@
     }
 
     let waButtonHtml = '';
-    if (userQuery) {
+    if (userQuery && !IS_HELPDESK_LOCKED) {
       const waUrl = `https://wa.me/${KPKU_WA_NUMBER}?text=${encodeURIComponent('Halo Panitia KPKU IAGI 2026, saya ingin menanyakan terkait:\n"' + userQuery + '"')}`;
       waButtonHtml = `<a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="bubble-wa-cta"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.4-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg><span>Hubungi WhatsApp Panitia (+62 857-2945-6481)</span></a>`;
     }

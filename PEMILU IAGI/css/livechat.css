@@ -1309,7 +1309,7 @@
   width: 100%;
 }
 
-.btn-chat-wa-primary {
+.btn-chat-portal-primary {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1318,22 +1318,32 @@
   color: #070A0F !important;
   text-decoration: none;
   font-weight: 800;
-  font-size: 0.8rem;
-  padding: 11px 16px;
-  border-radius: 10px;
+  font-size: 0.82rem;
+  padding: 12px 18px;
+  border-radius: 12px;
   width: 100%;
   box-shadow: 0 4px 14px rgba(245, 186, 66, 0.35);
   transition: all 0.2s;
   touch-action: manipulation;
 }
 
-.btn-chat-wa-primary:hover {
+.btn-chat-portal-primary:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
 }
 
-.btn-chat-wa-primary:active {
+.btn-chat-portal-primary:active {
   transform: scale(0.98);
+}
+
+.kpku-chat-window.window-locked .btn-chat-wa,
+.kpku-chat-window.window-locked .bubble-wa-cta,
+.kpku-chat-window.window-locked a[href*="wa.me"] {
+  display: none !important;
+}
+
+.btn-chat-wa-primary {
+  display: none !important;
 }
 
 .btn-chat-portal-secondary {
@@ -1351,6 +1361,7 @@
   width: 100%;
   transition: all 0.2s;
   touch-action: manipulation;
+  cursor: pointer;
 }
 
 .btn-chat-portal-secondary:hover {
