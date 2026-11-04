@@ -2163,50 +2163,46 @@ class VisitorTicketAdminController extends Controller
         $statusStats = [];
 
         foreach ($tickets as $t) {
+            $fin = \App\Services\VisitorTicketExcelService::computeTicketFinancials($t);
             $p = $t->payment;
             $proofZipEntry = ($p && isset($addedProofs[$p->id])) ? $addedProofs[$p->id] : '-';
             $proofUrl = ($p && !empty($p->proof_of_payment)) ? $this->resolveProofUrl($p->proof_of_payment) : '-';
 
-            $basePrice = (float)($t->individual_price ?? $t->price ?? 0);
+            $ticketPrice = $fin['ticket_price'];
             $disc = $p ? (float)($p->discount_amount ?? 0) : 0;
             $uniq = $p ? (float)($p->unique_code ?? 0) : 0;
-            $tot = $p ? (float)$p->total_amount : 0;
-
-            $isPaid = ($p && in_array(strtolower($p->status), ['verified', 'paid', 'approved', 'success']));
-            $isDebt = ($p && (bool)$p->is_debt && !$isPaid);
             $cat = $t->category_label ?? strtoupper($t->visitor_type ?? 'VISITOR');
-            $pStat = $p ? strtoupper($p->status) : 'FREE';
 
-            $totalBase += $basePrice;
+            $totalBase += $ticketPrice;
             $totalDiscount += $disc;
             $totalUnique += $uniq;
-            $totalNominal += $tot;
-            if ($isPaid) $totalPaid += $tot;
-            if ($isDebt) $totalDebt += $tot;
+            $totalNominal += $ticketPrice;
+            $totalPaid += $fin['paid_amount'];
+            $totalDebt += $fin['debt_amount'];
             if ($t->checked_in) $checkedInCount++;
             if ($t->card_printed) $cardPrintedCount++;
 
             if (!isset($catStats[$cat])) {
-                $catStats[$cat] = ['count' => 0, 'total' => 0, 'paid' => 0, 'debt' => 0, 'printed' => 0, 'checkin' => 0];
+                $catStats[$cat] = ['count' => 0, 'total' => 0.0, 'paid' => 0.0, 'debt' => 0.0, 'printed' => 0, 'checkin' => 0];
             }
             $catStats[$cat]['count']++;
-            $catStats[$cat]['total'] += $tot;
-            if ($isPaid) $catStats[$cat]['paid'] += $tot;
-            if ($isDebt) $catStats[$cat]['debt'] += $tot;
+            $catStats[$cat]['total'] += $ticketPrice;
+            $catStats[$cat]['paid'] += $fin['paid_amount'];
+            $catStats[$cat]['debt'] += $fin['debt_amount'];
             if ($t->card_printed) $catStats[$cat]['printed']++;
             if ($t->checked_in) $catStats[$cat]['checkin']++;
 
-            $statLabel = $isDebt ? 'DEBT (HUTANG)' : ($isPaid ? 'PAID / LUNAS' : ($p ? $pStat : 'FREE'));
+            $statLabel = $fin['status_label'];
             if (!isset($statusStats[$statLabel])) {
-                $statusStats[$statLabel] = ['count' => 0, 'total' => 0];
+                $statusStats[$statLabel] = ['count' => 0, 'total' => 0.0];
             }
             $statusStats[$statLabel]['count']++;
-            $statusStats[$statLabel]['total'] += $tot;
+            $statusStats[$statLabel]['total'] += $ticketPrice;
 
             $row = [
                 $t->ticket_code,
-                $p ? ($p->receipt_no ?? '-') : '-',
-                $p ? $p->payment_code : '-',
+                $fin['receipt_no'],
+                $fin['payment_code'],
                 $t->visitor_name,
                 $t->visitor_email,
                 $t->visitor_phone ?? '-',
@@ -2214,13 +2210,13 @@ class VisitorTicketAdminController extends Controller
                 $cat,
                 $t->registration_source === 'admin_onsite' ? 'Onsite (Admin)' : 'Online Self',
                 strtoupper($t->status),
-                $p ? strtoupper($p->payment_method) : 'FREE',
-                $p ? strtoupper($p->status) : 'FREE',
-                $basePrice,
+                $fin['payment_method'],
+                $fin['payment_status'],
+                $ticketPrice,
                 $disc,
                 $p ? ($p->discount_notes ?? '-') : '-',
                 $uniq,
-                $tot,
+                $ticketPrice,
                 $t->checked_in ? 'YES' : 'NO',
                 $t->checked_in_at ? $t->checked_in_at->format('Y-m-d H:i:s') : '-',
                 $t->card_printed ? 'SUDAH CETAK' : 'BELUM CETAK',
