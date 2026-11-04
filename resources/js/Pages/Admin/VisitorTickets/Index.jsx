@@ -97,6 +97,8 @@ import TableChartRoundedIcon from '@mui/icons-material/TableChartRounded';
 import SortIcon from '@mui/icons-material/Sort';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import FolderZipIcon from '@mui/icons-material/FolderZip';
 import VisitorAnalyticsDashboard from '@/Components/VisitorTickets/VisitorAnalyticsDashboard';
 
 const CATEGORY_META = {
@@ -586,6 +588,37 @@ export default function VisitorTicketsIndex({
             console.error('Failed to save selectedIds to localStorage', e);
         }
     }, [selectedIds]);
+
+    const [exportMenuAnchor, setExportMenuAnchor] = useState(null);
+
+    const buildExportUrl = (withProofs = false, explicitIds = null) => {
+        const params = new URLSearchParams();
+        if (searchTerm) params.append('search', searchTerm);
+        if (typeFilter && typeFilter.length > 0) {
+            typeFilter.forEach(t => params.append('type[]', t));
+        }
+        if (registrationTypeFilter !== 'all') params.append('registration_type', registrationTypeFilter);
+        if (checkedInFilter !== 'all') params.append('checked_in', checkedInFilter);
+        if (statusFilter !== 'all') params.append('status', statusFilter);
+        if (debtFilter !== 'all') params.append('debt', debtFilter);
+        if (emailSentFilter !== 'all') params.append('email_sent', emailSentFilter);
+        if (duplicateFilter !== 'all') params.append('duplicate', duplicateFilter);
+        if (invoiceFilter !== 'all') params.append('invoice_filter', invoiceFilter);
+        if (cardPrintedFilter !== 'all') params.append('card_printed', cardPrintedFilter);
+        if (sortFilter && sortFilter !== 'latest') params.append('sort', sortFilter);
+
+        const idsToUse = explicitIds !== null ? explicitIds : (selectedIds.length > 0 ? selectedIds : null);
+        if (idsToUse && idsToUse.length > 0) {
+            params.append('ids', idsToUse.join(','));
+        }
+
+        if (withProofs) {
+            params.append('with_proofs', '1');
+        }
+
+        const queryString = params.toString();
+        return route('admin.visitorTickets.export') + (queryString ? `?${queryString}` : '');
+    };
 
     // Ticket Cache for accurate calculation across pages/multi-select
     const [ticketCache, setTicketCache] = useState({});
@@ -2438,10 +2471,10 @@ export default function VisitorTicketsIndex({
                         </Button>
 
                         <Button
-                            component="a"
-                            href={route('admin.visitorTickets.export')}
                             variant="outlined"
+                            onClick={(e) => setExportMenuAnchor(e.currentTarget)}
                             startIcon={<DownloadIcon />}
+                            endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 16 }} />}
                             sx={{
                                 color: '#334155',
                                 borderColor: '#cbd5e1',
@@ -2468,8 +2501,59 @@ export default function VisitorTicketsIndex({
                                 transition: 'all 0.12s ease',
                             }}
                         >
-                            Export CSV
+                            Export CSV / ZIP
                         </Button>
+                        <Menu
+                            anchorEl={exportMenuAnchor}
+                            open={Boolean(exportMenuAnchor)}
+                            onClose={() => setExportMenuAnchor(null)}
+                            PaperProps={{
+                                sx: {
+                                    borderRadius: '14px',
+                                    boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                                    p: 0.8,
+                                    minWidth: 280,
+                                }
+                            }}
+                        >
+                            <MenuItem
+                                onClick={() => {
+                                    setExportMenuAnchor(null);
+                                    window.location.href = buildExportUrl(false);
+                                }}
+                                sx={{ py: 1.2, px: 2, borderRadius: '10px', gap: 1.5 }}
+                            >
+                                <FileDownloadIcon sx={{ color: '#094d42', fontSize: 22 }} />
+                                <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a' }}>
+                                        📄 Export File CSV Saja
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem', display: 'block' }}>
+                                        Dilengkapi kolom link online bukti bayar
+                                    </Typography>
+                                </Box>
+                            </MenuItem>
+
+                            <Divider sx={{ my: 0.8 }} />
+
+                            <MenuItem
+                                onClick={() => {
+                                    setExportMenuAnchor(null);
+                                    window.location.href = buildExportUrl(true);
+                                }}
+                                sx={{ py: 1.2, px: 2, borderRadius: '10px', gap: 1.5, bgcolor: '#f0fdf4', '&:hover': { bgcolor: '#dcfce7' } }}
+                            >
+                                <FolderZipIcon sx={{ color: '#059669', fontSize: 24 }} />
+                                <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 900, color: '#065f46' }}>
+                                        📦 Export CSV + Bukti Bayar (.ZIP)
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#047857', fontSize: '0.72rem', display: 'block' }}>
+                                        Paket ZIP berisi CSV & folder file bukti transfer
+                                    </Typography>
+                                </Box>
+                            </MenuItem>
+                        </Menu>
                     </Box>
                 </Box>
 
@@ -3341,6 +3425,29 @@ export default function VisitorTicketsIndex({
                                 }}
                             >
                                 Tandai Cetak ({selectedIds.length})
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="contained"
+                                startIcon={<FolderZipIcon sx={{ fontSize: '16px !important' }} />}
+                                onClick={() => {
+                                    window.location.href = buildExportUrl(true, selectedIds);
+                                }}
+                                disabled={bulkActionProcessing}
+                                sx={{
+                                    bgcolor: '#0369a1',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    fontSize: '0.82rem',
+                                    borderRadius: '10px',
+                                    whiteSpace: 'nowrap',
+                                    boxShadow: '0 3px 0 #075985',
+                                    px: 1.4,
+                                    '&:hover': { bgcolor: '#075985' },
+                                }}
+                            >
+                                📦 Export + Bukti ({selectedIds.length})
                             </Button>
                             <Button
                                 size="small"

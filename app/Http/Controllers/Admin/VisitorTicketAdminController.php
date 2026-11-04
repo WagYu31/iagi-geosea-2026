@@ -2045,14 +2045,192 @@ class VisitorTicketAdminController extends Controller
     }
 
     /**
-     * Export Visitor Tickets to CSV
+     * Resolve actual file path of payment proof on local server disk
      */
-    public function exportCsv()
+    private function resolveProofPath($proof)
     {
-        $tickets = VisitorTicket::with(['payment', 'checkedInBy'])->latest()->get();
+        if (empty($proof)) return null;
 
+        // Try direct file path
+        if (file_exists($proof)) return $proof;
+
+        $clean = ltrim($proof, '/');
+        // If it starts with storage/, remove it to check storage/app/public/
+        if (str_starts_with($clean, 'storage/')) {
+            $sub = substr($clean, 8);
+            if (Storage::disk('public')->exists($sub)) {
+                return Storage::disk('public')->path($sub);
+            }
+            if (file_exists(public_path($clean))) {
+                return public_path($clean);
+            }
+        }
+
+        // Try Storage public disk
+        if (Storage::disk('public')->exists($clean)) {
+            return Storage::disk('public')->path($clean);
+        }
+
+        // Try public_path('storage/' . $clean)
+        if (file_exists(public_path('storage/' . $clean))) {
+            return public_path('storage/' . $clean);
+        }
+
+        // Try storage_path('app/public/' . $clean)
+        if (file_exists(storage_path('app/public/' . $clean))) {
+            return storage_path('app/public/' . $clean);
+        }
+
+        // Try storage_path('app/' . $clean)
+        if (file_exists(storage_path('app/' . $clean))) {
+            return storage_path('app/' . $clean);
+        }
+
+        // Try public_path($clean)
+        if (file_exists(public_path($clean))) {
+            return public_path($clean);
+        }
+
+        return null;
+    }
+
+    /**
+     * Resolve full online URL for payment proof
+     */
+    private function resolveProofUrl($proof)
+    {
+        if (empty($proof)) return '-';
+        if (str_starts_with($proof, 'http://') || str_starts_with($proof, 'https://')) {
+            return $proof;
+        }
+        $clean = ltrim($proof, '/');
+        if (str_starts_with($clean, 'storage/')) {
+            return url($clean);
+        }
+        return url('storage/' . $clean);
+    }
+
+    /**
+     * Export Visitor Tickets to CSV or ZIP (with proof of payment files)
+     */
+    public function exportCsv(Request $request)
+    {
+        if ($request->filled('ids')) {
+            $idArray = is_array($request->ids) ? $request->ids : array_filter(explode(',', (string)$request->ids));
+            $tickets = VisitorTicket::with(['payment', 'checkedInBy'])->whereIn('id', $idArray)->latest()->get();
+        } else {
+            $query = $this->filterTicketsQuery($request);
+            $tickets = $query->latest()->get();
+        }
+
+        $withProofs = $request->boolean('with_proofs') || $request->input('format') === 'zip';
+
+        if ($withProofs) {
+            @set_time_limit(300);
+            @ini_set('memory_limit', '512M');
+
+            $zipFilename = 'visitor_tickets_dan_bukti_bayar_' . date('Y-m-d_His') . '.zip';
+            $tempZipPath = tempnam(sys_get_temp_dir(), 'vis_zip_');
+
+            $zip = new \ZipArchive();
+            if ($zip->open($tempZipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+                return response('Gagal membuat arsip ZIP di server', 500);
+            }
+
+            // Map and add unique proof files to the ZIP archive
+            $addedProofs = []; // payment_id => zipEntryName
+            foreach ($tickets as $t) {
+                $p = $t->payment;
+                if ($p && !empty($p->proof_of_payment) && !isset($addedProofs[$p->id])) {
+                    $realPath = $this->resolveProofPath($p->proof_of_payment);
+                    if ($realPath && file_exists($realPath) && is_readable($realPath)) {
+                        $ext = pathinfo($realPath, PATHINFO_EXTENSION) ?: 'jpg';
+                        $safeReceipt = preg_replace('/[^A-Za-z0-9_\-]/', '_', $p->receipt_no ?? $p->payment_code ?? 'PAY_' . $p->id);
+                        $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '_', $t->visitor_name ?? 'Peserta');
+                        $entryName = "bukti_pembayaran/{$safeReceipt}_{$safeName}.{$ext}";
+
+                        $zip->addFile($realPath, $entryName);
+                        $addedProofs[$p->id] = $entryName;
+                    }
+                }
+            }
+
+            // Build CSV with ZIP file references and URLs
+            $handle = fopen('php://temp', 'r+');
+            fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM
+            fputcsv($handle, [
+                'Ticket Code',
+                'Invoice / Receipt No',
+                'Payment Code',
+                'Visitor Name',
+                'Email',
+                'Phone / WhatsApp',
+                'Institution',
+                'Category',
+                'Registration Source',
+                'Status',
+                'Payment Method',
+                'Payment Status',
+                'Base Amount (IDR)',
+                'Discount (IDR)',
+                'Discount Notes',
+                'Unique Code',
+                'Total Amount (IDR)',
+                'Checked In',
+                'Checked In Time',
+                'Card Printed',
+                'Registered At',
+                'Bukti Bayar (File di Folder ZIP)',
+                'Bukti Bayar (URL Online)',
+            ]);
+
+            foreach ($tickets as $t) {
+                $p = $t->payment;
+                $proofZipEntry = ($p && isset($addedProofs[$p->id])) ? $addedProofs[$p->id] : '-';
+                $proofUrl = ($p && !empty($p->proof_of_payment)) ? $this->resolveProofUrl($p->proof_of_payment) : '-';
+
+                fputcsv($handle, [
+                    $t->ticket_code,
+                    $p ? ($p->receipt_no ?? '-') : '-',
+                    $p ? $p->payment_code : '-',
+                    $t->visitor_name,
+                    $t->visitor_email,
+                    $t->visitor_phone ?? '-',
+                    $t->visitor_institution ?? '-',
+                    $t->category_label ?? strtoupper($t->visitor_type),
+                    $t->registration_source === 'admin_onsite' ? 'Onsite (Admin)' : 'Online Self',
+                    strtoupper($t->status),
+                    $p ? strtoupper($p->payment_method) : 'FREE',
+                    $p ? strtoupper($p->status) : 'FREE',
+                    $t->individual_price ?? ($t->price ?? 0),
+                    $p ? ($p->discount_amount ?? 0) : 0,
+                    $p ? ($p->discount_notes ?? '-') : '-',
+                    $p ? ($p->unique_code ?? 0) : 0,
+                    $p ? $p->total_amount : 0,
+                    $t->checked_in ? 'YES' : 'NO',
+                    $t->checked_in_at ? $t->checked_in_at->format('Y-m-d H:i:s') : '-',
+                    $t->card_printed ? 'YES' : 'NO',
+                    $t->created_at->format('Y-m-d H:i:s'),
+                    $proofZipEntry,
+                    $proofUrl,
+                ]);
+            }
+
+            rewind($handle);
+            $csvContent = stream_get_contents($handle);
+            fclose($handle);
+
+            // Add CSV into the ZIP archive
+            $zip->addFromString('visitor_tickets_' . date('Y-m-d_His') . '.csv', $csvContent);
+            $zip->close();
+
+            return response()->download($tempZipPath, $zipFilename)->deleteFileAfterSend(true);
+        }
+
+        // Standard CSV export (includes direct proof URLs)
         $filename = 'visitor_tickets_' . date('Y-m-d_His') . '.csv';
         $handle = fopen('php://temp', 'r+');
+        fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM
 
         fputcsv($handle, [
             'Ticket Code',
@@ -2076,10 +2254,13 @@ class VisitorTicketAdminController extends Controller
             'Checked In Time',
             'Card Printed',
             'Registered At',
+            'Bukti Bayar (URL Online)',
         ]);
 
         foreach ($tickets as $t) {
             $p = $t->payment;
+            $proofUrl = ($p && !empty($p->proof_of_payment)) ? $this->resolveProofUrl($p->proof_of_payment) : '-';
+
             fputcsv($handle, [
                 $t->ticket_code,
                 $p ? ($p->receipt_no ?? '-') : '-',
@@ -2102,6 +2283,7 @@ class VisitorTicketAdminController extends Controller
                 $t->checked_in_at ? $t->checked_in_at->format('Y-m-d H:i:s') : '-',
                 $t->card_printed ? 'YES' : 'NO',
                 $t->created_at->format('Y-m-d H:i:s'),
+                $proofUrl,
             ]);
         }
 
@@ -2110,7 +2292,7 @@ class VisitorTicketAdminController extends Controller
         fclose($handle);
 
         return response($csv, 200, [
-            'Content-Type' => 'text/csv',
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
