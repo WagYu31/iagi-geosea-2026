@@ -1710,11 +1710,12 @@ export default function VisitorTicketsIndex({
     const handleBulkAction = (actionName) => {
         if (selectedIds.length === 0) return;
 
-        let confirmMsg = `Execute bulk action for ${selectedIds.length} selected tickets?`;
-        if (actionName === 'delete') confirmMsg = `WARNING: Are you sure you want to PERMANENTLY DELETE ${selectedIds.length} selected tickets?`;
-        if (actionName === 'verify_payment') confirmMsg = `Verify payment for ${selectedIds.length} selected tickets?`;
-        if (actionName === 'check_in') confirmMsg = `Perform bulk check-in for ${selectedIds.length} selected tickets?`;
-        if (actionName === 'undo_check_in') confirmMsg = `Undo check-in for ${selectedIds.length} selected tickets?`;
+        let confirmMsg = `Eksekusi aksi massal untuk ${selectedIds.length} tiket terpilih?`;
+        if (actionName === 'delete') confirmMsg = `PERINGATAN: Apakah Anda yakin ingin MENGHAPUS PERMANEN ${selectedIds.length} tiket terpilih?`;
+        if (actionName === 'activate_tickets' || actionName === 'verify_payment') confirmMsg = `UBAH MASSAL KE ACTIVE: Apakah Anda yakin ingin mengubah status ${selectedIds.length} tiket terpilih menjadi ACTIVE? (Status pembayaran juga otomatis disetujui)`;
+        if (actionName === 'mark_printed') confirmMsg = `TANDAI KARTU DICETAK: Tandai ${selectedIds.length} tiket terpilih sebagai SUDAH CETAK KARTU (sekaligus Check-In)?`;
+        if (actionName === 'check_in') confirmMsg = `Lakukan Check-In massal untuk ${selectedIds.length} tiket terpilih?`;
+        if (actionName === 'undo_check_in') confirmMsg = `Batalkan check-in untuk ${selectedIds.length} tiket terpilih?`;
         if (actionName === 'resend_email') confirmMsg = `Kirim / Resend E-Tiket ke ${selectedIds.length} email pengunjung yang dipilih?`;
 
         if (confirm(confirmMsg)) {
@@ -1730,6 +1731,34 @@ export default function VisitorTicketsIndex({
                 }
             });
         }
+    };
+
+    const handleActivateAllFilteredPending = () => {
+        const pendingCount = stats.pendingVerificationCount || totalItems || 0;
+        if (!confirm(`UBAH SEMUA KE ACTIVE: Yakin ingin mengubah SEMUA ${pendingCount} tiket berstatus PENDING hasil filter saat ini menjadi ACTIVE? (Status pembayaran juga otomatis disetujui)`)) {
+            return;
+        }
+
+        setBulkActionProcessing(true);
+        router.post(route('admin.visitorTickets.bulkAction'), {
+            action: 'activate_tickets',
+            mode: 'filtered_pending',
+            search: searchTerm,
+            type: typeFilter,
+            registration_type: registrationTypeFilter,
+            checked_in: checkedInFilter,
+            status: 'pending',
+            debt: debtFilter,
+            email_sent: emailSentFilter,
+            duplicate: duplicateFilter,
+            invoice_filter: invoiceFilter,
+        }, {
+            preserveScroll: true,
+            onFinish: () => {
+                setBulkActionProcessing(false);
+                setSelectedIds([]);
+            }
+        });
     };
 
     const handleOpenPrintBadges = (mode = 'selected') => {
@@ -3274,21 +3303,44 @@ export default function VisitorTicketsIndex({
                             <Button
                                 size="small"
                                 variant="contained"
-                                startIcon={<CheckIcon />}
-                                onClick={() => handleBulkAction('verify_payment')}
+                                startIcon={<CheckCircleIcon sx={{ fontSize: '18px !important' }} />}
+                                onClick={() => handleBulkAction('activate_tickets')}
                                 disabled={bulkActionProcessing}
                                 sx={{
                                     bgcolor: '#10b981',
                                     color: '#fff',
                                     textTransform: 'none',
                                     fontWeight: 900,
+                                    fontSize: '0.82rem',
                                     borderRadius: '10px',
                                     whiteSpace: 'nowrap',
-                                    boxShadow: '0 3px 0 #047857',
+                                    boxShadow: '0 3px 0 #047857, 0 4px 12px rgba(16,185,129,0.35)',
+                                    px: 1.6,
                                     '&:hover': { bgcolor: '#059669' },
                                 }}
                             >
-                                Verify Payment
+                                ⚡ Ubah ke ACTIVE ({selectedIds.length})
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="contained"
+                                startIcon={<PrintIcon sx={{ fontSize: '16px !important' }} />}
+                                onClick={() => handleBulkAction('mark_printed')}
+                                disabled={bulkActionProcessing}
+                                sx={{
+                                    bgcolor: '#8b5cf6',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    fontSize: '0.82rem',
+                                    borderRadius: '10px',
+                                    whiteSpace: 'nowrap',
+                                    boxShadow: '0 3px 0 #6d28d9',
+                                    px: 1.4,
+                                    '&:hover': { bgcolor: '#7c3aed' },
+                                }}
+                            >
+                                Tandai Cetak ({selectedIds.length})
                             </Button>
                             <Button
                                 size="small"
@@ -3455,19 +3507,45 @@ export default function VisitorTicketsIndex({
                                 />
                             )}
                             {statusFilter === 'pending' && (
-                                <Chip
-                                    icon={<PaidIcon sx={{ fontSize: '13px !important', color: '#c2410c !important' }} />}
-                                    label={`Filter Aktif: Menunggu Verifikasi (${totalItems} tiket)`}
-                                    size="small"
-                                    onDelete={handleResetFilters}
-                                    sx={{
-                                        fontWeight: 800,
-                                        fontSize: '0.74rem',
-                                        bgcolor: '#fff7ed',
-                                        color: '#c2410c',
-                                        border: '1.5px solid #fed7aa',
-                                    }}
-                                />
+                                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+                                    <Chip
+                                        icon={<PaidIcon sx={{ fontSize: '13px !important', color: '#c2410c !important' }} />}
+                                        label={`Filter Aktif: Menunggu Verifikasi (${totalItems} tiket)`}
+                                        size="small"
+                                        onDelete={handleResetFilters}
+                                        sx={{
+                                            fontWeight: 800,
+                                            fontSize: '0.74rem',
+                                            bgcolor: '#fff7ed',
+                                            color: '#c2410c',
+                                            border: '1.5px solid #fed7aa',
+                                        }}
+                                    />
+                                    {totalItems > 0 && (
+                                        <Button
+                                            size="small"
+                                            variant="contained"
+                                            onClick={handleActivateAllFilteredPending}
+                                            disabled={bulkActionProcessing}
+                                            startIcon={<CheckCircleIcon sx={{ fontSize: 14 }} />}
+                                            sx={{
+                                                bgcolor: '#10b981',
+                                                color: '#ffffff',
+                                                fontSize: '0.72rem',
+                                                fontWeight: 900,
+                                                textTransform: 'none',
+                                                py: 0.3,
+                                                px: 1.3,
+                                                borderRadius: '8px',
+                                                boxShadow: '0 2px 6px rgba(16, 185, 129, 0.35)',
+                                                whiteSpace: 'nowrap',
+                                                '&:hover': { bgcolor: '#059669' },
+                                            }}
+                                        >
+                                            ⚡ Ubah Semua {totalItems} Tiket Pending ke ACTIVE
+                                        </Button>
+                                    )}
+                                </Box>
                             )}
                             {checkedInFilter === 'yes' && (
                                 <Chip

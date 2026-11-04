@@ -2997,14 +2997,26 @@ class VisitorTicketAdminController extends Controller
     public function bulkAction(Request $request)
     {
         $request->validate([
-            'action' => 'required|in:verify_payment,check_in,undo_check_in,cancel_ticket,delete,resend_email',
-            'ticket_ids' => 'required|array',
+            'action' => 'required|in:verify_payment,activate_tickets,mark_pending,mark_printed,check_in,undo_check_in,cancel_ticket,delete,resend_email',
+            'ticket_ids' => 'nullable|array',
             'ticket_ids.*' => 'integer|exists:visitor_tickets,id',
+            'mode' => 'nullable|string|in:selected,filtered_pending',
         ]);
 
         $action = $request->action;
-        $ticketIds = $request->ticket_ids;
-        $tickets = VisitorTicket::whereIn('id', $ticketIds)->get();
+
+        if ($request->input('mode') === 'filtered_pending') {
+            $query = $this->filterTicketsQuery($request);
+            $tickets = $query->where('visitor_tickets.status', 'pending')->get();
+            $ticketIds = $tickets->pluck('id')->toArray();
+        } else {
+            $ticketIds = $request->ticket_ids ?? [];
+            $tickets = VisitorTicket::whereIn('id', $ticketIds)->get();
+        }
+
+        if (empty($ticketIds) && in_array($action, ['activate_tickets', 'verify_payment', 'mark_pending', 'mark_printed', 'check_in', 'undo_check_in', 'cancel_ticket', 'delete'])) {
+            return back()->with('error', 'Tidak ada tiket yang dipilih untuk diproses.');
+        }
 
         switch ($action) {
             case 'resend_email':
@@ -3030,15 +3042,46 @@ class VisitorTicketAdminController extends Controller
                     return back()->with('warning', "E-Tiket terkirim ke {$successCount} email ({$failCount} email gagal).");
                 }
 
+            case 'activate_tickets':
             case 'verify_payment':
-                $paymentIds = $tickets->pluck('payment_id')->filter()->unique();
-                VisitorPayment::whereIn('id', $paymentIds)->update([
-                    'status' => 'approved',
-                    'verified_at' => now(),
-                    'verified_by_admin_id' => Auth::id(),
+                // 1. Ubah status semua tiket terpilih menjadi 'active'
+                VisitorTicket::whereIn('id', $ticketIds)->update([
+                    'status' => 'active',
                 ]);
-                VisitorTicket::whereIn('payment_id', $paymentIds)->update(['status' => 'active']);
-                return back()->with('success', count($paymentIds) . ' pembayaran berhasil diverifikasi secara massal!');
+
+                // 2. Setujui invoice pembayaran terkait jika ada
+                $paymentIds = $tickets->pluck('payment_id')->filter()->unique();
+                if ($paymentIds->isNotEmpty()) {
+                    VisitorPayment::whereIn('id', $paymentIds)->where('status', '!=', 'approved')->update([
+                        'status' => 'approved',
+                        'verified_at' => now(),
+                        'verified_by_admin_id' => Auth::id(),
+                    ]);
+                    // Pastikan seluruh tiket anggota dalam invoice yang sama juga berstatus active
+                    VisitorTicket::whereIn('payment_id', $paymentIds)->update(['status' => 'active']);
+                }
+
+                $activatedCount = count($ticketIds);
+                return back()->with('success', "Sukses! {$activatedCount} tiket berhasil diubah statusnya menjadi ACTIVE (Pending Terverifikasi) secara massal.");
+
+            case 'mark_pending':
+                VisitorTicket::whereIn('id', $ticketIds)->update(['status' => 'pending']);
+                return back()->with('success', count($ticketIds) . ' tiket berhasil diubah menjadi PENDING.');
+
+            case 'mark_printed':
+                $now = now();
+                $adminId = Auth::id();
+                VisitorTicket::whereIn('id', $ticketIds)->update([
+                    'card_printed' => true,
+                    'card_printed_at' => $now,
+                    'card_printed_by_admin_id' => $adminId,
+                ]);
+                VisitorTicket::whereIn('id', $ticketIds)->where('status', 'active')->where('checked_in', false)->update([
+                    'checked_in' => true,
+                    'checked_in_at' => $now,
+                    'checked_in_by_admin_id' => $adminId,
+                ]);
+                return back()->with('success', count($ticketIds) . ' tiket berhasil ditandai SUDAH CETAK KARTU secara massal.');
 
             case 'check_in':
                 VisitorTicket::whereIn('id', $ticketIds)->where('status', 'active')->update([
