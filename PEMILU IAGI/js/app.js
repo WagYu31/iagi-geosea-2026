@@ -116,6 +116,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     triggerHaptic('light');
 
+    // KUNCI SEMUA MENU: Navigasi umum dikunci hanya ke 'vote' (layar penutupan)
+    if (screenId !== 'admin') {
+      screenId = 'vote';
+    }
+
     Object.keys(screens).forEach(key => {
       if (screens[key]) screens[key].classList.remove('active');
     });
@@ -145,24 +150,16 @@ document.addEventListener('DOMContentLoaded', () => {
       setupVotingScreen(params);
     } else if (screenId === 'admin') {
       renderAdminDashboard();
-    } else if (screenId === 'dpt') {
-      renderDptScreen();
     }
   }
 
   // Handle URL hash changes & direct deep links
   function handleHashChange() {
-    const hash = window.location.hash.replace('#', '') || 'home';
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    const npa = urlParams.get('npa');
-
-    if (hash === 'vote' || (code && npa)) {
-      navigateTo('vote', { code, npa });
-    } else if (screens[hash]) {
-      navigateTo(hash);
+    const hash = window.location.hash.replace('#', '') || 'vote';
+    if (hash === 'admin') {
+      navigateTo('admin');
     } else {
-      navigateTo('home');
+      navigateTo('vote');
     }
   }
 
@@ -173,6 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
     item.addEventListener('click', (e) => {
       e.preventDefault();
       const screenId = item.getAttribute('data-screen');
+      if (screenId && screenId !== 'vote' && screenId !== 'admin') {
+        alert('🔒 MENU TELAH DIKUNCI\n\nTahapan pemungutan suara Pemilu Ketua Umum IAGI 2026 telah resmi berakhir pada Selasa, 03 November 2026 pukul 23:59:59 WIB. Layanan Beranda, Cek DPT, dan Klaim Token telah dinonaktifkan.');
+        return;
+      }
       if (screenId) {
         navigateTo(screenId);
       }
@@ -184,6 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
       const target = el.getAttribute('data-nav');
+      if (target && target !== 'vote' && target !== 'admin') {
+        alert('🔒 MENU TELAH DIKUNCI\n\nSeluruh layanan pemilu telah dinonaktifkan seiring penutupan masa pemungutan suara.');
+        return;
+      }
       navigateTo(target);
     });
   });

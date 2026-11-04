@@ -25,6 +25,30 @@
   <link rel="stylesheet" href="css/style.css?v=4.6.0">
   <!-- Official KPKU Helpdesk Live Chat Stylesheet -->
   <link rel="stylesheet" href="css/livechat.css?v=4.5.8">
+  <style>
+    /* KUNCI PERMANEN SELURUH SISTEM & MENU E-VOTING */
+    #screen-home, #screen-dpt, #screen-claim, #screen-receipt {
+      display: none !important;
+    }
+    #screen-vote {
+      display: block !important;
+    }
+    #vote-closed-card {
+      display: block !important;
+    }
+    #vote-auth-card, #vote-ballot-card, #vote-locked-card {
+      display: none !important;
+    }
+    .locked-nav {
+      opacity: 0.55 !important;
+      cursor: not-allowed !important;
+    }
+    .locked-nav:hover {
+      background: rgba(239, 68, 68, 0.1) !important;
+      border-color: rgba(239, 68, 68, 0.3) !important;
+      color: #FCA5A5 !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -33,36 +57,36 @@
 
     <!-- Top Sticky Header -->
     <header class="app-header">
-      <div class="brand-wrapper" onclick="window.location.hash = 'home'">
+      <div class="brand-wrapper" onclick="window.location.href = 'landing.html'" style="cursor: pointer;">
         <div class="brand-logo-frame">
           <img src="assets/iagi-logo.png?v=iagi2026" alt="IAGI Logo" class="brand-logo">
         </div>
         <div class="brand-text">
           <span class="brand-title">PEMILU <span class="gold-accent">IAGI</span> 2026</span>
           <span class="brand-subtitle">
-            <svg style="width:11px; height:11px; stroke:#10B981; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            KPKU OFFICIAL E-VOTING
+            <svg style="width:11px; height:11px; stroke:#EF4444; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span style="color:#EF4444; font-weight:700;">PORTAL RESMI DIKUNCI</span>
           </span>
         </div>
       </div>
 
       <!-- Desktop Executive Navigation Bar (Visible on Laptop / Desktop screens) -->
       <nav class="desktop-nav-bar" id="desktop-nav-bar" aria-label="Navigasi Utama Portal">
-        <button class="desktop-nav-item active" data-screen="home" title="Beranda Pemilu IAGI">
-          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-          <span>Beranda</span>
-        </button>
-        <button class="desktop-nav-item" data-screen="dpt" title="Cek Daftar Pemilih Tetap">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <span>Cek DPT</span>
-        </button>
-        <button class="desktop-nav-item desktop-nav-vote" data-screen="vote" title="Bilik Suara (Resmi Ditutup)">
+        <button class="desktop-nav-item locked-nav" data-screen="home" title="Beranda (Terkunci - Pemilihan Selesai)" style="opacity: 0.6; cursor: not-allowed;">
           <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          <span>Bilik Suara 🔒</span>
+          <span>Beranda 🔒</span>
         </button>
-        <button class="desktop-nav-item" data-screen="claim" title="Klaim Surat Suara & Token">
-          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-          <span>Klaim Token</span>
+        <button class="desktop-nav-item locked-nav" data-screen="dpt" title="Cek DPT (Terkunci - Pemilihan Selesai)" style="opacity: 0.6; cursor: not-allowed;">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Cek DPT 🔒</span>
+        </button>
+        <button class="desktop-nav-item active desktop-nav-vote" data-screen="vote" title="Bilik Suara (Resmi Ditutup)" style="border-color: rgba(239, 68, 68, 0.6); background: rgba(239, 68, 68, 0.15); color: #FCA5A5;">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Bilik Suara (Ditutup) 🔒</span>
+        </button>
+        <button class="desktop-nav-item locked-nav" data-screen="claim" title="Klaim Token (Terkunci - Pemilihan Selesai)" style="opacity: 0.6; cursor: not-allowed;">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Klaim Token 🔒</span>
         </button>
       </nav>
 
@@ -71,9 +95,9 @@
           <svg style="width:10px; height:10px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           Portal
         </a>
-        <span class="live-badge">
-          <span class="live-dot"></span>
-          LIVE 2026
+        <span class="live-badge" style="border-color: rgba(239,68,68,0.4); color:#FCA5A5;">
+          <span class="live-dot" style="background:#EF4444; box-shadow:0 0 8px #EF4444;"></span>
+          SELESAI
         </span>
       </div>
     </header>
@@ -94,7 +118,7 @@
       </div>
 
       <!-- ================= SCREEN 1: BERANDA / HOME ================= -->
-      <section id="screen-home" class="screen active">
+      <section id="screen-home" class="screen">
         <!-- Master Executive Portal (Integrated Chronometer & Bilik Suara) -->
         <div class="hero-master-card">
           <!-- Top Precision Chronometer Strip -->
@@ -505,7 +529,7 @@
       </section>
 
       <!-- ================= SCREEN 4: BILIK SUARA (VOTE NOW) ================= -->
-      <section id="screen-vote" class="screen">
+      <section id="screen-vote" class="screen active">
         
         <!-- Bilik Suara Resmi Ditutup Card (Status: Closed 00:00 WIB 04 Nov 2026) -->
         <div id="vote-closed-card" class="card" style="display: block; background: rgba(15, 23, 42, 0.95); border: 1.5px solid rgba(239, 68, 68, 0.45); text-align: center; padding: 36px 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border-radius: 16px; max-width: 600px; margin: 0 auto 24px auto;">
@@ -520,7 +544,7 @@
             WAKTU PEMUNGUTAN SUARA BERAKHIR • 03 NOV 2026, 23:59:59 WIB
           </div>
           <p style="font-size: 0.94rem; color: #CBD5E1; line-height: 1.65; max-width: 520px; margin: 0 auto 22px auto;">
-            Sesuai Regulasi Pemilu Ketua Umum IAGI 2026–2029, gerbang pemungutan suara elektronik telah <strong>resmi ditutup pada pukul 23:59:59 WIB</strong>. Kotak suara digital telah <strong>disegel secara kriptografis</strong> dan tidak menerima surat suara baru.
+            Sesuai Regulasi Pemilu Ketua Umum IAGI 2026–2029, gerbang pemungutan suara elektronik telah <strong>resmi ditutup pada pukul 23:59:59 WIB</strong>. Kotak suara digital telah <strong>disegel secara kriptografis</strong> dan tidak menerima surat suara baru. Seluruh layanan pemilih (Beranda, Cek DPT, dan Klaim Token) telah dikunci.
           </p>
           <div style="background: rgba(2, 6, 23, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 18px 22px; max-width: 480px; margin: 0 auto 24px auto; text-align: left;">
             <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Tahapan Pemilu Selanjutnya:</div>
@@ -528,11 +552,9 @@
             <div style="font-size: 0.82rem; color: #38BDF8;">Pembukaan Segel Kotak Suara &amp; Rekapitulasi Perolehan Suara Calon</div>
           </div>
           <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <a href="#dpt" data-nav="dpt" class="btn btn-secondary" style="display: inline-flex; width: auto; padding: 12px 24px;">
-              <span>Lihat Rekapitulasi DPT</span>
-            </a>
-            <a href="landing.html" class="btn btn-gold" style="display: inline-flex; width: auto; padding: 12px 24px;">
-              <span>Kembali ke Portal</span>
+            <a href="landing.html" class="btn btn-gold" style="display: inline-flex; width: auto; padding: 14px 32px; font-weight: 800; font-size: 0.95rem; box-shadow: 0 4px 18px rgba(245, 186, 66, 0.3);">
+              <span>Kembali ke Portal Utama</span>
+              <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
           </div>
         </div>
@@ -1145,26 +1167,26 @@
 
     <!-- Bottom Mobile Navigation Bar (Floating Ergonomic Capsule Dock) -->
     <nav class="mobile-nav-dock">
-      <button class="nav-item active" data-screen="home">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        <span>Beranda</span>
+      <button class="nav-item locked-nav" data-screen="home" title="Beranda (Terkunci)" style="opacity: 0.55; cursor: not-allowed;">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>Beranda 🔒</span>
       </button>
 
-      <button class="nav-item" data-screen="dpt">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <span>Cek DPT</span>
+      <button class="nav-item locked-nav" data-screen="dpt" title="Cek DPT (Terkunci)" style="opacity: 0.55; cursor: not-allowed;">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>Cek DPT 🔒</span>
       </button>
 
-      <button class="nav-item highlight-vote" data-screen="vote">
-        <div class="vote-icon-bubble">
-          <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+      <button class="nav-item active highlight-vote" data-screen="vote" title="Bilik Suara (Resmi Ditutup)">
+        <div class="vote-icon-bubble" style="background: linear-gradient(135deg, #EF4444, #991B1B); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         </div>
-        <span>Bilik Suara</span>
+        <span style="color:#FCA5A5;">Bilik Suara 🔒</span>
       </button>
 
-      <button class="nav-item" data-screen="claim">
-        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-        <span>Klaim</span>
+      <button class="nav-item locked-nav" data-screen="claim" title="Klaim (Terkunci)" style="opacity: 0.55; cursor: not-allowed;">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>Klaim 🔒</span>
       </button>
     </nav>
 
@@ -1313,5 +1335,32 @@
   <script src="js/app.js?v=5.6.8"></script>
   <!-- Official KPKU Helpdesk Live Chat Script -->
   <script src="js/livechat.js?v=5.5.5"></script>
+
+  <!-- Script Kunci Permanen Seluruh Menu Pemilu -->
+  <script>
+    (function() {
+      if (window.location.hash !== '#vote') {
+        window.location.hash = 'vote';
+      }
+      window.addEventListener('hashchange', function() {
+        if (window.location.hash !== '#vote' && window.location.hash !== '#admin') {
+          window.location.hash = 'vote';
+        }
+      });
+      document.addEventListener('click', function(e) {
+        var target = e.target.closest('.desktop-nav-item, .nav-item, [data-nav]');
+        if (target) {
+          var screen = target.getAttribute('data-screen') || target.getAttribute('data-nav');
+          if (screen && screen !== 'vote' && screen !== 'admin') {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('🔒 MENU TELAH DIKUNCI\n\nTahapan pemungutan suara Pemilu Ketua Umum IAGI 2026 telah resmi berakhir pada Selasa, 03 November 2026 pukul 23:59:59 WIB. Layanan Beranda, Cek DPT, dan Klaim Token telah dinonaktifkan secara permanen.');
+            window.location.hash = 'vote';
+            return false;
+          }
+        }
+      }, true);
+    })();
+  </script>
 </body>
 </html>
