@@ -13,7 +13,11 @@ $allowedOrigins = [
     'https://pemiluiagi.web.id',
     'https://www.pemiluiagi.web.id',
     'http://localhost:8088',
-    'http://127.0.0.1:8088'
+    'http://127.0.0.1:8088',
+    'http://localhost:8080',
+    'http://127.0.0.1:8080',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000'
 ];
 if (in_array($origin, $allowedOrigins)) {
     header("Access-Control-Allow-Origin: {$origin}");
