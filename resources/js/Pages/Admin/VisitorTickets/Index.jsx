@@ -530,6 +530,7 @@ export default function VisitorTicketsIndex({
     const [duplicateFilter, setDuplicateFilter] = useState(filters.duplicate || 'all');
     const [unpaidExcelFilter, setUnpaidExcelFilter] = useState(filters.unpaid_excel || 'all');
     const [invoiceFilter, setInvoiceFilter] = useState(filters.invoice_filter || 'all');
+    const [cardPrintedFilter, setCardPrintedFilter] = useState(filters.card_printed || 'all');
     const [sortFilter, setSortFilter] = useState(filters.sort || 'latest');
     const [perPageFilter, setPerPageFilter] = useState(filters.per_page ? String(filters.per_page) : '25');
     const [sentTicketIds, setSentTicketIds] = useState([]);
@@ -551,6 +552,12 @@ export default function VisitorTicketsIndex({
             setInvoiceFilter(filters.invoice_filter || 'all');
         }
     }, [filters.invoice_filter]);
+
+    useEffect(() => {
+        if (filters.card_printed !== undefined) {
+            setCardPrintedFilter(filters.card_printed || 'all');
+        }
+    }, [filters.card_printed]);
 
     useEffect(() => {
         setTypeFilter(parseTypeFilter(filters.type));
@@ -897,6 +904,7 @@ export default function VisitorTicketsIndex({
             email_sent: overrides.email_sent !== undefined ? overrides.email_sent : emailSentFilter,
             duplicate: overrides.duplicate !== undefined ? overrides.duplicate : duplicateFilter,
             invoice_filter: overrides.invoice_filter !== undefined ? overrides.invoice_filter : invoiceFilter,
+            card_printed: overrides.card_printed !== undefined ? overrides.card_printed : cardPrintedFilter,
             sort: overrides.sort !== undefined ? overrides.sort : sortFilter,
             per_page: currentPerPage,
             page: overrides.page || 1,
@@ -911,6 +919,7 @@ export default function VisitorTicketsIndex({
         if (params.email_sent === 'all') delete params.email_sent;
         if (params.duplicate === 'all') delete params.duplicate;
         if (params.invoice_filter === 'all') delete params.invoice_filter;
+        if (params.card_printed === 'all') delete params.card_printed;
         if (!params.sort || params.sort === 'latest') delete params.sort;
         if (String(params.per_page) === '25') delete params.per_page;
         if (params.page === 1) delete params.page;
@@ -994,6 +1003,19 @@ export default function VisitorTicketsIndex({
         navigateFilters({ invoice_filter: val, page: 1 });
     };
 
+    const handleCardPrintedFilterChange = (val) => {
+        setCardPrintedFilter(val);
+        navigateFilters({ card_printed: val, page: 1 });
+    };
+
+    const handleToggleCardPrinted = (ticketId, autoCheckIn = true) => {
+        router.patch(route('admin.visitorTickets.toggleCardPrinted', ticketId), {
+            auto_check_in: autoCheckIn
+        }, {
+            preserveScroll: true,
+        });
+    };
+
     const handleToggleInvoiceSort = () => {
         let nextSort = 'inv_desc';
         if (sortFilter === 'inv_desc') {
@@ -1016,9 +1038,10 @@ export default function VisitorTicketsIndex({
         setEmailSentFilter('all');
         setDuplicateFilter('all');
         setInvoiceFilter('all');
+        setCardPrintedFilter('all');
         setSortFilter('latest');
         setPerPageFilter('25');
-        navigateFilters({ search: '', type: [], registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', duplicate: 'all', invoice_filter: 'all', sort: 'latest', per_page: '25', page: 1 });
+        navigateFilters({ search: '', type: [], registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', duplicate: 'all', invoice_filter: 'all', card_printed: 'all', sort: 'latest', per_page: '25', page: 1 });
     };
 
     const handlePageChange = (_, page) => {
@@ -1057,6 +1080,8 @@ export default function VisitorTicketsIndex({
             debt: 'all',
             email_sent: 'all',
             duplicate: 'all',
+            invoice_filter: 'all',
+            card_printed: 'all',
             page: 1,
         };
 
@@ -1072,6 +1097,8 @@ export default function VisitorTicketsIndex({
                 setStatusFilter('all');
                 setEmailSentFilter('all');
                 setDuplicateFilter('all');
+                setInvoiceFilter('all');
+                setCardPrintedFilter('all');
                 navigateFilters({ ...baseParams, debt: 'debt' });
             }
         } else if (statKey === 'paid_revenue') {
@@ -1086,6 +1113,8 @@ export default function VisitorTicketsIndex({
                 setStatusFilter('all');
                 setEmailSentFilter('all');
                 setDuplicateFilter('all');
+                setInvoiceFilter('all');
+                setCardPrintedFilter('all');
                 navigateFilters({ ...baseParams, debt: 'fully_paid' });
             }
         } else if (statKey === 'pending') {
@@ -1100,6 +1129,8 @@ export default function VisitorTicketsIndex({
                 setDebtFilter('all');
                 setEmailSentFilter('all');
                 setDuplicateFilter('all');
+                setInvoiceFilter('all');
+                setCardPrintedFilter('all');
                 navigateFilters({ ...baseParams, status: 'pending' });
             }
         } else if (statKey === 'checked_in') {
@@ -1114,7 +1145,25 @@ export default function VisitorTicketsIndex({
                 setDebtFilter('all');
                 setEmailSentFilter('all');
                 setDuplicateFilter('all');
+                setInvoiceFilter('all');
+                setCardPrintedFilter('all');
                 navigateFilters({ ...baseParams, checked_in: 'yes' });
+            }
+        } else if (statKey === 'card_printed') {
+            if (cardPrintedFilter === 'printed') {
+                handleResetFilters();
+            } else {
+                setCardPrintedFilter('printed');
+                setSearchTerm('');
+                setTypeFilter([]);
+                setRegistrationTypeFilter('all');
+                setCheckedInFilter('all');
+                setStatusFilter('all');
+                setDebtFilter('all');
+                setEmailSentFilter('all');
+                setDuplicateFilter('all');
+                setInvoiceFilter('all');
+                navigateFilters({ ...baseParams, card_printed: 'printed' });
             }
         } else if (statKey === 'email_sent') {
             if (emailSentFilter === 'sent') {
@@ -1128,6 +1177,8 @@ export default function VisitorTicketsIndex({
                 setStatusFilter('all');
                 setDebtFilter('all');
                 setDuplicateFilter('all');
+                setInvoiceFilter('all');
+                setCardPrintedFilter('all');
                 navigateFilters({ ...baseParams, email_sent: 'sent' });
             }
         } else if (statKey === 'non_exclusive') {
@@ -1143,6 +1194,8 @@ export default function VisitorTicketsIndex({
                 setDebtFilter('all');
                 setEmailSentFilter('all');
                 setDuplicateFilter('all');
+                setInvoiceFilter('all');
+                setCardPrintedFilter('all');
                 navigateFilters({ ...baseParams, type: ['non_exclusive'] });
             }
         }
@@ -1812,7 +1865,7 @@ export default function VisitorTicketsIndex({
     };
 
     const isTypeFilterActive = Array.isArray(typeFilter) ? typeFilter.length > 0 : (typeFilter && typeFilter !== 'all');
-    const hasActiveFilters = Boolean(searchTerm || isTypeFilterActive || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || invoiceFilter !== 'all' || (sortFilter && sortFilter !== 'latest'));
+    const hasActiveFilters = Boolean(searchTerm || isTypeFilterActive || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || invoiceFilter !== 'all' || cardPrintedFilter !== 'all' || (sortFilter && sortFilter !== 'latest'));
     const isFiltered = Boolean(stats.isFiltered || hasActiveFilters);
     const overallTotal = Number(globalStats.totalVisitors || totalItems || stats.totalVisitors || 0);
 
@@ -1821,6 +1874,7 @@ export default function VisitorTicketsIndex({
         { key: 'email_sent', label: 'Email Terkirim', value: stats.emailSentCount || 0, subValue: isFiltered ? 'Filter Aktif' : 'E-Ticket Terkirim', icon: <EmailIcon />, color: '#0d9488', shadow: '#0f766e', bg: 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%)', badgeBg: '#14b8a6' },
         { key: 'non_exclusive', label: 'Visitor Pass (Free)', value: stats.nonExclusiveCount || 0, subValue: isFiltered ? 'Filter Aktif' : 'Free / Non-Exclusive', icon: <ConfirmationNumberIcon />, color: '#0284c7', shadow: '#0369a1', bg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', badgeBg: '#0ea5e9' },
         { key: 'checked_in', label: 'Checked-In Gate', value: stats.checkedInCount || 0, subValue: isFiltered ? 'Hadir (Filter)' : 'Hadir di Lokasi', icon: <HowToRegIcon />, color: '#0891b2', shadow: '#0e7490', bg: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)', badgeBg: '#06b6d4' },
+        { key: 'card_printed', label: 'Kartu Dicetak', value: stats.cardPrintedCount || 0, subValue: isFiltered ? 'Filter Aktif' : `${stats.cardUnprintedCount || 0} Belum Cetak`, icon: <PrintIcon />, color: '#7c3aed', shadow: '#6d28d9', bg: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', badgeBg: '#8b5cf6' },
         { key: 'pending', label: 'Pending Verification', value: stats.pendingVerificationCount || 0, subValue: isFiltered ? 'Dicek (Filter)' : 'Menunggu Dicek', icon: <PaidIcon />, color: '#ea580c', shadow: '#c2410c', bg: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)', badgeBg: '#f97316' },
         { key: 'debt', label: 'Outstanding Debt (Hutang)', value: `Rp ${Number(stats.debtTotalRevenue || 0).toLocaleString('id-ID')}`, subValue: `${stats.debtCount || 0} Tiket Hutang`, icon: <WarningAmberIcon />, color: '#d97706', shadow: '#b45309', bg: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', badgeBg: '#f59e0b' },
         { key: 'paid_revenue', label: 'Uang Masuk (Kas Lunas)', value: `Rp ${Number(stats.realPaidRevenue ?? stats.totalRevenue ?? 0).toLocaleString('id-ID')}`, subValue: `${stats.fullyPaidCount || 0} Tiket Lunas`, icon: <AccountBalanceWalletIcon />, color: '#059669', shadow: '#047857', bg: 'linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%)', badgeBg: '#10b981' },
@@ -2442,9 +2496,9 @@ export default function VisitorTicketsIndex({
                         gridTemplateColumns: {
                             xs: 'repeat(1, 1fr)',
                             sm: 'repeat(2, 1fr)',
-                            md: 'repeat(4, 1fr)',
-                            lg: 'repeat(4, 1fr)',
-                            xl: 'repeat(8, 1fr)',
+                            md: 'repeat(3, 1fr)',
+                            lg: 'repeat(5, 1fr)',
+                            xl: 'repeat(9, 1fr)',
                         },
                         gap: 1.5,
                         mb: 3,
@@ -2456,6 +2510,7 @@ export default function VisitorTicketsIndex({
                             (s.key === 'email_sent' && emailSentFilter === 'sent') ||
                             (s.key === 'non_exclusive' && typeFilter.length === 1 && typeFilter[0] === 'non_exclusive') ||
                             (s.key === 'checked_in' && checkedInFilter === 'yes') ||
+                            (s.key === 'card_printed' && cardPrintedFilter === 'printed') ||
                             (s.key === 'pending' && statusFilter === 'pending') ||
                             (s.key === 'debt' && debtFilter === 'debt') ||
                             (s.key === 'paid_revenue' && (debtFilter === 'fully_paid' || debtFilter === 'paid'));
@@ -2834,6 +2889,34 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="all">All Statuses</MenuItem>
                                 <MenuItem value="yes">✅ Checked In</MenuItem>
                                 <MenuItem value="no">⏳ Not Checked In</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Status Cetak</InputLabel>
+                            <Select
+                                value={cardPrintedFilter}
+                                label="Status Cetak"
+                                onChange={(e) => handleCardPrintedFilterChange(e.target.value)}
+                                sx={{
+                                    borderRadius: '10px',
+                                    fontSize: '0.82rem',
+                                    bgcolor: cardPrintedFilter !== 'all' ? '#f5f3ff' : '#f8fafc',
+                                    fontWeight: cardPrintedFilter !== 'all' ? 800 : 600,
+                                    color: cardPrintedFilter !== 'all' ? '#7c3aed' : 'inherit',
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: cardPrintedFilter !== 'all' ? '#8b5cf6 !important' : undefined,
+                                        borderWidth: cardPrintedFilter !== 'all' ? '2px !important' : undefined,
+                                    },
+                                }}
+                            >
+                                <MenuItem value="all">Semua Status Cetak</MenuItem>
+                                <MenuItem value="printed" sx={{ color: '#7c3aed', fontWeight: 800 }}>
+                                    🖨️ Sudah Cetak ({stats.cardPrintedCount || 0})
+                                </MenuItem>
+                                <MenuItem value="not_printed" sx={{ color: '#64748b', fontWeight: 700 }}>
+                                    ⏳ Belum Cetak ({stats.cardUnprintedCount || 0})
+                                </MenuItem>
                             </Select>
                         </FormControl>
 
@@ -3401,6 +3484,37 @@ export default function VisitorTicketsIndex({
                                     }}
                                 />
                             )}
+                            {cardPrintedFilter === 'printed' && (
+                                <Chip
+                                    icon={<PrintIcon sx={{ fontSize: '13px !important', color: '#7c3aed !important' }} />}
+                                    label={`Filter Aktif: Kartu Sudah Dicetak (${totalItems} tiket)`}
+                                    size="small"
+                                    onDelete={() => handleCardPrintedFilterChange('all')}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#f5f3ff',
+                                        color: '#7c3aed',
+                                        border: '1.5px solid #c4b5fd',
+                                        boxShadow: '0 2px 4px rgba(124,58,237,0.15)',
+                                    }}
+                                />
+                            )}
+                            {cardPrintedFilter === 'not_printed' && (
+                                <Chip
+                                    icon={<PrintIcon sx={{ fontSize: '13px !important', color: '#64748b !important' }} />}
+                                    label={`Filter Aktif: Belum Cetak Kartu (${totalItems} tiket)`}
+                                    size="small"
+                                    onDelete={() => handleCardPrintedFilterChange('all')}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#f8fafc',
+                                        color: '#64748b',
+                                        border: '1.5px solid #cbd5e1',
+                                    }}
+                                />
+                            )}
                             {emailSentFilter === 'sent' && (
                                 <Chip
                                     icon={<EmailIcon sx={{ fontSize: '13px !important', color: '#0f766e !important' }} />}
@@ -3767,7 +3881,7 @@ export default function VisitorTicketsIndex({
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>SOURCE</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>TICKET STATUS</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>PAYMENT</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>CHECK-IN GATE</TableCell>
+                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>CHECK-IN & KARTU</TableCell>
                                     <TableCell 
                                         sx={{ 
                                             fontWeight: 900, 
@@ -4365,68 +4479,132 @@ export default function VisitorTicketsIndex({
                                                     )}
                                                 </TableCell>
 
-                                                {/* CHECK-IN GATE 1-CLICK TOGGLE */}
+                                                {/* CHECK-IN & STATUS CETAK KARTU */}
                                                 <TableCell sx={{ py: 1.2, whiteSpace: 'nowrap' }}>
-                                                    {t.checked_in ? (
-                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                                                            <Chip
-                                                                icon={<CheckCircleIcon sx={{ fontSize: 13, color: '#15803d !important' }} />}
-                                                                label="CHECKED IN"
-                                                                size="small"
-                                                                onClick={() => handleToggleCheckIn(t.id)}
-                                                                sx={{
-                                                                    bgcolor: '#dcfce7',
-                                                                    border: '1px solid #86efac',
-                                                                    color: '#15803d',
-                                                                    fontWeight: 900,
-                                                                    fontSize: '0.64rem',
-                                                                    height: 22,
-                                                                    boxShadow: '0 2px 0 #86efac',
-                                                                    cursor: 'pointer',
-                                                                    whiteSpace: 'nowrap',
-                                                                    '&:hover': { bgcolor: '#bbf7d0' },
-                                                                }}
-                                                            />
+                                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.6, alignItems: 'flex-start' }}>
+                                                        {/* Baris 1: Gate Check In */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                                                            {t.checked_in ? (
+                                                                <Chip
+                                                                    icon={<CheckCircleIcon sx={{ fontSize: 13, color: '#15803d !important' }} />}
+                                                                    label="CHECKED IN"
+                                                                    size="small"
+                                                                    onClick={() => handleToggleCheckIn(t.id)}
+                                                                    title="Klik untuk batalkan status Check-in"
+                                                                    sx={{
+                                                                        bgcolor: '#dcfce7',
+                                                                        border: '1px solid #86efac',
+                                                                        color: '#15803d',
+                                                                        fontWeight: 900,
+                                                                        fontSize: '0.64rem',
+                                                                        height: 22,
+                                                                        boxShadow: '0 2px 0 #86efac',
+                                                                        cursor: 'pointer',
+                                                                        whiteSpace: 'nowrap',
+                                                                        '&:hover': { bgcolor: '#bbf7d0' },
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    disabled={t.status !== 'active'}
+                                                                    onClick={() => handleToggleCheckIn(t.id)}
+                                                                    sx={{
+                                                                        borderColor: '#cbd5e1',
+                                                                        color: '#334155',
+                                                                        fontSize: '0.68rem',
+                                                                        py: 0.2,
+                                                                        px: 1,
+                                                                        height: 22,
+                                                                        borderRadius: '6px',
+                                                                        textTransform: 'none',
+                                                                        fontWeight: 800,
+                                                                        bgcolor: '#f8fafc',
+                                                                        boxShadow: '0 2px 0 #e2e8f0',
+                                                                        whiteSpace: 'nowrap',
+                                                                        '&:hover': {
+                                                                            borderColor: '#10b981',
+                                                                            color: '#10b981',
+                                                                            bgcolor: '#f0fdf4',
+                                                                            transform: 'translateY(-1px)',
+                                                                            boxShadow: '0 3px 0 #86efac',
+                                                                        },
+                                                                        '&:active': {
+                                                                            transform: 'translateY(1px)',
+                                                                            boxShadow: '0 1px 0 #86efac',
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    Check In
+                                                                </Button>
+                                                            )}
+                                                            {t.checked_in_at && (
+                                                                <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.65rem', fontWeight: 600 }}>
+                                                                    {new Date(t.checked_in_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                                                                </Typography>
+                                                            )}
                                                         </Box>
-                                                    ) : (
-                                                        <Button
-                                                            size="small"
-                                                            variant="outlined"
-                                                            disabled={t.status !== 'active'}
-                                                            onClick={() => handleToggleCheckIn(t.id)}
-                                                            sx={{
-                                                                borderColor: '#cbd5e1',
-                                                                color: '#334155',
-                                                                fontSize: '0.7rem',
-                                                                py: 0.3,
-                                                                px: 1.2,
-                                                                borderRadius: '8px',
-                                                                textTransform: 'none',
-                                                                fontWeight: 800,
-                                                                bgcolor: '#f8fafc',
-                                                                boxShadow: '0 2px 0 #e2e8f0',
-                                                                whiteSpace: 'nowrap',
-                                                                '&:hover': {
-                                                                  borderColor: '#10b981',
-                                                                  color: '#10b981',
-                                                                  bgcolor: '#f0fdf4',
-                                                                  transform: 'translateY(-1px)',
-                                                                  boxShadow: '0 3px 0 #86efac',
-                                                                },
-                                                                '&:active': {
-                                                                  transform: 'translateY(1px)',
-                                                                  boxShadow: '0 1px 0 #86efac',
-                                                                }
-                                                            }}
-                                                        >
-                                                            Check In
-                                                        </Button>
-                                                    )}
-                                                    {t.checked_in_at && (
-                                                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', fontSize: '0.65rem', mt: 0.3, whiteSpace: 'nowrap' }}>
-                                                            {new Date(t.checked_in_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-                                                        </Typography>
-                                                    )}
+
+                                                        {/* Baris 2: Status Cetak Kartu */}
+                                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                                                            {t.card_printed ? (
+                                                                <Chip
+                                                                    icon={<PrintIcon sx={{ fontSize: 12, color: '#7c3aed !important' }} />}
+                                                                    label="SUDAH CETAK"
+                                                                    size="small"
+                                                                    onClick={() => handleToggleCardPrinted(t.id, false)}
+                                                                    title="Kartu sudah dicetak. Klik untuk ubah jadi Belum Cetak"
+                                                                    sx={{
+                                                                        bgcolor: '#f5f3ff',
+                                                                        border: '1px solid #c4b5fd',
+                                                                        color: '#7c3aed',
+                                                                        fontWeight: 900,
+                                                                        fontSize: '0.62rem',
+                                                                        height: 20,
+                                                                        boxShadow: '0 2px 0 #ddd6fe',
+                                                                        cursor: 'pointer',
+                                                                        whiteSpace: 'nowrap',
+                                                                        '&:hover': { bgcolor: '#ede9fe', borderColor: '#a78bfa' },
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="text"
+                                                                    disabled={t.status !== 'active'}
+                                                                    onClick={() => handleToggleCardPrinted(t.id, true)}
+                                                                    title="Klik jika kartu sudah dicetak fisik (otomatis tandai Check In)"
+                                                                    startIcon={<PrintIcon sx={{ fontSize: '12px !important', color: '#94a3b8' }} />}
+                                                                    sx={{
+                                                                        color: '#64748b',
+                                                                        fontSize: '0.65rem',
+                                                                        py: 0.1,
+                                                                        px: 0.8,
+                                                                        height: 20,
+                                                                        borderRadius: '6px',
+                                                                        textTransform: 'none',
+                                                                        fontWeight: 700,
+                                                                        border: '1px dashed #cbd5e1',
+                                                                        bgcolor: '#f8fafc',
+                                                                        whiteSpace: 'nowrap',
+                                                                        '&:hover': {
+                                                                            borderColor: '#8b5cf6',
+                                                                            color: '#7c3aed',
+                                                                            bgcolor: '#f5f3ff',
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    Belum Cetak
+                                                                </Button>
+                                                            )}
+                                                            {t.card_printed_at && (
+                                                                <Typography variant="caption" sx={{ color: '#a78bfa', fontSize: '0.63rem', fontWeight: 600 }}>
+                                                                    {new Date(t.card_printed_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                                                                </Typography>
+                                                            )}
+                                                        </Box>
+                                                    </Box>
                                                 </TableCell>
 
                                                 {/* 3D ACTION BUTTONS - STICKY RIGHT */}

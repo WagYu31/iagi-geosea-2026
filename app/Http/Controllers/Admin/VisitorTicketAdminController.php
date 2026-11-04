@@ -274,6 +274,15 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
+        // Card Printed filter (all / printed / not_printed)
+        if ($cardPrinted = $request->input('card_printed')) {
+            if ($cardPrinted === 'printed' || $cardPrinted === 'yes' || $cardPrinted === '1') {
+                $query->where('card_printed', true);
+            } elseif ($cardPrinted === 'not_printed' || $cardPrinted === 'no' || $cardPrinted === '0') {
+                $query->where('card_printed', false);
+            }
+        }
+
         return $query;
     }
 
@@ -401,6 +410,7 @@ class VisitorTicketAdminController extends Controller
             ($request->filled('duplicate') && $request->input('duplicate') !== 'all') ||
             ($request->filled('invoice_filter') && $request->input('invoice_filter') !== 'all') ||
             $request->filled('invoice_no') ||
+            ($request->filled('card_printed') && $request->input('card_printed') !== 'all') ||
             ($request->filled('sort') && !in_array($request->input('sort'), ['latest', 'all', ''])) ||
             ($request->filled('unpaid_excel') && $request->input('unpaid_excel') !== 'all');
 
@@ -411,6 +421,7 @@ class VisitorTicketAdminController extends Controller
         $statsExclusivePaidCount = 0;
         $statsNonExclusiveCount = 0;
         $statsCheckedInCount = 0;
+        $statsCardPrintedCount = 0;
         $statsPendingVerificationCount = 0;
         $statsEmailSentCount = 0;
         $statsEmailUnsentCount = 0;
@@ -424,6 +435,7 @@ class VisitorTicketAdminController extends Controller
 
         foreach ($ticketsForStats as $t) {
             if ($t->checked_in) $statsCheckedInCount++;
+            if ($t->card_printed) $statsCardPrintedCount++;
             if ($t->status === 'pending') $statsPendingVerificationCount++;
             if (!empty($t->email_sent_at)) $statsEmailSentCount++;
             if (empty($t->email_sent_at) && $t->status === 'active' && !empty($t->visitor_email)) $statsEmailUnsentCount++;
@@ -478,6 +490,8 @@ class VisitorTicketAdminController extends Controller
             'exclusivePaidCount' => $statsExclusivePaidCount,
             'nonExclusiveCount' => $statsNonExclusiveCount,
             'checkedInCount' => $statsCheckedInCount,
+            'cardPrintedCount' => $statsCardPrintedCount,
+            'cardUnprintedCount' => max(0, $statsTotalVisitors - $statsCardPrintedCount),
             'pendingVerificationCount' => $statsPendingVerificationCount,
             'emailSentCount' => $statsEmailSentCount,
             'emailUnsentCount' => $statsEmailUnsentCount,
@@ -499,6 +513,7 @@ class VisitorTicketAdminController extends Controller
         $globalStats = [
             'totalVisitors' => VisitorTicket::count(),
             'checkedInCount' => VisitorTicket::where('checked_in', true)->count(),
+            'cardPrintedCount' => VisitorTicket::where('card_printed', true)->count(),
         ];
 
         // Fetch tickets timestamp & status in memory for bulletproof, SQL-version-agnostic grouping
@@ -886,6 +901,7 @@ class VisitorTicketAdminController extends Controller
                 'duplicate' => $request->input('duplicate', 'all'),
                 'invoice_filter' => $request->input('invoice_filter', 'all'),
                 'invoice_no' => $request->input('invoice_no', ''),
+                'card_printed' => $request->input('card_printed', 'all'),
                 'sort' => $request->input('sort', 'latest'),
                 'unpaid_excel' => $request->input('unpaid_excel', 'all'),
                 'per_page' => $perPageInput,
@@ -1879,11 +1895,21 @@ class VisitorTicketAdminController extends Controller
     {
         $ticket = VisitorTicket::with('payment')->findOrFail($id);
 
-        $ticket->update([
+        $updates = [
             'card_printed' => true,
             'card_printed_at' => now(),
             'card_printed_by_admin_id' => Auth::id(),
-        ]);
+        ];
+
+        // Otomatis tandai check-in jika tiket aktif dan belum check-in
+        // Membantu admin saat melayani peserta onsite/manual yang langsung cetak kartu di meja
+        if (!$ticket->checked_in && $ticket->status === 'active') {
+            $updates['checked_in'] = true;
+            $updates['checked_in_at'] = now();
+            $updates['checked_in_by_admin_id'] = Auth::id();
+        }
+
+        $ticket->update($updates);
 
         $templatePath = self::getBadgeTemplateForType($ticket->visitor_type);
 
@@ -1919,11 +1945,19 @@ class VisitorTicketAdminController extends Controller
             return redirect()->route('admin.visitorTickets')->with('error', 'Tidak ada tiket yang dipilih atau sesuai filter untuk dicetak.');
         }
 
-        // Mark all as card printed
+        // Mark all as card printed and auto check-in for active tickets
+        $now = now();
+        $adminId = Auth::id();
         VisitorTicket::whereIn('id', $tickets->pluck('id'))->update([
             'card_printed' => true,
-            'card_printed_at' => now(),
-            'card_printed_by_admin_id' => Auth::id(),
+            'card_printed_at' => $now,
+            'card_printed_by_admin_id' => $adminId,
+        ]);
+
+        VisitorTicket::whereIn('id', $tickets->where('checked_in', false)->where('status', 'active')->pluck('id'))->update([
+            'checked_in' => true,
+            'checked_in_at' => $now,
+            'checked_in_by_admin_id' => $adminId,
         ]);
 
         // Map templatePath for each ticket
@@ -2534,6 +2568,37 @@ class VisitorTicketAdminController extends Controller
         $msg = $newStatus 
             ? "Tiket {$ticket->ticket_code} ({$ticket->visitor_name}) berhasil di-Check In!" 
             : "Check-In untuk tiket {$ticket->ticket_code} dibatalkan.";
+
+        return back()->with('success', $msg);
+    }
+
+    /**
+     * Toggle Card Printed status manually by Admin
+     */
+    public function toggleCardPrinted(Request $request, $id)
+    {
+        $ticket = VisitorTicket::findOrFail($id);
+
+        $newStatus = !$ticket->card_printed;
+
+        $updates = [
+            'card_printed' => $newStatus,
+            'card_printed_at' => $newStatus ? now() : null,
+            'card_printed_by_admin_id' => $newStatus ? Auth::id() : null,
+        ];
+
+        // Jika ditandai sudah cetak kartu, otomatis check-in jika belum check-in
+        if ($newStatus && $request->boolean('auto_check_in', true) && !$ticket->checked_in && $ticket->status === 'active') {
+            $updates['checked_in'] = true;
+            $updates['checked_in_at'] = now();
+            $updates['checked_in_by_admin_id'] = Auth::id();
+        }
+
+        $ticket->update($updates);
+
+        $msg = $newStatus 
+            ? "Status kartu {$ticket->ticket_code} ({$ticket->visitor_name}): SUDAH DICETAK!" . ($ticket->checked_in ? " (Sekaligus Di-Check In)" : "") 
+            : "Status cetak kartu {$ticket->ticket_code} dibatalkan (Belum Cetak).";
 
         return back()->with('success', $msg);
     }
