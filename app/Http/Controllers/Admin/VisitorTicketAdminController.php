@@ -2112,7 +2112,211 @@ class VisitorTicketAdminController extends Controller
     }
 
     /**
-     * Export Visitor Tickets to CSV or ZIP (with proof of payment files)
+     * Helper to generate CSV content with clean UTF-8 BOM, all rows,
+     * and comprehensive executive summary & pivot tables at the bottom.
+     */
+    private function generateCsvWithSummary($tickets, array $addedProofs = [], bool $includeZipEntry = false): string
+    {
+        $handle = fopen('php://temp', 'r+');
+        fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM
+
+        $headers = [
+            'Ticket Code',
+            'Invoice / Receipt No',
+            'Payment Code',
+            'Visitor Name',
+            'Email',
+            'Phone / WhatsApp',
+            'Institution',
+            'Category',
+            'Registration Source',
+            'Status',
+            'Payment Method',
+            'Payment Status',
+            'Base Amount (IDR)',
+            'Discount (IDR)',
+            'Discount Notes',
+            'Unique Code',
+            'Total Amount (IDR)',
+            'Checked In',
+            'Checked In Time',
+            'Card Printed',
+            'Registered At',
+        ];
+        if ($includeZipEntry) {
+            $headers[] = 'Bukti Bayar (File di Folder ZIP)';
+        }
+        $headers[] = 'Bukti Bayar (URL Online)';
+
+        fputcsv($handle, $headers);
+
+        $totalBase = 0;
+        $totalDiscount = 0;
+        $totalUnique = 0;
+        $totalNominal = 0;
+        $totalPaid = 0;
+        $totalDebt = 0;
+        $checkedInCount = 0;
+        $cardPrintedCount = 0;
+
+        $catStats = [];
+        $statusStats = [];
+
+        foreach ($tickets as $t) {
+            $p = $t->payment;
+            $proofZipEntry = ($p && isset($addedProofs[$p->id])) ? $addedProofs[$p->id] : '-';
+            $proofUrl = ($p && !empty($p->proof_of_payment)) ? $this->resolveProofUrl($p->proof_of_payment) : '-';
+
+            $basePrice = (float)($t->individual_price ?? $t->price ?? 0);
+            $disc = $p ? (float)($p->discount_amount ?? 0) : 0;
+            $uniq = $p ? (float)($p->unique_code ?? 0) : 0;
+            $tot = $p ? (float)$p->total_amount : 0;
+
+            $isPaid = ($p && in_array(strtolower($p->status), ['verified', 'paid', 'approved', 'success']));
+            $isDebt = ($p && (bool)$p->is_debt && !$isPaid);
+            $cat = $t->category_label ?? strtoupper($t->visitor_type ?? 'VISITOR');
+            $pStat = $p ? strtoupper($p->status) : 'FREE';
+
+            $totalBase += $basePrice;
+            $totalDiscount += $disc;
+            $totalUnique += $uniq;
+            $totalNominal += $tot;
+            if ($isPaid) $totalPaid += $tot;
+            if ($isDebt) $totalDebt += $tot;
+            if ($t->checked_in) $checkedInCount++;
+            if ($t->card_printed) $cardPrintedCount++;
+
+            if (!isset($catStats[$cat])) {
+                $catStats[$cat] = ['count' => 0, 'total' => 0, 'paid' => 0, 'debt' => 0, 'printed' => 0, 'checkin' => 0];
+            }
+            $catStats[$cat]['count']++;
+            $catStats[$cat]['total'] += $tot;
+            if ($isPaid) $catStats[$cat]['paid'] += $tot;
+            if ($isDebt) $catStats[$cat]['debt'] += $tot;
+            if ($t->card_printed) $catStats[$cat]['printed']++;
+            if ($t->checked_in) $catStats[$cat]['checkin']++;
+
+            $statLabel = $isDebt ? 'DEBT (HUTANG)' : ($isPaid ? 'PAID / LUNAS' : ($p ? $pStat : 'FREE'));
+            if (!isset($statusStats[$statLabel])) {
+                $statusStats[$statLabel] = ['count' => 0, 'total' => 0];
+            }
+            $statusStats[$statLabel]['count']++;
+            $statusStats[$statLabel]['total'] += $tot;
+
+            $row = [
+                $t->ticket_code,
+                $p ? ($p->receipt_no ?? '-') : '-',
+                $p ? $p->payment_code : '-',
+                $t->visitor_name,
+                $t->visitor_email,
+                $t->visitor_phone ?? '-',
+                $t->visitor_institution ?? '-',
+                $cat,
+                $t->registration_source === 'admin_onsite' ? 'Onsite (Admin)' : 'Online Self',
+                strtoupper($t->status),
+                $p ? strtoupper($p->payment_method) : 'FREE',
+                $p ? strtoupper($p->status) : 'FREE',
+                $basePrice,
+                $disc,
+                $p ? ($p->discount_notes ?? '-') : '-',
+                $uniq,
+                $tot,
+                $t->checked_in ? 'YES' : 'NO',
+                $t->checked_in_at ? $t->checked_in_at->format('Y-m-d H:i:s') : '-',
+                $t->card_printed ? 'SUDAH CETAK' : 'BELUM CETAK',
+                $t->created_at->format('Y-m-d H:i:s'),
+            ];
+            if ($includeZipEntry) {
+                $row[] = $proofZipEntry;
+            }
+            $row[] = $proofUrl;
+
+            fputcsv($handle, $row);
+        }
+
+        // Blank line
+        fputcsv($handle, []);
+
+        // GRAND TOTAL ROW
+        $totalRow = [
+            'TOTAL KESELURUHAN',
+            '',
+            '',
+            'Total: ' . count($tickets) . ' Peserta',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            $totalBase,
+            $totalDiscount,
+            '',
+            $totalUnique,
+            $totalNominal,
+            'Checked-In: ' . $checkedInCount,
+            '',
+            'Cetak: ' . $cardPrintedCount,
+            '',
+        ];
+        if ($includeZipEntry) $totalRow[] = '';
+        $totalRow[] = '';
+        fputcsv($handle, $totalRow);
+
+        // Blank line
+        fputcsv($handle, []);
+        fputcsv($handle, ['=== RINGKASAN EKSEKUTIF (KEY INDICATORS) ===']);
+        fputcsv($handle, ['Indikator', 'Nilai / Jumlah']);
+        fputcsv($handle, ['Total Pengunjung Terdaftar', count($tickets) . ' Orang']);
+        fputcsv($handle, ['Total Uang Masuk (Kas Lunas)', 'Rp ' . number_format($totalPaid, 0, ',', '.')]);
+        fputcsv($handle, ['Total Outstanding Debt (Piutang)', 'Rp ' . number_format($totalDebt, 0, ',', '.')]);
+        fputcsv($handle, ['Total Potensi Akumulasi', 'Rp ' . number_format($totalNominal, 0, ',', '.')]);
+        fputcsv($handle, ['Total Hadir Gate Check-In', $checkedInCount . ' Orang']);
+        fputcsv($handle, ['Total Kartu Selesai Dicetak', $cardPrintedCount . ' Kartu']);
+
+        // Blank line
+        fputcsv($handle, []);
+        fputcsv($handle, ['=== PIVOT REKAPITULASI KATEGORI PESERTA ===']);
+        fputcsv($handle, ['No', 'Kategori Peserta', 'Jumlah Tiket', 'Total Tagihan (IDR)', 'Kas Lunas (IDR)', 'Piutang / Debt (IDR)', 'Sudah Cetak Kartu', 'Hadir Gate']);
+        $cNo = 1;
+        foreach ($catStats as $cName => $cData) {
+            fputcsv($handle, [
+                $cNo++,
+                $cName,
+                $cData['count'],
+                $cData['total'],
+                $cData['paid'],
+                $cData['debt'],
+                $cData['printed'],
+                $cData['checkin'],
+            ]);
+        }
+
+        // Blank line
+        fputcsv($handle, []);
+        fputcsv($handle, ['=== PIVOT REKAPITULASI STATUS PEMBAYARAN ===']);
+        fputcsv($handle, ['No', 'Status Pembayaran', 'Jumlah Tiket', 'Total Nilai (IDR)']);
+        $sNo = 1;
+        foreach ($statusStats as $sName => $sData) {
+            fputcsv($handle, [
+                $sNo++,
+                $sName,
+                $sData['count'],
+                $sData['total'],
+            ]);
+        }
+
+        rewind($handle);
+        $csv = stream_get_contents($handle);
+        fclose($handle);
+
+        return $csv;
+    }
+
+    /**
+     * Export Visitor Tickets to Excel (.xlsx), CSV, or ZIP (with proof of payment files)
      */
     public function exportCsv(Request $request)
     {
@@ -2124,13 +2328,44 @@ class VisitorTicketAdminController extends Controller
             $tickets = $query->latest()->get();
         }
 
-        $withProofs = $request->boolean('with_proofs') || $request->input('format') === 'zip';
+        $format = strtolower((string)$request->input('format', 'csv'));
+        $withProofs = $request->boolean('with_proofs') || $format === 'zip';
 
+        // 1. EXCEL (.XLSX) EXPORT with Executive Pivot & Data Sheet
+        if ($format === 'xlsx' || $format === 'excel') {
+            @set_time_limit(300);
+            @ini_set('memory_limit', '512M');
+
+            $excelService = new \App\Services\VisitorTicketExcelService();
+            $tempExcelPath = $excelService->generateWorkbook($tickets, [
+                'resolve_url_fn' => fn($proof) => $this->resolveProofUrl($proof),
+            ]);
+
+            $excelFilename = 'visitor_tickets_rekap_dan_pivot_executive_' . date('Y-m-d_His') . '.xlsx';
+
+            if (ob_get_level()) {
+                @ob_end_clean();
+            }
+
+            $headers = [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="' . $excelFilename . '"',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ];
+            if (file_exists($tempExcelPath)) {
+                $headers['Content-Length'] = filesize($tempExcelPath);
+            }
+
+            return response()->download($tempExcelPath, $excelFilename, $headers)->deleteFileAfterSend(true);
+        }
+
+        // 2. ZIP EXPORT (Excel + CSV + Folder Bukti Bayar)
         if ($withProofs) {
             @set_time_limit(300);
             @ini_set('memory_limit', '512M');
 
-            $zipFilename = 'visitor_tickets_dan_bukti_bayar_' . date('Y-m-d_His') . '.zip';
+            $zipFilename = 'visitor_tickets_lengkap_dan_bukti_bayar_' . date('Y-m-d_His') . '.zip';
             $tempZipPath = tempnam(sys_get_temp_dir(), 'vis_zip_');
 
             $zip = new \ZipArchive();
@@ -2156,74 +2391,23 @@ class VisitorTicketAdminController extends Controller
                 }
             }
 
-            // Build CSV with ZIP file references and URLs
-            $handle = fopen('php://temp', 'r+');
-            fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM
-            fputcsv($handle, [
-                'Ticket Code',
-                'Invoice / Receipt No',
-                'Payment Code',
-                'Visitor Name',
-                'Email',
-                'Phone / WhatsApp',
-                'Institution',
-                'Category',
-                'Registration Source',
-                'Status',
-                'Payment Method',
-                'Payment Status',
-                'Base Amount (IDR)',
-                'Discount (IDR)',
-                'Discount Notes',
-                'Unique Code',
-                'Total Amount (IDR)',
-                'Checked In',
-                'Checked In Time',
-                'Card Printed',
-                'Registered At',
-                'Bukti Bayar (File di Folder ZIP)',
-                'Bukti Bayar (URL Online)',
+            // A. Add Excel Workbook into ZIP
+            $excelService = new \App\Services\VisitorTicketExcelService();
+            $tempExcelPath = $excelService->generateWorkbook($tickets, [
+                'added_proofs' => $addedProofs,
+                'resolve_url_fn' => fn($proof) => $this->resolveProofUrl($proof),
             ]);
+            $zip->addFile($tempExcelPath, 'visitor_tickets_rekap_dan_pivot_executive_' . date('Y-m-d') . '.xlsx');
 
-            foreach ($tickets as $t) {
-                $p = $t->payment;
-                $proofZipEntry = ($p && isset($addedProofs[$p->id])) ? $addedProofs[$p->id] : '-';
-                $proofUrl = ($p && !empty($p->proof_of_payment)) ? $this->resolveProofUrl($p->proof_of_payment) : '-';
+            // B. Add CSV with summary into ZIP
+            $csvContent = $this->generateCsvWithSummary($tickets, $addedProofs, true);
+            $zip->addFromString('visitor_tickets_data_' . date('Y-m-d') . '.csv', $csvContent);
 
-                fputcsv($handle, [
-                    $t->ticket_code,
-                    $p ? ($p->receipt_no ?? '-') : '-',
-                    $p ? $p->payment_code : '-',
-                    $t->visitor_name,
-                    $t->visitor_email,
-                    $t->visitor_phone ?? '-',
-                    $t->visitor_institution ?? '-',
-                    $t->category_label ?? strtoupper($t->visitor_type),
-                    $t->registration_source === 'admin_onsite' ? 'Onsite (Admin)' : 'Online Self',
-                    strtoupper($t->status),
-                    $p ? strtoupper($p->payment_method) : 'FREE',
-                    $p ? strtoupper($p->status) : 'FREE',
-                    $t->individual_price ?? ($t->price ?? 0),
-                    $p ? ($p->discount_amount ?? 0) : 0,
-                    $p ? ($p->discount_notes ?? '-') : '-',
-                    $p ? ($p->unique_code ?? 0) : 0,
-                    $p ? $p->total_amount : 0,
-                    $t->checked_in ? 'YES' : 'NO',
-                    $t->checked_in_at ? $t->checked_in_at->format('Y-m-d H:i:s') : '-',
-                    $t->card_printed ? 'YES' : 'NO',
-                    $t->created_at->format('Y-m-d H:i:s'),
-                    $proofZipEntry,
-                    $proofUrl,
-                ]);
-            }
-
-            rewind($handle);
-            $csvContent = stream_get_contents($handle);
-            fclose($handle);
-
-            // Add CSV into the ZIP archive
-            $zip->addFromString('visitor_tickets_' . date('Y-m-d_His') . '.csv', $csvContent);
             $zip->close();
+
+            if (file_exists($tempExcelPath)) {
+                @unlink($tempExcelPath);
+            }
 
             if (ob_get_level()) {
                 @ob_end_clean();
@@ -2243,69 +2427,9 @@ class VisitorTicketAdminController extends Controller
             return response()->download($tempZipPath, $zipFilename, $headers)->deleteFileAfterSend(true);
         }
 
-        // Standard CSV export (includes direct proof URLs)
+        // 3. Standard CSV export with comprehensive summary at bottom
         $filename = 'visitor_tickets_' . date('Y-m-d_His') . '.csv';
-        $handle = fopen('php://temp', 'r+');
-        fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM
-
-        fputcsv($handle, [
-            'Ticket Code',
-            'Invoice / Receipt No',
-            'Payment Code',
-            'Visitor Name',
-            'Email',
-            'Phone / WhatsApp',
-            'Institution',
-            'Category',
-            'Registration Source',
-            'Status',
-            'Payment Method',
-            'Payment Status',
-            'Base Amount (IDR)',
-            'Discount (IDR)',
-            'Discount Notes',
-            'Unique Code',
-            'Total Amount (IDR)',
-            'Checked In',
-            'Checked In Time',
-            'Card Printed',
-            'Registered At',
-            'Bukti Bayar (URL Online)',
-        ]);
-
-        foreach ($tickets as $t) {
-            $p = $t->payment;
-            $proofUrl = ($p && !empty($p->proof_of_payment)) ? $this->resolveProofUrl($p->proof_of_payment) : '-';
-
-            fputcsv($handle, [
-                $t->ticket_code,
-                $p ? ($p->receipt_no ?? '-') : '-',
-                $p ? $p->payment_code : '-',
-                $t->visitor_name,
-                $t->visitor_email,
-                $t->visitor_phone ?? '-',
-                $t->visitor_institution ?? '-',
-                $t->category_label ?? strtoupper($t->visitor_type),
-                $t->registration_source === 'admin_onsite' ? 'Onsite (Admin)' : 'Online Self',
-                strtoupper($t->status),
-                $p ? strtoupper($p->payment_method) : 'FREE',
-                $p ? strtoupper($p->status) : 'FREE',
-                $t->individual_price ?? ($t->price ?? 0),
-                $p ? ($p->discount_amount ?? 0) : 0,
-                $p ? ($p->discount_notes ?? '-') : '-',
-                $p ? ($p->unique_code ?? 0) : 0,
-                $p ? $p->total_amount : 0,
-                $t->checked_in ? 'YES' : 'NO',
-                $t->checked_in_at ? $t->checked_in_at->format('Y-m-d H:i:s') : '-',
-                $t->card_printed ? 'YES' : 'NO',
-                $t->created_at->format('Y-m-d H:i:s'),
-                $proofUrl,
-            ]);
-        }
-
-        rewind($handle);
-        $csv = stream_get_contents($handle);
-        fclose($handle);
+        $csv = $this->generateCsvWithSummary($tickets, [], false);
 
         if (ob_get_level()) {
             @ob_end_clean();

@@ -591,7 +591,7 @@ export default function VisitorTicketsIndex({
 
     const [exportMenuAnchor, setExportMenuAnchor] = useState(null);
 
-    const triggerExport = (withProofs = false, useSelected = false) => {
+    const triggerExport = (format = 'xlsx', withProofs = false, useSelected = false) => {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = route('admin.visitorTickets.export');
@@ -605,11 +605,12 @@ export default function VisitorTicketsIndex({
             form.appendChild(input);
         };
 
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') 
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
             || (typeof window !== 'undefined' && window._csrf_token)
             || '';
         if (csrfToken) addInput('_token', csrfToken);
 
+        addInput('format', format);
         if (withProofs) addInput('with_proofs', '1');
 
         if (useSelected && selectedIds.length > 0) {
@@ -2492,12 +2493,12 @@ export default function VisitorTicketsIndex({
                         <Button
                             variant="outlined"
                             onClick={(e) => setExportMenuAnchor(e.currentTarget)}
-                            startIcon={<DownloadIcon />}
+                            startIcon={<TableChartRoundedIcon sx={{ color: '#094d42' }} />}
                             endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 16 }} />}
                             sx={{
-                                color: '#334155',
-                                borderColor: '#cbd5e1',
-                                bgcolor: '#ffffff',
+                                color: '#094d42',
+                                borderColor: '#a7f3d0',
+                                bgcolor: '#f0fdf4',
                                 fontWeight: 800,
                                 fontSize: { xs: '0.75rem', sm: '0.82rem' },
                                 px: { xs: 1.5, sm: 2 },
@@ -2506,21 +2507,21 @@ export default function VisitorTicketsIndex({
                                 textTransform: 'none',
                                 whiteSpace: 'nowrap',
                                 flex: { xs: '1 1 calc(50% - 8px)', sm: '0 0 auto' },
-                                boxShadow: '0 3px 0 #cbd5e1',
+                                boxShadow: '0 3px 0 #a7f3d0',
                                 '&:hover': {
-                                    bgcolor: '#f8fafc',
-                                    borderColor: '#94a3b8',
+                                    bgcolor: '#dcfce7',
+                                    borderColor: '#6ee7b7',
                                     transform: 'translateY(1px)',
-                                    boxShadow: '0 2px 0 #cbd5e1',
+                                    boxShadow: '0 2px 0 #a7f3d0',
                                 },
                                 '&:active': {
                                     transform: 'translateY(2px)',
-                                    boxShadow: '0 1px 0 #cbd5e1',
+                                    boxShadow: '0 1px 0 #a7f3d0',
                                 },
                                 transition: 'all 0.12s ease',
                             }}
                         >
-                            Export CSV / ZIP
+                            Export Excel / CSV / ZIP
                         </Button>
                         <Menu
                             anchorEl={exportMenuAnchor}
@@ -2528,27 +2529,27 @@ export default function VisitorTicketsIndex({
                             onClose={() => setExportMenuAnchor(null)}
                             PaperProps={{
                                 sx: {
-                                    borderRadius: '14px',
-                                    boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-                                    p: 0.8,
-                                    minWidth: 280,
+                                    borderRadius: '16px',
+                                    boxShadow: '0 12px 35px rgba(0,0,0,0.18)',
+                                    p: 1,
+                                    minWidth: 320,
                                 }
                             }}
                         >
                             <MenuItem
                                 onClick={() => {
                                     setExportMenuAnchor(null);
-                                    triggerExport(false, false);
+                                    triggerExport('xlsx', false, false);
                                 }}
-                                sx={{ py: 1.2, px: 2, borderRadius: '10px', gap: 1.5 }}
+                                sx={{ py: 1.4, px: 2, borderRadius: '12px', gap: 1.5, bgcolor: '#f0fdf4', '&:hover': { bgcolor: '#dcfce7' } }}
                             >
-                                <FileDownloadIcon sx={{ color: '#094d42', fontSize: 22 }} />
+                                <TableChartRoundedIcon sx={{ color: '#059669', fontSize: 26 }} />
                                 <Box>
-                                    <Typography variant="body2" sx={{ fontWeight: 800, color: '#0f172a' }}>
-                                        📄 Export File CSV Saja
+                                    <Typography variant="body2" sx={{ fontWeight: 900, color: '#065f46', fontSize: '0.88rem' }}>
+                                        📊 Export Excel (.XLSX) Komplit &amp; Pivot
                                     </Typography>
-                                    <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem', display: 'block' }}>
-                                        Dilengkapi kolom link online bukti bayar
+                                    <Typography variant="caption" sx={{ color: '#047857', fontSize: '0.72rem', display: 'block', mt: 0.3 }}>
+                                        2 Sheet: Ringkasan Pivot Eksekutif &amp; Data Tiket + Rumus SUM
                                     </Typography>
                                 </Box>
                             </MenuItem>
@@ -2558,17 +2559,37 @@ export default function VisitorTicketsIndex({
                             <MenuItem
                                 onClick={() => {
                                     setExportMenuAnchor(null);
-                                    triggerExport(true, false);
+                                    triggerExport('zip', true, false);
                                 }}
-                                sx={{ py: 1.2, px: 2, borderRadius: '10px', gap: 1.5, bgcolor: '#f0fdf4', '&:hover': { bgcolor: '#dcfce7' } }}
+                                sx={{ py: 1.4, px: 2, borderRadius: '12px', gap: 1.5, bgcolor: '#eff6ff', '&:hover': { bgcolor: '#dbeafe' } }}
                             >
-                                <FolderZipIcon sx={{ color: '#059669', fontSize: 24 }} />
+                                <FolderZipIcon sx={{ color: '#0284c7', fontSize: 26 }} />
                                 <Box>
-                                    <Typography variant="body2" sx={{ fontWeight: 900, color: '#065f46' }}>
-                                        📦 Export CSV + Bukti Bayar (.ZIP)
+                                    <Typography variant="body2" sx={{ fontWeight: 900, color: '#0369a1', fontSize: '0.88rem' }}>
+                                        📦 Export Lengkap (.ZIP) = Excel + Bukti Bayar
                                     </Typography>
-                                    <Typography variant="caption" sx={{ color: '#047857', fontSize: '0.72rem', display: 'block' }}>
-                                        Paket ZIP berisi CSV & folder file bukti transfer
+                                    <Typography variant="caption" sx={{ color: '#0284c7', fontSize: '0.72rem', display: 'block', mt: 0.3 }}>
+                                        Paket ZIP berisi Excel, CSV &amp; seluruh foto bukti transfer
+                                    </Typography>
+                                </Box>
+                            </MenuItem>
+
+                            <Divider sx={{ my: 0.8 }} />
+
+                            <MenuItem
+                                onClick={() => {
+                                    setExportMenuAnchor(null);
+                                    triggerExport('csv', false, false);
+                                }}
+                                sx={{ py: 1.2, px: 2, borderRadius: '12px', gap: 1.5, '&:hover': { bgcolor: '#f8fafc' } }}
+                            >
+                                <FileDownloadIcon sx={{ color: '#64748b', fontSize: 24 }} />
+                                <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 800, color: '#1e293b' }}>
+                                        📄 Export File CSV Saja
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem', display: 'block' }}>
+                                        Data mentah lengkap dengan baris total &amp; link bukti online
                                     </Typography>
                                 </Box>
                             </MenuItem>
@@ -3448,8 +3469,29 @@ export default function VisitorTicketsIndex({
                             <Button
                                 size="small"
                                 variant="contained"
+                                startIcon={<TableChartRoundedIcon sx={{ fontSize: '16px !important' }} />}
+                                onClick={() => triggerExport('xlsx', false, true)}
+                                disabled={bulkActionProcessing}
+                                sx={{
+                                    bgcolor: '#059669',
+                                    color: '#fff',
+                                    textTransform: 'none',
+                                    fontWeight: 900,
+                                    fontSize: '0.82rem',
+                                    borderRadius: '10px',
+                                    whiteSpace: 'nowrap',
+                                    boxShadow: '0 3px 0 #047857',
+                                    px: 1.4,
+                                    '&:hover': { bgcolor: '#047857' },
+                                }}
+                            >
+                                📊 Export Excel ({selectedIds.length})
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="contained"
                                 startIcon={<FolderZipIcon sx={{ fontSize: '16px !important' }} />}
-                                onClick={() => triggerExport(true, true)}
+                                onClick={() => triggerExport('zip', true, true)}
                                 disabled={bulkActionProcessing}
                                 sx={{
                                     bgcolor: '#0369a1',
