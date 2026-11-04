@@ -94,6 +94,9 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import InsightsRoundedIcon from '@mui/icons-material/InsightsRounded';
 import TableChartRoundedIcon from '@mui/icons-material/TableChartRounded';
+import SortIcon from '@mui/icons-material/Sort';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import VisitorAnalyticsDashboard from '@/Components/VisitorTickets/VisitorAnalyticsDashboard';
 
 const CATEGORY_META = {
@@ -526,6 +529,8 @@ export default function VisitorTicketsIndex({
     const [emailSentFilter, setEmailSentFilter] = useState(filters.email_sent || 'all');
     const [duplicateFilter, setDuplicateFilter] = useState(filters.duplicate || 'all');
     const [unpaidExcelFilter, setUnpaidExcelFilter] = useState(filters.unpaid_excel || 'all');
+    const [invoiceFilter, setInvoiceFilter] = useState(filters.invoice_filter || 'all');
+    const [sortFilter, setSortFilter] = useState(filters.sort || 'latest');
     const [perPageFilter, setPerPageFilter] = useState(filters.per_page ? String(filters.per_page) : '25');
     const [sentTicketIds, setSentTicketIds] = useState([]);
 
@@ -534,6 +539,18 @@ export default function VisitorTicketsIndex({
             setPerPageFilter(String(filters.per_page));
         }
     }, [filters.per_page]);
+
+    useEffect(() => {
+        if (filters.sort !== undefined) {
+            setSortFilter(filters.sort || 'latest');
+        }
+    }, [filters.sort]);
+
+    useEffect(() => {
+        if (filters.invoice_filter !== undefined) {
+            setInvoiceFilter(filters.invoice_filter || 'all');
+        }
+    }, [filters.invoice_filter]);
 
     useEffect(() => {
         setTypeFilter(parseTypeFilter(filters.type));
@@ -879,6 +896,8 @@ export default function VisitorTicketsIndex({
             debt: overrides.debt !== undefined ? overrides.debt : debtFilter,
             email_sent: overrides.email_sent !== undefined ? overrides.email_sent : emailSentFilter,
             duplicate: overrides.duplicate !== undefined ? overrides.duplicate : duplicateFilter,
+            invoice_filter: overrides.invoice_filter !== undefined ? overrides.invoice_filter : invoiceFilter,
+            sort: overrides.sort !== undefined ? overrides.sort : sortFilter,
             per_page: currentPerPage,
             page: overrides.page || 1,
         };
@@ -891,6 +910,8 @@ export default function VisitorTicketsIndex({
         if (params.debt === 'all') delete params.debt;
         if (params.email_sent === 'all') delete params.email_sent;
         if (params.duplicate === 'all') delete params.duplicate;
+        if (params.invoice_filter === 'all') delete params.invoice_filter;
+        if (!params.sort || params.sort === 'latest') delete params.sort;
         if (String(params.per_page) === '25') delete params.per_page;
         if (params.page === 1) delete params.page;
         if (viewMode === 'analytics') {
@@ -963,6 +984,28 @@ export default function VisitorTicketsIndex({
         navigateFilters({ duplicate: val, page: 1 });
     };
 
+    const handleSortChange = (val) => {
+        setSortFilter(val);
+        navigateFilters({ sort: val, page: 1 });
+    };
+
+    const handleInvoiceFilterChange = (val) => {
+        setInvoiceFilter(val);
+        navigateFilters({ invoice_filter: val, page: 1 });
+    };
+
+    const handleToggleInvoiceSort = () => {
+        let nextSort = 'inv_desc';
+        if (sortFilter === 'inv_desc') {
+            nextSort = 'inv_asc';
+        } else if (sortFilter === 'inv_asc') {
+            nextSort = 'latest';
+        } else {
+            nextSort = 'inv_desc';
+        }
+        handleSortChange(nextSort);
+    };
+
     const handleResetFilters = () => {
         setSearchTerm('');
         setTypeFilter([]);
@@ -972,8 +1015,10 @@ export default function VisitorTicketsIndex({
         setDebtFilter('all');
         setEmailSentFilter('all');
         setDuplicateFilter('all');
+        setInvoiceFilter('all');
+        setSortFilter('latest');
         setPerPageFilter('25');
-        navigateFilters({ search: '', type: [], registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', duplicate: 'all', per_page: '25', page: 1 });
+        navigateFilters({ search: '', type: [], registration_type: 'all', checked_in: 'all', status: 'all', debt: 'all', email_sent: 'all', duplicate: 'all', invoice_filter: 'all', sort: 'latest', per_page: '25', page: 1 });
     };
 
     const handlePageChange = (_, page) => {
@@ -1767,7 +1812,7 @@ export default function VisitorTicketsIndex({
     };
 
     const isTypeFilterActive = Array.isArray(typeFilter) ? typeFilter.length > 0 : (typeFilter && typeFilter !== 'all');
-    const hasActiveFilters = Boolean(searchTerm || isTypeFilterActive || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all');
+    const hasActiveFilters = Boolean(searchTerm || isTypeFilterActive || registrationTypeFilter !== 'all' || checkedInFilter !== 'all' || statusFilter !== 'all' || debtFilter !== 'all' || emailSentFilter !== 'all' || duplicateFilter !== 'all' || invoiceFilter !== 'all' || (sortFilter && sortFilter !== 'latest'));
     const isFiltered = Boolean(stats.isFiltered || hasActiveFilters);
     const overallTotal = Number(globalStats.totalVisitors || totalItems || stats.totalVisitors || 0);
 
@@ -2559,14 +2604,14 @@ export default function VisitorTicketsIndex({
                                 sm: 'repeat(2, 1fr)',
                                 md: 'repeat(3, 1fr)',
                                 lg: 'repeat(4, 1fr)',
-                                xl: '1.8fr 1.05fr 0.9fr 0.9fr 0.9fr 0.9fr 0.95fr 1.1fr auto',
+                                xl: '1.6fr 1fr 0.85fr 0.85fr 0.85fr 0.85fr 0.85fr 0.95fr 1.25fr auto',
                             },
                             gap: 1.5,
                             alignItems: 'center',
                         }}
                     >
                         <TextField
-                            placeholder="Search name, email, ticket code, INVOICE / receipt no, institution..."
+                            placeholder="Cari No. INV (misal: 108, 076), nama, email, tiket code, instansi..."
                             value={searchTerm}
                             onChange={(e) => handleSearchChange(e.target.value)}
                             size="small"
@@ -2870,6 +2915,35 @@ export default function VisitorTicketsIndex({
                                 <MenuItem value="both" sx={{ color: '#7f1d1d', fontWeight: 900 }}>
                                     🚨 Email & Nama Persis Sama
                                 </MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl size="small" fullWidth>
+                            <InputLabel sx={{ fontSize: '0.82rem', fontWeight: 700 }}>Urutan INV / Sort</InputLabel>
+                            <Select
+                                value={sortFilter}
+                                label="Urutan INV / Sort"
+                                onChange={(e) => handleSortChange(e.target.value)}
+                                sx={{
+                                    borderRadius: '10px',
+                                    fontSize: '0.82rem',
+                                    bgcolor: (sortFilter === 'inv_desc' || sortFilter === 'inv_asc') ? '#fffbeb' : '#f8fafc',
+                                    fontWeight: (sortFilter === 'inv_desc' || sortFilter === 'inv_asc') ? 800 : 600,
+                                    color: (sortFilter === 'inv_desc' || sortFilter === 'inv_asc') ? '#b45309' : 'inherit',
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        borderColor: (sortFilter === 'inv_desc' || sortFilter === 'inv_asc') ? '#f59e0b !important' : undefined,
+                                        borderWidth: (sortFilter === 'inv_desc' || sortFilter === 'inv_asc') ? '2px !important' : undefined,
+                                    },
+                                }}
+                            >
+                                <MenuItem value="latest">🕒 Registrasi Terbaru</MenuItem>
+                                <MenuItem value="inv_desc" sx={{ fontWeight: 800, color: '#b45309' }}>
+                                    ⚡ No. INV Terbesar (108 → 013)
+                                </MenuItem>
+                                <MenuItem value="inv_asc" sx={{ fontWeight: 800, color: '#0369a1' }}>
+                                    🔢 No. INV Terkecil (013 → 108)
+                                </MenuItem>
+                                <MenuItem value="oldest">⏳ Registrasi Terlama</MenuItem>
                             </Select>
                         </FormControl>
 
@@ -3357,6 +3431,52 @@ export default function VisitorTicketsIndex({
                                     }}
                                 />
                             )}
+                            {sortFilter === 'inv_desc' && (
+                                <Chip
+                                    icon={<ArrowDownwardIcon sx={{ fontSize: '13px !important', color: '#b45309 !important' }} />}
+                                    label={`Urutan: No. INV Terbesar (108 → 013)`}
+                                    size="small"
+                                    onDelete={() => handleSortChange('latest')}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#fef3c7',
+                                        color: '#b45309',
+                                        border: '1.5px solid #fde68a',
+                                        boxShadow: '0 2px 4px rgba(217,119,6,0.15)',
+                                    }}
+                                />
+                            )}
+                            {sortFilter === 'inv_asc' && (
+                                <Chip
+                                    icon={<ArrowUpwardIcon sx={{ fontSize: '13px !important', color: '#0369a1 !important' }} />}
+                                    label={`Urutan: No. INV Terkecil (013 → 108)`}
+                                    size="small"
+                                    onDelete={() => handleSortChange('latest')}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#f0f9ff',
+                                        color: '#0369a1',
+                                        border: '1.5px solid #bae6fd',
+                                        boxShadow: '0 2px 4px rgba(2,132,199,0.15)',
+                                    }}
+                                />
+                            )}
+                            {sortFilter === 'oldest' && (
+                                <Chip
+                                    label="Urutan: Registrasi Terlama"
+                                    size="small"
+                                    onDelete={() => handleSortChange('latest')}
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: '0.74rem',
+                                        bgcolor: '#f1f5f9',
+                                        color: '#475569',
+                                        border: '1.5px solid #cbd5e1',
+                                    }}
+                                />
+                            )}
                             {duplicateFilter !== 'all' && (
                                 <Chip
                                     icon={<WarningAmberIcon sx={{ fontSize: '13px !important', color: '#b91c1c !important' }} />}
@@ -3600,7 +3720,48 @@ export default function VisitorTicketsIndex({
                                         </Tooltip>
                                     </TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>TICKET CODE</TableCell>
-                                    <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>INVOICE / RECEIPT</TableCell>
+                                    <TableCell
+                                        onClick={handleToggleInvoiceSort}
+                                        title="Klik untuk mengurutkan nomor invoice (Terbesar ↔ Terkecil)"
+                                        sx={{
+                                            fontWeight: 900,
+                                            fontSize: '0.72rem',
+                                            color: (sortFilter === 'inv_desc' || sortFilter === 'inv_asc') ? '#b45309' : '#475569',
+                                            letterSpacing: '0.05em',
+                                            whiteSpace: 'nowrap',
+                                            cursor: 'pointer',
+                                            userSelect: 'none',
+                                            bgcolor: (sortFilter === 'inv_desc' || sortFilter === 'inv_asc') ? '#fef3c7' : 'inherit',
+                                            transition: 'all 0.15s ease',
+                                            '&:hover': {
+                                                bgcolor: '#fef3c7',
+                                                color: '#b45309',
+                                            },
+                                        }}
+                                    >
+                                        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
+                                            <span>INVOICE / RECEIPT</span>
+                                            {sortFilter === 'inv_desc' && (
+                                                <Chip
+                                                    label="Terbesar ↓"
+                                                    size="small"
+                                                    sx={{ height: 18, fontSize: '0.62rem', fontWeight: 900, bgcolor: '#b45309', color: '#fff', px: 0.2 }}
+                                                />
+                                            )}
+                                            {sortFilter === 'inv_asc' && (
+                                                <Chip
+                                                    label="Terkecil ↑"
+                                                    size="small"
+                                                    sx={{ height: 18, fontSize: '0.62rem', fontWeight: 900, bgcolor: '#0284c7', color: '#fff', px: 0.2 }}
+                                                />
+                                            )}
+                                            {sortFilter !== 'inv_desc' && sortFilter !== 'inv_asc' && (
+                                                <Tooltip title="Klik untuk mengurutkan nomor invoice">
+                                                    <SortIcon sx={{ fontSize: 15, color: '#94a3b8' }} />
+                                                </Tooltip>
+                                            )}
+                                        </Box>
+                                    </TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>PARTICIPANT / VISITOR</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>CATEGORY</TableCell>
                                     <TableCell sx={{ fontWeight: 900, fontSize: '0.72rem', color: '#475569', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>SOURCE</TableCell>

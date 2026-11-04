@@ -238,6 +238,42 @@ class VisitorTicketAdminController extends Controller
             }
         }
 
+        // Invoice presence filter (all / has_invoice / no_invoice)
+        if ($invFilter = $request->input('invoice_filter')) {
+            if ($invFilter === 'has_invoice' || $invFilter === 'with_invoice') {
+                $query->whereNotNull('payment_id');
+            } elseif ($invFilter === 'no_invoice' || $invFilter === 'without_invoice') {
+                $query->whereNull('payment_id');
+            }
+        }
+
+        // Specific Invoice Number filter
+        if ($invNo = trim((string) $request->input('invoice_no', ''))) {
+            if (preg_match('/(\d+)/', $invNo, $matches)) {
+                $numericId = (int) $matches[1];
+                $matchingPaymentId = null;
+                if ($numericId >= 13) {
+                    $targetRank = $numericId - 12;
+                    $matchingPaymentId = VisitorPayment::orderBy('id', 'asc')
+                        ->skip($targetRank - 1)
+                        ->take(1)
+                        ->value('id');
+                } elseif ($numericId > 0) {
+                    $matchingPaymentId = $numericId;
+                }
+                $query->whereHas('payment', function ($pq) use ($invNo, $matchingPaymentId) {
+                    $pq->where('payment_code', 'like', "%{$invNo}%");
+                    if ($matchingPaymentId) {
+                        $pq->orWhere('id', $matchingPaymentId);
+                    }
+                });
+            } else {
+                $query->whereHas('payment', function ($pq) use ($invNo) {
+                    $pq->where('payment_code', 'like', "%{$invNo}%");
+                });
+            }
+        }
+
         return $query;
     }
 
@@ -257,12 +293,32 @@ class VisitorTicketAdminController extends Controller
         }
 
         $duplicateParam = $request->input('duplicate');
+        $sort = $request->input('sort', 'latest');
+
         if ($duplicateParam === 'email') {
             $tickets = $query->orderBy(DB::raw('LOWER(TRIM(visitor_email))'), 'asc')->orderBy('id', 'asc')->paginate($perPage)->withQueryString();
         } elseif ($duplicateParam === 'name') {
             $tickets = $query->orderBy(DB::raw('LOWER(TRIM(visitor_name))'), 'asc')->orderBy('id', 'asc')->paginate($perPage)->withQueryString();
         } elseif ($duplicateParam === 'any' || $duplicateParam === 'both') {
             $tickets = $query->orderBy(DB::raw('LOWER(TRIM(visitor_email))'), 'asc')->orderBy(DB::raw('LOWER(TRIM(visitor_name))'), 'asc')->paginate($perPage)->withQueryString();
+        } elseif ($sort === 'inv_desc') {
+            // Sort by Invoice Number Descending (Terbesar / Terakhir ke Terkecil)
+            $tickets = $query->orderByRaw('CASE WHEN visitor_tickets.payment_id IS NOT NULL THEN 0 ELSE 1 END')
+                ->orderBy('visitor_tickets.payment_id', 'desc')
+                ->orderBy('visitor_tickets.is_group_leader', 'desc')
+                ->orderBy('visitor_tickets.id', 'asc')
+                ->paginate($perPage)
+                ->withQueryString();
+        } elseif ($sort === 'inv_asc') {
+            // Sort by Invoice Number Ascending (Terkecil / Pertama ke Terbesar)
+            $tickets = $query->orderByRaw('CASE WHEN visitor_tickets.payment_id IS NOT NULL THEN 0 ELSE 1 END')
+                ->orderBy('visitor_tickets.payment_id', 'asc')
+                ->orderBy('visitor_tickets.is_group_leader', 'desc')
+                ->orderBy('visitor_tickets.id', 'asc')
+                ->paginate($perPage)
+                ->withQueryString();
+        } elseif ($sort === 'oldest') {
+            $tickets = $query->oldest()->paginate($perPage)->withQueryString();
         } else {
             $tickets = $query->latest()->paginate($perPage)->withQueryString();
         }
@@ -343,6 +399,9 @@ class VisitorTicketAdminController extends Controller
             ($request->filled('debt') && $request->input('debt') !== 'all') ||
             ($request->filled('email_sent') && $request->input('email_sent') !== 'all') ||
             ($request->filled('duplicate') && $request->input('duplicate') !== 'all') ||
+            ($request->filled('invoice_filter') && $request->input('invoice_filter') !== 'all') ||
+            $request->filled('invoice_no') ||
+            ($request->filled('sort') && !in_array($request->input('sort'), ['latest', 'all', ''])) ||
             ($request->filled('unpaid_excel') && $request->input('unpaid_excel') !== 'all');
 
         // Fetch tickets matching the active query (or all tickets if no filter) with payment relations
@@ -825,6 +884,9 @@ class VisitorTicketAdminController extends Controller
                 'debt' => $request->input('debt', 'all'),
                 'email_sent' => $request->input('email_sent', 'all'),
                 'duplicate' => $request->input('duplicate', 'all'),
+                'invoice_filter' => $request->input('invoice_filter', 'all'),
+                'invoice_no' => $request->input('invoice_no', ''),
+                'sort' => $request->input('sort', 'latest'),
                 'unpaid_excel' => $request->input('unpaid_excel', 'all'),
                 'per_page' => $perPageInput,
             ],
