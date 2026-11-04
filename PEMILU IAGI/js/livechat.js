@@ -8,6 +8,7 @@
 
   const KPKU_WA_NUMBER = '6285729456481';
   const KPKU_WA_DISPLAY = '+62 857-2945-6481';
+  const IS_HELPDESK_LOCKED = true; // Lock helpdesk: election, voting, and pleno are officially completed
 
   // Knowledge Base Responses
   const BOT_KNOWLEDGE = [
@@ -61,47 +62,53 @@
     container.id = 'kpku-chat-container';
     container.innerHTML = `
       <!-- Trigger Floating Button -->
-      <button type="button" class="kpku-chat-trigger" id="btn-chat-trigger" aria-label="Buka Live Chat Bantuan KPKU">
+      <button type="button" class="kpku-chat-trigger${IS_HELPDESK_LOCKED ? ' chat-trigger-locked' : ''}" id="btn-chat-trigger" aria-label="${IS_HELPDESK_LOCKED ? 'Helpdesk Pemilu IAGI (Ditutup)' : 'Buka Live Chat Bantuan KPKU'}">
         <div class="chat-trigger-icon-wrap">
-          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <span class="chat-trigger-dot"></span>
+          ${IS_HELPDESK_LOCKED
+            ? `<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+               <span class="chat-trigger-dot dot-locked"></span>`
+            : `<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+               <span class="chat-trigger-dot"></span>`
+          }
         </div>
         <div class="chat-trigger-label">
-          <span class="chat-trigger-title">Live Chat KPKU</span>
-          <span class="chat-trigger-subtitle">● Online Helpdesk</span>
+          <span class="chat-trigger-title">${IS_HELPDESK_LOCKED ? 'Helpdesk (Ditutup)' : 'Live Chat KPKU'}</span>
+          <span class="chat-trigger-subtitle">${IS_HELPDESK_LOCKED ? '● Layanan Selesai' : '● Online Helpdesk'}</span>
         </div>
-        <span class="chat-trigger-badge" id="chat-unread-badge">1</span>
+        <span class="chat-trigger-badge" id="chat-unread-badge" style="${IS_HELPDESK_LOCKED ? 'display:none;' : ''}">1</span>
       </button>
 
       <!-- Overlay (Mobile) -->
       <div class="kpku-chat-overlay" id="chat-overlay"></div>
 
       <!-- Live Chat Window -->
-      <div class="kpku-chat-window" id="chat-window">
+      <div class="kpku-chat-window${IS_HELPDESK_LOCKED ? ' window-locked' : ''}" id="chat-window">
         <!-- Mobile Drawer Handle Bar -->
         <div class="chat-drawer-handle-bar" id="chat-drawer-handle"></div>
 
         <!-- Header -->
-        <div class="kpku-chat-header">
+        <div class="kpku-chat-header${IS_HELPDESK_LOCKED ? ' header-locked' : ''}">
           <div class="chat-header-profile">
-            <div class="chat-avatar-frame">
+            <div class="chat-avatar-frame${IS_HELPDESK_LOCKED ? ' avatar-locked' : ''}">
               <img src="assets/iagi-logo.png?v=iagi2026" alt="KPKU Logo">
-              <span class="chat-avatar-status"></span>
+              <span class="chat-avatar-status${IS_HELPDESK_LOCKED ? ' status-locked' : ''}"></span>
             </div>
             <div class="chat-header-info">
               <span class="chat-header-title">Helpdesk Pemilu IAGI</span>
-              <span class="chat-header-status">
-                <span class="chat-trigger-dot" style="position:static; display:inline-block; margin-right:4px;"></span>
-                Online • Respon Cepat
+              <span class="chat-header-status${IS_HELPDESK_LOCKED ? ' status-text-locked' : ''}">
+                ${IS_HELPDESK_LOCKED
+                  ? `<span class="chat-trigger-dot dot-locked" style="position:static; display:inline-block; margin-right:4px;"></span>Layanan Resmi Ditutup`
+                  : `<span class="chat-trigger-dot" style="position:static; display:inline-block; margin-right:4px;"></span>Online • Respon Cepat`
+                }
               </span>
             </div>
           </div>
           <div class="chat-header-actions">
-            <button type="button" class="btn-chat-restore" id="btn-chat-restore" title="Muat / Pulihkan Riwayat Chat & Balasan Panitia (Cari dengan NPA)" aria-label="Muat Chat">
+            <button type="button" class="btn-chat-restore" id="btn-chat-restore" title="${IS_HELPDESK_LOCKED ? 'Buka Arsip Percakapan & Tiket Pengaduan' : 'Muat / Pulihkan Riwayat Chat & Balasan Panitia (Cari dengan NPA)'}" aria-label="Arsip Tiket">
               <svg viewBox="0 0 24 24" style="width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.2;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-              <span>Muat Chat</span>
+              <span>${IS_HELPDESK_LOCKED ? 'Arsip Tiket' : 'Muat Chat'}</span>
             </button>
-            <a href="https://wa.me/${KPKU_WA_NUMBER}?text=Halo%20Panitia%20KPKU%20IAGI%202026,%20saya%20butuh%20bantuan%20terkait%20Pemilu." target="_blank" rel="noopener noreferrer" class="btn-chat-wa" title="Lanjut Chat di WhatsApp">
+            <a href="https://wa.me/${KPKU_WA_NUMBER}?text=Halo%20Sekretariat%20PP%20IAGI,%20saya%20ingin%20menanyakan%20informasi%20resmi%20pasca%20Pemilu%20IAGI%202026." target="_blank" rel="noopener noreferrer" class="btn-chat-wa" title="Hubungi Sekretariat di WhatsApp">
               <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.4-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg>
             </a>
             <button type="button" class="btn-chat-close" id="btn-chat-close" aria-label="Tutup Chat">&times;</button>
@@ -109,9 +116,14 @@
         </div>
 
         <!-- Banner -->
-        <div class="kpku-chat-banner">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-          <span>Pusat Bantuan Resmi Panitia Pemilu Ketua Umum IAGI 2026–2029</span>
+        <div class="kpku-chat-banner${IS_HELPDESK_LOCKED ? ' banner-locked' : ''}">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;flex-shrink:0;">
+            ${IS_HELPDESK_LOCKED
+              ? `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>`
+              : `<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>`
+            }
+          </svg>
+          <span>${IS_HELPDESK_LOCKED ? 'Layanan Bantuan & Pengaduan Pemilih Resmi Ditutup' : 'Pusat Bantuan Resmi Panitia Pemilu Ketua Umum IAGI 2026–2029'}</span>
         </div>
 
         <!-- Restore / Recovery Panel -->
@@ -119,18 +131,84 @@
           <div class="chat-restore-inner">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
               <span class="chat-restore-desc" style="font-weight: 700; color: #FDE68A; font-size: 0.78rem;">
-                📂 Muat Riwayat Chat & Balasan Panitia
+                📂 ${IS_HELPDESK_LOCKED ? 'Buka Arsip Percakapan Tiket (Read-Only)' : 'Muat Riwayat Chat & Balasan Panitia'}
               </span>
               <button type="button" onclick="document.getElementById('chat-restore-panel').style.display='none'" style="background:none; border:none; color:#94A3B8; font-size:1.2rem; cursor:pointer; line-height:1; padding:0 4px;" aria-label="Tutup Panel">&times;</button>
             </div>
             <div style="font-size: 0.72rem; color: #94A3B8; margin-bottom: 8px; line-height: 1.35;">
-              Masukkan <strong>NPA 5-digit</strong> atau <strong>Email</strong> Anda untuk memuat percakapan & balasan resmi admin:
+              Masukkan <strong>NPA 5-digit</strong> atau <strong>Email</strong> Anda untuk memeriksa arsip tiket:
             </div>
             <div class="chat-restore-input-group">
               <input type="text" id="restore-npa-input" class="restore-input" placeholder="Contoh: 01842 atau email...">
-              <button type="button" class="btn-do-restore" id="btn-do-restore" onclick="window.doRestoreByNpa()">Muat Chat</button>
+              <button type="button" class="btn-do-restore" id="btn-do-restore" onclick="window.doRestoreByNpa()">Buka Arsip</button>
             </div>
             <div id="restore-status-msg" style="display: none; font-size: 0.74rem; padding: 4px 0; font-weight: 600;"></div>
+          </div>
+        </div>
+
+        <!-- LOCKED HELPDESK SCREEN (Minimalist 21st.dev Obsidian Card) -->
+        <div class="kpku-chat-locked-screen" id="chat-locked-screen" style="${IS_HELPDESK_LOCKED ? 'display: flex;' : 'display: none;'}">
+          <div class="chat-locked-card">
+            
+            <div class="chat-locked-icon-halo">
+              <div class="chat-locked-icon-badge">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#F5BA42" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+            </div>
+
+            <div class="chat-locked-status-pill">
+              <span class="status-pulse-dot"></span>
+              <span>LAYANAN RESMI SELESAI</span>
+            </div>
+
+            <h3 class="chat-locked-title">Helpdesk Pemilu Telah Ditutup</h3>
+            <p class="chat-locked-desc">
+              Seluruh rangkaian pemungutan suara elektronik (e-Voting) dan Sidang Pleno Terbuka KPKU IAGI 2026–2029 telah selesai dilaksanakan. Kanal aduan & bantuan pemilih resmi dinonaktifkan.
+            </p>
+
+            <div class="chat-locked-bento">
+              <div class="chat-bento-item">
+                <span class="chat-bento-label">Status Helpdesk:</span>
+                <span class="chat-bento-val val-danger">● RESMI DITUTUP</span>
+              </div>
+              <div class="chat-bento-item">
+                <span class="chat-bento-label">Pemungutan Suara:</span>
+                <span class="chat-bento-val">BERAKHIR 03 NOV</span>
+              </div>
+              <div class="chat-bento-item">
+                <span class="chat-bento-label">Sidang Pleno:</span>
+                <span class="chat-bento-val val-success">TELAH DILAKSANAKAN</span>
+              </div>
+              <div class="chat-bento-item">
+                <span class="chat-bento-label">Kotak Suara:</span>
+                <span class="chat-bento-val val-gold">TERSEGEL & LUBER</span>
+              </div>
+            </div>
+
+            <div class="chat-locked-notice">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#F5BA42" stroke-width="2" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span>Untuk pertanyaan administratif atau korespondensi resmi pasca-pemilu, silakan hubungi Sekretariat PP IAGI via WhatsApp.</span>
+            </div>
+
+            <div class="chat-locked-actions">
+              <a href="https://wa.me/${KPKU_WA_NUMBER}?text=Halo%20Sekretariat%20PP%20IAGI,%20saya%20ingin%20menanyakan%20informasi%20resmi%20pasca%20Pemilu%20IAGI%202026." target="_blank" rel="noopener noreferrer" class="btn-chat-wa-primary">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.64c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.02-1.25-.75-.67-1.26-1.5-1.4-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.15.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.72 4.31 3.81.6.26 1.07.42 1.44.54.61.19 1.16.17 1.6.1.49-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.17-.48-.29z"/></svg>
+                <span>Hubungi Sekretariat PP IAGI (WA)</span>
+              </a>
+
+              <a href="landing.html" class="btn-chat-portal-secondary">
+                <span>Kembali ke Beranda Utama</span>
+              </a>
+            </div>
+
+            <div class="chat-locked-footer">
+              <span>Perlu memeriksa tiket pengaduan lampau?</span>
+              <button type="button" class="btn-chat-archive-link" onclick="window.openRestorePanel()">📂 Buka Arsip Percakapan (Read-Only)</button>
+            </div>
+
           </div>
         </div>
 
@@ -347,12 +425,26 @@
       });
     });
 
-    if (hasCompletedPreChat()) {
+    if (IS_HELPDESK_LOCKED) {
+      window.showHelpdeskLockedScreen();
+    } else if (hasCompletedPreChat()) {
       showPreChatForm(false);
     } else {
       showPreChatForm(true);
     }
   }
+
+  window.showHelpdeskLockedScreen = function() {
+    const lockedScreen = document.getElementById('chat-locked-screen');
+    const prechatScreen = document.getElementById('prechat-screen');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatForm = document.getElementById('chat-form');
+
+    if (lockedScreen) lockedScreen.style.display = 'flex';
+    if (prechatScreen) prechatScreen.style.display = 'none';
+    if (chatMessages) chatMessages.style.display = 'none';
+    if (chatForm) chatForm.style.display = 'none';
+  };
 
   function toggleChatWindow(show) {
     const win = document.getElementById('chat-window');
@@ -363,7 +455,9 @@
       win.classList.add('active');
       if (overlay) overlay.classList.add('active');
 
-      if (hasCompletedPreChat()) {
+      if (IS_HELPDESK_LOCKED) {
+        window.showHelpdeskLockedScreen();
+      } else if (hasCompletedPreChat()) {
         showPreChatForm(false);
         const input = document.getElementById('chat-input');
         if (input && window.innerWidth > 480) input.focus();
@@ -392,6 +486,11 @@
   }
 
   function showPreChatForm(show) {
+    if (IS_HELPDESK_LOCKED) {
+      window.showHelpdeskLockedScreen();
+      return;
+    }
+
     const prechatScreen = document.getElementById('prechat-screen');
     const chatMessages = document.getElementById('chat-messages');
     const chatForm = document.getElementById('chat-form');
@@ -451,6 +550,11 @@
 
   window.handlePreChatSubmit = function(event) {
     if (event) event.preventDefault();
+
+    if (IS_HELPDESK_LOCKED) {
+      alert('Helpdesk Pemilu IAGI telah resmi ditutup. Seluruh tahapan pemilihan telah selesai.');
+      return;
+    }
 
     const nameInput = document.getElementById('prechat-name');
     const npaInput = document.getElementById('prechat-npa');
@@ -753,6 +857,11 @@
 
   function restoreChatSession() {
     try {
+      if (IS_HELPDESK_LOCKED) {
+        window.showHelpdeskLockedScreen();
+        return;
+      }
+
       let ticketId = getActiveTicketId();
       const identity = getVoterIdentity();
 
@@ -821,7 +930,9 @@
       if (statusMsg) {
         statusMsg.style.display = 'block';
         statusMsg.style.color = '#F87171';
-        statusMsg.innerText = 'Tidak ditemukan tiket aktif untuk "' + query + '". Silakan ketik pertanyaan langsung di bawah.';
+        statusMsg.innerText = IS_HELPDESK_LOCKED
+          ? 'Tidak ditemukan arsip tiket untuk "' + query + '".'
+          : 'Tidak ditemukan tiket aktif untuk "' + query + '". Silakan ketik pertanyaan langsung di bawah.';
       }
       return;
     }
@@ -835,7 +946,44 @@
         timestamp: Date.now()
       }));
     } catch(e) {}
-    showPreChatForm(false);
+
+    if (IS_HELPDESK_LOCKED) {
+      const lockedScreen = document.getElementById('chat-locked-screen');
+      const prechatScreen = document.getElementById('prechat-screen');
+      const chatMessages = document.getElementById('chat-messages');
+      const chatForm = document.getElementById('chat-form');
+
+      if (lockedScreen) lockedScreen.style.display = 'none';
+      if (prechatScreen) prechatScreen.style.display = 'none';
+      if (chatMessages) chatMessages.style.display = 'flex';
+      if (chatForm) chatForm.style.display = 'none';
+
+      updateVoterIdentityBanner();
+
+      // Ensure read-only alert banner exists at top of archive
+      let arcBanner = document.getElementById('chat-archive-alert-banner');
+      if (!arcBanner && chatMessages) {
+        arcBanner = document.createElement('div');
+        arcBanner.id = 'chat-archive-alert-banner';
+        arcBanner.className = 'chat-archive-alert';
+        arcBanner.innerHTML = `
+          <div class="chat-archive-alert-content">
+            <div style="font-weight: 800; color: #F87171; display:flex; align-items:center; gap:6px; font-size:0.75rem;">
+              <span>🔒 Mode Arsip Pengaduan (Read-Only)</span>
+            </div>
+            <div style="font-size:0.68rem; color:#94A3B8; margin-top:2px; line-height:1.35;">
+              Layanan helpdesk telah ditutup. Percakapan ini diarsipkan untuk transparansi. Pengiriman pesan baru dinonaktifkan.
+            </div>
+          </div>
+          <button type="button" class="btn-return-locked" onclick="window.showHelpdeskLockedScreen()">
+            ← Kembali ke Status Penutupan
+          </button>
+        `;
+        chatMessages.insertBefore(arcBanner, chatMessages.firstChild);
+      }
+    } else {
+      showPreChatForm(false);
+    }
     renderFullChatHistory(found);
 
     if (statusMsg) {
@@ -912,6 +1060,11 @@
   }
 
   function handleUserSend(text) {
+    if (IS_HELPDESK_LOCKED) {
+      alert('Helpdesk Pemilu IAGI telah resmi ditutup. Seluruh tahapan pemilihan telah selesai.');
+      return;
+    }
+
     const trimmed = (text || '').trim();
     if (!trimmed) return;
 
