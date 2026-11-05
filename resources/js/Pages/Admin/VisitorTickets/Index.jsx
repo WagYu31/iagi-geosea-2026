@@ -430,6 +430,69 @@ const CATEGORY_PRICES = {
     'poster_presenter': 0,
 };
 
+class AnalyticsErrorBoundary extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        console.error('VisitorTickets Analytics Error Boundary caught:', error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 4,
+                        my: 3,
+                        bgcolor: '#fff1f2',
+                        border: '2px solid #f43f5e',
+                        borderRadius: '16px',
+                        textAlign: 'center',
+                        maxWidth: '850px',
+                        mx: 'auto',
+                    }}
+                >
+                    <Box sx={{ fontSize: '3rem', mb: 1 }}>⚠️</Box>
+                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#9f1239', mb: 1 }}>
+                        Analitik Mengalami Kendala Tampilan
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#be123c', mb: 3 }}>
+                        {String(this.state.error?.message || this.state.error || 'Terjadi kesalahan sistem saat memuat visual analitik')}
+                    </Typography>
+                    <Stack direction="row" spacing={2} justifyContent="center">
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                this.setState({ hasError: false, error: null });
+                                if (this.props.onSwitchToTable) this.props.onSwitchToTable();
+                            }}
+                            sx={{ bgcolor: '#094d42', color: '#ffffff', '&:hover': { bgcolor: '#063830' }, textTransform: 'none', fontWeight: 800 }}
+                        >
+                            📋 Kembali ke Tampilan Tabel Tiket
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            onClick={() => window.location.reload()}
+                            sx={{ borderColor: '#f43f5e', color: '#be123c', textTransform: 'none', fontWeight: 800 }}
+                        >
+                            🔄 Muat Ulang Halaman
+                        </Button>
+                    </Stack>
+                </Paper>
+            );
+        }
+        return this.props.children;
+    }
+}
+
 export default function VisitorTicketsIndex({
     tickets = {},
     stats = {},
@@ -2189,34 +2252,36 @@ export default function VisitorTicketsIndex({
                 </Box>
 
                 {viewMode === 'analytics' ? (
-                    <VisitorAnalyticsDashboard
-                        analytics={analytics}
-                        stats={stats}
-                        globalStats={globalStats}
-                        isDark={isDark}
-                        onSwitchToTable={() => handleSetViewMode('table')}
-                        onTriggerGateScanner={() => router.visit(route('admin.gateScanner'))}
-                        // Filter States & Handlers (matching Gambar 2)
-                        searchTerm={searchTerm}
-                        onSearchChange={handleSearchChange}
-                        typeFilter={typeFilter}
-                        onTypeFilterChange={handleTypeFilterChange}
-                        registrationTypeFilter={registrationTypeFilter}
-                        onRegistrationTypeFilterChange={handleRegistrationTypeFilterChange}
-                        checkedInFilter={checkedInFilter}
-                        onCheckedInFilterChange={handleCheckedInFilterChange}
-                        statusFilter={statusFilter}
-                        onStatusFilterChange={handleStatusFilterChange}
-                        debtFilter={debtFilter}
-                        onDebtFilterChange={handleDebtFilterChange}
-                        emailSentFilter={emailSentFilter}
-                        onEmailSentFilterChange={handleEmailSentFilterChange}
-                        duplicateFilter={duplicateFilter}
-                        onDuplicateFilterChange={handleDuplicateFilterChange}
-                        onResetFilters={handleResetFilters}
-                        hasActiveFilters={hasActiveFilters}
-                        CATEGORY_META={CATEGORY_META}
-                    />
+                    <AnalyticsErrorBoundary onSwitchToTable={() => handleSetViewMode('table')}>
+                        <VisitorAnalyticsDashboard
+                            analytics={analytics}
+                            stats={stats}
+                            globalStats={globalStats}
+                            isDark={isDark}
+                            onSwitchToTable={() => handleSetViewMode('table')}
+                            onTriggerGateScanner={() => router.visit(route('admin.gateScanner'))}
+                            // Filter States & Handlers (matching Gambar 2)
+                            searchTerm={searchTerm}
+                            onSearchChange={handleSearchChange}
+                            typeFilter={typeFilter}
+                            onTypeFilterChange={handleTypeFilterChange}
+                            registrationTypeFilter={registrationTypeFilter}
+                            onRegistrationTypeFilterChange={handleRegistrationTypeFilterChange}
+                            checkedInFilter={checkedInFilter}
+                            onCheckedInFilterChange={handleCheckedInFilterChange}
+                            statusFilter={statusFilter}
+                            onStatusFilterChange={handleStatusFilterChange}
+                            debtFilter={debtFilter}
+                            onDebtFilterChange={handleDebtFilterChange}
+                            emailSentFilter={emailSentFilter}
+                            onEmailSentFilterChange={handleEmailSentFilterChange}
+                            duplicateFilter={duplicateFilter}
+                            onDuplicateFilterChange={handleDuplicateFilterChange}
+                            onResetFilters={handleResetFilters}
+                            hasActiveFilters={hasActiveFilters}
+                            CATEGORY_META={CATEGORY_META}
+                        />
+                    </AnalyticsErrorBoundary>
                 ) : (
                     <>
                         {/* 3D HEADER & QUICK ACTION BAR */}

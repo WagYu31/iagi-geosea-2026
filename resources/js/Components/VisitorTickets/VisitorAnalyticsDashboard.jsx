@@ -690,19 +690,20 @@ export default function VisitorAnalyticsDashboard({
 
     const dailyChartData = useMemo(() => {
         let runningCum = 0;
-        return rawDailyAttendance.map((d, i) => {
+        const list = Array.isArray(rawDailyAttendance) ? rawDailyAttendance : [];
+        return list.map((d, i) => {
             let dayVol = 0;
             if (dailyCategoryFilter === 'all') {
-                dayVol = d.volume ?? 0;
+                dayVol = Number(d.volume) || 0;
             } else if (d.by_category && d.by_category[dailyCategoryFilter] !== undefined) {
-                dayVol = d.by_category[dailyCategoryFilter] ?? 0;
+                dayVol = Number(d.by_category[dailyCategoryFilter]) || 0;
             } else if (d.by_pillar && d.by_pillar[dailyCategoryFilter] !== undefined) {
-                dayVol = d.by_pillar[dailyCategoryFilter] ?? 0;
+                dayVol = Number(d.by_pillar[dailyCategoryFilter]) || 0;
             } else if (d.by_group && d.by_group[dailyCategoryFilter] !== undefined) {
-                dayVol = d.by_group[dailyCategoryFilter] ?? 0;
+                dayVol = Number(d.by_group[dailyCategoryFilter]) || 0;
             } else {
-                const catObj = enrichedCategories.find(c => c.visitor_type === dailyCategoryFilter);
-                const totalCat = catObj ? (catObj.checkedIn || catObj.count || 0) : 0;
+                const catObj = Array.isArray(enrichedCategories) ? enrichedCategories.find(c => c.visitor_type === dailyCategoryFilter) : null;
+                const totalCat = catObj ? Number(catObj.checkedIn || catObj.count || 0) : 0;
                 const weights = [0.11, 0.55, 0.20, 0.09, 0.05];
                 dayVol = Math.round(totalCat * (weights[i] || 0.1));
             }
@@ -720,20 +721,27 @@ export default function VisitorAnalyticsDashboard({
     }, [rawDailyAttendance, dailyCategoryFilter, dailyMode, enrichedCategories]);
 
     const maxDailyVol = useMemo(() => {
-        const vols = dailyChartData.map(d => d.activeVal);
-        return Math.max(...(vols.length ? vols : [1]), 1);
+        const vols = dailyChartData.map(d => Number(d.activeVal) || 0);
+        const m = Math.max(...(vols.length ? vols : [1]), 1);
+        return isFinite(m) && m > 0 ? m : 1;
     }, [dailyChartData]);
 
     const selectedFilterTotal = useMemo(() => {
-        return dailyChartData.reduce((acc, d) => acc + d.dailyVol, 0);
+        return dailyChartData.reduce((acc, d) => acc + (Number(d.dailyVol) || 0), 0);
     }, [dailyChartData]);
 
     const peakDayInfo = useMemo(() => {
         let maxV = -1;
-        let peak = dailyChartData[1] || dailyChartData[0];
+        let peak = dailyChartData[1] || dailyChartData[0] || {
+            day: '02 Nov',
+            short_label: 'Tgl 2',
+            title: 'Tgl 2 (02 Nov 2026)',
+            dailyVol: 389,
+            agenda: 'Grand Opening Ceremony & Plenary Sesi Puncak'
+        };
         dailyChartData.forEach(d => {
-            if (d.dailyVol > maxV) {
-                maxV = d.dailyVol;
+            if ((Number(d.dailyVol) || 0) > maxV) {
+                maxV = Number(d.dailyVol) || 0;
                 peak = d;
             }
         });
@@ -745,23 +753,24 @@ export default function VisitorAnalyticsDashboard({
             return { label: 'Semua Kategori (Total)', icon: '🌟', color: '#2563eb' };
         }
         if (['commercial', 'scientific', 'leadership', 'expo'].includes(dailyCategoryFilter)) {
-            const p = pillarsBreakdown[dailyCategoryFilter];
-            return { label: p?.label || dailyCategoryFilter, icon: p?.icon || '🏛️', color: p?.color || '#2563eb' };
+            const p = (pillarsBreakdown && pillarsBreakdown[dailyCategoryFilter]) || {};
+            return { label: p.label || dailyCategoryFilter, icon: p.icon || '🏛️', color: p.color || '#2563eb' };
         }
         if (['participant', 'technical', 'visitor', 'roles'].includes(dailyCategoryFilter)) {
             const g = REGISTRATION_GROUPS.find(gr => gr.id === dailyCategoryFilter);
             return { label: g?.title || dailyCategoryFilter, icon: g?.icon || '📁', color: g?.color || '#2563eb' };
         }
-        const cat = enrichedCategories.find(c => c.visitor_type === dailyCategoryFilter);
+        const cat = Array.isArray(enrichedCategories) ? enrichedCategories.find(c => c.visitor_type === dailyCategoryFilter) : null;
         if (cat) {
-            return { label: cat.label, icon: cat.icon, color: cat.color };
+            return { label: cat.label || dailyCategoryFilter, icon: cat.icon || '🏷️', color: cat.color || '#2563eb' };
         }
-        return { label: dailyCategoryFilter, icon: '🏷️', color: '#2563eb' };
+        return { label: String(dailyCategoryFilter || 'Kategori'), icon: '🏷️', color: '#2563eb' };
     }, [dailyCategoryFilter, pillarsBreakdown, enrichedCategories]);
 
     const targetBenchmarks = useMemo(() => {
-        if (analytics.targetBenchmarks && analytics.targetBenchmarks.financial) {
-            return analytics.targetBenchmarks;
+        const tb = analytics.targetBenchmarks;
+        if (tb && tb.financial && tb.attendance) {
+            return tb;
         }
         return {
             financial: {
@@ -2184,7 +2193,7 @@ export default function VisitorAnalyticsDashboard({
                                     {/* Peak Day Indicator Chip */}
                                     <Chip
                                         icon={<FlashOnIcon sx={{ fontSize: 14, color: '#f59e0b' }} />}
-                                        label={`Puncak: ${peakDayInfo?.short_label || 'Tgl 2'} (${peakDayInfo?.dailyVol || 389} Pax)`}
+                                        label={`Puncak: ${peakDayInfo?.short_label || 'Tgl 2'} (${(Number(peakDayInfo?.dailyVol) || 389).toLocaleString('id-ID')} Pax)`}
                                         size="small"
                                         sx={{
                                             height: 24,
@@ -2201,7 +2210,7 @@ export default function VisitorAnalyticsDashboard({
                                         size="small"
                                         onClick={(e) => setDailyCategoryAnchor(e.currentTarget)}
                                         endIcon={<KeyboardArrowDownRoundedIcon sx={{ fontSize: 16 }} />}
-                                        startIcon={<FilterAltRoundedIcon sx={{ fontSize: 15, color: selectedFilterMeta.color }} />}
+                                        startIcon={<FilterAltRoundedIcon sx={{ fontSize: 15, color: selectedFilterMeta?.color || '#2563eb' }} />}
                                         sx={{
                                             height: 26,
                                             fontSize: '0.7rem',
@@ -2218,7 +2227,7 @@ export default function VisitorAnalyticsDashboard({
                                             },
                                         }}
                                     >
-                                        {selectedFilterMeta.icon} {selectedFilterMeta.label.length > 20 ? selectedFilterMeta.label.substring(0, 18) + '...' : selectedFilterMeta.label}
+                                        {selectedFilterMeta?.icon || '🌟'} {(selectedFilterMeta?.label || '').length > 20 ? (selectedFilterMeta?.label || '').substring(0, 18) + '...' : (selectedFilterMeta?.label || 'Kategori')}
                                     </Button>
 
                                     <Menu
@@ -2346,20 +2355,21 @@ export default function VisitorAnalyticsDashboard({
                                 const graphH = chartH - padT - padB;
 
                                 const points = dailyChartData.map((d, i) => {
-                                    const val = d.activeVal;
+                                    const val = Number(d.activeVal) || 0;
+                                    const denom = Math.max(1, Number(maxDailyVol) || 1);
                                     const x = padL + (i / Math.max(1, dailyChartData.length - 1)) * graphW;
-                                    const y = padT + graphH - (val / maxDailyVol) * graphH;
+                                    const y = padT + graphH - (val / denom) * graphH;
                                     return {
-                                        x,
-                                        y,
+                                        x: isFinite(x) ? x : padL,
+                                        y: isFinite(y) ? y : (padT + graphH),
                                         val,
-                                        day: d.day,
-                                        short_label: d.short_label,
-                                        subtitle: d.subtitle,
-                                        agenda: d.agenda,
-                                        dailyVol: d.dailyVol,
-                                        cumVol: d.cumVol,
-                                        is_peak: d.day === peakDayInfo?.day,
+                                        day: d.day || `D${i+1}`,
+                                        short_label: d.short_label || `Tgl ${i+1}`,
+                                        subtitle: d.subtitle || '',
+                                        agenda: d.agenda || '',
+                                        dailyVol: Number(d.dailyVol) || 0,
+                                        cumVol: Number(d.cumVol) || 0,
+                                        is_peak: Boolean(d.day && d.day === peakDayInfo?.day),
                                     };
                                 });
 
@@ -2392,7 +2402,8 @@ export default function VisitorAnalyticsDashboard({
                                             {/* Horizontal Guideline Grids */}
                                             {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
                                                 const lineY = padT + graphH * (1 - ratio);
-                                                const gridVal = Math.round(maxDailyVol * ratio);
+                                                const validMax = Math.max(1, Number(maxDailyVol) || 1);
+                                                const gridVal = Math.round(validMax * ratio);
                                                 return (
                                                     <g key={ratio}>
                                                         <line
@@ -2412,7 +2423,7 @@ export default function VisitorAnalyticsDashboard({
                                                             fontFamily="Inter, sans-serif"
                                                             fontWeight="600"
                                                         >
-                                                            {gridVal}
+                                                            {(Number(gridVal) || 0).toLocaleString('id-ID')}
                                                         </text>
                                                     </g>
                                                 );
@@ -2483,7 +2494,7 @@ export default function VisitorAnalyticsDashboard({
                                                             fontWeight="900"
                                                             fontFamily="Inter, sans-serif"
                                                         >
-                                                            {pt.val.toLocaleString('id-ID')}
+                                                            {(Number(pt.val) || 0).toLocaleString('id-ID')}
                                                         </text>
 
                                                         {/* X-Axis Day & Date Label (Dual Line) */}
@@ -2520,9 +2531,11 @@ export default function VisitorAnalyticsDashboard({
                             {/* 5-Day Metric Cards Strip (Tgl 1 - 5 Breakdown) */}
                             <Grid container spacing={1.5} sx={{ mt: 1.5 }}>
                                 {dailyChartData.map((d) => {
-                                    const isPeak = d.day === peakDayInfo?.day;
+                                    const isPeak = Boolean(d.day && d.day === peakDayInfo?.day);
                                     const isHovered = hoveredDay === d.day;
-                                    const pctOfSelected = selectedFilterTotal > 0 ? Math.round((d.dailyVol / selectedFilterTotal) * 100) : 0;
+                                    const totalSel = Number(selectedFilterTotal) || 0;
+                                    const dayV = Number(d.dailyVol) || 0;
+                                    const pctOfSelected = totalSel > 0 ? Math.round((dayV / totalSel) * 100) : 0;
 
                                     return (
                                         <Grid size={{ xs: 6, sm: 4, md: 2.4 }} key={d.day}>
@@ -2564,7 +2577,7 @@ export default function VisitorAnalyticsDashboard({
                                                 </Box>
 
                                                 <Typography sx={{ fontSize: '1.05rem', fontWeight: 900, color: isPeak ? '#2563eb' : textPrimary, letterSpacing: '-0.02em' }}>
-                                                    {d.dailyVol.toLocaleString('id-ID')} <span style={{ fontSize: '0.68rem', fontWeight: 600, color: textSecondary }}>Pax</span>
+                                                    {(Number(d.dailyVol) || 0).toLocaleString('id-ID')} <span style={{ fontSize: '0.68rem', fontWeight: 600, color: textSecondary }}>Pax</span>
                                                 </Typography>
 
                                                 <Typography sx={{ fontSize: '0.62rem', color: textSecondary, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', mt: 0.2 }}>
@@ -2612,7 +2625,7 @@ export default function VisitorAnalyticsDashboard({
                             >
                                 <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#2563eb', flexShrink: 0 }} />
                                 <Typography sx={{ fontSize: '0.74rem', color: textSecondary, lineHeight: 1.5 }}>
-                                    <strong style={{ color: '#2563eb' }}>Rekomendasi Operasional:</strong> Lonjakan tertinggi arus kedatangan delegasi <strong>{selectedFilterMeta.label}</strong> terjadi pada <strong>{peakDayInfo?.title} ({peakDayInfo?.dailyVol} delegasi)</strong> agenda {peakDayInfo?.agenda}. Panitia telah menyiagakan 4 jalur fast-track barcode turnstile, 2 meja cetak badge express di lobby Royal Ambarrukmo, serta alokasi khusus gate VIP &amp; Presenter.
+                                    <strong style={{ color: '#2563eb' }}>Rekomendasi Operasional:</strong> Lonjakan tertinggi arus kedatangan delegasi <strong>{selectedFilterMeta?.label || 'Kategori'}</strong> terjadi pada <strong>{peakDayInfo?.title || 'Tgl 2'} ({(Number(peakDayInfo?.dailyVol) || 0).toLocaleString('id-ID')} delegasi)</strong> agenda {peakDayInfo?.agenda || 'Sesi Puncak'}. Panitia telah menyiagakan 4 jalur fast-track barcode turnstile, 2 meja cetak badge express di lobby Royal Ambarrukmo, serta alokasi khusus gate VIP &amp; Presenter.
                                 </Typography>
                             </Box>
                         </Card>
