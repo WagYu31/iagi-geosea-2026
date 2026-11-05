@@ -887,9 +887,124 @@ class AdminController extends Controller
             })->whereNotNull('payment_proof_url')->count(),
         ];
 
+        // Fetch all verified / paid payments with user info for analytical aggregation
+        $paidPayments = Payment::where(function ($q) {
+                $q->where('status', 'paid')->orWhere('verified', true);
+            })
+            ->with('user:id,category,name')
+            ->select('id', 'user_id', 'amount', 'status', 'verified', 'gateway', 'order_id', 'paid_at', 'created_at')
+            ->get();
+
+        // 1. Daily Trend / Velocity (Aggregate by date)
+        $dailyBuckets = [];
+        foreach ($paidPayments as $p) {
+            $date = $p->paid_at ? $p->paid_at->format('Y-m-d') : $p->created_at->format('Y-m-d');
+            if (!isset($dailyBuckets[$date])) {
+                $dailyBuckets[$date] = [
+                    'date' => $date,
+                    'label' => date('d M', strtotime($date)),
+                    'revenue' => 0,
+                    'count' => 0,
+                ];
+            }
+            $dailyBuckets[$date]['revenue'] += (float) $p->amount;
+            $dailyBuckets[$date]['count']++;
+        }
+        ksort($dailyBuckets);
+
+        // Calculate cumulative
+        $dailyTrend = [];
+        $cumRev = 0;
+        $cumCount = 0;
+        foreach ($dailyBuckets as $d) {
+            $cumRev += $d['revenue'];
+            $cumCount += $d['count'];
+            $dailyTrend[] = [
+                'date' => $d['date'],
+                'label' => $d['label'],
+                'revenue' => $d['revenue'],
+                'count' => $d['count'],
+                'cum_revenue' => $cumRev,
+                'cum_count' => $cumCount,
+            ];
+        }
+
+        // 2. Category Distribution
+        $catBuckets = [
+            'Professional' => ['count' => 0, 'revenue' => 0, 'color' => '#7c3aed', 'icon' => '💼'],
+            'Student' => ['count' => 0, 'revenue' => 0, 'color' => '#2563eb', 'icon' => '🎓'],
+            'International Delegate' => ['count' => 0, 'revenue' => 0, 'color' => '#ea580c', 'icon' => '🌐'],
+            'Other' => ['count' => 0, 'revenue' => 0, 'color' => '#0d7a6a', 'icon' => '🏷️'],
+        ];
+
+        $totalRev = $stats['totalRevenue'] ?: 1;
+        foreach ($paidPayments as $p) {
+            $userCat = $p->user ? $p->user->category : 'Other';
+            $matchedKey = 'Other';
+            if ($userCat && str_contains(strtolower($userCat), 'student')) {
+                $matchedKey = 'Student';
+            } elseif ($userCat && (str_contains(strtolower($userCat), 'international') || str_contains(strtolower($userCat), 'intl') || str_contains(strtolower($userCat), 'expatriate'))) {
+                $matchedKey = 'International Delegate';
+            } elseif ($userCat && str_contains(strtolower($userCat), 'prof')) {
+                $matchedKey = 'Professional';
+            } elseif (isset($catBuckets[$userCat])) {
+                $matchedKey = $userCat;
+            }
+
+            $catBuckets[$matchedKey]['count']++;
+            $catBuckets[$matchedKey]['revenue'] += (float) $p->amount;
+        }
+
+        $categoryBreakdown = [];
+        foreach ($catBuckets as $catName => $cData) {
+            if ($cData['count'] > 0 || $catName !== 'Other') {
+                $categoryBreakdown[] = [
+                    'category' => $catName,
+                    'label' => $catName,
+                    'count' => $cData['count'],
+                    'revenue' => $cData['revenue'],
+                    'pct' => round(($cData['revenue'] / $totalRev) * 100, 1),
+                    'color' => $cData['color'],
+                    'icon' => $cData['icon'],
+                ];
+            }
+        }
+
+        // 3. Payment Method Breakdown
+        $methodBreakdown = [
+            [
+                'name' => 'Manual Bank Transfer',
+                'count' => $stats['manualCount'],
+                'color' => '#0d7a6a',
+                'icon' => '🏦',
+                'pct' => $stats['paidCount'] > 0 ? round(($stats['manualCount'] / $stats['paidCount']) * 100, 1) : 100,
+            ],
+            [
+                'name' => 'Midtrans Payment Gateway',
+                'count' => $stats['midtransCount'],
+                'color' => '#2563eb',
+                'icon' => '💳',
+                'pct' => $stats['paidCount'] > 0 ? round(($stats['midtransCount'] / $stats['paidCount']) * 100, 1) : 0,
+            ],
+        ];
+
+        // 4. Solvency Metrics
+        $totalAllCount = $stats['paidCount'] + $stats['pendingCount'];
+        $solvencyRate = $totalAllCount > 0 ? round(($stats['paidCount'] / $totalAllCount) * 100, 1) : 100;
+        $avgTicket = $stats['paidCount'] > 0 ? round($stats['totalRevenue'] / $stats['paidCount']) : 0;
+
+        $paymentAnalytics = [
+            'dailyTrend' => $dailyTrend,
+            'categoryBreakdown' => $categoryBreakdown,
+            'methodBreakdown' => $methodBreakdown,
+            'solvencyRate' => $solvencyRate,
+            'avgTicket' => $avgTicket,
+        ];
+
         return Inertia::render('Admin/Payments', [
             'payments' => $payments,
             'stats' => $stats,
+            'analytics' => $paymentAnalytics,
             'filters' => [
                 'search' => $search ?? '',
                 'category' => $category ?? 'all',
