@@ -347,4 +347,122 @@ class AuditLogAdminController extends Controller
             'Content-Type' => 'text/plain',
         ]);
     }
+
+    /**
+     * Restore deleted data from snapshot in ActivityLog
+     */
+    public function restoreFromLog(Request $request, $id)
+    {
+        $log = ActivityLog::findOrFail($id);
+        $snapshot = $log->snapshot;
+
+        if (empty($snapshot) || !is_array($snapshot)) {
+            return back()->with('error', 'Rekaman log ini tidak memiliki snapshot data yang dapat dipulihkan.');
+        }
+
+        try {
+            // Case 1: Single Ticket Deletion (or has ticket key)
+            if ($log->action === 'delete_ticket' || isset($snapshot['ticket'])) {
+                $ticketData = $snapshot['ticket'] ?? $snapshot;
+                $paymentData = $snapshot['payment'] ?? null;
+
+                $targetCode = $ticketData['ticket_code'] ?? ($ticketData['code'] ?? $log->target_code);
+
+                // Check if already exists/active
+                if ($targetCode) {
+                    $existing = VisitorTicket::where('ticket_code', $targetCode)->first();
+                    if ($existing) {
+                        return back()->with('error', "Tiket {$targetCode} atas nama {$existing->visitor_name} sudah ada / aktif di sistem.");
+                    }
+                }
+
+                // 1. Restore Payment if available
+                $paymentId = $ticketData['payment_id'] ?? ($paymentData['id'] ?? null);
+                if ($paymentData && is_array($paymentData)) {
+                    $existingPayment = null;
+                    if ($paymentId) {
+                        $existingPayment = VisitorPayment::find($paymentId);
+                    }
+                    if (!$existingPayment && !empty($paymentData['payment_code'])) {
+                        $existingPayment = VisitorPayment::where('payment_code', $paymentData['payment_code'])->first();
+                    }
+
+                    if (!$existingPayment) {
+                        $pInsert = [
+                            'payment_code' => $paymentData['payment_code'] ?? ('ONSITE-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(3)))),
+                            'payment_method' => $paymentData['payment_method'] ?? 'manual_bank_transfer',
+                            'total_members' => $paymentData['total_members'] ?? 1,
+                            'price_per_ticket' => $paymentData['price_per_ticket'] ?? ($paymentData['total_amount'] ?? 0),
+                            'unique_code' => $paymentData['unique_code'] ?? 0,
+                            'total_amount' => $paymentData['total_amount'] ?? 0,
+                            'proof_of_payment' => $paymentData['proof_of_payment'] ?? null,
+                            'status' => $paymentData['status'] ?? 'approved',
+                            'is_mixed_category' => $paymentData['is_mixed_category'] ?? false,
+                            'pic_name' => $paymentData['pic_name'] ?? ($ticketData['visitor_name'] ?? 'Peserta'),
+                            'pic_email' => $paymentData['pic_email'] ?? ($ticketData['visitor_email'] ?? null),
+                            'pic_phone' => $paymentData['pic_phone'] ?? ($ticketData['visitor_phone'] ?? null),
+                            'pic_institution' => $paymentData['pic_institution'] ?? ($ticketData['visitor_institution'] ?? null),
+                            'is_debt' => $paymentData['is_debt'] ?? false,
+                            'debt_notes' => $paymentData['debt_notes'] ?? null,
+                            'notes' => ($paymentData['notes'] ?? '') . ' [Restored from Log #' . $log->id . ']',
+                            'verified_at' => $paymentData['verified_at'] ?? now(),
+                            'verified_by_admin_id' => $paymentData['verified_by_admin_id'] ?? Auth::id(),
+                        ];
+                        if (!empty($paymentData['id']) && !VisitorPayment::where('id', $paymentData['id'])->exists()) {
+                            $pInsert['id'] = $paymentData['id'];
+                        }
+                        $createdPayment = VisitorPayment::create($pInsert);
+                        $paymentId = $createdPayment->id;
+                    } else {
+                        $paymentId = $existingPayment->id;
+                    }
+                }
+
+                // 2. Restore Ticket
+                $tInsert = [
+                    'payment_id' => $paymentId,
+                    'registered_by_admin_id' => $ticketData['registered_by_admin_id'] ?? Auth::id(),
+                    'registration_source' => $ticketData['registration_source'] ?? 'admin_onsite',
+                    'visitor_name' => $ticketData['visitor_name'] ?? ($ticketData['name'] ?? 'Peserta'),
+                    'visitor_email' => $ticketData['visitor_email'] ?? ($ticketData['email'] ?? ''),
+                    'visitor_phone' => $ticketData['visitor_phone'] ?? ($ticketData['phone'] ?? null),
+                    'visitor_institution' => $ticketData['visitor_institution'] ?? ($ticketData['institution'] ?? null),
+                    'ticket_code' => $targetCode ?: ('TKT-RESTORE-' . strtoupper(bin2hex(random_bytes(3)))),
+                    'visitor_type' => $ticketData['visitor_type'] ?? ($ticketData['type'] ?? 'non_iagi_member_professional'),
+                    'individual_price' => $ticketData['individual_price'] ?? ($ticketData['price'] ?? 0),
+                    'is_group_leader' => $ticketData['is_group_leader'] ?? false,
+                    'group_code' => $ticketData['group_code'] ?? null,
+                    'status' => $ticketData['status'] ?? 'active',
+                    'checked_in' => $ticketData['checked_in'] ?? false,
+                    'checked_in_at' => $ticketData['checked_in_at'] ?? null,
+                    'card_printed' => $ticketData['card_printed'] ?? false,
+                    'card_printed_at' => $ticketData['card_printed_at'] ?? null,
+                    'email_sent_at' => $ticketData['email_sent_at'] ?? null,
+                    'email_sent_count' => $ticketData['email_sent_count'] ?? 0,
+                ];
+
+                if (!empty($ticketData['id']) && !VisitorTicket::where('id', $ticketData['id'])->exists()) {
+                    $tInsert['id'] = $ticketData['id'];
+                }
+
+                $restoredTicket = VisitorTicket::create($tInsert);
+
+                // 3. Log the restore activity
+                ActivityLog::record(
+                    action: 'restore_ticket',
+                    module: 'visitor_tickets',
+                    description: "Memulihkan tiket {$restoredTicket->ticket_code} ({$restoredTicket->visitor_name}) dari Log Audit #{$log->id}",
+                    targetId: $restoredTicket->id,
+                    targetCode: $restoredTicket->ticket_code,
+                    snapshot: $restoredTicket->toArray()
+                );
+
+                return back()->with('success', "Tiket {$restoredTicket->ticket_code} atas nama {$restoredTicket->visitor_name} berhasil dipulihkan!");
+            }
+
+            return back()->with('error', 'Aksi pemulihan untuk tipe log ini belum didukung.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal memulihkan tiket: ' . $e->getMessage());
+        }
+    }
 }

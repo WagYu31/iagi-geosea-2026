@@ -71,6 +71,35 @@ export default function LogsIndex({
         log: null,
     });
     const [copiedJson, setCopiedJson] = useState(false);
+    const [restoring, setRestoring] = useState(false);
+
+    const handleRestoreFromLog = () => {
+        if (!snapshotModal.log) return;
+        const targetName = snapshotModal.log.snapshot?.ticket?.visitor_name || snapshotModal.log.target_code || 'data';
+        if (!confirm(`Apakah Anda yakin ingin memulihkan kembali tiket "${targetName}" ke sistem?`)) {
+            return;
+        }
+
+        setRestoring(true);
+        router.post(
+            route('admin.logs.restore', snapshotModal.log.id),
+            {},
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setRestoring(false);
+                    setSnapshotModal({ open: false, log: null });
+                },
+                onError: (err) => {
+                    setRestoring(false);
+                    alert('Gagal memulihkan: ' + (Object.values(err)[0] || 'Terjadi kesalahan sistem'));
+                },
+                onFinish: () => {
+                    setRestoring(false);
+                }
+            }
+        );
+    };
 
     // Clear system log confirm dialog
     const [clearLogDialogOpen, setClearLogDialogOpen] = useState(false);
@@ -1063,7 +1092,32 @@ export default function LogsIndex({
                     )}
                 </DialogContent>
 
-                <DialogActions sx={{ p: 2.5, bgcolor: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
+                <DialogActions sx={{ p: 2.5, bgcolor: '#f8fafc', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box>
+                        {snapshotModal.log && (snapshotModal.log.action?.includes('delete') || snapshotModal.log.snapshot?.ticket) && (
+                            <Button
+                                variant="contained"
+                                startIcon={restoring ? <CircularProgress size={16} sx={{ color: 'white' }} /> : <RefreshIcon />}
+                                onClick={handleRestoreFromLog}
+                                disabled={restoring}
+                                sx={{
+                                    background: 'linear-gradient(135deg, #094d42 0%, #0d7a6a 50%, #10b981 100%)',
+                                    color: 'white',
+                                    fontWeight: 800,
+                                    borderRadius: '10px',
+                                    textTransform: 'none',
+                                    px: 2.5,
+                                    py: 0.9,
+                                    boxShadow: '0 4px 14px rgba(13,122,106,0.3)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(135deg, #0d7a6a 0%, #10b981 100%)',
+                                    }
+                                }}
+                            >
+                                {restoring ? 'Memulihkan Data...' : '🔄 Pulihkan Tiket Ini (Restore Data)'}
+                            </Button>
+                        )}
+                    </Box>
                     <Button onClick={() => setSnapshotModal({ open: false, log: null })} sx={{ textTransform: 'none', fontWeight: 800, color: '#64748b' }}>
                         Tutup
                     </Button>

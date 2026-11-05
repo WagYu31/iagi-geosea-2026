@@ -304,24 +304,42 @@ class FindDeletedTicketCommand extends Command
             }
 
             // Restore visitor ticket
-            $ticket = VisitorTicket::create([
+            $ticketDataToInsert = [
                 'payment_id' => $paymentId,
                 'registered_by_admin_id' => $t['registered_by_admin_id'] ?? null,
-                'registration_source' => in_array($t['registration_source'] ?? '', ['online_self', 'admin_onsite']) ? $t['registration_source'] : 'admin_onsite',
+                'registration_source' => $t['registration_source'] ?? 'admin_onsite',
                 'visitor_name' => $name,
                 'visitor_email' => $email,
                 'visitor_phone' => $t['visitor_phone'] ?? ($t['phone'] ?? null),
-                'visitor_institution' => $t['visitor_institution'] ?? ($t['institution'] ?? 'Universitas Padjadjaran'),
+                'visitor_institution' => $t['visitor_institution'] ?? ($t['institution'] ?? null),
                 'ticket_code' => $code ?? ('TKT-RESTORE-' . strtoupper(bin2hex(random_bytes(3)))),
-                'visitor_type' => $t['visitor_type'] ?? ($t['type'] ?? 'student_undergraduate'),
+                'visitor_type' => $t['visitor_type'] ?? ($t['type'] ?? 'non_iagi_member_professional'),
                 'individual_price' => $t['individual_price'] ?? ($t['price'] ?? 0),
                 'is_group_leader' => $t['is_group_leader'] ?? false,
                 'group_code' => $t['group_code'] ?? null,
-                'status' => 'active',
+                'status' => $t['status'] ?? 'active',
                 'checked_in' => $t['checked_in'] ?? false,
                 'checked_in_at' => $t['checked_in_at'] ?? null,
                 'card_printed' => $t['card_printed'] ?? false,
-            ]);
+                'card_printed_at' => $t['card_printed_at'] ?? null,
+                'email_sent_at' => $t['email_sent_at'] ?? null,
+                'email_sent_count' => $t['email_sent_count'] ?? 0,
+            ];
+
+            if (!empty($t['id']) && !VisitorTicket::where('id', $t['id'])->exists()) {
+                $ticketDataToInsert['id'] = $t['id'];
+            }
+
+            $ticket = VisitorTicket::create($ticketDataToInsert);
+
+            ActivityLog::record(
+                action: 'restore_ticket',
+                module: 'visitor_tickets',
+                description: "Memulihkan tiket {$ticket->ticket_code} atas nama {$ticket->visitor_name} dari CLI find-deleted",
+                targetId: $ticket->id,
+                targetCode: $ticket->ticket_code,
+                snapshot: $ticket->toArray()
+            );
 
             DB::commit();
 

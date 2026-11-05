@@ -276,6 +276,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/logs', [App\Http\Controllers\Admin\AuditLogAdminController::class, 'index'])->name('logs');
         Route::post('/logs/clear-system', [App\Http\Controllers\Admin\AuditLogAdminController::class, 'clearSystemLog'])->name('logs.clearSystem');
         Route::get('/logs/download-system', [App\Http\Controllers\Admin\AuditLogAdminController::class, 'downloadSystemLog'])->name('logs.downloadSystem');
+        Route::post('/logs/restore/{id}', [App\Http\Controllers\Admin\AuditLogAdminController::class, 'restoreFromLog'])->name('logs.restore');
 
         // Landing Page Settings
         Route::get('/settings', [App\Http\Controllers\LandingPageSettingController::class, 'index'])->name('settings');
