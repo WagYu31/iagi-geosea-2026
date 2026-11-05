@@ -572,6 +572,18 @@ export default function VisitorAnalyticsDashboard({
         return Math.max(...(vols.length ? vols : [1]), 1);
     }, [hourlyAttendance, hourlyMode]);
 
+    const pillarsBreakdown = useMemo(() => {
+        if (analytics.pillarsBreakdown && Object.keys(analytics.pillarsBreakdown).length > 0) {
+            return analytics.pillarsBreakdown;
+        }
+        return {
+            commercial: { label: 'Commercial & Paid', icon: '💼', color: '#2563eb', total: 350, lunas: 280, debt: 45, pending: 25, revenue: 260000000 },
+            scientific: { label: 'Scientific & Presenters', icon: '🔬', color: '#8b5cf6', total: 240, lunas: 210, debt: 0, pending: 30, revenue: 0 },
+            leadership: { label: 'VIP & Leadership', icon: '🌟', color: '#f59e0b', total: 65, lunas: 65, debt: 0, pending: 0, revenue: 0 },
+            expo: { label: 'Expo, Industry & Crew', icon: '🏢', color: '#10b981', total: 291, lunas: 230, debt: 7, pending: 54, revenue: 50000000 },
+        };
+    }, [analytics.pillarsBreakdown]);
+
     // ── 8.1 DAILY GATE TURNSTILE ATTENDANCE (TGL 1 - 5 NOV & PER CATEGORY REGISTER) ──
     const rawDailyAttendance = useMemo(() => {
         if (analytics.dailyAttendance && analytics.dailyAttendance.length > 0) {
@@ -746,18 +758,6 @@ export default function VisitorAnalyticsDashboard({
         }
         return { label: dailyCategoryFilter, icon: '🏷️', color: '#2563eb' };
     }, [dailyCategoryFilter, pillarsBreakdown, enrichedCategories]);
-
-    const pillarsBreakdown = useMemo(() => {
-        if (analytics.pillarsBreakdown && Object.keys(analytics.pillarsBreakdown).length > 0) {
-            return analytics.pillarsBreakdown;
-        }
-        return {
-            commercial: { label: 'Commercial & Paid', icon: '💼', color: '#2563eb', total: 350, lunas: 280, debt: 45, pending: 25, revenue: 260000000 },
-            scientific: { label: 'Scientific & Presenters', icon: '🔬', color: '#8b5cf6', total: 240, lunas: 210, debt: 0, pending: 30, revenue: 0 },
-            leadership: { label: 'VIP & Leadership', icon: '🌟', color: '#f59e0b', total: 65, lunas: 65, debt: 0, pending: 0, revenue: 0 },
-            expo: { label: 'Expo, Industry & Crew', icon: '🏢', color: '#10b981', total: 291, lunas: 230, debt: 7, pending: 54, revenue: 50000000 },
-        };
-    }, [analytics.pillarsBreakdown]);
 
     const targetBenchmarks = useMemo(() => {
         if (analytics.targetBenchmarks && analytics.targetBenchmarks.financial) {
