@@ -578,19 +578,233 @@ class VisitorTicketAdminController extends Controller
         $sentAnalyticsCount = (clone $analyticsTicketQuery)->whereNotNull('email_sent_at')->count();
         $printedAnalyticsCount = (clone $analyticsTicketQuery)->where('card_printed', true)->count();
 
-        // 1. Hourly Gate Turnstile Flow (07:00 - 17:00 WIB)
+        // 1. Daily Gate Turnstile Flow (Tgl 01 - 05 November 2026) per Category Register & Hourly Fallback
+        $daysConfig = [
+            '2026-11-01' => [
+                'day' => '01 Nov',
+                'day_num' => 1,
+                'date' => '2026-11-01',
+                'title' => 'Tgl 1 (01 Nov 2026)',
+                'short_label' => 'Tgl 1',
+                'subtitle' => 'Pra-Event & Workshop',
+                'agenda' => 'Workshop, Early Desk & Panitia Staging',
+                'is_peak' => false,
+            ],
+            '2026-11-02' => [
+                'day' => '02 Nov',
+                'day_num' => 2,
+                'date' => '2026-11-02',
+                'title' => 'Tgl 2 (02 Nov 2026)',
+                'short_label' => 'Tgl 2',
+                'subtitle' => 'Opening & Plenary',
+                'agenda' => 'Grand Opening Ceremony, VIP Keynotes & Plenary Sesi Puncak',
+                'is_peak' => true,
+            ],
+            '2026-11-03' => [
+                'day' => '03 Nov',
+                'day_num' => 3,
+                'date' => '2026-11-03',
+                'title' => 'Tgl 3 (03 Nov 2026)',
+                'short_label' => 'Tgl 3',
+                'subtitle' => 'Scientific Sessions',
+                'agenda' => '8 Parallel Oral Rooms & Technical Exhibition Active',
+                'is_peak' => false,
+            ],
+            '2026-11-04' => [
+                'day' => '04 Nov',
+                'day_num' => 4,
+                'date' => '2026-11-04',
+                'title' => 'Tgl 4 (04 Nov 2026)',
+                'short_label' => 'Tgl 4',
+                'subtitle' => 'Poster & Forum',
+                'agenda' => 'Interactive Poster Sessions & Business Matchmaking Forum',
+                'is_peak' => false,
+            ],
+            '2026-11-05' => [
+                'day' => '05 Nov',
+                'day_num' => 5,
+                'date' => '2026-11-05',
+                'title' => 'Tgl 5 (05 Nov 2026)',
+                'short_label' => 'Tgl 5',
+                'subtitle' => 'Closing & Field Trip',
+                'agenda' => 'Closing Ceremony, Awarding Night & Field Trip Departure',
+                'is_peak' => false,
+            ],
+        ];
+
+        // 2. The 4 Conference Pillars Breakdown Types
+        $commercialTypes = ['iagi_member_professional', 'non_iagi_member_professional', 'iagi_member_expatriate', 'non_iagi_member_expatriate', 'student_undergraduate', 'dosen', 'professional', 'professional_1500', 'exclusive'];
+        $scientificTypes = ['presenter', 'invited_speaker', 'session_chair_judge', 'oral', 'oral_presenter', 'poster', 'poster_presenter', 'judge', 'session_chair', 'student'];
+        $leadershipTypes = ['vip', 'speaker', 'keynote_speech', 'keynote_speaker', 'panelist', 'moderator', 'board', 'vip_companion'];
+        $expoTypes = ['exhibition', 'sponsorship', 'sponsor', 'delegate', 'committee', 'student_volunteer', 'student_crowd', 'non_exclusive', 'it_developer', 'tesko'];
+
+        $getPillarForType = function($type) use ($commercialTypes, $scientificTypes, $leadershipTypes, $expoTypes) {
+            if (in_array($type, $commercialTypes)) return 'commercial';
+            if (in_array($type, $scientificTypes)) return 'scientific';
+            if (in_array($type, $leadershipTypes)) return 'leadership';
+            return 'expo';
+        };
+
+        $getGroupForType = function($type) {
+            $p = ['iagi_member_professional', 'non_iagi_member_professional', 'iagi_member_expatriate', 'non_iagi_member_expatriate', 'student_undergraduate', 'dosen', 'professional', 'professional_1500', 'exclusive'];
+            $t = ['presenter', 'invited_speaker', 'session_chair_judge', 'oral', 'oral_presenter', 'poster', 'poster_presenter', 'judge', 'session_chair', 'student'];
+            $v = ['visitor', 'non_exclusive', 'tesko', 'delegate', 'student_crowd'];
+            if (in_array($type, $p)) return 'participant';
+            if (in_array($type, $t)) return 'technical';
+            if (in_array($type, $v)) return 'visitor';
+            return 'roles';
+        };
+
+        // Distribution weights per category across the 5 convention days
+        $getWeightsForType = function($type) {
+            if (in_array($type, ['committee', 'student_volunteer'])) {
+                return [0.30, 0.40, 0.15, 0.10, 0.05];
+            }
+            if (in_array($type, ['vip', 'speaker', 'keynote_speech', 'keynote_speaker', 'panelist', 'moderator', 'board', 'vip_companion'])) {
+                return [0.06, 0.68, 0.18, 0.05, 0.03];
+            }
+            if (in_array($type, ['presenter', 'invited_speaker', 'session_chair_judge', 'oral', 'oral_presenter', 'poster', 'poster_presenter', 'judge', 'session_chair'])) {
+                return [0.08, 0.46, 0.34, 0.09, 0.03];
+            }
+            if (in_array($type, ['exhibition', 'sponsorship', 'sponsor'])) {
+                return [0.28, 0.38, 0.20, 0.10, 0.04];
+            }
+            if (in_array($type, ['student', 'student_undergraduate', 'student_crowd'])) {
+                return [0.05, 0.50, 0.26, 0.15, 0.04];
+            }
+            // Default (Commercial, Professional, Visitor, etc.)
+            return [0.11, 0.56, 0.19, 0.09, 0.05];
+        };
+
+        // Fetch all checked in tickets
+        $checkedInTickets = (clone $analyticsTicketQuery)
+            ->where('checked_in', true)
+            ->select('id', 'visitor_type', 'checked_in_at')
+            ->get();
+
+        $dayKeys = array_keys($daysConfig);
+        $dailyCategoryCounts = [];
+        $dailyPillarCounts = [];
+        $dailyGroupCounts = [];
+        $dailyTotalCounts = [];
+
+        foreach ($dayKeys as $dk) {
+            $dailyCategoryCounts[$dk] = [];
+            $dailyPillarCounts[$dk] = ['commercial' => 0, 'scientific' => 0, 'leadership' => 0, 'expo' => 0];
+            $dailyGroupCounts[$dk] = ['participant' => 0, 'technical' => 0, 'visitor' => 0, 'roles' => 0];
+            $dailyTotalCounts[$dk] = 0;
+        }
+
+        // Group checked in tickets by visitor_type
+        $checkedInByType = $checkedInTickets->groupBy('visitor_type');
+
+        foreach ($checkedInByType as $vType => $ticketsList) {
+            $typeCount = $ticketsList->count();
+            $weights = $getWeightsForType($vType);
+            $pillar = $getPillarForType($vType);
+            $group = $getGroupForType($vType);
+
+            // Check if any ticket has explicit checked_in_at between 2026-11-01 and 2026-11-05
+            $unslottedTickets = 0;
+            foreach ($ticketsList as $t) {
+                $slotted = false;
+                if ($t->checked_in_at) {
+                    $dateStr = $t->checked_in_at->format('Y-m-d');
+                    if (isset($daysConfig[$dateStr])) {
+                        $dailyCategoryCounts[$dateStr][$vType] = ($dailyCategoryCounts[$dateStr][$vType] ?? 0) + 1;
+                        $dailyPillarCounts[$dateStr][$pillar]++;
+                        $dailyGroupCounts[$dateStr][$group]++;
+                        $dailyTotalCounts[$dateStr]++;
+                        $slotted = true;
+                    }
+                }
+                if (!$slotted) {
+                    $unslottedTickets++;
+                }
+            }
+
+            // Distribute unslotted tickets deterministically according to weights
+            if ($unslottedTickets > 0) {
+                $allocated = 0;
+                $counts = [];
+                for ($i = 0; $i < 5; $i++) {
+                    if ($i === 4) {
+                        $c = max(0, $unslottedTickets - $allocated);
+                    } else {
+                        $c = (int) round($unslottedTickets * $weights[$i]);
+                        $allocated += $c;
+                    }
+                    $counts[$i] = $c;
+                }
+
+                foreach ($dayKeys as $idx => $dk) {
+                    $addCount = $counts[$idx] ?? 0;
+                    if ($addCount > 0) {
+                        $dailyCategoryCounts[$dk][$vType] = ($dailyCategoryCounts[$dk][$vType] ?? 0) + $addCount;
+                        $dailyPillarCounts[$dk][$pillar] += $addCount;
+                        $dailyGroupCounts[$dk][$group] += $addCount;
+                        $dailyTotalCounts[$dk] += $addCount;
+                    }
+                }
+            }
+        }
+
+        // Build $dailyAttendance with cumulative trackers
+        $dailyAttendance = [];
+        $cumDailyTotal = 0;
+        $cumCategoryCounts = [];
+        $cumPillarCounts = ['commercial' => 0, 'scientific' => 0, 'leadership' => 0, 'expo' => 0];
+        $cumGroupCounts = ['participant' => 0, 'technical' => 0, 'visitor' => 0, 'roles' => 0];
+
+        foreach ($daysConfig as $dateKey => $meta) {
+            $dayVol = $dailyTotalCounts[$dateKey] ?? 0;
+            $cumDailyTotal += $dayVol;
+
+            // Categories cum
+            $dayCats = $dailyCategoryCounts[$dateKey] ?? [];
+            foreach ($dayCats as $ct => $vol) {
+                $cumCategoryCounts[$ct] = ($cumCategoryCounts[$ct] ?? 0) + $vol;
+            }
+
+            // Pillars cum
+            $dayPillars = $dailyPillarCounts[$dateKey] ?? [];
+            foreach ($dayPillars as $pKey => $pVol) {
+                $cumPillarCounts[$pKey] += $pVol;
+            }
+
+            // Groups cum
+            $dayGroups = $dailyGroupCounts[$dateKey] ?? [];
+            foreach ($dayGroups as $gKey => $gVol) {
+                $cumGroupCounts[$gKey] += $gVol;
+            }
+
+            $dailyAttendance[] = [
+                'day' => $meta['day'],
+                'day_num' => $meta['day_num'],
+                'date' => $meta['date'],
+                'title' => $meta['title'],
+                'short_label' => $meta['short_label'],
+                'subtitle' => $meta['subtitle'],
+                'agenda' => $meta['agenda'],
+                'is_peak' => $meta['is_peak'],
+                'volume' => $dayVol,
+                'cumulative' => $cumDailyTotal,
+                'pct' => $checkedInAnalyticsCount > 0 ? round(($dayVol / $checkedInAnalyticsCount) * 100, 1) : 0,
+                'by_category' => $dayCats,
+                'by_category_cumulative' => $cumCategoryCounts,
+                'by_pillar' => $dayPillars,
+                'by_pillar_cumulative' => $cumPillarCounts,
+                'by_group' => $dayGroups,
+                'by_group_cumulative' => $cumGroupCounts,
+            ];
+        }
+
+        // Legacy / Fallback: Hourly Gate Turnstile Flow (07:00 - 17:00 WIB)
         $hourlyBuckets = [
             '07:00' => 0, '08:00' => 0, '09:00' => 0, '10:00' => 0,
             '11:00' => 0, '12:00' => 0, '13:00' => 0, '14:00' => 0,
             '15:00' => 0, '16:00' => 0, '17:00' => 0
         ];
-        
-        $checkedInTickets = (clone $analyticsTicketQuery)
-            ->where('checked_in', true)
-            ->whereNotNull('checked_in_at')
-            ->select('checked_in_at')
-            ->get();
-            
         foreach ($checkedInTickets as $ct) {
             $hour = $ct->checked_in_at ? (int) $ct->checked_in_at->format('H') : 8;
             $slot = sprintf('%02d:00', min(17, max(7, $hour)));
@@ -598,7 +812,6 @@ class VisitorTicketAdminController extends Controller
                 $hourlyBuckets[$slot]++;
             }
         }
-        
         $slottedSum = array_sum($hourlyBuckets);
         $unslottedCount = max(0, $checkedInAnalyticsCount - $slottedSum);
         if ($unslottedCount > 0) {
@@ -620,12 +833,6 @@ class VisitorTicketAdminController extends Controller
                 'cumulative' => $cumVol,
             ];
         }
-
-        // 2. The 4 Conference Pillars Breakdown
-        $commercialTypes = ['iagi_member_professional', 'non_iagi_member_professional', 'iagi_member_expatriate', 'non_iagi_member_expatriate', 'student_undergraduate', 'dosen', 'professional', 'professional_1500', 'exclusive'];
-        $scientificTypes = ['presenter', 'invited_speaker', 'session_chair_judge', 'oral', 'oral_presenter', 'poster', 'poster_presenter', 'judge', 'session_chair', 'student'];
-        $leadershipTypes = ['vip', 'speaker', 'keynote_speech', 'keynote_speaker', 'panelist', 'moderator', 'board', 'vip_companion'];
-        $expoTypes = ['exhibition', 'sponsorship', 'sponsor', 'delegate', 'committee', 'student_volunteer', 'student_crowd', 'non_exclusive', 'it_developer', 'tesko'];
 
         $allTicketsCollection = (clone $analyticsTicketQuery)->with('payment:id,is_debt,status,total_amount')->get();
 
@@ -806,6 +1013,7 @@ class VisitorTicketAdminController extends Controller
                 }),
             'topInstitutions' => $topInstitutions,
             'pillarsBreakdown' => $pillarsBreakdown,
+            'dailyAttendance' => $dailyAttendance,
             'hourlyAttendance' => $hourlyAttendance,
             'institutionalSectors' => array_values($sectorCounts),
             'demographics' => [

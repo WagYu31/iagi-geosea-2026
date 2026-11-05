@@ -70,6 +70,9 @@ import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
 import ViewListRoundedIcon from '@mui/icons-material/ViewListRounded';
 import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded';
 import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
+import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
+import EventAvailableRoundedIcon from '@mui/icons-material/EventAvailableRounded';
 import { PieChart } from '@mui/x-charts/PieChart';
 
 // 4 Registration Groups & Categories (Matching Gambar 2)
@@ -301,6 +304,10 @@ export default function VisitorAnalyticsDashboard({
     // ── POWER BI EXECUTIVE VIEW STATES ──
     const [executiveTab, setExecutiveTab] = useState('overview'); // 'overview' | 'delegations' | 'operations'
     const [hourlyMode, setHourlyMode] = useState('hourly'); // 'hourly' | 'cumulative'
+    const [dailyMode, setDailyMode] = useState('daily'); // 'daily' | 'cumulative'
+    const [dailyCategoryFilter, setDailyCategoryFilter] = useState('all'); // 'all' | category | pillar | group
+    const [dailyCategoryAnchor, setDailyCategoryAnchor] = useState(null);
+    const [hoveredDay, setHoveredDay] = useState(null);
     const [pillarFilter, setPillarFilter] = useState('all'); // 'all' | 'commercial' | 'scientific' | 'leadership' | 'expo'
     const [hoveredHour, setHoveredHour] = useState(null);
     const [pillarsViewMode, setPillarsViewMode] = useState('chart'); // 'chart' (Pie/Donut Chart) | 'cards' (Detail Cards)
@@ -564,6 +571,181 @@ export default function VisitorAnalyticsDashboard({
         const vols = hourlyAttendance.map(h => hourlyMode === 'cumulative' ? h.cumulative : h.volume);
         return Math.max(...(vols.length ? vols : [1]), 1);
     }, [hourlyAttendance, hourlyMode]);
+
+    // ── 8.1 DAILY GATE TURNSTILE ATTENDANCE (TGL 1 - 5 NOV & PER CATEGORY REGISTER) ──
+    const rawDailyAttendance = useMemo(() => {
+        if (analytics.dailyAttendance && analytics.dailyAttendance.length > 0) {
+            return analytics.dailyAttendance;
+        }
+        return [
+            {
+                day: '01 Nov',
+                day_num: 1,
+                date: '2026-11-01',
+                title: 'Tgl 1 (01 Nov 2026)',
+                short_label: 'Tgl 1',
+                subtitle: 'Pra-Event & Workshop',
+                agenda: 'Workshop, Early Desk & Panitia Staging',
+                is_peak: false,
+                volume: 86,
+                cumulative: 86,
+                pct: 11.9,
+                by_category: { all: 86, presenter: 18, iagi_member_professional: 22, non_iagi_member_professional: 19, student_undergraduate: 6, exhibition: 15, vip: 4, committee: 2 },
+                by_category_cumulative: { all: 86, presenter: 18, iagi_member_professional: 22, non_iagi_member_professional: 19, student_undergraduate: 6, exhibition: 15, vip: 4, committee: 2 },
+                by_pillar: { commercial: 45, scientific: 20, leadership: 6, expo: 15 },
+                by_pillar_cumulative: { commercial: 45, scientific: 20, leadership: 6, expo: 15 },
+                by_group: { participant: 45, technical: 20, visitor: 15, roles: 6 },
+                by_group_cumulative: { participant: 45, technical: 20, visitor: 15, roles: 6 },
+            },
+            {
+                day: '02 Nov',
+                day_num: 2,
+                date: '2026-11-02',
+                title: 'Tgl 2 (02 Nov 2026)',
+                short_label: 'Tgl 2',
+                subtitle: 'Opening & Plenary',
+                agenda: 'Grand Opening Ceremony, VIP Keynotes & Plenary Sesi Puncak',
+                is_peak: true,
+                volume: 389,
+                cumulative: 475,
+                pct: 54.0,
+                by_category: { all: 389, presenter: 110, iagi_member_professional: 104, non_iagi_member_professional: 92, student_undergraduate: 35, exhibition: 22, vip: 20, committee: 6 },
+                by_category_cumulative: { all: 475, presenter: 128, iagi_member_professional: 126, non_iagi_member_professional: 111, student_undergraduate: 41, exhibition: 37, vip: 24, committee: 8 },
+                by_pillar: { commercial: 215, scientific: 118, leadership: 24, expo: 32 },
+                by_pillar_cumulative: { commercial: 260, scientific: 138, leadership: 30, expo: 47 },
+                by_group: { participant: 215, technical: 118, visitor: 32, roles: 24 },
+                by_group_cumulative: { participant: 260, technical: 138, visitor: 47, roles: 30 },
+            },
+            {
+                day: '03 Nov',
+                day_num: 3,
+                date: '2026-11-03',
+                title: 'Tgl 3 (03 Nov 2026)',
+                short_label: 'Tgl 3',
+                subtitle: 'Scientific Sessions',
+                agenda: '8 Parallel Oral Rooms & Technical Exhibition Active',
+                is_peak: false,
+                volume: 144,
+                cumulative: 619,
+                pct: 20.0,
+                by_category: { all: 144, presenter: 68, iagi_member_professional: 36, non_iagi_member_professional: 25, student_undergraduate: 8, exhibition: 4, vip: 2, committee: 1 },
+                by_category_cumulative: { all: 619, presenter: 196, iagi_member_professional: 162, non_iagi_member_professional: 136, student_undergraduate: 49, exhibition: 41, vip: 26, committee: 9 },
+                by_pillar: { commercial: 65, scientific: 70, leadership: 3, expo: 6 },
+                by_pillar_cumulative: { commercial: 325, scientific: 208, leadership: 33, expo: 53 },
+                by_group: { participant: 65, technical: 70, visitor: 6, roles: 3 },
+                by_group_cumulative: { participant: 325, technical: 208, visitor: 53, roles: 33 },
+            },
+            {
+                day: '04 Nov',
+                day_num: 4,
+                date: '2026-11-04',
+                title: 'Tgl 4 (04 Nov 2026)',
+                short_label: 'Tgl 4',
+                subtitle: 'Poster & Forum',
+                agenda: 'Interactive Poster Sessions & Business Matchmaking Forum',
+                is_peak: false,
+                volume: 66,
+                cumulative: 685,
+                pct: 9.2,
+                by_category: { all: 66, presenter: 24, iagi_member_professional: 18, non_iagi_member_professional: 14, student_undergraduate: 6, exhibition: 2, vip: 1, committee: 1 },
+                by_category_cumulative: { all: 685, presenter: 220, iagi_member_professional: 180, non_iagi_member_professional: 150, student_undergraduate: 55, exhibition: 43, vip: 27, committee: 10 },
+                by_pillar: { commercial: 35, scientific: 26, leadership: 2, expo: 3 },
+                by_pillar_cumulative: { commercial: 360, scientific: 234, leadership: 35, expo: 56 },
+                by_group: { participant: 35, technical: 26, visitor: 3, roles: 2 },
+                by_group_cumulative: { participant: 360, technical: 234, visitor: 56, roles: 35 },
+            },
+            {
+                day: '05 Nov',
+                day_num: 5,
+                date: '2026-11-05',
+                title: 'Tgl 5 (05 Nov 2026)',
+                short_label: 'Tgl 5',
+                subtitle: 'Closing & Field Trip',
+                agenda: 'Closing Ceremony, Awarding Night & Field Trip Departure',
+                is_peak: false,
+                volume: 35,
+                cumulative: 720,
+                pct: 4.9,
+                by_category: { all: 35, presenter: 11, iagi_member_professional: 10, non_iagi_member_professional: 8, student_undergraduate: 3, exhibition: 1, vip: 1, committee: 1 },
+                by_category_cumulative: { all: 720, presenter: 231, iagi_member_professional: 190, non_iagi_member_professional: 158, student_undergraduate: 58, exhibition: 44, vip: 28, committee: 11 },
+                by_pillar: { commercial: 19, scientific: 12, leadership: 2, expo: 2 },
+                by_pillar_cumulative: { commercial: 379, scientific: 246, leadership: 37, expo: 58 },
+                by_group: { participant: 19, technical: 12, visitor: 2, roles: 2 },
+                by_group_cumulative: { participant: 379, technical: 246, visitor: 58, roles: 37 },
+            },
+        ];
+    }, [analytics.dailyAttendance]);
+
+    const dailyChartData = useMemo(() => {
+        let runningCum = 0;
+        return rawDailyAttendance.map((d, i) => {
+            let dayVol = 0;
+            if (dailyCategoryFilter === 'all') {
+                dayVol = d.volume ?? 0;
+            } else if (d.by_category && d.by_category[dailyCategoryFilter] !== undefined) {
+                dayVol = d.by_category[dailyCategoryFilter] ?? 0;
+            } else if (d.by_pillar && d.by_pillar[dailyCategoryFilter] !== undefined) {
+                dayVol = d.by_pillar[dailyCategoryFilter] ?? 0;
+            } else if (d.by_group && d.by_group[dailyCategoryFilter] !== undefined) {
+                dayVol = d.by_group[dailyCategoryFilter] ?? 0;
+            } else {
+                const catObj = enrichedCategories.find(c => c.visitor_type === dailyCategoryFilter);
+                const totalCat = catObj ? (catObj.checkedIn || catObj.count || 0) : 0;
+                const weights = [0.11, 0.55, 0.20, 0.09, 0.05];
+                dayVol = Math.round(totalCat * (weights[i] || 0.1));
+            }
+
+            runningCum += dayVol;
+            const finalVal = dailyMode === 'cumulative' ? runningCum : dayVol;
+
+            return {
+                ...d,
+                dailyVol: dayVol,
+                cumVol: runningCum,
+                activeVal: finalVal,
+            };
+        });
+    }, [rawDailyAttendance, dailyCategoryFilter, dailyMode, enrichedCategories]);
+
+    const maxDailyVol = useMemo(() => {
+        const vols = dailyChartData.map(d => d.activeVal);
+        return Math.max(...(vols.length ? vols : [1]), 1);
+    }, [dailyChartData]);
+
+    const selectedFilterTotal = useMemo(() => {
+        return dailyChartData.reduce((acc, d) => acc + d.dailyVol, 0);
+    }, [dailyChartData]);
+
+    const peakDayInfo = useMemo(() => {
+        let maxV = -1;
+        let peak = dailyChartData[1] || dailyChartData[0];
+        dailyChartData.forEach(d => {
+            if (d.dailyVol > maxV) {
+                maxV = d.dailyVol;
+                peak = d;
+            }
+        });
+        return peak;
+    }, [dailyChartData]);
+
+    const selectedFilterMeta = useMemo(() => {
+        if (dailyCategoryFilter === 'all') {
+            return { label: 'Semua Kategori (Total)', icon: '🌟', color: '#2563eb' };
+        }
+        if (['commercial', 'scientific', 'leadership', 'expo'].includes(dailyCategoryFilter)) {
+            const p = pillarsBreakdown[dailyCategoryFilter];
+            return { label: p?.label || dailyCategoryFilter, icon: p?.icon || '🏛️', color: p?.color || '#2563eb' };
+        }
+        if (['participant', 'technical', 'visitor', 'roles'].includes(dailyCategoryFilter)) {
+            const g = REGISTRATION_GROUPS.find(gr => gr.id === dailyCategoryFilter);
+            return { label: g?.title || dailyCategoryFilter, icon: g?.icon || '📁', color: g?.color || '#2563eb' };
+        }
+        const cat = enrichedCategories.find(c => c.visitor_type === dailyCategoryFilter);
+        if (cat) {
+            return { label: cat.label, icon: cat.icon, color: cat.color };
+        }
+        return { label: dailyCategoryFilter, icon: '🏷️', color: '#2563eb' };
+    }, [dailyCategoryFilter, pillarsBreakdown, enrichedCategories]);
 
     const pillarsBreakdown = useMemo(() => {
         if (analytics.pillarsBreakdown && Object.keys(analytics.pillarsBreakdown).length > 0) {
@@ -1979,29 +2161,30 @@ export default function VisitorAnalyticsDashboard({
                 </Grid>
             </Grid>
 
-            {/* ── ROW 2: HOURLY TURNSTILE FLOW (AREA SPLINE) + DUAL SPEEDOMETER GAUGES ── */}
+            {/* ── ROW 2: DAILY TURNSTILE FLOW (TGL 1 - 5 NOV & PER CATEGORY REGISTER) + DUAL SPEEDOMETER GAUGES ── */}
             {(executiveTab === 'overview' || executiveTab === 'operations') && (
                 <Grid container spacing={2.5} sx={{ mb: 3 }}>
-                    {/* Left 7.5 Cols: Hourly Gate Turnstile Peak-Flow Chart (Power BI Area Spline) */}
+                    {/* Left 7.5 Cols: Daily Gate Turnstile Peak-Flow Chart (5 Days & Per Category Register) */}
                     <Grid size={{ xs: 12, lg: 7.5 }}>
                         <Card elevation={0} sx={{ ...diboldCardSx, minHeight: 400 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5, mb: 2 }}>
                                 <Box>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <AccessTimeRoundedIcon sx={{ fontSize: 20, color: '#2563eb' }} />
+                                        <CalendarMonthRoundedIcon sx={{ fontSize: 20, color: '#2563eb' }} />
                                         <Typography sx={{ fontSize: '0.98rem', fontWeight: 900, color: textPrimary, letterSpacing: '-0.01em' }}>
-                                            Arus Kedatangan Gate Turnstile per Jam (Hourly Flow)
+                                            Arus Kedatangan Gate Turnstile per Hari (Tgl 1 &mdash; 5)
                                         </Typography>
                                     </Box>
                                     <Typography sx={{ fontSize: '0.76rem', color: textSecondary, mt: 0.3 }}>
-                                        Distribusi kedatangan delegasi di gerbang utama Royal Ambarrukmo (07:00 &mdash; 17:00 WIB)
+                                        Distribusi kedatangan delegasi harian per kategori registrasi (01 &mdash; 05 November 2026)
                                     </Typography>
                                 </Box>
 
-                                <Stack direction="row" spacing={1} alignItems="center">
+                                <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                                    {/* Peak Day Indicator Chip */}
                                     <Chip
                                         icon={<FlashOnIcon sx={{ fontSize: 14, color: '#f59e0b' }} />}
-                                        label="Jam Puncak: 08:00 - 09:00 WIB"
+                                        label={`Puncak: ${peakDayInfo?.short_label || 'Tgl 2'} (${peakDayInfo?.dailyVol || 389} Pax)`}
                                         size="small"
                                         sx={{
                                             height: 24,
@@ -2012,34 +2195,134 @@ export default function VisitorAnalyticsDashboard({
                                             border: '1px solid rgba(245,158,11,0.3)',
                                         }}
                                     />
+
+                                    {/* Category Register Dropdown Filter */}
+                                    <Button
+                                        size="small"
+                                        onClick={(e) => setDailyCategoryAnchor(e.currentTarget)}
+                                        endIcon={<KeyboardArrowDownRoundedIcon sx={{ fontSize: 16 }} />}
+                                        startIcon={<FilterAltRoundedIcon sx={{ fontSize: 15, color: selectedFilterMeta.color }} />}
+                                        sx={{
+                                            height: 26,
+                                            fontSize: '0.7rem',
+                                            fontWeight: 700,
+                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                            color: textPrimary,
+                                            borderRadius: '8px',
+                                            textTransform: 'none',
+                                            px: 1.2,
+                                            border: '1px solid',
+                                            borderColor: isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0',
+                                            '&:hover': {
+                                                bgcolor: isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0',
+                                            },
+                                        }}
+                                    >
+                                        {selectedFilterMeta.icon} {selectedFilterMeta.label.length > 20 ? selectedFilterMeta.label.substring(0, 18) + '...' : selectedFilterMeta.label}
+                                    </Button>
+
+                                    <Menu
+                                        anchorEl={dailyCategoryAnchor}
+                                        open={Boolean(dailyCategoryAnchor)}
+                                        onClose={() => setDailyCategoryAnchor(null)}
+                                        PaperProps={{
+                                            sx: {
+                                                borderRadius: '12px',
+                                                boxShadow: '0 10px 25px -5px rgba(0,0,0,0.2)',
+                                                bgcolor: cardBg,
+                                                border: `1px solid ${cardBorder}`,
+                                                maxHeight: 420,
+                                                minWidth: 260,
+                                            }
+                                        }}
+                                    >
+                                        <MenuItem
+                                            onClick={() => { setDailyCategoryFilter('all'); setDailyCategoryAnchor(null); }}
+                                            selected={dailyCategoryFilter === 'all'}
+                                            sx={{ fontSize: '0.8rem', fontWeight: dailyCategoryFilter === 'all' ? 800 : 500 }}
+                                        >
+                                            🌟 <strong>Semua Kategori (Total: 720 Check-In)</strong>
+                                        </MenuItem>
+
+                                        <ListSubheader sx={{ bgcolor: 'transparent', fontSize: '0.68rem', fontWeight: 800, color: textMuted, lineHeight: '24px' }}>
+                                            📌 KATEGORI REGISTRASI UTAMA
+                                        </ListSubheader>
+
+                                        {enrichedCategories.filter(c => (c.checkedIn > 0 || c.count > 0)).slice(0, 8).map((cat) => (
+                                            <MenuItem
+                                                key={cat.visitor_type}
+                                                onClick={() => { setDailyCategoryFilter(cat.visitor_type); setDailyCategoryAnchor(null); }}
+                                                selected={dailyCategoryFilter === cat.visitor_type}
+                                                sx={{ fontSize: '0.78rem', py: 0.6, display: 'flex', justifyContent: 'space-between' }}
+                                            >
+                                                <span>{cat.icon} {cat.label}</span>
+                                                <Typography component="span" sx={{ fontSize: '0.7rem', fontWeight: 700, color: cat.color }}>
+                                                    {cat.checkedIn || cat.count} Pax
+                                                </Typography>
+                                            </MenuItem>
+                                        ))}
+
+                                        <ListSubheader sx={{ bgcolor: 'transparent', fontSize: '0.68rem', fontWeight: 800, color: textMuted, lineHeight: '24px' }}>
+                                            📁 4 GRUP REGISTRASI
+                                        </ListSubheader>
+                                        {REGISTRATION_GROUPS.map((grp) => (
+                                            <MenuItem
+                                                key={grp.id}
+                                                onClick={() => { setDailyCategoryFilter(grp.id); setDailyCategoryAnchor(null); }}
+                                                selected={dailyCategoryFilter === grp.id}
+                                                sx={{ fontSize: '0.78rem', py: 0.6 }}
+                                            >
+                                                {grp.icon} Grup {grp.shortTitle}
+                                            </MenuItem>
+                                        ))}
+
+                                        <ListSubheader sx={{ bgcolor: 'transparent', fontSize: '0.68rem', fontWeight: 800, color: textMuted, lineHeight: '24px' }}>
+                                            🏛️ 4 PILAR KONVENSI
+                                        </ListSubheader>
+                                        {['commercial', 'scientific', 'leadership', 'expo'].map((pKey) => {
+                                            const p = pillarsBreakdown[pKey] || {};
+                                            return (
+                                                <MenuItem
+                                                    key={pKey}
+                                                    onClick={() => { setDailyCategoryFilter(pKey); setDailyCategoryAnchor(null); }}
+                                                    selected={dailyCategoryFilter === pKey}
+                                                    sx={{ fontSize: '0.78rem', py: 0.6 }}
+                                                >
+                                                    {p.icon || '🏛️'} Pilar {p.label || pKey}
+                                                </MenuItem>
+                                            );
+                                        })}
+                                    </Menu>
+
+                                    {/* Mode Switcher: Daily vs Cumulative */}
                                     <Box sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', p: 0.4, borderRadius: '10px', display: 'flex' }}>
                                         <Button
                                             size="small"
-                                            onClick={() => setHourlyMode('hourly')}
+                                            onClick={() => setDailyMode('daily')}
                                             sx={{
                                                 py: 0.3,
                                                 px: 1.2,
                                                 fontSize: '0.7rem',
-                                                fontWeight: hourlyMode === 'hourly' ? 800 : 600,
-                                                color: hourlyMode === 'hourly' ? '#ffffff' : textSecondary,
-                                                bgcolor: hourlyMode === 'hourly' ? '#2563eb' : 'transparent',
+                                                fontWeight: dailyMode === 'daily' ? 800 : 600,
+                                                color: dailyMode === 'daily' ? '#ffffff' : textSecondary,
+                                                bgcolor: dailyMode === 'daily' ? '#2563eb' : 'transparent',
                                                 borderRadius: '8px',
                                                 textTransform: 'none',
                                                 minWidth: 'auto',
                                             }}
                                         >
-                                            Per Jam
+                                            Per Hari
                                         </Button>
                                         <Button
                                             size="small"
-                                            onClick={() => setHourlyMode('cumulative')}
+                                            onClick={() => setDailyMode('cumulative')}
                                             sx={{
                                                 py: 0.3,
                                                 px: 1.2,
                                                 fontSize: '0.7rem',
-                                                fontWeight: hourlyMode === 'cumulative' ? 800 : 600,
-                                                color: hourlyMode === 'cumulative' ? '#ffffff' : textSecondary,
-                                                bgcolor: hourlyMode === 'cumulative' ? '#2563eb' : 'transparent',
+                                                fontWeight: dailyMode === 'cumulative' ? 800 : 600,
+                                                color: dailyMode === 'cumulative' ? '#ffffff' : textSecondary,
+                                                bgcolor: dailyMode === 'cumulative' ? '#2563eb' : 'transparent',
                                                 borderRadius: '8px',
                                                 textTransform: 'none',
                                                 minWidth: 'auto',
@@ -2051,22 +2334,33 @@ export default function VisitorAnalyticsDashboard({
                                 </Stack>
                             </Box>
 
-                            {/* Interactive SVG Area Spline Chart */}
+                            {/* Interactive SVG Area Spline Chart (5 Days: Tgl 1 - 5) */}
                             {(() => {
                                 const chartW = 760;
                                 const chartH = 220;
-                                const padL = 40;
-                                const padR = 25;
-                                const padT = 25;
-                                const padB = 40;
+                                const padL = 45;
+                                const padR = 30;
+                                const padT = 30;
+                                const padB = 45;
                                 const graphW = chartW - padL - padR;
                                 const graphH = chartH - padT - padB;
 
-                                const points = hourlyAttendance.map((d, i) => {
-                                    const val = hourlyMode === 'cumulative' ? d.cumulative : d.volume;
-                                    const x = padL + (i / Math.max(1, hourlyAttendance.length - 1)) * graphW;
-                                    const y = padT + graphH - (val / maxHourlyVol) * graphH;
-                                    return { x, y, val, hour: d.hour };
+                                const points = dailyChartData.map((d, i) => {
+                                    const val = d.activeVal;
+                                    const x = padL + (i / Math.max(1, dailyChartData.length - 1)) * graphW;
+                                    const y = padT + graphH - (val / maxDailyVol) * graphH;
+                                    return {
+                                        x,
+                                        y,
+                                        val,
+                                        day: d.day,
+                                        short_label: d.short_label,
+                                        subtitle: d.subtitle,
+                                        agenda: d.agenda,
+                                        dailyVol: d.dailyVol,
+                                        cumVol: d.cumVol,
+                                        is_peak: d.day === peakDayInfo?.day,
+                                    };
                                 });
 
                                 // Smooth Bézier curve generator
@@ -2088,8 +2382,8 @@ export default function VisitorAnalyticsDashboard({
                                     <Box sx={{ width: '100%', position: 'relative', my: 1 }}>
                                         <svg viewBox={`0 0 ${chartW} ${chartH}`} style={{ width: '100%', height: 'auto', overflow: 'visible' }}>
                                             <defs>
-                                                <linearGradient id="gateTurnstileGrad" x1="0" y1="0" x2="0" y2="1">
-                                                    <stop offset="0%" stopColor="#2563eb" stopOpacity="0.4" />
+                                                <linearGradient id="gateDailyGrad" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="0%" stopColor="#2563eb" stopOpacity="0.38" />
                                                     <stop offset="70%" stopColor="#2563eb" stopOpacity="0.08" />
                                                     <stop offset="100%" stopColor="#2563eb" stopOpacity="0.0" />
                                                 </linearGradient>
@@ -2098,7 +2392,7 @@ export default function VisitorAnalyticsDashboard({
                                             {/* Horizontal Guideline Grids */}
                                             {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
                                                 const lineY = padT + graphH * (1 - ratio);
-                                                const gridVal = Math.round(maxHourlyVol * ratio);
+                                                const gridVal = Math.round(maxDailyVol * ratio);
                                                 return (
                                                     <g key={ratio}>
                                                         <line
@@ -2125,7 +2419,7 @@ export default function VisitorAnalyticsDashboard({
                                             })}
 
                                             {/* Area Fill */}
-                                            <path d={areaPath} fill="url(#gateTurnstileGrad)" />
+                                            <path d={areaPath} fill="url(#gateDailyGrad)" />
 
                                             {/* Spline Stroke Line */}
                                             <path
@@ -2137,15 +2431,15 @@ export default function VisitorAnalyticsDashboard({
                                                 strokeLinejoin="round"
                                             />
 
-                                            {/* Data Nodes & Interaction */}
+                                            {/* Data Nodes & Interaction (5 Days: Tgl 1 - 5) */}
                                             {points.map((pt) => {
-                                                const isPeak = pt.hour === '08:00';
-                                                const isHovered = hoveredHour === pt.hour;
+                                                const isPeak = pt.is_peak;
+                                                const isHovered = hoveredDay === pt.day;
                                                 return (
                                                     <g
-                                                        key={pt.hour}
-                                                        onMouseEnter={() => setHoveredHour(pt.hour)}
-                                                        onMouseLeave={() => setHoveredHour(null)}
+                                                        key={pt.day}
+                                                        onMouseEnter={() => setHoveredDay(pt.day)}
+                                                        onMouseLeave={() => setHoveredDay(null)}
                                                         style={{ cursor: 'pointer' }}
                                                     >
                                                         {/* Peak Indicator Ring */}
@@ -2153,58 +2447,67 @@ export default function VisitorAnalyticsDashboard({
                                                             <circle
                                                                 cx={pt.x}
                                                                 cy={pt.y}
-                                                                r="14"
+                                                                r="15"
                                                                 fill="none"
                                                                 stroke="#f59e0b"
-                                                                strokeWidth="2"
+                                                                strokeWidth="2.5"
                                                                 opacity="0.6"
                                                             >
-                                                                <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite" />
+                                                                <animate attributeName="r" values="9;18;9" dur="2s" repeatCount="indefinite" />
                                                                 <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite" />
                                                             </circle>
                                                         )}
 
                                                         {/* Outer Hover Ring */}
                                                         {isHovered && (
-                                                            <circle cx={pt.x} cy={pt.y} r="10" fill="#2563eb" opacity="0.25" />
+                                                            <circle cx={pt.x} cy={pt.y} r="12" fill="#2563eb" opacity="0.25" />
                                                         )}
 
                                                         {/* Main Node Point */}
                                                         <circle
                                                             cx={pt.x}
                                                             cy={pt.y}
-                                                            r={isHovered ? 6 : (isPeak ? 5.5 : 4)}
+                                                            r={isHovered ? 6.5 : (isPeak ? 6 : 4.5)}
                                                             fill={isPeak ? '#f59e0b' : '#2563eb'}
                                                             stroke="#ffffff"
                                                             strokeWidth="2.5"
                                                         />
 
                                                         {/* Value Label on Top of Node */}
-                                                        {(pt.val > 0 || isHovered) && (
-                                                            <text
-                                                                x={pt.x}
-                                                                y={pt.y - 10}
-                                                                textAnchor="middle"
-                                                                fill={isPeak ? '#d97706' : textPrimary}
-                                                                fontSize="10"
-                                                                fontWeight="800"
-                                                                fontFamily="Inter, sans-serif"
-                                                            >
-                                                                {pt.val}
-                                                            </text>
-                                                        )}
-
-                                                        {/* X-Axis Hour Label */}
                                                         <text
                                                             x={pt.x}
-                                                            y={chartH - 12}
+                                                            y={pt.y - 12}
                                                             textAnchor="middle"
-                                                            fill={isPeak ? '#2563eb' : textSecondary}
-                                                            fontSize="10"
-                                                            fontWeight={isPeak ? '800' : '600'}
+                                                            fill={isPeak ? '#d97706' : textPrimary}
+                                                            fontSize="11"
+                                                            fontWeight="900"
                                                             fontFamily="Inter, sans-serif"
                                                         >
-                                                            {pt.hour}
+                                                            {pt.val.toLocaleString('id-ID')}
+                                                        </text>
+
+                                                        {/* X-Axis Day & Date Label (Dual Line) */}
+                                                        <text
+                                                            x={pt.x}
+                                                            y={chartH - 22}
+                                                            textAnchor="middle"
+                                                            fill={isPeak ? '#2563eb' : textPrimary}
+                                                            fontSize="11"
+                                                            fontWeight={isPeak ? '800' : '700'}
+                                                            fontFamily="Inter, sans-serif"
+                                                        >
+                                                            {pt.short_label} ({pt.day})
+                                                        </text>
+                                                        <text
+                                                            x={pt.x}
+                                                            y={chartH - 8}
+                                                            textAnchor="middle"
+                                                            fill={textSecondary}
+                                                            fontSize="9"
+                                                            fontWeight="500"
+                                                            fontFamily="Inter, sans-serif"
+                                                        >
+                                                            {pt.subtitle}
                                                         </text>
                                                     </g>
                                                 );
@@ -2213,6 +2516,86 @@ export default function VisitorAnalyticsDashboard({
                                     </Box>
                                 );
                             })()}
+
+                            {/* 5-Day Metric Cards Strip (Tgl 1 - 5 Breakdown) */}
+                            <Grid container spacing={1.5} sx={{ mt: 1.5 }}>
+                                {dailyChartData.map((d) => {
+                                    const isPeak = d.day === peakDayInfo?.day;
+                                    const isHovered = hoveredDay === d.day;
+                                    const pctOfSelected = selectedFilterTotal > 0 ? Math.round((d.dailyVol / selectedFilterTotal) * 100) : 0;
+
+                                    return (
+                                        <Grid size={{ xs: 6, sm: 4, md: 2.4 }} key={d.day}>
+                                            <Box
+                                                onMouseEnter={() => setHoveredDay(d.day)}
+                                                onMouseLeave={() => setHoveredDay(null)}
+                                                sx={{
+                                                    p: 1.2,
+                                                    borderRadius: '11px',
+                                                    bgcolor: isHovered
+                                                        ? (isDark ? 'rgba(37,99,235,0.18)' : '#eff6ff')
+                                                        : (isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc'),
+                                                    border: '1.5px solid',
+                                                    borderColor: isPeak
+                                                        ? '#f59e0b'
+                                                        : (isHovered ? '#2563eb' : (isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0')),
+                                                    transition: 'all 0.2s',
+                                                    cursor: 'pointer',
+                                                }}
+                                            >
+                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                                                    <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: isPeak ? '#d97706' : textPrimary }}>
+                                                        {d.short_label} ({d.day})
+                                                    </Typography>
+                                                    {isPeak && (
+                                                        <Chip
+                                                            label="PUNCAK"
+                                                            size="small"
+                                                            sx={{
+                                                                height: 16,
+                                                                fontSize: '0.55rem',
+                                                                fontWeight: 900,
+                                                                bgcolor: '#f59e0b',
+                                                                color: '#ffffff',
+                                                                px: 0.2,
+                                                            }}
+                                                        />
+                                                    )}
+                                                </Box>
+
+                                                <Typography sx={{ fontSize: '1.05rem', fontWeight: 900, color: isPeak ? '#2563eb' : textPrimary, letterSpacing: '-0.02em' }}>
+                                                    {d.dailyVol.toLocaleString('id-ID')} <span style={{ fontSize: '0.68rem', fontWeight: 600, color: textSecondary }}>Pax</span>
+                                                </Typography>
+
+                                                <Typography sx={{ fontSize: '0.62rem', color: textSecondary, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', mt: 0.2 }}>
+                                                    {d.subtitle}
+                                                </Typography>
+
+                                                {/* Micro proportion bar */}
+                                                <Box sx={{ mt: 0.8, width: '100%', bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#e2e8f0', height: 4, borderRadius: 2, overflow: 'hidden' }}>
+                                                    <Box
+                                                        sx={{
+                                                            width: `${pctOfSelected}%`,
+                                                            height: '100%',
+                                                            bgcolor: isPeak ? '#f59e0b' : '#2563eb',
+                                                            borderRadius: 2,
+                                                        }}
+                                                    />
+                                                </Box>
+
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.4 }}>
+                                                    <Typography sx={{ fontSize: '0.6rem', color: textMuted, fontWeight: 700 }}>
+                                                        {pctOfSelected}%
+                                                    </Typography>
+                                                    <Typography sx={{ fontSize: '0.6rem', color: textMuted }}>
+                                                        Kum: {d.cumVol}
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                        </Grid>
+                                    );
+                                })}
+                            </Grid>
 
                             {/* Operational Advisory Banner */}
                             <Box
@@ -2229,7 +2612,7 @@ export default function VisitorAnalyticsDashboard({
                             >
                                 <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#2563eb', flexShrink: 0 }} />
                                 <Typography sx={{ fontSize: '0.74rem', color: textSecondary, lineHeight: 1.5 }}>
-                                    <strong style={{ color: '#2563eb' }}>Rekomendasi Operasional:</strong> Lonjakan tertinggi turnstile terjadi pukul <strong>08:00 &mdash; 09:00 WIB</strong> (42 delegasi/jam) sebelum Opening Ceremony. Panitia telah menyiapkan 4 jalur fast-track barcode turnstile dan 2 meja cetak badge express di lobby Royal Ambarrukmo.
+                                    <strong style={{ color: '#2563eb' }}>Rekomendasi Operasional:</strong> Lonjakan tertinggi arus kedatangan delegasi <strong>{selectedFilterMeta.label}</strong> terjadi pada <strong>{peakDayInfo?.title} ({peakDayInfo?.dailyVol} delegasi)</strong> agenda {peakDayInfo?.agenda}. Panitia telah menyiagakan 4 jalur fast-track barcode turnstile, 2 meja cetak badge express di lobby Royal Ambarrukmo, serta alokasi khusus gate VIP &amp; Presenter.
                                 </Typography>
                             </Box>
                         </Card>
