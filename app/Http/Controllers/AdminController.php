@@ -895,31 +895,44 @@ class AdminController extends Controller
             ->select('id', 'user_id', 'amount', 'status', 'verified', 'gateway', 'order_id', 'paid_at', 'created_at')
             ->get();
 
-        // 1. Daily Trend / Velocity (Aggregate by date)
-        $dailyBuckets = [];
+        // 1. Monthly Trend / Velocity (Aggregate by Month: YYYY-MM)
+        $monthNames = [
+            '01' => 'Jan', '02' => 'Feb', '03' => 'Mar', '04' => 'Apr',
+            '05' => 'Mei', '06' => 'Jun', '07' => 'Jul', '08' => 'Agu',
+            '09' => 'Sep', '10' => 'Okt', '11' => 'Nov', '12' => 'Des'
+        ];
+
+        $monthlyBuckets = [];
         foreach ($paidPayments as $p) {
-            $date = $p->paid_at ? $p->paid_at->format('Y-m-d') : $p->created_at->format('Y-m-d');
-            if (!isset($dailyBuckets[$date])) {
-                $dailyBuckets[$date] = [
-                    'date' => $date,
-                    'label' => date('d M', strtotime($date)),
+            $dt = $p->paid_at ?? $p->created_at;
+            if (!$dt) continue;
+            $monthKey = $dt->format('Y-m');
+            $year = $dt->format('Y');
+            $mNum = $dt->format('m');
+            $mLabel = ($monthNames[$mNum] ?? $dt->format('M')) . ' ' . $year;
+
+            if (!isset($monthlyBuckets[$monthKey])) {
+                $monthlyBuckets[$monthKey] = [
+                    'date' => $monthKey,
+                    'month_key' => $monthKey,
+                    'label' => $mLabel,
                     'revenue' => 0,
                     'count' => 0,
                 ];
             }
-            $dailyBuckets[$date]['revenue'] += (float) $p->amount;
-            $dailyBuckets[$date]['count']++;
+            $monthlyBuckets[$monthKey]['revenue'] += (float) $p->amount;
+            $monthlyBuckets[$monthKey]['count']++;
         }
-        ksort($dailyBuckets);
+        ksort($monthlyBuckets);
 
         // Calculate cumulative
-        $dailyTrend = [];
+        $monthlyTrend = [];
         $cumRev = 0;
         $cumCount = 0;
-        foreach ($dailyBuckets as $d) {
+        foreach ($monthlyBuckets as $d) {
             $cumRev += $d['revenue'];
             $cumCount += $d['count'];
-            $dailyTrend[] = [
+            $monthlyTrend[] = [
                 'date' => $d['date'],
                 'label' => $d['label'],
                 'revenue' => $d['revenue'],
@@ -994,7 +1007,8 @@ class AdminController extends Controller
         $avgTicket = $stats['paidCount'] > 0 ? round($stats['totalRevenue'] / $stats['paidCount']) : 0;
 
         $paymentAnalytics = [
-            'dailyTrend' => $dailyTrend,
+            'monthlyTrend' => $monthlyTrend,
+            'dailyTrend' => $monthlyTrend,
             'categoryBreakdown' => $categoryBreakdown,
             'methodBreakdown' => $methodBreakdown,
             'solvencyRate' => $solvencyRate,

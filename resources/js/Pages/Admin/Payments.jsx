@@ -45,25 +45,26 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
 
     // Statistical Analytics Section States
     const [showAnalytics, setShowAnalytics] = useState(true);
-    const [chartMetric, setChartMetric] = useState('revenue'); // 'revenue' | 'count'
-    const [chartMode, setChartMode] = useState('daily'); // 'daily' | 'cumulative'
+    const [chartMetric, setChartMetric] = useState('count'); // 'revenue' | 'count' (Default to volume 'count' as requested)
+    const [chartMode, setChartMode] = useState('monthly'); // 'monthly' | 'cumulative'
     const [hoveredPoint, setHoveredPoint] = useState(null);
 
-    // Prepare Daily Trend Data
-    const dailyTrend = useMemo(() => {
-        if (analytics.dailyTrend && analytics.dailyTrend.length > 0) {
-            return analytics.dailyTrend;
+    // Prepare Monthly Trend Data (Aggregated by Month)
+    const monthlyTrend = useMemo(() => {
+        const data = analytics.monthlyTrend || analytics.dailyTrend;
+        if (data && Array.isArray(data) && data.length > 0) {
+            return data;
         }
         return [
-            { date: '2026-10-25', label: '25 Okt', revenue: 12500000, count: 6, cum_revenue: 12500000, cum_count: 6 },
-            { date: '2026-10-27', label: '27 Okt', revenue: 25000000, count: 12, cum_revenue: 37500000, cum_count: 18 },
-            { date: '2026-10-29', label: '29 Okt', revenue: 42500000, count: 21, cum_revenue: 80000000, cum_count: 39 },
-            { date: '2026-10-31', label: '31 Okt', revenue: 65000000, count: 34, cum_revenue: 145000000, cum_count: 73 },
-            { date: '2026-11-01', label: '01 Nov', revenue: 44225680, count: 23, cum_revenue: 189225680, cum_count: 96 },
-            { date: '2026-11-02', label: '02 Nov', revenue: 52000000, count: 27, cum_revenue: 241225680, cum_count: 123 },
-            { date: '2026-11-03', label: '03 Nov', revenue: 24500000, count: 13, cum_revenue: 265725680, cum_count: 136 },
+            { date: '2026-05', label: 'Mei 2026', revenue: 12500000, count: 6, cum_revenue: 12500000, cum_count: 6 },
+            { date: '2026-06', label: 'Jun 2026', revenue: 25000000, count: 12, cum_revenue: 37500000, cum_count: 18 },
+            { date: '2026-07', label: 'Jul 2026', revenue: 42500000, count: 21, cum_revenue: 80000000, cum_count: 39 },
+            { date: '2026-08', label: 'Agu 2026', revenue: 65000000, count: 34, cum_revenue: 145000000, cum_count: 73 },
+            { date: '2026-09', label: 'Sep 2026', revenue: 44225680, count: 23, cum_revenue: 189225680, cum_count: 96 },
+            { date: '2026-10', label: 'Okt 2026', revenue: 52000000, count: 27, cum_revenue: 241225680, cum_count: 123 },
+            { date: '2026-11', label: 'Nov 2026', revenue: 24500000, count: 13, cum_revenue: 265725680, cum_count: 136 },
         ];
-    }, [analytics.dailyTrend]);
+    }, [analytics.monthlyTrend, analytics.dailyTrend]);
 
     const categoryBreakdown = useMemo(() => {
         if (analytics.categoryBreakdown && analytics.categoryBreakdown.length > 0) {
@@ -93,30 +94,32 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
     const avgTicket = analytics.avgTicket ?? (stats.paidCount > 0 ? Math.round(stats.totalRevenue / stats.paidCount) : 1953865);
 
     const activeChartPoints = useMemo(() => {
-        return dailyTrend.map((d) => {
+        return monthlyTrend.map((d) => {
             const val = chartMetric === 'revenue'
-                ? (chartMode === 'cumulative' ? d.cum_revenue : d.revenue)
-                : (chartMode === 'cumulative' ? d.cum_count : d.count);
+                ? (chartMode === 'cumulative' ? (Number(d.cum_revenue) || 0) : (Number(d.revenue) || 0))
+                : (chartMode === 'cumulative' ? (Number(d.cum_count) || 0) : (Number(d.count) || 0));
             return { ...d, val };
         });
-    }, [dailyTrend, chartMetric, chartMode]);
+    }, [monthlyTrend, chartMetric, chartMode]);
 
     const maxChartVal = useMemo(() => {
-        const vals = activeChartPoints.map(p => p.val);
-        return Math.max(...(vals.length ? vals : [1]), 1);
+        const vals = activeChartPoints.map(p => Number(p.val) || 0);
+        const m = Math.max(...(vals.length ? vals : [1]), 1);
+        return isFinite(m) && m > 0 ? m : 1;
     }, [activeChartPoints]);
 
-    const peakTrendDay = useMemo(() => {
+    const peakTrendMonth = useMemo(() => {
         let maxV = -1;
-        let peak = dailyTrend[dailyTrend.length - 2] || dailyTrend[0];
-        dailyTrend.forEach(d => {
-            if (d.revenue > maxV) {
-                maxV = d.revenue;
+        let peak = monthlyTrend[monthlyTrend.length - 1] || monthlyTrend[0] || { label: 'Agu 2026', revenue: 0, count: 0 };
+        monthlyTrend.forEach(d => {
+            const v = chartMetric === 'revenue' ? (Number(d.revenue) || 0) : (Number(d.count) || 0);
+            if (v > maxV) {
+                maxV = v;
                 peak = d;
             }
         });
         return peak;
-    }, [dailyTrend]);
+    }, [monthlyTrend, chartMetric]);
 
     const searchTimer = useRef(null);
     const isFirstRender = useRef(true);
@@ -930,18 +933,18 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                             <ShowChartRoundedIcon sx={{ fontSize: 20, color: '#0d7a6a' }} />
                                             <Typography sx={{ fontSize: '0.92rem', fontWeight: 800, color: c.textPrimary }}>
-                                                {chartMetric === 'revenue' ? 'Tren Penerimaan Kas Harian (Revenue Velocity)' : 'Tren Volume Transaksi Harian (Transactions)'}
+                                                {chartMetric === 'revenue' ? 'Tren Penerimaan Kas Bulanan (Monthly Cashflow)' : 'Tren Volume Transaksi Bulanan (Monthly Transactions)'}
                                             </Typography>
                                         </Box>
                                         <Typography sx={{ fontSize: '0.72rem', color: c.textMuted, mt: 0.2 }}>
-                                            Arus uang masuk dari 136 transaksi terverifikasi PIT IAGI &amp; GEOSEA XIX
+                                            Arus kas masuk per bulan dari 136 transaksi terverifikasi PIT IAGI &amp; GEOSEA XIX
                                         </Typography>
                                     </Box>
 
                                     <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
                                         <Chip
                                             icon={<FlashOnIcon sx={{ fontSize: 13, color: '#f59e0b' }} />}
-                                            label={`Puncak: ${peakTrendDay.label} (Rp ${Number(peakTrendDay.revenue).toLocaleString('id-ID')})`}
+                                            label={`Puncak: ${peakTrendMonth?.label || 'Agu 2026'} (${chartMetric === 'revenue' ? `Rp ${Number(peakTrendMonth?.revenue || 0).toLocaleString('id-ID')}` : `${peakTrendMonth?.count || 0} Tx`})`}
                                             size="small"
                                             sx={{
                                                 height: 24,
@@ -995,20 +998,20 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
                                         <Box sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', p: 0.3, borderRadius: '8px', display: 'flex' }}>
                                             <Button
                                                 size="small"
-                                                onClick={() => setChartMode('daily')}
+                                                onClick={() => setChartMode('monthly')}
                                                 sx={{
                                                     py: 0.25,
                                                     px: 1,
                                                     fontSize: '0.68rem',
-                                                    fontWeight: chartMode === 'daily' ? 800 : 600,
-                                                    color: chartMode === 'daily' ? '#ffffff' : c.textMuted,
-                                                    bgcolor: chartMode === 'daily' ? '#2563eb' : 'transparent',
+                                                    fontWeight: chartMode === 'monthly' ? 800 : 600,
+                                                    color: chartMode === 'monthly' ? '#ffffff' : c.textMuted,
+                                                    bgcolor: chartMode === 'monthly' ? '#2563eb' : 'transparent',
                                                     borderRadius: '6px',
                                                     textTransform: 'none',
                                                     minWidth: 'auto',
                                                 }}
                                             >
-                                                Per Tanggal
+                                                Per Bulan
                                             </Button>
                                             <Button
                                                 size="small"
@@ -1035,17 +1038,17 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
                                 {(() => {
                                     const chartW = 680;
                                     const chartH = 190;
-                                    const padL = 40;
-                                    const padR = 25;
-                                    const padT = 25;
-                                    const padB = 35;
+                                    const padL = 45;
+                                    const padR = 30;
+                                    const padT = 28;
+                                    const padB = 38;
                                     const graphW = chartW - padL - padR;
                                     const graphH = chartH - padT - padB;
 
                                     const points = activeChartPoints.map((pt, i) => {
                                         const x = padL + (i / Math.max(1, activeChartPoints.length - 1)) * graphW;
-                                        const y = padT + graphH - (pt.val / maxChartVal) * graphH;
-                                        return { ...pt, x, y, isPeak: pt.date === peakTrendDay.date };
+                                        const y = padT + graphH - (pt.val / Math.max(1, maxChartVal)) * graphH;
+                                        return { ...pt, x, y, isPeak: Boolean(pt.date && pt.date === peakTrendMonth.date) };
                                     });
 
                                     const splinePath = points.reduce((acc, pt, i, arr) => {
@@ -1167,7 +1170,7 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
                                                                 fontFamily="Inter, sans-serif"
                                                             >
                                                                 {chartMetric === 'revenue' 
-                                                                    ? `${Math.round(pt.val / 1000000)}JT` 
+                                                                    ? `${(pt.val / 1000000).toFixed(pt.val % 1000000 === 0 ? 0 : 1)}JT` 
                                                                     : `${pt.val}Tx`}
                                                             </text>
 
@@ -1177,8 +1180,8 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
                                                                 y={chartH - 12}
                                                                 textAnchor="middle"
                                                                 fill={pt.isPeak ? '#0d7a6a' : c.textMuted}
-                                                                fontSize="10"
-                                                                fontWeight={pt.isPeak ? '800' : '600'}
+                                                                fontSize="11"
+                                                                fontWeight={pt.isPeak ? '800' : '700'}
                                                                 fontFamily="Inter, sans-serif"
                                                             >
                                                                 {pt.label}
