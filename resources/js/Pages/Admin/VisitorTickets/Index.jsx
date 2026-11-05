@@ -944,6 +944,7 @@ export default function VisitorTicketsIndex({
         sync_pic_with_primary: false,
         recalculate_total: true,
         unique_code: 0,
+        receipt_no: '',
         members: [],
         removed_ticket_ids: [],
     });
@@ -1634,6 +1635,7 @@ export default function VisitorTicketsIndex({
             pic_phone: ticket.payment?.pic_phone || primaryMember?.visitor_phone || '',
             pic_institution: ticket.payment?.pic_institution || primaryMember?.visitor_institution || '',
             unique_code: Number(ticket.payment?.unique_code || 0),
+            receipt_no: ticket.payment?.receipt_no ? (ticket.payment.receipt_no).replace('Receipt No. ', '') : '',
             sync_pic_with_primary: false,
             recalculate_total: true,
             members: mappedMembers,
@@ -5556,27 +5558,55 @@ export default function VisitorTicketsIndex({
                                     />
                                 </Box>
 
-                                {/* KODE UNIK TRANSFER INPUT */}
-                                <Box sx={{ mt: 1.5, p: 1.5, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-                                    <Box sx={{ minWidth: 160 }}>
-                                        <TextField
-                                            label="Kode Unik Transfer"
-                                            type="number"
-                                            size="small"
-                                            value={editData.unique_code ?? 0}
-                                            onChange={(e) => setEditData('unique_code', e.target.value === '' ? 0 : parseInt(e.target.value) || 0)}
-                                            InputProps={{
-                                                startAdornment: <InputAdornment position="start">#</InputAdornment>,
-                                            }}
-                                            sx={{ bgcolor: '#ffffff', width: 160 }}
-                                        />
+                                {/* INVOICE NUMBER & KODE UNIK INPUT BOX */}
+                                <Box sx={{ mt: 1.5, p: 1.8, bgcolor: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                                        <Box sx={{ flex: 1, minWidth: 240 }}>
+                                            <TextField
+                                                fullWidth
+                                                label="Nomor Invoice / Receipt Resmi"
+                                                size="small"
+                                                placeholder="Contoh: 115/PIT-IAGI/PY-R/XI/2026"
+                                                value={editData.receipt_no || ''}
+                                                onChange={(e) => setEditData('receipt_no', e.target.value)}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <ReceiptLongIcon sx={{ fontSize: 16, color: '#094d42' }} />
+                                                        </InputAdornment>
+                                                    ),
+                                                }}
+                                                sx={{
+                                                    bgcolor: '#ffffff',
+                                                    '& .MuiOutlinedInput-root': {
+                                                        fontFamily: 'monospace',
+                                                        fontSize: '0.82rem',
+                                                        fontWeight: 700,
+                                                    },
+                                                }}
+                                            />
+                                        </Box>
+                                        <Box sx={{ width: 170 }}>
+                                            <TextField
+                                                fullWidth
+                                                label="Kode Unik Transfer"
+                                                type="number"
+                                                size="small"
+                                                value={editData.unique_code ?? 0}
+                                                onChange={(e) => setEditData('unique_code', e.target.value === '' ? 0 : parseInt(e.target.value) || 0)}
+                                                InputProps={{
+                                                    startAdornment: <InputAdornment position="start">#</InputAdornment>,
+                                                }}
+                                                sx={{ bgcolor: '#ffffff' }}
+                                            />
+                                        </Box>
                                     </Box>
-                                    <Box sx={{ flex: 1, minWidth: 200 }}>
-                                        <Typography variant="caption" sx={{ color: '#334155', display: 'block', fontWeight: 800 }}>
-                                            Kode Unik Transfer: <span style={{ color: '#1d4ed8' }}>+{liveEditUniqueCode}</span>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                                        <Typography variant="caption" sx={{ color: '#64748b', fontSize: '0.72rem' }}>
+                                            💡 <em>Nomor invoice otomatis melompati 114 (114 dibatalkan/salah input &rarr; terbit di 115).</em>
                                         </Typography>
-                                        <Typography variant="caption" sx={{ color: '#64748b', display: 'block', fontSize: '0.72rem' }}>
-                                            Subtotal: <strong>Rp {liveEditSubtotal.toLocaleString('id-ID')}</strong> + Kode Unik: <strong>Rp {liveEditUniqueCode.toLocaleString('id-ID')}</strong> = Estimasi Total: <strong style={{ color: '#094d42' }}>Rp {liveEditTotal.toLocaleString('id-ID')}</strong>
+                                        <Typography variant="caption" sx={{ color: '#334155', fontWeight: 800, fontSize: '0.72rem' }}>
+                                            Subtotal: <strong>Rp {liveEditSubtotal.toLocaleString('id-ID')}</strong> + Unik: <strong style={{ color: '#1d4ed8' }}>+{liveEditUniqueCode}</strong> = Total: <strong style={{ color: '#094d42' }}>Rp {liveEditTotal.toLocaleString('id-ID')}</strong>
                                         </Typography>
                                     </Box>
                                 </Box>

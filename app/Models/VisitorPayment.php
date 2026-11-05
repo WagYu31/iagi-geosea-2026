@@ -13,6 +13,7 @@ class VisitorPayment extends Model
 
     protected $fillable = [
         'payment_code',
+        'receipt_no',
         'payment_method',
         'total_members',
         'price_per_ticket',
@@ -70,6 +71,12 @@ class VisitorPayment extends Model
 
     public function getReceiptNoAttribute(): string
     {
+        // 1. Explicit override stored in database
+        if (array_key_exists('receipt_no', $this->attributes) && !empty($this->attributes['receipt_no'])) {
+            $val = trim($this->attributes['receipt_no']);
+            return str_starts_with($val, 'Receipt No. ') ? $val : "Receipt No. {$val}";
+        }
+
         $rank = 1;
         if ($this->id) {
             $rank = self::where('id', '<=', $this->id)->count();
@@ -80,6 +87,15 @@ class VisitorPayment extends Model
 
         // Sequence number starts from 13 (e.g. 1st payment = 013, 2nd = 014, etc.)
         $sequenceNumber = $rank + 12;
+
+        // Skip cancelled / voided invoice numbers (e.g. Invoice 114 was cancelled due to input error, jumped directly to 115)
+        $skippedInvoices = [114];
+        foreach ($skippedInvoices as $skipped) {
+            if ($sequenceNumber >= $skipped) {
+                $sequenceNumber++;
+            }
+        }
+
         $num = str_pad((string) $sequenceNumber, 3, '0', STR_PAD_LEFT);
 
         $date = $this->created_at ?? now();

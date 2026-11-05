@@ -60,21 +60,30 @@ class VisitorTicketAdminController extends Controller
                          ->orWhere('pic_institution', 'like', "%{$search}%")
                          ->orWhere('id', 'like', "%{$search}%");
 
-                      // Extract numeric sequence if search is like "013", "13", "014", etc.
+                      // Extract numeric sequence if search is like "013", "13", "014", "115", etc.
                       if (preg_match('/(\d+)/', $search, $matches)) {
                           $numericId = (int) $matches[1];
                           if ($numericId >= 13) {
                               $targetRank = $numericId - 12;
-                              $matchingPaymentId = VisitorPayment::orderBy('id', 'asc')
-                                  ->skip($targetRank - 1)
-                                  ->take(1)
-                                  ->value('id');
-                              if ($matchingPaymentId) {
-                                  $pq->orWhere('id', $matchingPaymentId);
+                              // Account for skipped invoice 114 (cancelled due to input error, jumped to 115)
+                              if ($numericId >= 115) {
+                                  $targetRank--;
+                              }
+                              if ($targetRank > 0) {
+                                  $matchingPaymentId = VisitorPayment::orderBy('id', 'asc')
+                                      ->skip($targetRank - 1)
+                                      ->take(1)
+                                      ->value('id');
+                                  if ($matchingPaymentId) {
+                                      $pq->orWhere('id', $matchingPaymentId);
+                                  }
                               }
                           } elseif ($numericId > 0) {
                               $pq->orWhere('id', $numericId);
                           }
+                      }
+                      if (Schema::hasColumn('visitor_payments', 'receipt_no')) {
+                          $pq->orWhere('receipt_no', 'like', "%{$search}%");
                       }
                   });
             });
@@ -255,15 +264,24 @@ class VisitorTicketAdminController extends Controller
                 $matchingPaymentId = null;
                 if ($numericId >= 13) {
                     $targetRank = $numericId - 12;
-                    $matchingPaymentId = VisitorPayment::orderBy('id', 'asc')
-                        ->skip($targetRank - 1)
-                        ->take(1)
-                        ->value('id');
+                    // Account for skipped invoice 114
+                    if ($numericId >= 115) {
+                        $targetRank--;
+                    }
+                    if ($targetRank > 0) {
+                        $matchingPaymentId = VisitorPayment::orderBy('id', 'asc')
+                            ->skip($targetRank - 1)
+                            ->take(1)
+                            ->value('id');
+                    }
                 } elseif ($numericId > 0) {
                     $matchingPaymentId = $numericId;
                 }
                 $query->whereHas('payment', function ($pq) use ($invNo, $matchingPaymentId) {
                     $pq->where('payment_code', 'like', "%{$invNo}%");
+                    if (Schema::hasColumn('visitor_payments', 'receipt_no')) {
+                        $pq->orWhere('receipt_no', 'like', "%{$invNo}%");
+                    }
                     if ($matchingPaymentId) {
                         $pq->orWhere('id', $matchingPaymentId);
                     }
@@ -271,6 +289,9 @@ class VisitorTicketAdminController extends Controller
             } else {
                 $query->whereHas('payment', function ($pq) use ($invNo) {
                     $pq->where('payment_code', 'like', "%{$invNo}%");
+                    if (Schema::hasColumn('visitor_payments', 'receipt_no')) {
+                        $pq->orWhere('receipt_no', 'like', "%{$invNo}%");
+                    }
                 });
             }
         }
@@ -3354,6 +3375,11 @@ class VisitorTicketAdminController extends Controller
                         'pic_institution' => !empty($picInstitution) ? $picInstitution : $payment->pic_institution,
                     ];
 
+                    if ($request->has('receipt_no') && Schema::hasColumn('visitor_payments', 'receipt_no')) {
+                        $customReceipt = trim((string)$request->input('receipt_no'));
+                        $updatePayment['receipt_no'] = $customReceipt !== '' ? $customReceipt : null;
+                    }
+
                     $uniqueCode = $request->has('unique_code')
                         ? (int) $request->input('unique_code')
                         : (int) ($payment->unique_code ?? 0);
@@ -3487,6 +3513,10 @@ class VisitorTicketAdminController extends Controller
             $paymentUpdates = [];
             if ($request->has('unique_code')) {
                 $paymentUpdates['unique_code'] = $uniqueCode;
+            }
+            if ($request->has('receipt_no') && Schema::hasColumn('visitor_payments', 'receipt_no')) {
+                $customReceipt = trim((string)$request->input('receipt_no'));
+                $paymentUpdates['receipt_no'] = $customReceipt !== '' ? $customReceipt : null;
             }
             if ($subtotal > 0) {
                 $paymentUpdates['total_amount'] = $subtotal + $uniqueCode;
