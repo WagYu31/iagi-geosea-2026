@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>E-Voting Pemilu IAGI 2026 | Komisi Pemilihan Ketua Umum</title>
-  
+
   <!-- PWA & Mobile Meta Tags -->
-  <meta name="description" content="Platform Resmi Pemungutan Suara Elektronik (E-Voting) Pemilihan Ketua Umum Ikatan Ahli Geologi Indonesia (IAGI) Periode 2026-2029">
+  <meta name="description"
+    content="Platform Resmi Pemungutan Suara Elektronik (E-Voting) Pemilihan Ketua Umum Ikatan Ahli Geologi Indonesia (IAGI) Periode 2026-2029">
   <meta name="theme-color" content="#021310">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Pemilu IAGI">
-  
+
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
@@ -19,7 +22,9 @@
   <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 
   <!-- Taste-Skill Mobile PWA Stylesheet -->
   <link rel="stylesheet" href="css/style.css?v=4.6.0">
@@ -42,14 +47,15 @@
       --text-subtle: #64748B;
     }
 
-    html, body {
+    html,
+    body {
       overflow-x: hidden !important;
       box-sizing: border-box !important;
     }
 
     body {
       background-color: var(--canvas-bg) !important;
-      background-image: 
+      background-image:
         radial-gradient(ellipse 90% 60% at 50% -20%, rgba(245, 186, 66, 0.12) 0%, rgba(16, 185, 129, 0.03) 45%, transparent 75%),
         radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px) !important;
       background-size: 100% 100%, 28px 28px !important;
@@ -73,7 +79,7 @@
       -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
       border: 1px solid rgba(255, 255, 255, 0.09) !important;
       border-radius: 24px !important;
-      box-shadow: 
+      box-shadow:
         0 30px 100px -20px rgba(0, 0, 0, 0.9),
         inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
       overflow: hidden !important;
@@ -209,17 +215,25 @@
     }
 
     /* Screen lock enforce */
-    #screen-home, #screen-dpt, #screen-claim, #screen-receipt {
+    #screen-home,
+    #screen-dpt,
+    #screen-claim,
+    #screen-receipt {
       display: none !important;
     }
+
     #screen-vote {
       display: block !important;
       padding: 0 !important;
     }
+
     #vote-closed-card {
       display: block !important;
     }
-    #vote-auth-card, #vote-ballot-card, #vote-locked-card {
+
+    #vote-auth-card,
+    #vote-ballot-card,
+    #vote-locked-card {
       display: none !important;
     }
 
@@ -255,7 +269,7 @@
       backdrop-filter: blur(28px) saturate(180%) !important;
       -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
       border: 1px solid rgba(255, 255, 255, 0.08) !important;
-      box-shadow: 
+      box-shadow:
         0 25px 70px -15px rgba(0, 0, 0, 0.8),
         inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
       border-radius: 24px !important;
@@ -299,7 +313,7 @@
       border-radius: 20px;
       background: linear-gradient(135deg, rgba(26, 36, 54, 0.9) 0%, rgba(13, 19, 31, 0.95) 100%);
       border: 1px solid rgba(245, 186, 66, 0.35);
-      box-shadow: 
+      box-shadow:
         0 10px 25px -5px rgba(0, 0, 0, 0.6),
         inset 0 1px 0 rgba(255, 255, 255, 0.2),
         0 0 25px rgba(245, 186, 66, 0.25);
@@ -310,13 +324,27 @@
     }
 
     @keyframes spin-slow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     @keyframes pulse-glow {
-      0%, 100% { transform: scale(0.95); opacity: 0.5; }
-      50% { transform: scale(1.1); opacity: 0.9; }
+
+      0%,
+      100% {
+        transform: scale(0.95);
+        opacity: 0.5;
+      }
+
+      50% {
+        transform: scale(1.1);
+        opacity: 0.9;
+      }
     }
 
     /* Status Pill */
@@ -347,8 +375,17 @@
     }
 
     @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.8); }
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.8);
+      }
     }
 
     .vault-heading {
@@ -388,44 +425,55 @@
       body {
         padding: 10px 8px 85px 8px !important;
       }
+
       .app-container {
         border-radius: 16px !important;
         width: 100% !important;
         max-width: 100% !important;
       }
+
       .desktop-nav-bar {
         display: none !important;
       }
+
       .app-main {
         padding: 8px 4px !important;
       }
+
       .app-header {
         padding: 12px 14px !important;
       }
+
       .brand-title {
         font-size: 0.88rem !important;
       }
+
       .brand-status-chip {
         font-size: 0.62rem !important;
         padding: 2px 6px !important;
       }
+
       .closed-hero-section {
         padding: 0 4px !important;
         margin: 10px auto 20px auto !important;
       }
+
       .closed-card-vault {
         padding: 28px 14px 24px 14px !important;
         border-radius: 18px !important;
       }
+
       .vault-heading {
         font-size: 1.28rem !important;
         line-height: 1.35 !important;
       }
+
       .vault-subheading {
         font-size: 0.82rem !important;
         line-height: 1.55 !important;
         margin-bottom: 20px !important;
       }
+
       .status-sealed-pill {
         font-size: 0.62rem !important;
         padding: 4px 10px !important;
@@ -434,22 +482,28 @@
         text-align: center !important;
         line-height: 1.4 !important;
       }
+
       .btn-portal-pill {
         padding: 5px 10px !important;
         font-size: 0.72rem !important;
       }
+
       .bento-matrix {
         grid-template-columns: 1fr !important;
         gap: 10px !important;
       }
+
       .cta-actions-row {
         flex-direction: column !important;
         width: 100% !important;
       }
-      .btn-21st-gold, .btn-21st-ghost {
+
+      .btn-21st-gold,
+      .btn-21st-ghost {
         width: 100% !important;
         box-sizing: border-box !important;
       }
+
       .vault-footer-strip {
         font-size: 0.62rem !important;
         gap: 8px !important;
@@ -539,7 +593,7 @@
       font-weight: 800;
       font-size: 0.92rem;
       text-decoration: none;
-      box-shadow: 
+      box-shadow:
         0 0 25px rgba(245, 186, 66, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.4);
       border: 1px solid #FDE68A;
@@ -549,7 +603,7 @@
 
     .btn-21st-gold:hover {
       transform: translateY(-2px);
-      box-shadow: 
+      box-shadow:
         0 0 35px rgba(245, 186, 66, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
       color: #000000 !important;
@@ -602,6 +656,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- Mobile App Frame Container -->
@@ -611,13 +666,17 @@
     <header class="app-header">
       <div class="brand-wrapper" onclick="window.location.href = 'landing.html'">
         <div class="brand-logo-frame">
-          <img src="assets/iagi-logo.png?v=iagi2026" alt="IAGI Logo" class="brand-logo" style="width:26px;height:26px;object-fit:contain;">
+          <img src="assets/iagi-logo.png?v=iagi2026" alt="IAGI Logo" class="brand-logo"
+            style="width:26px;height:26px;object-fit:contain;">
         </div>
         <div class="brand-text">
           <div class="brand-title">PEMILU <span class="gold-accent">IAGI</span> 2026</div>
           <div style="margin-top:2px;">
             <span class="brand-status-chip">
-              <svg style="width:9px; height:9px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <svg style="width:9px; height:9px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
               KPKU &bull; RESMI DISEGEL
             </span>
           </div>
@@ -627,26 +686,41 @@
       <!-- Desktop Executive Navigation Bar (Visible on Laptop / Desktop screens) -->
       <nav class="desktop-nav-bar" id="desktop-nav-bar" aria-label="Navigasi Utama Portal">
         <button class="desktop-nav-item locked-nav" data-screen="home" title="Beranda (Terkunci - Pemilihan Selesai)">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
           <span>Beranda</span>
         </button>
         <button class="desktop-nav-item locked-nav" data-screen="dpt" title="Cek DPT (Terkunci - Pemilihan Selesai)">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
           <span>Cek DPT</span>
         </button>
         <button class="desktop-nav-item active desktop-nav-vote" data-screen="vote" title="Bilik Suara (Resmi Ditutup)">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
           <span>Bilik Suara (Ditutup)</span>
         </button>
-        <button class="desktop-nav-item locked-nav" data-screen="claim" title="Klaim Token (Terkunci - Pemilihan Selesai)">
-          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <button class="desktop-nav-item locked-nav" data-screen="claim"
+          title="Klaim Token (Terkunci - Pemilihan Selesai)">
+          <svg style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
           <span>Klaim Token</span>
         </button>
       </nav>
 
       <div class="header-badges">
         <a href="landing.html" class="btn-portal-pill">
-          <svg style="width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <svg style="width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
           Portal Utama
         </a>
       </div>
@@ -658,12 +732,18 @@
       <!-- PWA Install Prompt Banner (Visible on Mobile Browser) -->
       <div id="pwa-prompt-banner" class="pwa-prompt-banner" style="display: none;">
         <div class="pwa-prompt-text" style="display:flex; align-items:center; gap:8px;">
-          <svg style="width:16px;height:16px;stroke:#F5BA42;fill:none;stroke-width:2;flex-shrink:0;" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <svg style="width:16px;height:16px;stroke:#F5BA42;fill:none;stroke-width:2;flex-shrink:0;"
+            viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
           <span><strong>Pasang di Layar Utama HP:</strong> Akses pemungutan suara lebih cepat tanpa browser tab.</span>
         </div>
         <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
           <button id="btn-install-pwa" class="btn-install-pwa">Pasang</button>
-          <button class="btn-close-banner" onclick="document.getElementById('pwa-prompt-banner').style.display='none'">&times;</button>
+          <button class="btn-close-banner"
+            onclick="document.getElementById('pwa-prompt-banner').style.display='none'">&times;</button>
         </div>
       </div>
 
@@ -678,20 +758,29 @@
               <span>LIVE VOTING</span>
             </div>
             <div class="chrono-timer">
-              <div class="chrono-unit"><span id="timer-days" class="chrono-num">00</span><span class="chrono-lbl">H</span></div>
+              <div class="chrono-unit"><span id="timer-days" class="chrono-num">00</span><span
+                  class="chrono-lbl">H</span></div>
               <span class="chrono-colon">:</span>
-              <div class="chrono-unit"><span id="timer-hours" class="chrono-num">00</span><span class="chrono-lbl">J</span></div>
+              <div class="chrono-unit"><span id="timer-hours" class="chrono-num">00</span><span
+                  class="chrono-lbl">J</span></div>
               <span class="chrono-colon">:</span>
-              <div class="chrono-unit"><span id="timer-mins" class="chrono-num">00</span><span class="chrono-lbl">M</span></div>
+              <div class="chrono-unit"><span id="timer-mins" class="chrono-num">00</span><span
+                  class="chrono-lbl">M</span></div>
               <span class="chrono-colon">:</span>
-              <div class="chrono-unit"><span id="timer-secs" class="chrono-num">00</span><span class="chrono-lbl">D</span></div>
+              <div class="chrono-unit"><span id="timer-secs" class="chrono-num">00</span><span
+                  class="chrono-lbl">D</span></div>
             </div>
           </div>
 
           <!-- Hero Body: Bilik Suara Digital -->
           <div class="hero-portal-content">
             <div class="presidential-ribbon-sm">
-              <svg style="width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <svg style="width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.5;"
+                viewBox="0 0 24 24">
+                <polygon
+                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                </polygon>
+              </svg>
               <span>E-VOTING RESMI KPKU IAGI 2026</span>
             </div>
             <h2 class="hero-portal-title">Bilik Suara Pemilu IAGI</h2>
@@ -700,18 +789,29 @@
             </p>
             <button class="btn btn-gold btn-hero-vote" onclick="window.location.hash = 'vote'">
               <span>Masuk ke Bilik Suara</span>
-              <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              <svg style="width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2.5;"
+                viewBox="0 0 24 24">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
             </button>
           </div>
 
           <!-- Quick Shortcuts Row -->
           <div class="hero-quick-actions">
             <button class="quick-action-btn" onclick="window.location.hash = 'dpt'">
-              <svg style="width:14px; height:14px; stroke:var(--gold-primary); fill:none; stroke-width:2;" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <svg style="width:14px; height:14px; stroke:var(--gold-primary); fill:none; stroke-width:2;"
+                viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
               <span>Cek DPT Online</span>
             </button>
             <button class="quick-action-btn" onclick="window.location.hash = 'claim'">
-              <svg style="width:14px; height:14px; stroke:#38BDF8; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <svg style="width:14px; height:14px; stroke:#38BDF8; fill:none; stroke-width:2;" viewBox="0 0 24 24">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
               <span>Klaim Kode Surat</span>
             </button>
           </div>
@@ -721,7 +821,13 @@
         <div class="card card-compact" style="margin-top: 12px;">
           <div class="section-mini-header">
             <div class="mini-header-title">
-              <svg style="width:14px; height:14px; stroke:var(--gold-primary); fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              <svg style="width:14px; height:14px; stroke:var(--gold-primary); fill:none; stroke-width:2;"
+                viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
               <span>Alur Regulasi KPKU</span>
             </div>
             <span class="mini-header-tag">4 Langkah</span>
@@ -770,7 +876,13 @@
         <div class="card card-compact" style="margin-top: 12px;">
           <div class="section-mini-header">
             <div class="mini-header-title">
-              <svg style="width:14px; height:14px; stroke:var(--gold-primary); fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              <svg style="width:14px; height:14px; stroke:var(--gold-primary); fill:none; stroke-width:2;"
+                viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
               <span>Calon Ketua Umum IAGI</span>
             </div>
             <span class="mini-header-tag">Geser Profil ➜</span>
@@ -780,11 +892,13 @@
             <!-- Candidate 01 Card -->
             <div class="candidate-snap-card" onclick="showCandidateDetailModal(1)">
               <div class="candidate-snap-header">
-                <span class="candidate-tag-pill" style="color:#0284C7; border-color:rgba(2,132,199,0.4);">NOMOR 01 • NPA: 03457</span>
+                <span class="candidate-tag-pill" style="color:#0284C7; border-color:rgba(2,132,199,0.4);">NOMOR 01 •
+                  NPA: 03457</span>
                 <span class="snap-more-link">Visi & Misi ➜</span>
               </div>
               <div class="candidate-snap-body">
-                <img src="assets/candidate-1.png?v=navystudio" alt="Mirzam Abdurrachman" class="candidate-snap-img" style="border-color:#0284C7;">
+                <img src="assets/candidate-1.png?v=navystudio" alt="Mirzam Abdurrachman" class="candidate-snap-img"
+                  style="border-color:#0284C7;">
                 <div class="candidate-snap-meta">
                   <div class="candidate-snap-name">Mirzam Abdurrachman</div>
                   <div class="candidate-snap-title">Pakar Vulkanologi & Dosen ITB</div>
@@ -795,11 +909,13 @@
             <!-- Candidate 02 Card -->
             <div class="candidate-snap-card" onclick="showCandidateDetailModal(2)">
               <div class="candidate-snap-header">
-                <span class="candidate-tag-pill" style="color:#10B981; border-color:rgba(16,185,129,0.4);">NOMOR 02 • NPA: 03749</span>
+                <span class="candidate-tag-pill" style="color:#10B981; border-color:rgba(16,185,129,0.4);">NOMOR 02 •
+                  NPA: 03749</span>
                 <span class="snap-more-link">Visi & Misi ➜</span>
               </div>
               <div class="candidate-snap-body">
-                <img src="assets/candidate-2.png?v=navystudio" alt="Sonny Yudhistira" class="candidate-snap-img" style="border-color:#10B981;">
+                <img src="assets/candidate-2.png?v=navystudio" alt="Sonny Yudhistira" class="candidate-snap-img"
+                  style="border-color:#10B981;">
                 <div class="candidate-snap-meta">
                   <div class="candidate-snap-name">Sonny Yudhistira</div>
                   <div class="candidate-snap-title">Eksplorasi Geologi & Bisnis Energi</div>
@@ -810,11 +926,13 @@
             <!-- Candidate 03 Card -->
             <div class="candidate-snap-card" onclick="showCandidateDetailModal(3)">
               <div class="candidate-snap-header">
-                <span class="candidate-tag-pill" style="color:#D97706; border-color:rgba(217,119,6,0.4);">NOMOR 03 • NPA: 05653</span>
+                <span class="candidate-tag-pill" style="color:#D97706; border-color:rgba(217,119,6,0.4);">NOMOR 03 •
+                  NPA: 05653</span>
                 <span class="snap-more-link">Visi & Misi ➜</span>
               </div>
               <div class="candidate-snap-body">
-                <img src="assets/candidate-3.png?v=navystudio" alt="Sri Hartanto" class="candidate-snap-img" style="border-color:#D97706;">
+                <img src="assets/candidate-3.png?v=navystudio" alt="Sri Hartanto" class="candidate-snap-img"
+                  style="border-color:#D97706;">
                 <div class="candidate-snap-meta">
                   <div class="candidate-snap-name">Sri Hartanto</div>
                   <div class="candidate-snap-title">Senior Geoscientist & Tata Kelola</div>
@@ -826,12 +944,20 @@
 
         <!-- Helpdesk & Hotline KPKU (Compact Dual Bar) -->
         <div class="helpdesk-compact-bar" style="margin-top: 12px;">
-          <div class="helpdesk-btn" style="opacity: 0.5; cursor: not-allowed; pointer-events: none; border-color: rgba(239, 68, 68, 0.3);">
-            <svg style="width:14px;height:14px;stroke:#EF4444;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <div class="helpdesk-btn"
+            style="opacity: 0.5; cursor: not-allowed; pointer-events: none; border-color: rgba(239, 68, 68, 0.3);">
+            <svg style="width:14px;height:14px;stroke:#EF4444;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <path
+                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+              </path>
+            </svg>
             <span style="color:#EF4444;">Hotline WA Ditutup</span>
           </div>
           <a href="mailto:iagisekretariat@gmail.com" class="helpdesk-btn">
-            <svg style="width:14px;height:14px;stroke:#38BDF8;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <svg style="width:14px;height:14px;stroke:#38BDF8;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
             <span>Email Sekretariat</span>
           </a>
         </div>
@@ -842,12 +968,21 @@
         <div class="card card-gold dpt-container-card">
           <!-- DPT Executive Header -->
           <div class="card-header-flex dpt-main-header">
-            <div class="card-icon-frame" style="background: linear-gradient(135deg, rgba(245, 186, 66, 0.2) 0%, rgba(16, 185, 129, 0.25) 100%); border-color: rgba(245, 186, 66, 0.45); box-shadow: 0 0 20px rgba(245, 186, 66, 0.25);">
-              <svg viewBox="0 0 24 24" style="stroke: var(--gold-primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <div class="card-icon-frame"
+              style="background: linear-gradient(135deg, rgba(245, 186, 66, 0.2) 0%, rgba(16, 185, 129, 0.25) 100%); border-color: rgba(245, 186, 66, 0.45); box-shadow: 0 0 20px rgba(245, 186, 66, 0.25);">
+              <svg viewBox="0 0 24 24" style="stroke: var(--gold-primary);">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
             </div>
             <div style="flex: 1;">
-              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                <div class="card-title" style="font-size: 1.15rem; font-weight: 900; letter-spacing: -0.01em;">Daftar Pemilih Tetap (DPT) Resmi</div>
+              <div
+                style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                <div class="card-title" style="font-size: 1.15rem; font-weight: 900; letter-spacing: -0.01em;">Daftar
+                  Pemilih Tetap (DPT) Resmi</div>
                 <span class="dpt-verified-tag">
                   <span class="live-dot" style="background:#10B981; box-shadow: 0 0 8px #10B981;"></span>
                   TERVERIFIKASI KPKU
@@ -863,7 +998,12 @@
           <div class="dpt-stats-grid">
             <div class="dpt-stat-card">
               <div class="dpt-stat-icon" style="color: var(--gold-primary); background: rgba(245,186,66,0.12);">
-                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <svg viewBox="0 0 24 24">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
               </div>
               <div class="dpt-stat-content">
                 <span class="dpt-stat-num" id="dpt-stat-total">2.143</span>
@@ -873,7 +1013,11 @@
 
             <div class="dpt-stat-card">
               <div class="dpt-stat-icon" style="color: #38BDF8; background: rgba(56,189,248,0.12);">
-                <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4">
+                  </path>
+                </svg>
               </div>
               <div class="dpt-stat-content">
                 <span class="dpt-stat-num" id="dpt-stat-claimed">1.577</span>
@@ -883,7 +1027,10 @@
 
             <div class="dpt-stat-card">
               <div class="dpt-stat-icon" style="color: #10B981; background: rgba(16,185,129,0.12);">
-                <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                <svg viewBox="0 0 24 24">
+                  <polyline points="9 11 12 14 22 4"></polyline>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
               </div>
               <div class="dpt-stat-content">
                 <span class="dpt-stat-num" id="dpt-stat-voted">1.357</span>
@@ -893,7 +1040,12 @@
 
             <div class="dpt-stat-card">
               <div class="dpt-stat-icon" style="color: #A78BFA; background: rgba(167,139,250,0.12);">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                  </path>
+                </svg>
               </div>
               <div class="dpt-stat-content">
                 <span class="dpt-stat-num" id="dpt-stat-pengda">18</span>
@@ -906,7 +1058,13 @@
           <div class="dpt-doc-banner">
             <div class="dpt-doc-left">
               <div class="dpt-doc-badge-icon">
-                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <svg viewBox="0 0 24 24">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
               </div>
               <div>
                 <div class="dpt-doc-title">Dokumen DPT Resmi Terverifikasi (2.143 Anggota)</div>
@@ -914,51 +1072,80 @@
               </div>
             </div>
             <div class="dpt-doc-actions">
-              <button type="button" onclick="document.getElementById('input-npa-claim')?.focus()" class="btn-dpt-download" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34D399; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-weight: 700;">
-                <svg viewBox="0 0 24 24" style="width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <button type="button" onclick="document.getElementById('input-npa-claim')?.focus()"
+                class="btn-dpt-download"
+                style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34D399; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-weight: 700;">
+                <svg viewBox="0 0 24 24"
+                  style="width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2;">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
                 <span>🔍 Cek Status DPT Mandiri</span>
               </button>
             </div>
           </div>
 
           <!-- Jaminan Keamanan & Perlindungan Privasi Data DPT (ISO/IEC Compliance) -->
-          <div class="dpt-iso-security-banner" style="background: linear-gradient(135deg, rgba(2, 35, 28, 0.75) 0%, rgba(1, 18, 14, 0.85) 100%); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);">
+          <div class="dpt-iso-security-banner"
+            style="background: linear-gradient(135deg, rgba(2, 35, 28, 0.75) 0%, rgba(1, 18, 14, 0.85) 100%); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);">
             <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px;">
-              <div style="width: 32px; height: 32px; border-radius: 9px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#34D399" stroke-width="2.2" style="width: 18px; height: 18px; max-width: 18px; max-height: 18px; display: block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+              <div
+                style="width: 32px; height: 32px; border-radius: 9px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#34D399" stroke-width="2.2"
+                  style="width: 18px; height: 18px; max-width: 18px; max-height: 18px; display: block;">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
               </div>
               <div style="flex: 1; min-width: 0;">
-                <div style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.06em; color: #6EE7B7; text-transform: uppercase; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); padding: 3px 8px; border-radius: 999px; margin-bottom: 5px;">JAMINAN PRIVASI DATA PEMILIH & SIBER</div>
-                <h4 style="margin: 0 0 4px 0; font-size: 0.88rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.01em;">Perlindungan Data DPT Berstandar Internasional ISO/IEC</h4>
+                <div
+                  style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.06em; color: #6EE7B7; text-transform: uppercase; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.25); padding: 3px 8px; border-radius: 999px; margin-bottom: 5px;">
+                  JAMINAN PRIVASI DATA PEMILIH & SIBER</div>
+                <h4
+                  style="margin: 0 0 4px 0; font-size: 0.88rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.01em;">
+                  Perlindungan Data DPT Berstandar Internasional ISO/IEC</h4>
                 <p style="margin: 0; font-size: 0.76rem; color: #94A3B8; line-height: 1.45;">
-                  Data 2.143 Anggota Terdaftar dikelola sesuai kepatuhan standar keamanan informasi global untuk menjamin hak pilih dan privasi anggota:
+                  Data 2.143 Anggota Terdaftar dikelola sesuai kepatuhan standar keamanan informasi global untuk
+                  menjamin hak pilih dan privasi anggota:
                 </p>
               </div>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;">
-              <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px;">
+              <div
+                style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                  <span style="font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; color: #F5BA42; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.3); padding: 2px 6px; border-radius: 4px;">ISO/IEC 27018</span>
+                  <span
+                    style="font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; color: #F5BA42; background: rgba(245, 186, 66, 0.15); border: 1px solid rgba(245, 186, 66, 0.3); padding: 2px 6px; border-radius: 4px;">ISO/IEC
+                    27018</span>
                   <span style="font-size: 0.7rem; font-weight: 700; color: #E2E8F0;">Proteksi Data Pribadi (PII)</span>
                 </div>
-                <p style="margin: 0; font-size: 0.72rem; color: #94A3B8; line-height: 1.4;">Penyamaran email pemilih (<em>masked email</em>), penguncian NPA resmi, dan enkripsi data anggota di cloud.</p>
+                <p style="margin: 0; font-size: 0.72rem; color: #94A3B8; line-height: 1.4;">Penyamaran email pemilih
+                  (<em>masked email</em>), penguncian NPA resmi, dan enkripsi data anggota di cloud.</p>
               </div>
 
-              <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px;">
+              <div
+                style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                  <span style="font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; color: #34D399; background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 6px; border-radius: 4px;">ISO/IEC 27017</span>
+                  <span
+                    style="font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; color: #34D399; background: rgba(52, 211, 153, 0.15); border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 6px; border-radius: 4px;">ISO/IEC
+                    27017</span>
                   <span style="font-size: 0.7rem; font-weight: 700; color: #E2E8F0;">Keamanan Cloud Terpadu</span>
                 </div>
-                <p style="margin: 0; font-size: 0.72rem; color: #94A3B8; line-height: 1.4;">Infrastruktur cloud berintegritas tinggi dengan proteksi isolasi data pemilih dari akses tak berwenang.</p>
+                <p style="margin: 0; font-size: 0.72rem; color: #94A3B8; line-height: 1.4;">Infrastruktur cloud
+                  berintegritas tinggi dengan proteksi isolasi data pemilih dari akses tak berwenang.</p>
               </div>
 
-              <div style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px;">
+              <div
+                style="background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 10px; padding: 10px 12px;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                  <span style="font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; color: #60A5FA; background: rgba(96, 165, 250, 0.15); border: 1px solid rgba(96, 165, 250, 0.3); padding: 2px 6px; border-radius: 4px;">ISO/IEC 27002</span>
+                  <span
+                    style="font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800; color: #60A5FA; background: rgba(96, 165, 250, 0.15); border: 1px solid rgba(96, 165, 250, 0.3); padding: 2px 6px; border-radius: 4px;">ISO/IEC
+                    27002</span>
                   <span style="font-size: 0.7rem; font-weight: 700; color: #E2E8F0;">Kontrol Akses & Audit Trail</span>
                 </div>
-                <p style="margin: 0; font-size: 0.72rem; color: #94A3B8; line-height: 1.4;">Sistem kontrol verifikasi berlapis dan audit trail kriptografis yang tidak dapat dimanipulasi.</p>
+                <p style="margin: 0; font-size: 0.72rem; color: #94A3B8; line-height: 1.4;">Sistem kontrol verifikasi
+                  berlapis dan audit trail kriptografis yang tidak dapat dimanipulasi.</p>
               </div>
             </div>
           </div>
@@ -967,16 +1154,22 @@
           <div class="dpt-search-section">
             <!-- Search Bar Input -->
             <div class="dpt-search-bar-wrap">
-              <svg class="dpt-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" id="dpt-search-input" class="dpt-search-input" placeholder="Cari Nama Lengkap, 5-Digit NPA, atau Wilayah Pengda..." autocomplete="off">
-              <button id="dpt-search-clear" class="dpt-search-clear" style="display:none;" title="Bersihkan Pencarian">&times;</button>
+              <svg class="dpt-search-icon" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="dpt-search-input" class="dpt-search-input"
+                placeholder="Cari Nama Lengkap, 5-Digit NPA, atau Wilayah Pengda..." autocomplete="off">
+              <button id="dpt-search-clear" class="dpt-search-clear" style="display:none;"
+                title="Bersihkan Pencarian">&times;</button>
             </div>
 
             <!-- Filter Controls Bar -->
             <div class="dpt-filter-toolbar">
               <!-- Filter Chips (Status) -->
               <div class="dpt-filter-chips">
-                <button class="dpt-chip active" data-filter="all">Semua (<span id="dpt-chip-count-all">2.143</span>)</button>
+                <button class="dpt-chip active" data-filter="all">Semua (<span
+                    id="dpt-chip-count-all">2.143</span>)</button>
                 <button class="dpt-chip" data-filter="unvoted">⏳ Belum Memilih</button>
                 <button class="dpt-chip" data-filter="claimed">🔑 Token Aktif</button>
                 <button class="dpt-chip" data-filter="voted">✅ Sudah Memilih</button>
@@ -984,7 +1177,11 @@
 
               <!-- Filter Pengda Dropdown -->
               <div class="dpt-pengda-select-wrap">
-                <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:var(--gold-primary);fill:none;stroke-width:2;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <svg viewBox="0 0 24 24"
+                  style="width:13px;height:13px;stroke:var(--gold-primary);fill:none;stroke-width:2;">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
                 <select id="dpt-pengda-select" class="dpt-pengda-select">
                   <option value="all">Semua Pengda (Seluruh Indonesia)</option>
                 </select>
@@ -1004,7 +1201,9 @@
             <div id="dpt-load-more-wrap" class="dpt-load-more-wrap" style="display:none;">
               <button id="btn-dpt-load-more" class="btn-dpt-load-more">
                 <span>Tampilkan 15 Pemilih Berikutnya</span>
-                <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg viewBox="0 0 24 24">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
               </button>
             </div>
           </div>
@@ -1015,10 +1214,12 @@
               <span style="font-size: 1.1rem;">💬</span>
               <div>
                 <strong>Nama Anda belum terdaftar di DPT atau butuh update email?</strong>
-                <div style="font-size: 0.72rem; color: #94A3B8;">Hubungi Tim Helpdesk Resmi KPKU IAGI untuk verifikasi cepat.</div>
+                <div style="font-size: 0.72rem; color: #94A3B8;">Hubungi Tim Helpdesk Resmi KPKU IAGI untuk verifikasi
+                  cepat.</div>
               </div>
             </div>
-            <div class="dpt-helpdesk-wa" style="opacity: 0.5; cursor: not-allowed; pointer-events: none; border-color: rgba(239, 68, 68, 0.4); color: #EF4444;">
+            <div class="dpt-helpdesk-wa"
+              style="opacity: 0.5; cursor: not-allowed; pointer-events: none; border-color: rgba(239, 68, 68, 0.4); color: #EF4444;">
               <span>Layanan Ditutup</span>
             </div>
           </div>
@@ -1030,11 +1231,15 @@
         <div class="card card-gold">
           <div class="card-header-flex">
             <div class="card-icon-frame">
-              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <svg viewBox="0 0 24 24">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
             </div>
             <div>
               <div class="card-title">Formulir Klaim Surat Suara</div>
-              <div style="font-size: 0.74rem; color: #CBD5E1;">Peroleh Link Akses & Token Kriptografi 128-bit resmi</div>
+              <div style="font-size: 0.74rem; color: #CBD5E1;">Peroleh Link Akses & Token Kriptografi 128-bit resmi
+              </div>
             </div>
           </div>
 
@@ -1043,12 +1248,15 @@
           <form id="form-claim" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Nomor Pokok Anggota (NPA) *</label>
-              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="5 digit angka (contoh:00000)" maxlength="5" inputmode="numeric" pattern="[0-9]{5}" title="Wajib tepat 5 digit angka (contoh: 00000)" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
+              <input type="text" id="claim-npa" class="form-input font-mono" placeholder="5 digit angka (contoh:00000)"
+                maxlength="5" inputmode="numeric" pattern="[0-9]{5}" title="Wajib tepat 5 digit angka (contoh: 00000)"
+                required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
             </div>
 
             <div class="form-group">
               <label class="form-label">Nama Lengkap (sesuai DPT) *</label>
-              <input type="text" id="claim-name" class="form-input" placeholder="Nama lengkap beserta gelar jika ada" required>
+              <input type="text" id="claim-name" class="form-input" placeholder="Nama lengkap beserta gelar jika ada"
+                required>
             </div>
 
             <div class="form-group">
@@ -1061,35 +1269,51 @@
 
             <button type="submit" class="btn btn-gold" style="margin-top: 12px;">
               <span>Klaim Surat Suara Sekarang</span>
-              <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;"
+                viewBox="0 0 24 24">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
             </button>
 
-            <div style="font-size: 0.72rem; color: #94A3B8; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center;">
+            <div
+              style="font-size: 0.72rem; color: #94A3B8; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center;">
               <span>ℹ️ Token tidak masuk ke email?</span>
-              <a href="javascript:void(0)" onclick="if(window.openHelpdeskChat){ window.openHelpdeskChat(); } else if(window.openKPKULiveChat){ window.openKPKULiveChat(); } else { document.getElementById('chat-trigger')?.click(); }" style="color: var(--gold-secondary); text-decoration: underline; font-weight: 600; cursor: pointer;">Hubungi Helpdesk Admin</a>
+              <a href="javascript:void(0)"
+                onclick="if(window.openHelpdeskChat){ window.openHelpdeskChat(); } else if(window.openKPKULiveChat){ window.openKPKULiveChat(); } else { document.getElementById('chat-trigger')?.click(); }"
+                style="color: var(--gold-secondary); text-decoration: underline; font-weight: 600; cursor: pointer;">Hubungi
+                Helpdesk Admin</a>
             </div>
           </form>
 
-          <div style="font-size: 0.74rem; color: #94A3B8; margin-top: 16px; line-height: 1.45; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 14px; display: flex; align-items: flex-start; gap: 8px;">
-            <svg style="width:16px; height:16px; stroke:var(--gold-primary); fill:none; stroke-width:2; flex-shrink:0; margin-top:1px;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-            <span><strong style="color:var(--gold-text);">Keamanan Kriptografi LUBER:</strong> Setiap anggota menerima satu kode unik sekali pakai yang belum terikat pada calon mana pun. Token langsung hangus seketika suara direkam.</span>
+          <div
+            style="font-size: 0.74rem; color: #94A3B8; margin-top: 16px; line-height: 1.45; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 14px; display: flex; align-items: flex-start; gap: 8px;">
+            <svg
+              style="width:16px; height:16px; stroke:var(--gold-primary); fill:none; stroke-width:2; flex-shrink:0; margin-top:1px;"
+              viewBox="0 0 24 24">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span><strong style="color:var(--gold-text);">Keamanan Kriptografi LUBER:</strong> Setiap anggota menerima
+              satu kode unik sekali pakai yang belum terikat pada calon mana pun. Token langsung hangus seketika suara
+              direkam.</span>
           </div>
         </div>
       </section>
 
       <!-- ================= SCREEN 4: BILIK SUARA (VOTE NOW) ================= -->
       <section id="screen-vote" class="screen active">
-        
+
         <!-- 21st.dev & Minimalist Vault Sealed Card -->
         <div id="vote-closed-card" class="closed-hero-section">
           <div class="closed-card-vault">
-            
+
             <!-- Vault Emblem Centerpiece -->
             <div class="vault-emblem-wrapper">
               <div class="vault-outer-ring"></div>
               <div class="vault-inner-glow"></div>
               <div class="vault-glass-tile">
-                <svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24">
+                <svg style="width:36px; height:36px; stroke:currentColor; fill:none; stroke-width:2;"
+                  viewBox="0 0 24 24">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                   <circle cx="12" cy="16" r="1.5" fill="currentColor"></circle>
@@ -1108,7 +1332,10 @@
             <!-- Title & Subtitle -->
             <h1 class="vault-heading">Pemilihan Ketua Umum<br>IAGI 2026–2029</h1>
             <p class="vault-subheading">
-              Seluruh gerbang pemungutan suara elektronik (e-Voting) telah resmi ditutup pada <strong>03 November 2026 pukul 23:59:59 WIB</strong>. Kotak suara digital telah <strong>disegel secara kriptografis</strong> (SHA-256 Merkle Chain) dan seluruh layanan pemilih telah dikunci untuk menjaga kedaulatan serta kemurnian suara.
+              Seluruh gerbang pemungutan suara elektronik (e-Voting) telah resmi ditutup pada <strong>03 November 2026
+                pukul 23:59:59 WIB</strong>. Kotak suara digital telah <strong>disegel secara kriptografis</strong>
+              (SHA-256 Merkle Chain) dan seluruh layanan pemilih telah dikunci untuk menjaga kedaulatan serta kemurnian
+              suara.
             </p>
 
             <!-- 21st.dev Bento Grid -->
@@ -1117,7 +1344,9 @@
               <div class="bento-item">
                 <div class="bento-header">
                   <span class="bento-tag">STATUS BRANKAS</span>
-                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  </svg>
                 </div>
                 <div class="bento-val">Disegel Kriptografis</div>
                 <div class="bento-sub">SHA-256 Merkle Chain 100% Utuh &amp; Aman</div>
@@ -1127,7 +1356,10 @@
               <div class="bento-item">
                 <div class="bento-header">
                   <span class="bento-tag">WAKTU PENUTUPAN</span>
-                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
                 </div>
                 <div class="bento-val">03 Nov 2026, 23:59:59 WIB</div>
                 <div class="bento-sub">Tepat waktu sesuai SK Regulasi KPKU</div>
@@ -1137,7 +1369,12 @@
               <div class="bento-item">
                 <div class="bento-header">
                   <span class="bento-tag">TAHAPAN BERIKUTNYA</span>
-                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
                 </div>
                 <div class="bento-val">Sidang Pleno Terbuka</div>
                 <div class="bento-sub">Pembukaan Segel &amp; Rekapitulasi Suara</div>
@@ -1147,7 +1384,10 @@
               <div class="bento-item">
                 <div class="bento-header">
                   <span class="bento-tag">INTEGRITAS SISTEM</span>
-                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  <svg class="bento-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  </svg>
                 </div>
                 <div class="bento-val">LUBER &amp; Zero-Tamper</div>
                 <div class="bento-sub">Terverifikasi sistematis tanpa intervensi</div>
@@ -1158,7 +1398,10 @@
             <div class="cta-actions-row">
               <a href="landing.html" class="btn-21st-gold">
                 <span>Kembali ke Portal Utama</span>
-                <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
               </a>
               <a href="landing.html#kandidat" class="btn-21st-ghost">
                 <span>Profil Calon Pemimpin</span>
@@ -1181,11 +1424,15 @@
         <div id="vote-auth-card" class="card card-gold" style="display: none;">
           <div class="card-header-flex">
             <div class="card-icon-frame">
-              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
             </div>
             <div>
               <div class="card-title">Verifikasi Akses Bilik Suara</div>
-              <div style="font-size: 0.74rem; color: #CBD5E1;">Masukkan NPA dan Kode Unik untuk membuka kertas suara</div>
+              <div style="font-size: 0.74rem; color: #CBD5E1;">Masukkan NPA dan Kode Unik untuk membuka kertas suara
+              </div>
             </div>
           </div>
 
@@ -1194,22 +1441,30 @@
           <form id="form-vote-auth" style="margin-top: 14px;">
             <div class="form-group">
               <label class="form-label">Nomor Pokok Anggota (NPA)</label>
-              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="5 digit angka (contoh:00000)" maxlength="5" inputmode="numeric" pattern="[0-9]{5}" title="Wajib tepat 5 digit angka (contoh: 00000)" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
+              <input type="text" id="vote-npa" class="form-input font-mono" placeholder="5 digit angka (contoh:00000)"
+                maxlength="5" inputmode="numeric" pattern="[0-9]{5}" title="Wajib tepat 5 digit angka (contoh: 00000)"
+                required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 5)">
             </div>
 
             <div class="form-group">
               <label class="form-label">Kode Unik Surat Suara (Token 128-bit)</label>
-              <input type="text" id="vote-token" class="form-input font-mono" placeholder="Contoh: IAGI-2026-X9K2-7LM4" required>
+              <input type="text" id="vote-token" class="form-input font-mono" placeholder="Contoh: IAGI-2026-X9K2-7LM4"
+                required>
             </div>
 
             <button type="submit" class="btn btn-gold" style="margin-top: 12px;">
               <span>Buka Kertas Suara Digital</span>
-              <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;"
+                viewBox="0 0 24 24">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
             </button>
           </form>
 
           <div style="margin-top: 18px; text-align: center;">
-            <a href="#claim" data-nav="claim" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: #F5BA42; background: rgba(245, 186, 66, 0.1); border: 1.5px solid rgba(245, 186, 66, 0.35); padding: 10px 18px; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: 0.88rem; letter-spacing: 0.01em; box-shadow: 0 4px 14px rgba(0,0,0,0.25); transition: all 0.2s ease; max-width: 100%; box-sizing: border-box;">
+            <a href="#claim" data-nav="claim"
+              style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: #F5BA42; background: rgba(245, 186, 66, 0.1); border: 1.5px solid rgba(245, 186, 66, 0.35); padding: 10px 18px; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: 0.88rem; letter-spacing: 0.01em; box-shadow: 0 4px 14px rgba(0,0,0,0.25); transition: all 0.2s ease; max-width: 100%; box-sizing: border-box;">
               <span>Belum punya kode unik? Klaim di sini</span>
               <span style="font-size: 1.1rem; transform: translateX(2px);">➜</span>
             </a>
@@ -1220,15 +1475,22 @@
         <div id="vote-ballot-card" style="display: none;">
           <!-- Voter Verified Status Banner -->
           <div class="card card-emerald voter-status-banner" style="margin-bottom: 16px; padding: 14px 18px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
               <div>
-                <div style="font-size: 0.68rem; font-weight: 800; color: #6EE7B7; text-transform: uppercase; letter-spacing: 0.06em;">Pemilih Terverifikasi KPKU:</div>
+                <div
+                  style="font-size: 0.68rem; font-weight: 800; color: #6EE7B7; text-transform: uppercase; letter-spacing: 0.06em;">
+                  Pemilih Terverifikasi KPKU:</div>
                 <div id="voter-badge-name" style="font-weight: 900; font-size: 1.05rem; color: #FFFFFF;">-</div>
-                <div id="voter-badge-npa" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold-text); font-weight: 700;">-</div>
+                <div id="voter-badge-npa"
+                  style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold-text); font-weight: 700;">-
+                </div>
               </div>
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="live-indicator-dot" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 10px #10B981; animation: pulseGlow 1.8s infinite;"></span>
-                <div style="background: rgba(16, 185, 129, 0.22); border: 1.5px solid #10B981; color: #A7F3D0; font-size: 0.72rem; font-weight: 900; padding: 6px 14px; border-radius: var(--radius-pill); letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 6px;">
+                <span class="live-indicator-dot"
+                  style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 10px #10B981; animation: pulseGlow 1.8s infinite;"></span>
+                <div
+                  style="background: rgba(16, 185, 129, 0.22); border: 1.5px solid #10B981; color: #A7F3D0; font-size: 0.72rem; font-weight: 900; padding: 6px 14px; border-radius: var(--radius-pill); letter-spacing: 0.05em; display: inline-flex; align-items: center; gap: 6px;">
                   <span>SURAT SUARA AKTIF</span>
                 </div>
               </div>
@@ -1238,29 +1500,37 @@
           <!-- Ballot Header, Controls & Mode Toggle -->
           <div class="ballot-control-header">
             <div style="text-align: center; margin-bottom: 12px;">
-              <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 186, 66, 0.15); border: 1px solid var(--gold-border); padding: 4px 14px; border-radius: var(--radius-pill); font-size: 0.72rem; font-weight: 800; color: #FDE68A; margin-bottom: 6px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <div
+                style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 186, 66, 0.15); border: 1px solid var(--gold-border); padding: 4px 14px; border-radius: var(--radius-pill); font-size: 0.72rem; font-weight: 800; color: #FDE68A; margin-bottom: 6px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
                 <span>SURAT SUARA ELEKTRONIK RESMI</span>
               </div>
-              <h3 style="font-size: 1.25rem; font-weight: 900; color: var(--text-pure); letter-spacing: -0.01em; margin: 4px 0 6px 0;">
+              <h3
+                style="font-size: 1.25rem; font-weight: 900; color: var(--text-pure); letter-spacing: -0.01em; margin: 4px 0 6px 0;">
                 SURAT SUARA PEMILIHAN KETUA UMUM
               </h3>
               <p style="font-size: 0.8rem; color: #94A3B8; margin: 0 auto; max-width: 460px; line-height: 1.45;">
-                Sentuh kotak coblos atau foto kandidat untuk mencoblos dengan <strong style="color: #FDE68A;">Paku 3D</strong> resmi.
+                Sentuh kotak coblos atau foto kandidat untuk mencoblos dengan <strong style="color: #FDE68A;">Paku
+                  3D</strong> resmi.
               </p>
             </div>
 
             <!-- Toolbar: Mode Switcher & Sound Toggle -->
             <div class="ballot-action-tools">
-              <button type="button" id="btn-toggle-ballot-view" class="ballot-tool-pill active" onclick="toggleBallotViewMode()" title="Ganti Tampilan Kertas Suara / Kartu">
+              <button type="button" id="btn-toggle-ballot-view" class="ballot-tool-pill active"
+                onclick="toggleBallotViewMode()" title="Ganti Tampilan Kertas Suara / Kartu">
                 <span class="tool-icon">📄</span>
                 <span id="label-toggle-view">Kertas Suara Landscape</span>
               </button>
-              <button type="button" id="btn-toggle-ballot-sound" class="ballot-tool-pill" onclick="toggleCoblosAudio()" title="Efek Suara Pencoblosan">
+              <button type="button" id="btn-toggle-ballot-sound" class="ballot-tool-pill" onclick="toggleCoblosAudio()"
+                title="Efek Suara Pencoblosan">
                 <span class="tool-icon" id="sound-icon">🔊</span>
                 <span id="sound-text">Suara: ON</span>
               </button>
-              <button type="button" id="btn-zoom-ballot-mobile" class="ballot-tool-pill btn-zoom-mobile" onclick="toggleBallotZoom()" title="Bentangkan Lebar / Normal">
+              <button type="button" id="btn-zoom-ballot-mobile" class="ballot-tool-pill btn-zoom-mobile"
+                onclick="toggleBallotZoom()" title="Bentangkan Lebar / Normal">
                 <span class="tool-icon">↔️</span>
                 <span id="zoom-text">Lebar Penuh</span>
               </button>
@@ -1270,7 +1540,8 @@
           <!-- Mobile Landscape Tip -->
           <div class="mobile-landscape-helper" id="mobile-landscape-helper">
             <span class="helper-icon">📱</span>
-            <span class="helper-txt"><strong>Format Kertas Suara Landscape:</strong> Geser ke kanan untuk melihat semua calon, atau miringkan HP Anda ke landscape.</span>
+            <span class="helper-txt"><strong>Format Kertas Suara Landscape:</strong> Geser ke kanan untuk melihat semua
+              calon, atau miringkan HP Anda ke landscape.</span>
           </div>
 
           <!-- ================= CONTAINER KERTAS SUARA LANDSCAPE (BILIK SUARA MEJA & BANTALAN SPONS) ================= -->
@@ -1287,11 +1558,14 @@
                   <div id="paku-coblos-object" class="paku-coblos-object">
                     <svg class="paku-svg" viewBox="0 0 120 280" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <!-- Tali Bilik Suara Menggantung -->
-                      <path d="M 60 10 C 95 35, 125 -10, 150 45" stroke="#D1B280" stroke-width="3.5" stroke-linecap="round" fill="none" />
-                      <path d="M 60 12 C 92 32, 122 -8, 148 47" stroke="#8C6527" stroke-width="1.8" stroke-linecap="round" fill="none" />
+                      <path d="M 60 10 C 95 35, 125 -10, 150 45" stroke="#D1B280" stroke-width="3.5"
+                        stroke-linecap="round" fill="none" />
+                      <path d="M 60 12 C 92 32, 122 -8, 148 47" stroke="#8C6527" stroke-width="1.8"
+                        stroke-linecap="round" fill="none" />
 
                       <!-- Kepala Paku Besi Bulat Beveled (Metallic Head) -->
-                      <ellipse cx="60" cy="24" rx="30" ry="11" fill="url(#metalHeadGrad)" filter="url(#pakuHeadShadow)" />
+                      <ellipse cx="60" cy="24" rx="30" ry="11" fill="url(#metalHeadGrad)"
+                        filter="url(#pakuHeadShadow)" />
                       <ellipse cx="60" cy="22" rx="27" ry="9" fill="url(#metalHeadInner)" />
                       <ellipse cx="57" cy="20" rx="16" ry="4.5" fill="#FFFFFF" opacity="0.85" />
 
@@ -1300,12 +1574,14 @@
 
                       <!-- Batang Paku Besi Baja Silinder (Polished Steel Shaft) -->
                       <path d="M 52 42 L 54 212 L 66 212 L 68 42 Z" fill="url(#metalShaftGrad)" />
-                      <line x1="56" y1="44" x2="57.5" y2="208" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.9" />
+                      <line x1="56" y1="44" x2="57.5" y2="208" stroke="#FFFFFF" stroke-width="2.5"
+                        stroke-linecap="round" opacity="0.9" />
                       <line x1="60" y1="44" x2="60.5" y2="208" stroke="#E2E8F0" stroke-width="1.5" opacity="0.65" />
 
                       <!-- Ujung Runcing Penusuk Paku (Sharp Pointed Tip) -->
                       <path d="M 54 212 L 60 264 L 66 212 Z" fill="url(#metalTipGrad)" />
-                      <line x1="58.5" y1="212" x2="60" y2="262" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.98" />
+                      <line x1="58.5" y1="212" x2="60" y2="262" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"
+                        opacity="0.98" />
 
                       <!-- Gradients & Lighting Definitions -->
                       <defs>
@@ -1401,7 +1677,8 @@
 
                     <!-- Petunjuk Coblos Horizontal Kertas Suara -->
                     <div class="ballot-instruction-ribbon">
-                      <span>★ PETUNJUK: SENTUH / KLIK SALAH SATU KOLOM KANDIDAT UNTUK MENCOBLOS DENGAN PAKU ELEKTRONIK RESMI ★</span>
+                      <span>★ PETUNJUK: SENTUH / KLIK SALAH SATU KOLOM KANDIDAT UNTUK MENCOBLOS DENGAN PAKU ELEKTRONIK
+                        RESMI ★</span>
                     </div>
 
                     <!-- 3 KOLOM KANDIDAT LANDSCAPE (KIRI KE KANAN) -->
@@ -1412,8 +1689,10 @@
                     <!-- Footer Kertas Suara (Stempel & Tanda Sah Panitia) -->
                     <div class="ballot-paper-footer">
                       <div class="b-footer-legal">
-                        <div class="b-legal-item">✓ Surat suara ini sah bila dicoblos pada salah satu nomor, foto, atau kotak nama calon ketua umum.</div>
-                        <div class="b-legal-item">✓ Pilihan pemilih dilindungi kerahasiaannya dengan enkripsi SHA-256 Zero-Knowledge.</div>
+                        <div class="b-legal-item">✓ Surat suara ini sah bila dicoblos pada salah satu nomor, foto, atau
+                          kotak nama calon ketua umum.</div>
+                        <div class="b-legal-item">✓ Pilihan pemilih dilindungi kerahasiaannya dengan enkripsi SHA-256
+                          Zero-Knowledge.</div>
                       </div>
 
                       <div class="b-footer-seal-wrap">
@@ -1457,7 +1736,8 @@
 
           <!-- Final Submit Button -->
           <div style="margin-top: 24px; margin-bottom: 28px;">
-            <button id="btn-submit-vote" class="btn btn-gold" disabled style="box-shadow: 0 10px 35px rgba(0,0,0,0.85); font-size: 0.96rem;">
+            <button id="btn-submit-vote" class="btn btn-gold" disabled
+              style="box-shadow: 0 10px 35px rgba(0,0,0,0.85); font-size: 0.96rem;">
               Pilih Salah Satu Calon Ketua Umum
             </button>
           </div>
@@ -1493,26 +1773,37 @@
           </div>
 
           <div class="receipt-hash-box">
-            <div style="font-size: 0.7rem; color: #64748B; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">
+            <div
+              style="font-size: 0.7rem; color: #64748B; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">
               Cryptographic Receipt Hash (SHA-256)
             </div>
             <div id="receipt-hash" class="receipt-hash-val">-</div>
-            <div id="receipt-full-hash" style="font-size: 0.6rem; color: #94A3B8; word-break: break-all; margin-top: 6px; font-family: var(--font-mono);">-</div>
+            <div id="receipt-full-hash"
+              style="font-size: 0.6rem; color: #94A3B8; word-break: break-all; margin-top: 6px; font-family: var(--font-mono);">
+              -</div>
           </div>
 
           <div style="text-align: center; font-size: 0.74rem; color: #64748B; line-height: 1.45; margin-top: 12px;">
-            Simpan tanda terima ini sebagai bukti sah penggunaan hak suara Anda pada Pemilu Ketua Umum IAGI 2026. Sesuai asas rahasia, surat suara tidak menyimpan identitas pilihan calon Anda.
+            Simpan tanda terima ini sebagai bukti sah penggunaan hak suara Anda pada Pemilu Ketua Umum IAGI 2026. Sesuai
+            asas rahasia, surat suara tidak menyimpan identitas pilihan calon Anda.
           </div>
         </div>
 
         <div style="display: flex; gap: 12px; margin-top: 18px;">
           <button id="btn-print-receipt" class="btn btn-gold btn-no-print">
-            <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
             <span>Cetak / Simpan Bukti</span>
           </button>
           <button class="btn btn-outline btn-no-print" onclick="window.location.hash = 'home'">
             <span>Ke Beranda</span>
-            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
           </button>
         </div>
       </section>
@@ -1521,11 +1812,14 @@
       <section id="screen-admin" class="screen">
         <!-- 2-Step Multi-Factor Authentication Gateway -->
         <div id="admin-pin-gate" class="card card-gold">
-          
+
           <!-- Header Card -->
           <div class="card-header-flex">
             <div class="card-icon-frame">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;display:block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                style="width:20px;height:20px;display:block;">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
             </div>
             <div>
               <div class="card-title">KPKU Command Center</div>
@@ -1542,7 +1836,8 @@
                 <label class="form-label">
                   <span>Email Resmi Panitia / Saksi *</span>
                 </label>
-                <input type="email" id="admin-email-input" class="form-input" placeholder="Masukkan email resmi Anda" required autocomplete="username">
+                <input type="email" id="admin-email-input" class="form-input" placeholder="Masukkan email resmi Anda"
+                  required autocomplete="username">
               </div>
 
               <div class="form-group" style="margin-bottom: 12px;">
@@ -1551,33 +1846,46 @@
                   <span class="helper">Otoritas Panitia KPKU</span>
                 </label>
                 <div style="position: relative;">
-                  <input type="password" id="admin-password-input" class="form-input" placeholder="Masukkan password" required>
-                  <button type="button" id="btn-toggle-admin-pwd" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; font-size: 0.75rem; cursor: pointer;">
+                  <input type="password" id="admin-password-input" class="form-input" placeholder="Masukkan password"
+                    required>
+                  <button type="button" id="btn-toggle-admin-pwd"
+                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94A3B8; font-size: 0.75rem; cursor: pointer;">
                     👁️
                   </button>
                 </div>
               </div>
 
-              <button type="submit" id="btn-submit-admin-step1" class="btn btn-gold" style="width: 100%; justify-content: center; margin-top: 10px;">
+              <button type="submit" id="btn-submit-admin-step1" class="btn btn-gold"
+                style="width: 100%; justify-content: center; margin-top: 10px;">
                 <span>Lanjut ke Verifikasi Masuk</span>
-                <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;"
+                  viewBox="0 0 24 24">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
               </button>
             </form>
           </div>
 
           <!-- STEP 2: Verifikasi Masuk (Email OTP atau Password/PIN) -->
           <div id="admin-auth-step-2" style="display: none; margin-top: 14px;">
-            <div style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 14px;">
-              <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Verifikasi Masuk (2FA)</div>
-              <div id="admin-step2-email-label" style="font-size: 0.82rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono);">admin@iagi.or.id</div>
+            <div
+              style="background: rgba(245, 186, 66, 0.08); border: 1px solid rgba(245, 186, 66, 0.25); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 14px;">
+              <div style="font-size: 0.72rem; color: #94A3B8; text-transform: uppercase; font-weight: 700;">Verifikasi
+                Masuk (2FA)</div>
+              <div id="admin-step2-email-label"
+                style="font-size: 0.82rem; font-weight: 800; color: #FFFFFF; font-family: var(--font-mono);">
+                admin@iagi.or.id</div>
             </div>
 
             <!-- 2FA Method Selector Tabs -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
-              <button type="button" id="tab-2fa-otp" class="btn btn-gold" style="padding: 7px 10px; font-size: 0.72rem; justify-content: center;">
+              <button type="button" id="tab-2fa-otp" class="btn btn-gold"
+                style="padding: 7px 10px; font-size: 0.72rem; justify-content: center;">
                 📧 OTP Email
               </button>
-              <button type="button" id="tab-2fa-pin" class="btn btn-subtle" style="padding: 7px 10px; font-size: 0.72rem; justify-content: center;">
+              <button type="button" id="tab-2fa-pin" class="btn btn-subtle"
+                style="padding: 7px 10px; font-size: 0.72rem; justify-content: center;">
                 🔒 PIN Keamanan
               </button>
             </div>
@@ -1589,12 +1897,17 @@
                   <label class="form-label">
                     <span>Kode Verifikasi OTP 6-Digit</span>
                   </label>
-                  <input type="text" id="admin-otp-input" class="form-input font-mono" placeholder="Contoh: 842026" maxlength="6" style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
+                  <input type="text" id="admin-otp-input" class="form-input font-mono" placeholder="Contoh: 842026"
+                    maxlength="6" style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
                 </div>
 
-                <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; margin-bottom: 10px;">
+                <button type="submit" class="btn btn-gold"
+                  style="width: 100%; justify-content: center; margin-bottom: 10px;">
                   <span>Verifikasi OTP & Buka Dashboard</span>
-                  <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;"
+                    viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
                 </button>
               </form>
             </div>
@@ -1606,25 +1919,33 @@
                   <label class="form-label">
                     <span>PIN Keamanan Panitia (4-Digit)</span>
                   </label>
-                  <input type="password" id="admin-2fa-pin-input" class="form-input font-mono" placeholder="Masukkan 4 Digit PIN" maxlength="6" style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
+                  <input type="password" id="admin-2fa-pin-input" class="form-input font-mono"
+                    placeholder="Masukkan 4 Digit PIN" maxlength="6"
+                    style="letter-spacing: 0.25em; text-align: center; font-size: 1.15rem;" required>
                 </div>
 
-                <button type="submit" class="btn btn-gold" style="width: 100%; justify-content: center; margin-bottom: 10px;">
+                <button type="submit" class="btn btn-gold"
+                  style="width: 100%; justify-content: center; margin-bottom: 10px;">
                   <span>Verifikasi PIN & Buka Dashboard</span>
-                  <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <svg style="width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2.5;"
+                    viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
                 </button>
               </form>
             </div>
 
             <div style="text-align: center; margin-top: 8px;">
-              <button type="button" id="btn-back-to-step1" style="background: none; border: none; color: #94A3B8; font-size: 0.74rem; cursor: pointer; text-decoration: underline;">
+              <button type="button" id="btn-back-to-step1"
+                style="background: none; border: none; color: #94A3B8; font-size: 0.74rem; cursor: pointer; text-decoration: underline;">
                 &larr; Ganti Email / Kembali ke Step 1
               </button>
             </div>
           </div>
 
           <!-- ISO Security Strip -->
-          <div style="margin-top: 14px; padding: 8px 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; text-align: center; font-size: 0.68rem; color: #6EE7B7;">
+          <div
+            style="margin-top: 14px; padding: 8px 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 8px; text-align: center; font-size: 0.68rem; color: #6EE7B7;">
             <div style="font-weight: 800; margin-bottom: 2px;">🛡️ Kepatuhan Standar Keamanan & Privasi:</div>
             <div style="color: #FFFFFF; font-family: var(--font-mono); font-weight: 700; letter-spacing: 0.02em;">
               ISO/IEC 27002 · ISO/IEC 27017 · ISO/IEC 27018
@@ -1632,8 +1953,10 @@
           </div>
 
           <!-- Link to Desktop Admin -->
-          <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
-            <a href="admin.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--gold-primary); text-decoration: none; font-weight: 700;">
+          <div
+            style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
+            <a href="admin.html" target="_blank"
+              style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--gold-primary); text-decoration: none; font-weight: 700;">
               <span>🖥️ Buka Web Admin Desktop / Proyektor Pleno &rarr;</span>
             </a>
           </div>
@@ -1641,69 +1964,95 @@
 
         <!-- Authenticated Dashboard -->
         <div id="admin-dashboard-content" style="display: none;">
-          
+
           <!-- Identity Ribbon -->
-          <div style="background: rgba(2, 28, 22, 0.9); border: 1px solid rgba(245, 186, 66, 0.3); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+          <div
+            style="background: rgba(2, 28, 22, 0.9); border: 1px solid rgba(245, 186, 66, 0.3); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(245, 186, 66, 0.15); border: 1px solid var(--gold-primary); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
+              <div
+                style="width: 32px; height: 32px; border-radius: 50%; background: rgba(245, 186, 66, 0.15); border: 1px solid var(--gold-primary); display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">
                 🛡️
               </div>
               <div>
-                <div id="admin-session-name" style="font-size: 0.8rem; font-weight: 800; color: #FFFFFF;">Administrator</div>
-                <div id="admin-session-role" style="font-size: 0.68rem; color: var(--gold-secondary);">Petugas KPKU</div>
+                <div id="admin-session-name" style="font-size: 0.8rem; font-weight: 800; color: #FFFFFF;">Administrator
+                </div>
+                <div id="admin-session-role" style="font-size: 0.68rem; color: var(--gold-secondary);">Petugas KPKU
+                </div>
               </div>
             </div>
-            <button id="btn-admin-logout" class="btn btn-subtle" style="font-size: 0.7rem; padding: 4px 10px; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); width: auto;">
+            <button id="btn-admin-logout" class="btn btn-subtle"
+              style="font-size: 0.7rem; padding: 4px 10px; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); width: auto;">
               Keluar
             </button>
           </div>
 
           <div class="card" style="margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; margin-bottom: 14px;">
+            <div
+              style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; margin-bottom: 14px;">
               <div>
                 <h3 style="font-size: 1.05rem; font-weight: 900; color: var(--text-pure);">KPKU Live Monitor</h3>
                 <div style="font-size: 0.74rem; color: #94A3B8;">Sistem E-Voting Terakreditasi 2026</div>
               </div>
-              <button id="btn-reset-demo-data" class="btn btn-subtle" style="width: auto; padding: 5px 12px; font-size: 0.7rem; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3);">
+              <button id="btn-reset-demo-data" class="btn btn-subtle"
+                style="width: auto; padding: 5px 12px; font-size: 0.7rem; color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3);">
                 Reset Demo
               </button>
             </div>
 
             <!-- Stats 4-Grid -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
-              <div style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+              <div
+                style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
                 <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TOTAL DPT</div>
-                <div id="admin-stat-dpt" style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: var(--text-pure);">0</div>
+                <div id="admin-stat-dpt"
+                  style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: var(--text-pure);">0
+                </div>
               </div>
-              <div style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+              <div
+                style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
                 <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">SUDAH KLAIM</div>
-                <div id="admin-stat-claimed" style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: #FBBF24;">0</div>
+                <div id="admin-stat-claimed"
+                  style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: #FBBF24;">0</div>
               </div>
-              <div style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+              <div
+                style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
                 <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">SUARA MASUK</div>
-                <div id="admin-stat-voted" style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: #34D399;">0</div>
+                <div id="admin-stat-voted"
+                  style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: #34D399;">0</div>
               </div>
-              <div style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+              <div
+                style="background: rgba(3, 20, 16, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
                 <div style="font-size: 0.7rem; color: #94A3B8; font-weight: 700;">TURNOUT %</div>
-                <div id="admin-stat-turnout" style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: var(--gold-text);">0%</div>
+                <div id="admin-stat-turnout"
+                  style="font-family: var(--font-mono); font-size: 1.4rem; font-weight: 900; color: var(--gold-text);">
+                  0%</div>
               </div>
             </div>
 
             <!-- Sealed vs Unsealed Tabulation Box -->
             <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 16px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <span style="font-weight: 800; font-size: 0.88rem; color: var(--text-pure);">Status Segel Perolehan Suara</span>
-                <button id="btn-toggle-seal" class="btn btn-gold" style="width: auto; padding: 7px 16px; font-size: 0.74rem;">
+                <span style="font-weight: 800; font-size: 0.88rem; color: var(--text-pure);">Status Segel Perolehan
+                  Suara</span>
+                <button id="btn-toggle-seal" class="btn btn-gold"
+                  style="width: auto; padding: 7px 16px; font-size: 0.74rem;">
                   Toggle Segel
                 </button>
               </div>
 
               <!-- Sealed Banner -->
-              <div id="admin-sealed-banner" style="background: rgba(245, 158, 11, 0.12); border: 1.5px dashed #F59E0B; border-radius: var(--radius-md); padding: 18px; text-align: center;">
-                <div style="margin-bottom: 8px;"><svg style="width:36px;height:36px;stroke:#F59E0B;fill:none;stroke-width:1.8;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
-                <strong style="color: #FDE68A; font-size: 0.95rem; display: block;">KOTAK SUARA TERSEGEL (SEALED)</strong>
+              <div id="admin-sealed-banner"
+                style="background: rgba(245, 158, 11, 0.12); border: 1.5px dashed #F59E0B; border-radius: var(--radius-md); padding: 18px; text-align: center;">
+                <div style="margin-bottom: 8px;"><svg
+                    style="width:36px;height:36px;stroke:#F59E0B;fill:none;stroke-width:1.8;" viewBox="0 0 24 24">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg></div>
+                <strong style="color: #FDE68A; font-size: 0.95rem; display: block;">KOTAK SUARA TERSEGEL
+                  (SEALED)</strong>
                 <p style="font-size: 0.76rem; color: #94A3B8; margin-top: 4px; line-height: 1.45;">
-                  Sesuai Bab 5 Proposal Regulasi KPKU, tabulasi perolehan calon disembunyikan selama masa pemungutan suara untuk menjaga objektivitas dan independensi pemilih. Buka segel saat Sidang Pleno resmi.
+                  Sesuai Bab 5 Proposal Regulasi KPKU, tabulasi perolehan calon disembunyikan selama masa pemungutan
+                  suara untuk menjaga objektivitas dan independensi pemilih. Buka segel saat Sidang Pleno resmi.
                 </p>
               </div>
 
@@ -1717,7 +2066,8 @@
                       <span id="chart-pct-1" style="font-family: var(--font-mono);">0%</span>
                     </div>
                     <div class="chart-track">
-                      <div id="chart-bar-1" class="chart-fill" style="width: 0%; background: var(--gold-metallic);"></div>
+                      <div id="chart-bar-1" class="chart-fill" style="width: 0%; background: var(--gold-metallic);">
+                      </div>
                     </div>
                     <div style="text-align: right; font-size: 0.74rem; color: #94A3B8;" id="chart-val-1">0 Suara</div>
                   </div>
@@ -1729,7 +2079,8 @@
                       <span id="chart-pct-2" style="font-family: var(--font-mono);">0%</span>
                     </div>
                     <div class="chart-track">
-                      <div id="chart-bar-2" class="chart-fill" style="width: 0%; background: var(--emerald-metallic);"></div>
+                      <div id="chart-bar-2" class="chart-fill" style="width: 0%; background: var(--emerald-metallic);">
+                      </div>
                     </div>
                     <div style="text-align: right; font-size: 0.74rem; color: #94A3B8;" id="chart-val-2">0 Suara</div>
                   </div>
@@ -1753,13 +2104,21 @@
           <!-- DPT Management Table in Admin -->
           <div class="card" style="margin-bottom: 16px;">
             <div class="card-title" style="font-size: 0.98rem; display: flex; align-items: center; gap: 8px;">
-              <svg style="width:16px;height:16px;stroke:var(--gold-primary);fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              <svg style="width:16px;height:16px;stroke:var(--gold-primary);fill:none;stroke-width:2;"
+                viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
               <span>Monitor Status Pemilih (DPT)</span>
             </div>
             <div style="overflow-x: auto; max-height: 250px; overflow-y: auto; margin-top: 10px;">
               <table style="width: 100%; border-collapse: collapse; text-align: left;">
                 <thead>
-                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.12); font-size: 0.72rem; color: #94A3B8; text-transform: uppercase;">
+                  <tr
+                    style="border-bottom: 1px solid rgba(255,255,255,0.12); font-size: 0.72rem; color: #94A3B8; text-transform: uppercase;">
                     <th style="padding: 8px 6px;">NPA</th>
                     <th style="padding: 8px 6px;">Nama</th>
                     <th style="padding: 8px 6px;">Status</th>
@@ -1773,7 +2132,10 @@
           <!-- Immutable Audit Trail -->
           <div class="card">
             <div class="card-title" style="font-size: 0.98rem; display: flex; align-items: center; gap: 8px;">
-              <svg style="width:16px;height:16px;stroke:var(--emerald-primary);fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <svg style="width:16px;height:16px;stroke:var(--emerald-primary);fill:none;stroke-width:2;"
+                viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
               <span>Log Audit Aktivitas Sistem</span>
             </div>
             <div id="admin-audit-logs" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
@@ -1784,26 +2146,43 @@
     </main>
 
     <!-- Bottom Mobile Navigation Bar (Floating Ergonomic Capsule Dock) -->
-    <nav class="mobile-nav-dock" style="background: rgba(10, 15, 25, 0.88); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);">
-      <button class="nav-item locked-nav" data-screen="home" title="Beranda (Terkunci)" style="opacity: 0.55; cursor: not-allowed;">
-        <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    <nav class="mobile-nav-dock"
+      style="background: rgba(10, 15, 25, 0.88); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);">
+      <button class="nav-item locked-nav" data-screen="home" title="Beranda (Terkunci)"
+        style="opacity: 0.55; cursor: not-allowed;">
+        <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
         <span style="font-size:0.68rem;">Beranda</span>
       </button>
 
-      <button class="nav-item locked-nav" data-screen="dpt" title="Cek DPT (Terkunci)" style="opacity: 0.55; cursor: not-allowed;">
-        <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <button class="nav-item locked-nav" data-screen="dpt" title="Cek DPT (Terkunci)"
+        style="opacity: 0.55; cursor: not-allowed;">
+        <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
         <span style="font-size:0.68rem;">Cek DPT</span>
       </button>
 
       <button class="nav-item active highlight-vote" data-screen="vote" title="Bilik Suara (Resmi Ditutup)">
-        <div class="vote-icon-bubble" style="background: linear-gradient(135deg, #F5BA42, #D97706); box-shadow: 0 4px 14px rgba(245, 186, 66, 0.35); color: #021310;">
-          <svg style="width:17px;height:17px;stroke:#021310;fill:none;stroke-width:2.2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <div class="vote-icon-bubble"
+          style="background: linear-gradient(135deg, #F5BA42, #D97706); box-shadow: 0 4px 14px rgba(245, 186, 66, 0.35); color: #021310;">
+          <svg style="width:17px;height:17px;stroke:#021310;fill:none;stroke-width:2.2;" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
         </div>
         <span style="color:#FDE68A; font-weight:700; font-size:0.68rem;">Ditutup</span>
       </button>
 
-      <button class="nav-item locked-nav" data-screen="claim" title="Klaim (Terkunci)" style="opacity: 0.55; cursor: not-allowed;">
-        <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <button class="nav-item locked-nav" data-screen="claim" title="Klaim (Terkunci)"
+        style="opacity: 0.55; cursor: not-allowed;">
+        <svg style="width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
         <span style="font-size:0.68rem;">Klaim</span>
       </button>
     </nav>
@@ -1825,13 +2204,18 @@
         <div class="dual-confirm-box">
           <img id="confirm-candidate-avatar" src="" alt="Caketum" class="dual-confirm-avatar">
           <div>
-            <div id="confirm-candidate-number" style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 900; color: var(--gold-text);">-</div>
-            <div id="confirm-candidate-name" style="font-size: 1rem; font-weight: 900; color: #FFFFFF; line-height: 1.3;">-</div>
+            <div id="confirm-candidate-number"
+              style="font-family: var(--font-mono); font-size: 0.85rem; font-weight: 900; color: var(--gold-text);">-
+            </div>
+            <div id="confirm-candidate-name"
+              style="font-size: 1rem; font-weight: 900; color: #FFFFFF; line-height: 1.3;">-</div>
           </div>
         </div>
 
-        <div style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.45; background: rgba(239, 68, 68, 0.15); border: 1.5px solid rgba(239, 68, 68, 0.35); border-radius: var(--radius-sm); padding: 10px 12px;">
-          Pilihan yang telah di-submit bersifat <strong>FINAL & PERMANEN</strong>. Kode unik Anda akan langsung dihanguskan dan tidak dapat digunakan kembali.
+        <div
+          style="font-size: 0.76rem; color: #CBD5E1; line-height: 1.45; background: rgba(239, 68, 68, 0.15); border: 1.5px solid rgba(239, 68, 68, 0.35); border-radius: var(--radius-sm); padding: 10px 12px;">
+          Pilihan yang telah di-submit bersifat <strong>FINAL & PERMANEN</strong>. Kode unik Anda akan langsung
+          dihanguskan dan tidak dapat digunakan kembali.
         </div>
 
         <div class="dual-confirm-actions">
@@ -1850,34 +2234,47 @@
       <div class="modal-card" style="max-width: 490px;">
         <div class="modal-header">
           <span class="modal-title" style="display:flex;align-items:center;gap:8px;">
-            <svg style="width:18px;height:18px;stroke:#10B981;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <svg style="width:18px;height:18px;stroke:#10B981;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
             <span>Klaim Surat Suara Berhasil!</span>
           </span>
           <button class="btn-close-modal">&times;</button>
         </div>
 
         <div class="email-sim-box" style="padding: 18px; text-align: center;">
-          <div style="width: 52px; height: 52px; margin: 0 auto 12px; background: rgba(16, 185, 129, 0.15); border: 2px solid #10B981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-            <svg style="width: 26px; height: 26px; stroke: #10B981; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <div
+            style="width: 52px; height: 52px; margin: 0 auto 12px; background: rgba(16, 185, 129, 0.15); border: 2px solid #10B981; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <svg style="width: 26px; height: 26px; stroke: #10B981; fill: none; stroke-width: 2.5;" viewBox="0 0 24 24">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
           </div>
 
-          <h3 style="font-size: 1.1rem; font-weight: 800; color: #FFFFFF; margin: 0 0 4px;">Surat Suara Siap Digunakan!</h3>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #FFFFFF; margin: 0 0 4px;">Surat Suara Siap Digunakan!
+          </h3>
           <p style="font-size: 0.78rem; color: #94A3B8; margin: 0 0 14px; line-height: 1.45;">
             Gunakan kode token resmi di bawah ini untuk membuka bilik suara digital dan memberikan hak suara Anda.
           </p>
 
           <!-- BOX KODE TOKEN RESMI (LANGSUNG TAMPIL DI LAYAR) -->
-          <div style="background: linear-gradient(135deg, rgba(245, 186, 66, 0.16) 0%, rgba(16, 185, 129, 0.12) 100%); border: 2px solid #F5BA42; border-radius: 14px; padding: 16px 14px; margin-bottom: 14px; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.35);">
-            <div style="font-size: 0.72rem; font-weight: 800; color: #F5BA42; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+          <div
+            style="background: linear-gradient(135deg, rgba(245, 186, 66, 0.16) 0%, rgba(16, 185, 129, 0.12) 100%); border: 2px solid #F5BA42; border-radius: 14px; padding: 16px 14px; margin-bottom: 14px; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.35);">
+            <div
+              style="font-size: 0.72rem; font-weight: 800; color: #F5BA42; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 6px;">
               <span>🔑</span><span>KODE TOKEN SURAT SUARA ANDA</span>
             </div>
             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin: 8px 0;">
-              <input type="text" id="sim-email-token-val" readonly value="IAGI-2026-XXXX-XXXX" style="background: #020617; border: 1.5px solid #F5BA42; border-radius: 8px; color: #FDE047; font-family: var(--font-mono); font-size: 1.15rem; font-weight: 900; text-align: center; letter-spacing: 0.08em; padding: 10px 12px; width: 100%; max-width: 280px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);" />
-              <button type="button" id="sim-btn-copy-token" class="btn btn-gold" style="padding: 10px 14px; font-size: 0.8rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; height: 42px;">
+              <input type="text" id="sim-email-token-val" readonly value="IAGI-2026-XXXX-XXXX"
+                style="background: #020617; border: 1.5px solid #F5BA42; border-radius: 8px; color: #FDE047; font-family: var(--font-mono); font-size: 1.15rem; font-weight: 900; text-align: center; letter-spacing: 0.08em; padding: 10px 12px; width: 100%; max-width: 280px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);" />
+              <button type="button" id="sim-btn-copy-token" class="btn btn-gold"
+                style="padding: 10px 14px; font-size: 0.8rem; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; height: 42px;">
                 <span>📋</span><span id="sim-copy-token-label">Salin</span>
               </button>
             </div>
-            <div id="sim-copy-alert" style="display: none; font-size: 0.72rem; color: #34D399; font-weight: 700; margin-top: 4px;">
+            <div id="sim-copy-alert"
+              style="display: none; font-size: 0.72rem; color: #34D399; font-weight: 700; margin-top: 4px;">
               ✓ Kode token berhasil disalin ke clipboard!
             </div>
             <p style="font-size: 0.72rem; color: #CBD5E1; margin: 8px 0 0; line-height: 1.45;">
@@ -1886,7 +2283,8 @@
           </div>
 
           <!-- Recipient Metadata Box -->
-          <div style="background: #020617; border: 1px solid #1E293B; border-radius: 10px; padding: 10px 14px; text-align: left; font-size: 0.75rem; line-height: 1.5; margin-bottom: 14px;">
+          <div
+            style="background: #020617; border: 1px solid #1E293B; border-radius: 10px; padding: 10px 14px; text-align: left; font-size: 0.75rem; line-height: 1.5; margin-bottom: 14px;">
             <div style="display:flex; justify-content:space-between; margin-bottom: 3px;">
               <span style="color: #64748B;">Nama Pemilih:</span>
               <strong id="sim-email-name" style="color: #FFFFFF;">-</strong>
@@ -1899,7 +2297,8 @@
               <span style="color: #64748B;">Email Terdaftar:</span>
               <strong id="sim-email-recipient" style="color: #38BDF8;">-</strong>
             </div>
-            <div style="display:flex; justify-content:space-between; border-top: 1px solid #1E293B; padding-top: 4px; margin-top: 4px;">
+            <div
+              style="display:flex; justify-content:space-between; border-top: 1px solid #1E293B; padding-top: 4px; margin-top: 4px;">
               <span style="color: #64748B;">Salinan Email:</span>
               <span style="color: #10B981; font-weight: 700;">● Dikirim ke Inbox / Spam</span>
             </div>
@@ -1908,27 +2307,46 @@
           <!-- Action Buttons -->
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <!-- TOMBOL UTAMA: LANGSUNG BUKA BILIK SUARA & COBLOS SEKARANG -->
-            <button type="button" id="sim-btn-open-vote" class="btn btn-gold" style="font-size: 0.88rem; padding: 13px; display:flex; align-items:center; justify-content:center; gap:8px; font-weight: 900; width: 100%; box-shadow: 0 4px 15px rgba(245, 186, 66, 0.25);">
+            <button type="button" id="sim-btn-open-vote" class="btn btn-gold"
+              style="font-size: 0.88rem; padding: 13px; display:flex; align-items:center; justify-content:center; gap:8px; font-weight: 900; width: 100%; box-shadow: 0 4px 15px rgba(245, 186, 66, 0.25);">
               <span>🗳️ Buka Bilik Suara & Coblos Sekarang</span>
-              <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;" viewBox="0 0 24 24">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
             </button>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px;">
-              <button type="button" id="sim-btn-open-inbox" class="btn btn-outline" style="font-size: 0.74rem; padding: 9px; display:flex; align-items:center; justify-content:center; gap:6px; color: #CBD5E1; border-color: #334155;">
-                <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <button type="button" id="sim-btn-open-inbox" class="btn btn-outline"
+                style="font-size: 0.74rem; padding: 9px; display:flex; align-items:center; justify-content:center; gap:6px; color: #CBD5E1; border-color: #334155;">
+                <svg style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
                 <span>Cek Email Masuk</span>
               </button>
-              <button type="button" id="sim-btn-resend-email" class="btn btn-outline" style="font-size: 0.74rem; padding: 9px; display:flex; align-items:center; justify-content:center; gap:6px; color: #FDE68A; border-color: rgba(245, 186, 66, 0.35);">
-                <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              <button type="button" id="sim-btn-resend-email" class="btn btn-outline"
+                style="font-size: 0.74rem; padding: 9px; display:flex; align-items:center; justify-content:center; gap:6px; color: #FDE68A; border-color: rgba(245, 186, 66, 0.35);">
+                <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;" viewBox="0 0 24 24">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <polyline points="1 20 1 14 7 14"></polyline>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
                 <span id="sim-resend-label">Kirim Ulang Email</span>
               </button>
             </div>
           </div>
-          <div id="sim-resend-alert" style="display: none; margin-top: 8px; font-size: 0.72rem; padding: 8px 12px; border-radius: 6px; text-align: center;"></div>
+          <div id="sim-resend-alert"
+            style="display: none; margin-top: 8px; font-size: 0.72rem; padding: 8px 12px; border-radius: 6px; text-align: center;">
+          </div>
 
           <!-- Helpdesk Notice -->
-          <div style="font-size: 0.71rem; color: #94A3B8; margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
-            Kendala teknis? <a href="javascript:void(0)" onclick="closeAllModals(); if(window.openHelpdeskChat){ window.openHelpdeskChat(); } else if(window.openKPKULiveChat){ window.openKPKULiveChat(); } else { document.getElementById('chat-trigger')?.click(); }" style="color: var(--gold-secondary); text-decoration: underline; font-weight: 700; cursor: pointer;">Hubungi Helpdesk Admin KPKU</a>
+          <div
+            style="font-size: 0.71rem; color: #94A3B8; margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
+            Kendala teknis? <a href="javascript:void(0)"
+              onclick="closeAllModals(); if(window.openHelpdeskChat){ window.openHelpdeskChat(); } else if(window.openKPKULiveChat){ window.openKPKULiveChat(); } else { document.getElementById('chat-trigger')?.click(); }"
+              style="color: var(--gold-secondary); text-decoration: underline; font-weight: 700; cursor: pointer;">Hubungi
+              Helpdesk Admin KPKU</a>
           </div>
         </div>
       </div>
@@ -1956,51 +2374,51 @@
 
   <!-- Failsafe Helpdesk Permanent Lock Override -->
   <script>
-  (function() {
-    function forceLockHelpdesk() {
-      var prechat = document.getElementById('prechat-screen');
-      var chatForm = document.getElementById('chat-form');
-      var chatWin = document.getElementById('chat-window');
-      var trigger = document.getElementById('btn-chat-trigger');
-      var banner = document.querySelector('.kpku-chat-banner');
-      var headerStatus = document.querySelector('.chat-header-status');
-      var avatarStatus = document.querySelector('.chat-avatar-status');
+    (function () {
+      function forceLockHelpdesk() {
+        var prechat = document.getElementById('prechat-screen');
+        var chatForm = document.getElementById('chat-form');
+        var chatWin = document.getElementById('chat-window');
+        var trigger = document.getElementById('btn-chat-trigger');
+        var banner = document.querySelector('.kpku-chat-banner');
+        var headerStatus = document.querySelector('.chat-header-status');
+        var avatarStatus = document.querySelector('.chat-avatar-status');
 
-      if (trigger) {
-        trigger.classList.add('chat-trigger-locked');
-        var tTitle = trigger.querySelector('.chat-trigger-title');
-        var tSub = trigger.querySelector('.chat-trigger-subtitle');
-        var tDot = trigger.querySelector('.chat-trigger-dot');
-        if (tTitle) tTitle.textContent = 'Helpdesk (Ditutup)';
-        if (tSub) tSub.textContent = '● Layanan Selesai';
-        if (tDot) tDot.classList.add('dot-locked');
-        var badge = document.getElementById('chat-unread-badge');
-        if (badge) badge.style.display = 'none';
-      }
+        if (trigger) {
+          trigger.classList.add('chat-trigger-locked');
+          var tTitle = trigger.querySelector('.chat-trigger-title');
+          var tSub = trigger.querySelector('.chat-trigger-subtitle');
+          var tDot = trigger.querySelector('.chat-trigger-dot');
+          if (tTitle) tTitle.textContent = 'Helpdesk (Ditutup)';
+          if (tSub) tSub.textContent = '● Layanan Selesai';
+          if (tDot) tDot.classList.add('dot-locked');
+          var badge = document.getElementById('chat-unread-badge');
+          if (badge) badge.style.display = 'none';
+        }
 
-      if (banner) {
-        banner.classList.add('banner-locked');
-        banner.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#F87171" stroke-width="2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Layanan Bantuan & Pengaduan Pemilih Resmi Ditutup</span>';
-      }
+        if (banner) {
+          banner.classList.add('banner-locked');
+          banner.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#F87171" stroke-width="2" style="width:14px;height:14px;display:inline-block;vertical-align:middle;flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Layanan Bantuan & Pengaduan Pemilih Resmi Ditutup</span>';
+        }
 
-      if (headerStatus) {
-        headerStatus.classList.add('status-text-locked');
-        headerStatus.innerHTML = '<span class="chat-trigger-dot dot-locked" style="position:static; display:inline-block; margin-right:4px;"></span>Layanan Resmi Ditutup';
-      }
-      if (avatarStatus) avatarStatus.classList.add('status-locked');
+        if (headerStatus) {
+          headerStatus.classList.add('status-text-locked');
+          headerStatus.innerHTML = '<span class="chat-trigger-dot dot-locked" style="position:static; display:inline-block; margin-right:4px;"></span>Layanan Resmi Ditutup';
+        }
+        if (avatarStatus) avatarStatus.classList.add('status-locked');
 
-      if (chatForm) chatForm.style.setProperty('display', 'none', 'important');
-      if (prechat) prechat.style.setProperty('display', 'none', 'important');
+        if (chatForm) chatForm.style.setProperty('display', 'none', 'important');
+        if (prechat) prechat.style.setProperty('display', 'none', 'important');
 
-      var waInside = document.querySelectorAll('.btn-chat-wa, .btn-chat-wa-primary, .helpdesk-btn, .dpt-helpdesk-wa');
-      waInside.forEach(function(el) { el.style.setProperty('display', 'none', 'important'); });
+        var waInside = document.querySelectorAll('.btn-chat-wa, .btn-chat-wa-primary, .helpdesk-btn, .dpt-helpdesk-wa');
+        waInside.forEach(function (el) { el.style.setProperty('display', 'none', 'important'); });
 
-      var lockedScreen = document.getElementById('chat-locked-screen');
-      if (!lockedScreen && chatWin) {
-        lockedScreen = document.createElement('div');
-        lockedScreen.id = 'chat-locked-screen';
-        lockedScreen.className = 'kpku-chat-locked-screen';
-        lockedScreen.innerHTML = `
+        var lockedScreen = document.getElementById('chat-locked-screen');
+        if (!lockedScreen && chatWin) {
+          lockedScreen = document.createElement('div');
+          lockedScreen.id = 'chat-locked-screen';
+          lockedScreen.className = 'kpku-chat-locked-screen';
+          lockedScreen.innerHTML = `
           <div class="chat-locked-card">
             <div class="chat-locked-icon-halo">
               <div class="chat-locked-icon-badge">
@@ -2054,36 +2472,36 @@
             </div>
           </div>
         `;
-        if (prechat && prechat.parentNode) {
-          prechat.parentNode.insertBefore(lockedScreen, prechat);
-        } else if (chatWin) {
-          chatWin.appendChild(lockedScreen);
+          if (prechat && prechat.parentNode) {
+            prechat.parentNode.insertBefore(lockedScreen, prechat);
+          } else if (chatWin) {
+            chatWin.appendChild(lockedScreen);
+          }
         }
+        if (lockedScreen) lockedScreen.style.setProperty('display', 'flex', 'important');
       }
-      if (lockedScreen) lockedScreen.style.setProperty('display', 'flex', 'important');
-    }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', forceLockHelpdesk);
-    } else {
-      forceLockHelpdesk();
-    }
-    setInterval(forceLockHelpdesk, 300);
-  })();
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', forceLockHelpdesk);
+      } else {
+        forceLockHelpdesk();
+      }
+      setInterval(forceLockHelpdesk, 300);
+    })();
   </script>
 
   <!-- Script Kunci Permanen Seluruh Menu Pemilu -->
   <script>
-    (function() {
+    (function () {
       if (window.location.hash !== '#vote') {
         window.location.hash = 'vote';
       }
-      window.addEventListener('hashchange', function() {
+      window.addEventListener('hashchange', function () {
         if (window.location.hash !== '#vote' && window.location.hash !== '#admin') {
           window.location.hash = 'vote';
         }
       });
-      document.addEventListener('click', function(e) {
+      document.addEventListener('click', function (e) {
         var target = e.target.closest('.desktop-nav-item, .nav-item, [data-nav]');
         if (target) {
           var screen = target.getAttribute('data-screen') || target.getAttribute('data-nav');
@@ -2099,4 +2517,5 @@
     })();
   </script>
 </body>
+
 </html>

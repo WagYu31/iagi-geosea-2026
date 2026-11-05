@@ -183,3 +183,4 @@ class RestoreTicketFromLogCommand extends Command
         }
     }
 }
+

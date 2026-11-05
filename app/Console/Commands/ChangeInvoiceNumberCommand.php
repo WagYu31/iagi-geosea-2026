@@ -161,3 +161,4 @@ class ChangeInvoiceNumberCommand extends Command
         return Command::SUCCESS;
     }
 }
+
