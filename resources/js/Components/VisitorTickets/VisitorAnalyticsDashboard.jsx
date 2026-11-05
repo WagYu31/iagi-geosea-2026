@@ -68,7 +68,147 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
 import PieChartRoundedIcon from '@mui/icons-material/PieChartRounded';
 import ViewListRoundedIcon from '@mui/icons-material/ViewListRounded';
+import CategoryRoundedIcon from '@mui/icons-material/CategoryRounded';
+import FilterListRoundedIcon from '@mui/icons-material/FilterListRounded';
 import { PieChart } from '@mui/x-charts/PieChart';
+
+// 4 Registration Groups & Categories (Matching Gambar 2)
+export const REGISTRATION_GROUPS = [
+    {
+        id: 'participant',
+        num: '1',
+        title: '1. PARTICIPANT',
+        shortTitle: 'Participant',
+        icon: '💼',
+        color: '#2563eb',
+        sub: 'Berbayar (Member / Non-Member / Dosen / Mahasiswa)',
+        types: [
+            'iagi_member_professional',
+            'non_iagi_member_professional',
+            'iagi_member_expatriate',
+            'non_iagi_member_expatriate',
+            'student_undergraduate',
+            'dosen',
+            'professional',
+            'professional_1500',
+            'exclusive'
+        ]
+    },
+    {
+        id: 'technical',
+        num: '2',
+        title: '2. TECHNICAL',
+        shortTitle: 'Technical',
+        icon: '🔬',
+        color: '#8b5cf6',
+        sub: '100% Free Pass (Presenter, Speaker, Chair/Judge)',
+        types: [
+            'presenter',
+            'student',
+            'invited_speaker',
+            'session_chair_judge',
+            'judge',
+            'session_chair',
+            'oral',
+            'oral_presenter',
+            'poster',
+            'poster_presenter'
+        ]
+    },
+    {
+        id: 'visitor',
+        num: '3',
+        title: '3. VISITOR',
+        shortTitle: 'Visitor',
+        icon: '🎟️',
+        color: '#0d9488',
+        sub: 'Free Pass (Exhibition & Public Attendee)',
+        types: [
+            'non_exclusive',
+            'visitor'
+        ]
+    },
+    {
+        id: 'roles',
+        num: '4',
+        title: '4. ROLES & INVITATIONS',
+        shortTitle: 'Roles & Invited',
+        icon: '🌟',
+        color: '#f59e0b',
+        sub: 'Undangan Khusus (VIP, Committee, Board, Crew)',
+        types: [
+            'vip',
+            'speaker',
+            'keynote_speech',
+            'keynote_speaker',
+            'panelist',
+            'moderator',
+            'exhibition',
+            'committee',
+            'student_volunteer',
+            'board',
+            'sponsorship',
+            'sponsor',
+            'delegate',
+            'student_crowd',
+            'vip_companion',
+            'it_developer',
+            'tesko'
+        ]
+    }
+];
+
+export const CATEGORY_LABELS = {
+    // 1. Participant
+    iagi_member_professional: { label: 'Professional (Member)', icon: '💼', group: 'participant', color: '#2563eb' },
+    non_iagi_member_professional: { label: 'Professional (Non-Member)', icon: '💼', group: 'participant', color: '#0284c7' },
+    iagi_member_expatriate: { label: 'Expatriate (Member)', icon: '🌍', group: 'participant', color: '#4f46e5' },
+    non_iagi_member_expatriate: { label: 'Expatriate (Non-Member)', icon: '🌍', group: 'participant', color: '#6366f1' },
+    student_undergraduate: { label: 'Student Undergraduate', icon: '🎓', group: 'participant', color: '#0ea5e9' },
+    dosen: { label: 'Dosen', icon: '📚', group: 'participant', color: '#38bdf8' },
+    professional: { label: 'Professional', icon: '💼', group: 'participant', color: '#1d4ed8' },
+    professional_1500: { label: 'Professional (Rp 1.5JT)', icon: '💼', group: 'participant', color: '#1e40af' },
+    exclusive: { label: 'Exclusive Participant', icon: '⭐', group: 'participant', color: '#3b82f6' },
+
+    // 2. Technical
+    presenter: { label: 'Presenter', icon: '🎓', group: 'technical', color: '#8b5cf6' },
+    student: { label: 'Presenter (Student)', icon: '🎓', group: 'technical', color: '#8b5cf6' },
+    invited_speaker: { label: 'Invited Speaker', icon: '🗣️', group: 'technical', color: '#a855f7' },
+    session_chair_judge: { label: 'Session Chair / Judge', icon: '⚖️', group: 'technical', color: '#c084fc' },
+    session_chair: { label: 'Session Chair', icon: '⚖️', group: 'technical', color: '#c084fc' },
+    judge: { label: 'Judge', icon: '⚖️', group: 'technical', color: '#c084fc' },
+    oral: { label: 'Oral Presenter', icon: '🎤', group: 'technical', color: '#7c3aed' },
+    oral_presenter: { label: 'Oral Presenter', icon: '🎤', group: 'technical', color: '#7c3aed' },
+    poster: { label: 'Poster Presenter', icon: '📊', group: 'technical', color: '#9333ea' },
+    poster_presenter: { label: 'Poster Presenter', icon: '📊', group: 'technical', color: '#9333ea' },
+
+    // 3. Visitor
+    non_exclusive: { label: 'Visitor Pass (Free)', icon: '🎟️', group: 'visitor', color: '#0d9488' },
+    visitor: { label: 'Visitor Pass (Free)', icon: '🎟️', group: 'visitor', color: '#0d9488' },
+
+    // 4. Roles & Invitations
+    vip: { label: 'VIP', icon: '⭐', group: 'roles', color: '#f59e0b' },
+    speaker: { label: 'Keynote Speaker', icon: '🎤', group: 'roles', color: '#eab308' },
+    keynote_speech: { label: 'Keynote Speaker', icon: '🎤', group: 'roles', color: '#eab308' },
+    keynote_speaker: { label: 'Keynote Speaker', icon: '🎤', group: 'roles', color: '#eab308' },
+    panelist: { label: 'Panelist', icon: '👥', group: 'roles', color: '#d97706' },
+    moderator: { label: 'Moderator', icon: '🎯', group: 'roles', color: '#f97316' },
+    exhibition: { label: 'Exhibition', icon: '🏛️', group: 'roles', color: '#10b981' },
+    committee: { label: 'Committee', icon: '👔', group: 'roles', color: '#059669' },
+    student_volunteer: { label: 'Student Volunteer', icon: '🤝', group: 'roles', color: '#14b8a6' },
+    board: { label: 'Board', icon: '🎖️', group: 'roles', color: '#b45309' },
+    sponsorship: { label: 'Delegate (Sponsor)', icon: '💎', group: 'roles', color: '#ec4899' },
+    sponsor: { label: 'Delegate (Sponsor)', icon: '💎', group: 'roles', color: '#ec4899' },
+    delegate: { label: 'Delegate', icon: '💎', group: 'roles', color: '#ec4899' },
+    student_crowd: { label: 'Student Crowd', icon: '🎓', group: 'roles', color: '#06b6d4' },
+    vip_companion: { label: 'VIP Companion', icon: '⭐', group: 'roles', color: '#fbbf24' },
+    it_developer: { label: 'IT Developer', icon: '💻', group: 'roles', color: '#64748b' },
+    tesko: { label: 'TESKO', icon: '🛠️', group: 'roles', color: '#94a3b8' },
+};
+
+export const getCategoryGroup = (type) => {
+    return REGISTRATION_GROUPS.find(g => g.types.includes(type)) || REGISTRATION_GROUPS[3];
+};
 
 // Number Formatter Helper
 const formatRupiah = (val) => {
@@ -161,6 +301,8 @@ export default function VisitorAnalyticsDashboard({
     const [pillarFilter, setPillarFilter] = useState('all'); // 'all' | 'commercial' | 'scientific' | 'leadership' | 'expo'
     const [hoveredHour, setHoveredHour] = useState(null);
     const [pillarsViewMode, setPillarsViewMode] = useState('chart'); // 'chart' (Pie/Donut Chart) | 'cards' (Detail Cards)
+    const [pieMode, setPieMode] = useState('pillars'); // 'pillars' (4 Pilar) | 'groups' (4 Grup Registrasi) | 'categories' (Per Kategori Tiket)
+    const [pieGroupFilter, setPieGroupFilter] = useState('all'); // 'all' | 'participant' | 'technical' | 'visitor' | 'roles'
     const [sectorsViewMode, setSectorsViewMode] = useState('grid'); // 'grid' | 'pie'
 
     // ── 1. REAL DATA: TICKETS & PAYMENTS ──
@@ -410,6 +552,134 @@ export default function VisitorAnalyticsDashboard({
             { id: 'expo', value: expo, label: 'Expo, Booth & Crew', color: '#10b981' },
         ];
     }, [pillarsBreakdown]);
+
+    // ── GROUPS PIE DATA (4 Registration Groups from Gambar 2) ──
+    const groupsPieData = useMemo(() => {
+        const data = REGISTRATION_GROUPS.map((grp) => {
+            const count = rawCategories
+                .filter((c) => grp.types.includes(c.visitor_type))
+                .reduce((sum, c) => sum + Number(c.count || 0), 0);
+            return {
+                id: grp.id,
+                label: grp.title,
+                shortLabel: grp.shortTitle,
+                value: count,
+                color: grp.color,
+                icon: grp.icon,
+                sub: grp.sub,
+            };
+        });
+        const grandTotal = data.reduce((sum, g) => sum + g.value, 0);
+        if (grandTotal === 0) {
+            return REGISTRATION_GROUPS.map((grp) => ({
+                id: grp.id,
+                label: grp.title,
+                shortLabel: grp.shortTitle,
+                value: 1,
+                color: grp.color,
+                icon: grp.icon,
+                sub: grp.sub,
+            }));
+        }
+        return data;
+    }, [rawCategories]);
+
+    const totalGroupsCount = useMemo(() => {
+        return groupsPieData.reduce((sum, g) => sum + (g.value > 0 ? g.value : 0), 0);
+    }, [groupsPieData]);
+
+    // ── CATEGORIES PIE DATA (Individual ticket categories from Gambar 2) ──
+    const categoriesPieData = useMemo(() => {
+        let list = rawCategories.filter((c) => Number(c.count || 0) > 0);
+
+        if (pieGroupFilter !== 'all') {
+            const targetGroup = REGISTRATION_GROUPS.find((g) => g.id === pieGroupFilter);
+            if (targetGroup) {
+                list = list.filter((c) => targetGroup.types.includes(c.visitor_type));
+            }
+        }
+
+        if (list.length === 0) {
+            return [
+                { id: 'empty', value: 1, label: 'Tidak Ada Data', fullLabel: 'Tidak Ada Data', icon: 'ℹ️', color: '#94a3b8', count: 0, est_revenue: 0 }
+            ];
+        }
+
+        return list.map((c) => {
+            const meta = CATEGORY_META[c.visitor_type] || {};
+            const def = CATEGORY_LABELS[c.visitor_type] || {};
+            const label = def.label || meta.label || c.label || c.visitor_type;
+            const icon = def.icon || '🏷️';
+            const color = def.color || meta.color || getCategoryGroup(c.visitor_type).color;
+            const groupInfo = getCategoryGroup(c.visitor_type);
+
+            return {
+                id: c.visitor_type,
+                value: Number(c.count || 0),
+                label: label,
+                fullLabel: `${icon} ${label}`,
+                visitor_type: c.visitor_type,
+                icon: icon,
+                color: color,
+                group: groupInfo.id,
+                groupTitle: groupInfo.shortTitle,
+                est_revenue: Number(c.est_revenue || 0),
+            };
+        });
+    }, [rawCategories, pieGroupFilter, CATEGORY_META]);
+
+    const totalCategoriesCount = useMemo(() => {
+        return categoriesPieData.reduce((sum, c) => sum + (c.id === 'empty' ? 0 : c.value), 0);
+    }, [categoriesPieData]);
+
+    // ── ACTIVE PIE METRICS ACCORDING TO SELECTED MODE ──
+    const activePieData = useMemo(() => {
+        if (pieMode === 'groups') return groupsPieData;
+        if (pieMode === 'categories') return categoriesPieData;
+        return pillarsPieData;
+    }, [pieMode, groupsPieData, categoriesPieData, pillarsPieData]);
+
+    const activeTotalCount = useMemo(() => {
+        if (pieMode === 'groups') return totalGroupsCount;
+        if (pieMode === 'categories') return totalCategoriesCount;
+        return totalPillarsCount;
+    }, [pieMode, totalGroupsCount, totalCategoriesCount, totalPillarsCount]);
+
+    const activeCenterLabel = useMemo(() => {
+        if (pieMode === 'groups') return 'Delegasi';
+        if (pieMode === 'categories') {
+            if (pieGroupFilter === 'participant') return 'Peserta';
+            if (pieGroupFilter === 'technical') return 'Pemakalah';
+            if (pieGroupFilter === 'visitor') return 'Visitor';
+            if (pieGroupFilter === 'roles') return 'Undangan';
+            return 'Delegasi';
+        }
+        return 'Delegasi';
+    }, [pieMode, pieGroupFilter]);
+
+    const activeCardTitle = useMemo(() => {
+        if (pieMode === 'groups') return '4 Grup Registrasi Konvensi';
+        if (pieMode === 'categories') {
+            if (pieGroupFilter === 'participant') return 'Komposisi Kategori Participant';
+            if (pieGroupFilter === 'technical') return 'Komposisi Kategori Technical';
+            if (pieGroupFilter === 'visitor') return 'Komposisi Kategori Visitor Pass';
+            if (pieGroupFilter === 'roles') return 'Komposisi Roles & Invitations';
+            return 'Komposisi Seluruh Kategori Tiket';
+        }
+        return '4 Pilar Komposisi Konvensi';
+    }, [pieMode, pieGroupFilter]);
+
+    const activeCardSubtitle = useMemo(() => {
+        if (pieMode === 'groups') return 'Struktur 4 grup registrasi PIT IAGI • GEOSEA XIX (Gambar 2)';
+        if (pieMode === 'categories') {
+            if (pieGroupFilter !== 'all') {
+                const grp = REGISTRATION_GROUPS.find((g) => g.id === pieGroupFilter);
+                return `Rincian per jenis tiket di grup ${grp?.title || ''}`;
+            }
+            return 'Rincian 20+ jenis tiket kepesertaan PIT IAGI & GEOSEA XIX';
+        }
+        return 'Struktur kepesertaan PIT IAGI • GEOSEA XIX 2026';
+    }, [pieMode, pieGroupFilter]);
 
     const institutionalSectors = useMemo(() => {
         if (analytics.institutionalSectors && analytics.institutionalSectors.length > 0) {
@@ -2047,19 +2317,20 @@ export default function VisitorAnalyticsDashboard({
             {/* ── ROW 3: THE 4 CONFERENCE PILLARS + TOP 10 DELEGATIONS (BI-COLOR STACKED BARS) ── */}
             {(executiveTab === 'overview' || executiveTab === 'delegations') && (
                 <Grid container spacing={2.5} sx={{ mb: 3 }}>
-                    {/* Left 5 Cols: The 4 Conference Pillars */}
+                    {/* Left 5 Cols: The 4 Conference Pillars / Groups / Categories */}
                     <Grid size={{ xs: 12, lg: 5 }}>
                         <Card elevation={0} sx={{ ...diboldCardSx, minHeight: 450, display: 'flex', flexDirection: 'column' }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                            {/* Card Header */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5, flexWrap: 'wrap', gap: 1 }}>
                                 <Box>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <CorporateFareRoundedIcon sx={{ fontSize: 20, color: '#8b5cf6' }} />
+                                        <CorporateFareRoundedIcon sx={{ fontSize: 20, color: pieMode === 'categories' ? '#10b981' : (pieMode === 'groups' ? '#8b5cf6' : '#2563eb') }} />
                                         <Typography sx={{ fontSize: '0.98rem', fontWeight: 900, color: textPrimary, letterSpacing: '-0.01em' }}>
-                                            4 Pilar Komposisi Konvensi
+                                            {activeCardTitle}
                                         </Typography>
                                     </Box>
-                                    <Typography sx={{ fontSize: '0.76rem', color: textSecondary, mt: 0.3 }}>
-                                        Struktur kepesertaan PIT IAGI &bull; GEOSEA XIX 2026
+                                    <Typography sx={{ fontSize: '0.74rem', color: textSecondary, mt: 0.3 }}>
+                                        {activeCardSubtitle}
                                     </Typography>
                                 </Box>
 
@@ -2107,20 +2378,140 @@ export default function VisitorAnalyticsDashboard({
                                 </Box>
                             </Box>
 
+                            {/* Control Bar: Mode Toggle (4 Pilar | 4 Grup | Kategori Tiket) & Dropdown Sub-Filter */}
+                            {pillarsViewMode === 'chart' && (
+                                <Box sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    flexWrap: 'wrap',
+                                    gap: 1,
+                                    mb: 1.5,
+                                    p: '6px 8px',
+                                    borderRadius: '10px',
+                                    bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#f8fafc',
+                                    border: `1px solid ${cardBorder}`
+                                }}>
+                                    {/* Mode Switcher */}
+                                    <Box sx={{ display: 'inline-flex', p: '2px', bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff', borderRadius: '8px', border: `1px solid ${cardBorder}` }}>
+                                        <Button
+                                            size="small"
+                                            onClick={() => setPieMode('pillars')}
+                                            sx={{
+                                                minWidth: 'auto',
+                                                px: 1,
+                                                py: 0.25,
+                                                fontSize: '0.67rem',
+                                                fontWeight: 800,
+                                                borderRadius: '6px',
+                                                textTransform: 'none',
+                                                bgcolor: pieMode === 'pillars' ? (isDark ? '#1e293b' : '#eff6ff') : 'transparent',
+                                                color: pieMode === 'pillars' ? '#2563eb' : textMuted,
+                                                boxShadow: pieMode === 'pillars' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                            }}
+                                        >
+                                            🏛️ 4 Pilar
+                                        </Button>
+                                        <Button
+                                            size="small"
+                                            onClick={() => setPieMode('groups')}
+                                            sx={{
+                                                minWidth: 'auto',
+                                                px: 1,
+                                                py: 0.25,
+                                                fontSize: '0.67rem',
+                                                fontWeight: 800,
+                                                borderRadius: '6px',
+                                                textTransform: 'none',
+                                                bgcolor: pieMode === 'groups' ? (isDark ? '#1e293b' : '#f5f3ff') : 'transparent',
+                                                color: pieMode === 'groups' ? '#8b5cf6' : textMuted,
+                                                boxShadow: pieMode === 'groups' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                            }}
+                                        >
+                                            📑 4 Grup
+                                        </Button>
+                                        <Button
+                                            size="small"
+                                            onClick={() => setPieMode('categories')}
+                                            sx={{
+                                                minWidth: 'auto',
+                                                px: 1,
+                                                py: 0.25,
+                                                fontSize: '0.67rem',
+                                                fontWeight: 800,
+                                                borderRadius: '6px',
+                                                textTransform: 'none',
+                                                bgcolor: pieMode === 'categories' ? (isDark ? '#1e293b' : '#ecfdf5') : 'transparent',
+                                                color: pieMode === 'categories' ? '#059669' : textMuted,
+                                                boxShadow: pieMode === 'categories' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                            }}
+                                        >
+                                            🏷️ Kategori Tiket
+                                        </Button>
+                                    </Box>
+
+                                    {/* Sub-Filter Dropdown when in 'categories' mode */}
+                                    {pieMode === 'categories' && (
+                                        <FormControl size="small" sx={{ minWidth: 155 }}>
+                                            <Select
+                                                value={pieGroupFilter}
+                                                onChange={(e) => setPieGroupFilter(e.target.value)}
+                                                displayEmpty
+                                                sx={{
+                                                    height: 27,
+                                                    fontSize: '0.69rem',
+                                                    fontWeight: 700,
+                                                    borderRadius: '7px',
+                                                    bgcolor: isDark ? '#1e293b' : '#ffffff',
+                                                    '& .MuiSelect-select': { py: 0.4, px: 0.9 },
+                                                }}
+                                            >
+                                                <MenuItem value="all" sx={{ fontSize: '0.74rem', fontWeight: 800 }}>🌐 Semua Kategori (20+)</MenuItem>
+                                                <MenuItem value="participant" sx={{ fontSize: '0.74rem' }}>💼 1. Participant (Berbayar)</MenuItem>
+                                                <MenuItem value="technical" sx={{ fontSize: '0.74rem' }}>🔬 2. Technical (Presenter/Judge)</MenuItem>
+                                                <MenuItem value="visitor" sx={{ fontSize: '0.74rem' }}>🎟️ 3. Visitor (Visitor Pass)</MenuItem>
+                                                <MenuItem value="roles" sx={{ fontSize: '0.74rem' }}>🌟 4. Roles & Invitations</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    )}
+
+                                    {/* Quick Active Filter Indicator */}
+                                    {typeFilter && typeFilter.length > 0 && (
+                                        <Tooltip title="Klik untuk reset filter kategori global" arrow>
+                                            <Chip
+                                                size="small"
+                                                label={`Filter Aktif (${typeFilter.length}) ✕`}
+                                                onClick={() => onTypeFilterChange([])}
+                                                sx={{
+                                                    height: 24,
+                                                    fontSize: '0.64rem',
+                                                    fontWeight: 800,
+                                                    bgcolor: isDark ? 'rgba(239,68,68,0.15)' : '#fee2e2',
+                                                    color: '#ef4444',
+                                                    cursor: 'pointer',
+                                                    borderRadius: '6px',
+                                                    '&:hover': { bgcolor: isDark ? 'rgba(239,68,68,0.25)' : '#fecaca' }
+                                                }}
+                                            />
+                                        </Tooltip>
+                                    )}
+                                </Box>
+                            )}
+
                             {pillarsViewMode === 'chart' ? (
                                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                                    {/* Donut / Pie Chart Container with Centered Total Metric */}
+                                    {/* Donut / Pie Chart Container with Centered Dynamic Total Metric */}
                                     <Box sx={{ position: 'relative', width: '100%', height: 215, display: 'flex', alignItems: 'center', justifyContent: 'center', my: 0.5 }}>
                                         <PieChart
                                             series={[{
-                                                data: pillarsPieData,
-                                                innerRadius: 56,
-                                                outerRadius: 86,
-                                                paddingAngle: 3,
-                                                cornerRadius: 6,
+                                                data: activePieData,
+                                                innerRadius: 54,
+                                                outerRadius: 84,
+                                                paddingAngle: activePieData.length > 8 ? 1.5 : 3,
+                                                cornerRadius: 5,
                                                 highlightScope: { fade: 'global', highlight: 'item' },
-                                                faded: { innerRadius: 50, additionalRadius: -4, opacity: 0.35 },
-                                                valueFormatter: (item) => `${item.value} Pax (${totalPillarsCount > 0 ? ((item.value / totalPillarsCount) * 100).toFixed(1) : 0}%)`,
+                                                faded: { innerRadius: 48, additionalRadius: -4, opacity: 0.35 },
+                                                valueFormatter: (item) => `${item.value} Pax (${activeTotalCount > 0 ? ((item.value / activeTotalCount) * 100).toFixed(1) : 0}%)`,
                                             }]}
                                             hideLegend={true}
                                             slots={{ legend: () => null }}
@@ -2136,62 +2527,212 @@ export default function VisitorAnalyticsDashboard({
                                             pointerEvents: 'none',
                                         }}>
                                             <Typography sx={{ fontWeight: 900, fontSize: '1.45rem', color: textPrimary, lineHeight: 1 }}>
-                                                {totalPillarsCount}
+                                                {activeTotalCount}
                                             </Typography>
                                             <Typography sx={{ fontSize: '0.62rem', color: textMuted, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', mt: 0.3 }}>
-                                                Delegasi
+                                                {activeCenterLabel}
                                             </Typography>
                                         </Box>
                                     </Box>
 
-                                    {/* Executive 4-Pillar Grid Legend */}
-                                    <Grid container spacing={1.2} sx={{ mt: 1 }}>
-                                        {[
-                                            { label: 'Commercial & Paid', icon: '💼', color: '#2563eb', count: pillarsBreakdown.commercial?.total || 0, sub: `Kas: ${formatShortCurrency(pillarsBreakdown.commercial?.revenue || 0)}` },
-                                            { label: 'Scientific & Presenter', icon: '🔬', color: '#8b5cf6', count: pillarsBreakdown.scientific?.total || 0, sub: '100% Free Pass' },
-                                            { label: 'VIP & Leadership', icon: '🌟', color: '#f59e0b', count: pillarsBreakdown.leadership?.total || 0, sub: 'Undangan Khusus' },
-                                            { label: 'Expo, Booth & Crew', icon: '🏢', color: '#10b981', count: pillarsBreakdown.expo?.total || 0, sub: 'Exhibition Hall' },
-                                        ].map((item) => {
-                                            const pct = totalPillarsCount > 0 ? Math.round((item.count / totalPillarsCount) * 100) : 0;
-                                            return (
-                                                <Grid size={{ xs: 6 }} key={item.label}>
-                                                    <Box sx={{
-                                                        p: 1.2,
-                                                        borderRadius: '10px',
-                                                        bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
-                                                        border: `1px solid ${cardBorder}`,
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: 1
-                                                    }}>
-                                                        <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: item.color, flexShrink: 0 }} />
-                                                        <Box sx={{ minWidth: 0, flex: 1 }}>
-                                                            <Typography noWrap sx={{ fontSize: '0.72rem', fontWeight: 800, color: textPrimary }}>
-                                                                {item.label}
-                                                            </Typography>
-                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                                <Typography sx={{ fontSize: '0.8rem', fontWeight: 900, color: item.color }}>
-                                                                    {item.count} Pax <span style={{ fontSize: '0.64rem', color: textMuted }}>({pct}%)</span>
+                                    {/* ── MODE 1: EXECUTIVE 4-PILLAR GRID LEGEND ── */}
+                                    {pieMode === 'pillars' && (
+                                        <Grid container spacing={1.2} sx={{ mt: 1 }}>
+                                            {[
+                                                { label: 'Commercial & Paid', icon: '💼', color: '#2563eb', count: pillarsBreakdown.commercial?.total || 0, sub: `Kas: ${formatShortCurrency(pillarsBreakdown.commercial?.revenue || 0)}` },
+                                                { label: 'Scientific & Presenter', icon: '🔬', color: '#8b5cf6', count: pillarsBreakdown.scientific?.total || 0, sub: '100% Free Pass' },
+                                                { label: 'VIP & Leadership', icon: '🌟', color: '#f59e0b', count: pillarsBreakdown.leadership?.total || 0, sub: 'Undangan Khusus' },
+                                                { label: 'Expo, Booth & Crew', icon: '🏢', color: '#10b981', count: pillarsBreakdown.expo?.total || 0, sub: 'Exhibition Hall' },
+                                            ].map((item) => {
+                                                const pct = activeTotalCount > 0 ? Math.round((item.count / activeTotalCount) * 100) : 0;
+                                                return (
+                                                    <Grid size={{ xs: 6 }} key={item.label}>
+                                                        <Box sx={{
+                                                            p: 1.2,
+                                                            borderRadius: '10px',
+                                                            bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                                            border: `1px solid ${cardBorder}`,
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: 1
+                                                        }}>
+                                                            <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: item.color, flexShrink: 0 }} />
+                                                            <Box sx={{ minWidth: 0, flex: 1 }}>
+                                                                <Typography noWrap sx={{ fontSize: '0.72rem', fontWeight: 800, color: textPrimary }}>
+                                                                    {item.label}
+                                                                </Typography>
+                                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 900, color: item.color }}>
+                                                                        {item.count} Pax <span style={{ fontSize: '0.64rem', color: textMuted }}>({pct}%)</span>
+                                                                    </Typography>
+                                                                </Box>
+                                                                <Typography noWrap sx={{ fontSize: '0.64rem', color: textMuted, mt: 0.1 }}>
+                                                                    {item.sub}
                                                                 </Typography>
                                                             </Box>
-                                                            <Typography noWrap sx={{ fontSize: '0.64rem', color: textMuted, mt: 0.1 }}>
-                                                                {item.sub}
-                                                            </Typography>
                                                         </Box>
-                                                    </Box>
-                                                </Grid>
-                                            );
-                                        })}
-                                    </Grid>
+                                                    </Grid>
+                                                );
+                                            })}
+                                        </Grid>
+                                    )}
 
+                                    {/* ── MODE 2: 4-REGISTRATION GROUPS GRID LEGEND (Gambar 2) ── */}
+                                    {pieMode === 'groups' && (
+                                        <Grid container spacing={1.2} sx={{ mt: 1 }}>
+                                            {groupsPieData.map((item) => {
+                                                const pct = activeTotalCount > 0 ? Math.round((item.value / activeTotalCount) * 100) : 0;
+                                                return (
+                                                    <Grid size={{ xs: 6 }} key={item.id}>
+                                                        <Tooltip title="Klik untuk membedah kategori di grup ini" arrow>
+                                                            <Box
+                                                                onClick={() => {
+                                                                    setPieMode('categories');
+                                                                    setPieGroupFilter(item.id);
+                                                                }}
+                                                                sx={{
+                                                                    p: 1.2,
+                                                                    borderRadius: '10px',
+                                                                    bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc',
+                                                                    border: `1px solid ${cardBorder}`,
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    gap: 1,
+                                                                    cursor: 'pointer',
+                                                                    transition: 'all 0.15s ease',
+                                                                    '&:hover': {
+                                                                        bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                                        transform: 'translateY(-1px)',
+                                                                        borderColor: item.color,
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: item.color, flexShrink: 0 }} />
+                                                                <Box sx={{ minWidth: 0, flex: 1 }}>
+                                                                    <Typography noWrap sx={{ fontSize: '0.72rem', fontWeight: 800, color: textPrimary }}>
+                                                                        {item.icon} {item.label}
+                                                                    </Typography>
+                                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                        <Typography sx={{ fontSize: '0.8rem', fontWeight: 900, color: item.color }}>
+                                                                            {item.value} Pax <span style={{ fontSize: '0.64rem', color: textMuted }}>({pct}%)</span>
+                                                                        </Typography>
+                                                                    </Box>
+                                                                    <Typography noWrap sx={{ fontSize: '0.62rem', color: textMuted, mt: 0.1 }}>
+                                                                        {item.sub}
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Box>
+                                                        </Tooltip>
+                                                    </Grid>
+                                                );
+                                            })}
+                                        </Grid>
+                                    )}
+
+                                    {/* ── MODE 3: INDIVIDUAL TICKET CATEGORIES GRID (Gambar 2 Detail) ── */}
+                                    {pieMode === 'categories' && (
+                                        <Box sx={{
+                                            mt: 1,
+                                            maxHeight: 180,
+                                            overflowY: 'auto',
+                                            pr: 0.5,
+                                            '&::-webkit-scrollbar': { width: '4px' },
+                                            '&::-webkit-scrollbar-thumb': { bgcolor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)', borderRadius: '4px' }
+                                        }}>
+                                            <Grid container spacing={1}>
+                                                {categoriesPieData.filter(item => item.id !== 'empty').map((item) => {
+                                                    const pct = activeTotalCount > 0 ? Math.round((item.value / activeTotalCount) * 100) : 0;
+                                                    const isCurrentlyFiltered = typeFilter && typeFilter.includes(item.visitor_type);
+
+                                                    return (
+                                                        <Grid size={{ xs: 6 }} key={item.id}>
+                                                            <Tooltip title={`Klik untuk filter tabel ke ${item.label}`} arrow>
+                                                                <Box
+                                                                    onClick={() => onTypeFilterChange && onTypeFilterChange([item.visitor_type])}
+                                                                    sx={{
+                                                                        p: 1,
+                                                                        borderRadius: '9px',
+                                                                        bgcolor: isCurrentlyFiltered
+                                                                            ? (isDark ? 'rgba(59,130,246,0.2)' : '#dbeafe')
+                                                                            : (isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc'),
+                                                                        border: isCurrentlyFiltered
+                                                                            ? '1.5px solid #3b82f6'
+                                                                            : `1px solid ${cardBorder}`,
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        gap: 0.8,
+                                                                        cursor: 'pointer',
+                                                                        transition: 'all 0.15s ease',
+                                                                        '&:hover': {
+                                                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                                            transform: 'translateY(-1px)',
+                                                                            boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <Box sx={{ width: 9, height: 9, borderRadius: '50%', bgcolor: item.color, flexShrink: 0 }} />
+                                                                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                                                                        <Typography noWrap sx={{ fontSize: '0.71rem', fontWeight: 800, color: textPrimary }}>
+                                                                            {item.icon} {item.label}
+                                                                        </Typography>
+                                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                            <Typography sx={{ fontSize: '0.78rem', fontWeight: 900, color: item.color }}>
+                                                                                {item.value} Pax <span style={{ fontSize: '0.62rem', color: textMuted }}>({pct}%)</span>
+                                                                            </Typography>
+                                                                            {item.est_revenue > 0 && (
+                                                                                <Typography sx={{ fontSize: '0.62rem', fontWeight: 700, color: '#10b981' }}>
+                                                                                    {formatShortCurrency(item.est_revenue)}
+                                                                                </Typography>
+                                                                            )}
+                                                                        </Box>
+                                                                    </Box>
+                                                                </Box>
+                                                            </Tooltip>
+                                                        </Grid>
+                                                    );
+                                                })}
+                                            </Grid>
+                                        </Box>
+                                    )}
+
+                                    {/* Bottom Dynamic Navigation Footer */}
                                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5, pt: 1, borderTop: `1px solid ${cardBorder}` }}>
-                                        <Button
-                                            size="small"
-                                            onClick={() => setPillarsViewMode('cards')}
-                                            sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#8b5cf6', textTransform: 'none' }}
-                                        >
-                                            Buka Rincian Lengkap 4 Pilar &rarr;
-                                        </Button>
+                                        {pieMode === 'pillars' && (
+                                            <Button
+                                                size="small"
+                                                onClick={() => setPillarsViewMode('cards')}
+                                                sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#8b5cf6', textTransform: 'none' }}
+                                            >
+                                                Buka Rincian Lengkap 4 Pilar &rarr;
+                                            </Button>
+                                        )}
+                                        {pieMode === 'groups' && (
+                                            <Button
+                                                size="small"
+                                                onClick={() => {
+                                                    setPieMode('categories');
+                                                    setPieGroupFilter('all');
+                                                }}
+                                                sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#2563eb', textTransform: 'none' }}
+                                            >
+                                                Bedah Rincian per Kategori Tiket (Gambar 2) &rarr;
+                                            </Button>
+                                        )}
+                                        {pieMode === 'categories' && (
+                                            <Button
+                                                size="small"
+                                                onClick={() => {
+                                                    if (pieGroupFilter !== 'all') {
+                                                        setPieGroupFilter('all');
+                                                    } else {
+                                                        setPieMode('pillars');
+                                                    }
+                                                }}
+                                                sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#059669', textTransform: 'none' }}
+                                            >
+                                                {pieGroupFilter !== 'all' ? '← Tampilkan Semua 20+ Kategori' : '← Kembali ke Ringkasan 4 Pilar'}
+                                            </Button>
+                                        )}
                                     </Box>
                                 </Box>
                             ) : (
