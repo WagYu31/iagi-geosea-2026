@@ -755,82 +755,300 @@ class AdminController extends Controller
         return response()->download($zipPath, $zipFileName)->deleteFileAfterSend(true);
     }
 
-    public function exportPayments()
+    public function exportPayments(Request $request)
     {
-        $payments = Payment::with(['user:id,name,email,category,whatsapp', 'submission:id,title,submission_code'])
-            ->latest()
-            ->get()
-            ->map(function ($payment) {
-                $methodMap = [
-                    'bank_transfer' => 'Bank Transfer',
-                    'gopay' => 'GoPay',
-                    'shopeepay' => 'ShopeePay',
-                    'qris' => 'QRIS',
-                    'credit_card' => 'Credit Card',
-                    'cstore' => 'Convenience Store',
-                    'echannel' => 'Mandiri Bill',
-                ];
+        $format = strtolower((string)$request->input('format', 'xlsx'));
 
-                $method = 'N/A';
-                if ($payment->gateway === 'manual') {
-                    $method = 'Manual Bank Transfer';
-                } elseif ($payment->order_id) {
-                    $method = $methodMap[$payment->payment_type] ?? $payment->payment_type ?? 'Midtrans';
-                } elseif ($payment->payment_proof_url) {
-                    $method = 'Manual Bank Transfer';
+        $query = Payment::with(['user:id,name,email,category,whatsapp', 'submission:id,title,submission_code']);
+
+        if ($request->filled('ids')) {
+            $idArray = is_array($request->ids) ? $request->ids : array_filter(explode(',', (string)$request->ids));
+            $query->whereIn('id', $idArray);
+        } else {
+            $search = $request->input('search');
+            $category = $request->input('category');
+            $status = $request->input('status');
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $cleanSearch = ltrim($search, '#');
+                    $q->whereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    })
+                    ->orWhere('order_id', 'like', "%{$search}%")
+                    ->orWhere('transaction_id', 'like', "%{$search}%")
+                    ->orWhere('id', 'like', "%{$cleanSearch}%")
+                    ->orWhereHas('submission', function ($sq) use ($search) {
+                        $sq->where('submission_code', 'like', "%{$search}%")
+                            ->orWhere('title', 'like', "%{$search}%");
+                    });
+                });
+            }
+
+            if ($category && $category !== 'all') {
+                $query->whereHas('user', function ($q) use ($category) {
+                    $q->where('category', $category);
+                });
+            }
+
+            if ($status && $status !== 'all') {
+                if ($status === 'paid') {
+                    $query->where(function($q) {
+                        $q->where('status', 'paid')->orWhere('verified', true);
+                    });
+                } elseif ($status === 'pending') {
+                    $query->where('status', 'pending')->where('verified', false);
+                } elseif ($status === 'manual') {
+                    $query->where(function($q) {
+                        $q->where('gateway', 'manual')->orWhereNotNull('payment_proof_url');
+                    });
+                } elseif ($status === 'midtrans') {
+                    $query->whereNotNull('order_id');
                 }
-
-                $status = 'Pending';
-                if ($payment->status === 'paid' || $payment->verified) {
-                    $status = 'Paid';
-                } elseif ($payment->status === 'failed') {
-                    $status = 'Failed';
-                } elseif ($payment->status === 'expired') {
-                    $status = 'Expired';
-                } elseif ($payment->status === 'refunded') {
-                    $status = 'Refunded';
-                }
-
-                return [
-                    'Payment ID'        => $payment->id,
-                    'User Name'         => $payment->user->name ?? 'N/A',
-                    'Email'             => $payment->user->email ?? 'N/A',
-                    'WhatsApp'          => $payment->user->whatsapp ?? 'N/A',
-                    'Category'          => $payment->user->category ?? 'N/A',
-                    'Submission Code'   => $payment->submission->submission_code ?? 'N/A',
-                    'Submission Title'  => $payment->submission->title ?? 'N/A',
-                    'Amount (IDR)'      => $payment->amount ?? 0,
-                    'Payment Method'    => $method,
-                    'Order ID'          => $payment->order_id ?? '',
-                    'Transaction ID'    => $payment->transaction_id ?? '',
-                    'Status'            => $status,
-                    'Paid At'           => $payment->paid_at ? \Carbon\Carbon::parse($payment->paid_at)->format('Y-m-d H:i:s') : '',
-                    'Created At'        => $payment->created_at ? $payment->created_at->format('Y-m-d H:i:s') : '',
-                ];
-            });
-
-        $filename = 'payments_' . date('Y-m-d_His') . '.csv';
-        $handle = fopen('php://temp', 'r+');
-
-        // Add BOM for UTF-8
-        fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
-
-        if ($payments->isNotEmpty()) {
-            // Add header
-            fputcsv($handle, array_keys($payments->first()));
-
-            // Add data
-            foreach ($payments as $payment) {
-                fputcsv($handle, $payment);
             }
         }
+
+        $payments = $query->latest()->get();
+
+        // 1. EXCEL (.XLSX) EXPORT WITH REKAP & PIVOT EXECUTIVE
+        if ($format === 'xlsx' || $format === 'excel') {
+            @set_time_limit(300);
+            @ini_set('memory_limit', '512M');
+
+            $excelService = new \App\Services\PaymentExcelService();
+            $tempExcelPath = $excelService->generateWorkbook($payments);
+            $excelFilename = 'payments_rekap_dan_pivot_executive_' . date('Y-m-d_His') . '.xlsx';
+
+            if (ob_get_level()) {
+                @ob_end_clean();
+            }
+
+            $headers = [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition' => 'attachment; filename="' . $excelFilename . '"',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ];
+            if (file_exists($tempExcelPath)) {
+                $headers['Content-Length'] = filesize($tempExcelPath);
+            }
+
+            return response()->download($tempExcelPath, $excelFilename, $headers)->deleteFileAfterSend(true);
+        }
+
+        // 2. CSV EXPORT WITH PIVOT EXECUTIVE TABLES
+        $methodMap = [
+            'bank_transfer' => 'Bank Transfer',
+            'gopay' => 'GoPay',
+            'shopeepay' => 'ShopeePay',
+            'qris' => 'QRIS',
+            'credit_card' => 'Credit Card',
+            'cstore' => 'Convenience Store',
+            'echannel' => 'Mandiri Bill',
+        ];
+
+        $filename = 'payments_rekap_' . date('Y-m-d_His') . '.csv';
+        $handle = fopen('php://temp', 'r+');
+        fputs($handle, "\xEF\xBB\xBF"); // UTF-8 BOM
+
+        $headers = [
+            'No',
+            'Payment ID',
+            'Tanggal Registrasi',
+            'Tanggal Lunas',
+            'Nama Peserta',
+            'Email',
+            'WhatsApp',
+            'Kategori',
+            'Kode Submisi',
+            'Judul Submisi',
+            'Nominal (IDR)',
+            'Metode Pembayaran',
+            'Gateway',
+            'Status',
+            'Order ID',
+            'Transaction ID',
+            'Bukti Transfer',
+        ];
+        fputcsv($handle, $headers);
+
+        $totalNominal = 0;
+        $totalPaidRevenue = 0;
+        $paidCount = 0;
+        $pendingCount = 0;
+
+        $catStats = [];
+        $monthlyStats = [];
+        $statusStats = [];
+
+        $monthNames = [
+            '01' => 'Jan', '02' => 'Feb', '03' => 'Mar', '04' => 'Apr',
+            '05' => 'Mei', '06' => 'Jun', '07' => 'Jul', '08' => 'Agu',
+            '09' => 'Sep', '10' => 'Okt', '11' => 'Nov', '12' => 'Des'
+        ];
+
+        foreach ($payments as $idx => $payment) {
+            $amt = (float) ($payment->amount ?? 0);
+            $totalNominal += $amt;
+
+            $isPaid = ($payment->status === 'paid' || (bool)$payment->verified);
+            $isPending = (!$isPaid && !in_array($payment->status, ['failed', 'expired', 'refunded']));
+
+            if ($isPaid) {
+                $paidCount++;
+                $totalPaidRevenue += $amt;
+            } elseif ($isPending) {
+                $pendingCount++;
+            }
+
+            $method = 'Manual Bank Transfer';
+            if ($payment->gateway === 'manual') {
+                $method = 'Manual Bank Transfer';
+            } elseif ($payment->order_id) {
+                $method = $methodMap[$payment->payment_type] ?? $payment->payment_type ?? 'Midtrans';
+            } elseif ($payment->payment_proof_url) {
+                $method = 'Manual Bank Transfer';
+            }
+
+            $status = $isPaid ? 'Paid' : ($isPending ? 'Pending' : ucfirst($payment->status));
+
+            // Categories
+            $userCat = $payment->user ? (string)$payment->user->category : 'Other';
+            $matchedKey = 'Other';
+            if (str_contains(strtolower($userCat), 'student')) {
+                $matchedKey = 'Student';
+            } elseif (str_contains(strtolower($userCat), 'international') || str_contains(strtolower($userCat), 'intl')) {
+                $matchedKey = 'International Delegate';
+            } elseif (str_contains(strtolower($userCat), 'prof')) {
+                $matchedKey = 'Professional';
+            } elseif ($userCat) {
+                $matchedKey = $userCat;
+            }
+
+            if (!isset($catStats[$matchedKey])) {
+                $catStats[$matchedKey] = ['count' => 0, 'revenue' => 0];
+            }
+            if ($isPaid) {
+                $catStats[$matchedKey]['count']++;
+                $catStats[$matchedKey]['revenue'] += $amt;
+            }
+
+            // Monthly
+            if ($isPaid) {
+                $dt = $payment->paid_at ? \Carbon\Carbon::parse($payment->paid_at) : ($payment->created_at ? \Carbon\Carbon::parse($payment->created_at) : null);
+                if ($dt) {
+                    $mKey = $dt->format('Y-m');
+                    $mLabel = ($monthNames[$dt->format('m')] ?? $dt->format('M')) . ' ' . $dt->format('Y');
+                    if (!isset($monthlyStats[$mKey])) {
+                        $monthlyStats[$mKey] = ['label' => $mLabel, 'count' => 0, 'revenue' => 0];
+                    }
+                    $monthlyStats[$mKey]['count']++;
+                    $monthlyStats[$mKey]['revenue'] += $amt;
+                }
+            }
+
+            // Status
+            if (!isset($statusStats[$status])) {
+                $statusStats[$status] = ['count' => 0, 'revenue' => 0];
+            }
+            $statusStats[$status]['count']++;
+            $statusStats[$status]['revenue'] += $amt;
+
+            fputcsv($handle, [
+                $idx + 1,
+                $payment->id,
+                $payment->created_at ? $payment->created_at->format('Y-m-d H:i:s') : '',
+                $payment->paid_at ? \Carbon\Carbon::parse($payment->paid_at)->format('Y-m-d H:i:s') : '',
+                $payment->user->name ?? 'N/A',
+                $payment->user->email ?? 'N/A',
+                $payment->user->whatsapp ?? '',
+                $payment->user->category ?? 'N/A',
+                $payment->submission->submission_code ?? '',
+                $payment->submission->title ?? '',
+                $amt,
+                $method,
+                strtoupper($payment->gateway ?? 'MANUAL'),
+                $status,
+                $payment->order_id ?? '',
+                $payment->transaction_id ?? '',
+                !empty($payment->payment_proof_url) ? 'Ada' : 'Tidak Ada',
+            ]);
+        }
+
+        // Blank & Grand Total
+        fputcsv($handle, []);
+        fputcsv($handle, [
+            'TOTAL KESELURUHAN',
+            '',
+            '',
+            '',
+            'Total: ' . count($payments) . ' Transaksi',
+            '',
+            '',
+            '',
+            '',
+            '',
+            $totalNominal,
+            '',
+            '',
+            'Lunas: ' . $paidCount . ' | Pending: ' . $pendingCount,
+            '',
+            '',
+            '',
+        ]);
+
+        // PIVOT SECTIONS
+        fputcsv($handle, []);
+        fputcsv($handle, ['=== RINGKASAN EKSEKUTIF KEUANGAN (KEY FINANCIAL METRICS) ===']);
+        fputcsv($handle, ['Metrik', 'Nilai']);
+        fputcsv($handle, ['Total Transaksi', count($payments) . ' Data']);
+        fputcsv($handle, ['Total Revenue Verified (Kas Lunas)', 'Rp ' . number_format($totalPaidRevenue, 0, ',', '.')]);
+        fputcsv($handle, ['Total Transaksi Lunas', $paidCount . ' Transaksi']);
+        fputcsv($handle, ['Pending Verifikasi', $pendingCount . ' Transaksi']);
+        fputcsv($handle, ['Rata-rata Nominal per Tiket', 'Rp ' . number_format($paidCount > 0 ? round($totalPaidRevenue / $paidCount) : 0, 0, ',', '.')]);
+        fputcsv($handle, ['Tingkat Solvency (Lunas)', (count($payments) > 0 ? round(($paidCount / count($payments)) * 100, 1) : 0) . '%']);
+
+        fputcsv($handle, []);
+        fputcsv($handle, ['=== PIVOT 1: REKAPITULASI OMZET PER KATEGORI PESERTA (LUNAS) ===']);
+        fputcsv($handle, ['No', 'Kategori Delegasi', 'Jumlah Transaksi (Tx)', 'Total Omzet Lunas (IDR)', 'Rata-rata per Tiket (IDR)', 'Persentase Omzet']);
+        $cNo = 1;
+        foreach ($catStats as $cName => $cData) {
+            $avg = $cData['count'] > 0 ? round($cData['revenue'] / $cData['count']) : 0;
+            $pct = $totalPaidRevenue > 0 ? round(($cData['revenue'] / $totalPaidRevenue) * 100, 1) : 0;
+            fputcsv($handle, [$cNo++, $cName, $cData['count'], $cData['revenue'], $avg, $pct . '%']);
+        }
+        fputcsv($handle, ['', 'TOTAL REVENUE DIVERIFIKASI', $paidCount, $totalPaidRevenue, ($paidCount > 0 ? round($totalPaidRevenue / $paidCount) : 0), '100%']);
+
+        fputcsv($handle, []);
+        fputcsv($handle, ['=== PIVOT 2: TREN TRANSAKSI BULANAN (MONTHLY RUN RATE) ===']);
+        fputcsv($handle, ['No', 'Bulan Transaksi', 'Transaksi Baru (Tx)', 'Omzet Bulan Ini (IDR)', 'Kumulatif Transaksi (Tx)', 'Kumulatif Omzet (IDR)']);
+        ksort($monthlyStats);
+        $mNo = 1;
+        $cumTx = 0;
+        $cumRev = 0;
+        foreach ($monthlyStats as $mKey => $mData) {
+            $cumTx += $mData['count'];
+            $cumRev += $mData['revenue'];
+            fputcsv($handle, [$mNo++, $mData['label'], $mData['count'], $mData['revenue'], $cumTx, $cumRev]);
+        }
+        fputcsv($handle, ['', 'TOTAL TRANSAKSI BULANAN', $paidCount, $totalPaidRevenue, $cumTx, $cumRev]);
+
+        fputcsv($handle, []);
+        fputcsv($handle, ['=== PIVOT 3: REKAPITULASI STATUS PEMBAYARAN ===']);
+        fputcsv($handle, ['No', 'Status Pembayaran', 'Jumlah Transaksi (Tx)', 'Total Nominal (IDR)']);
+        $sNo = 1;
+        foreach ($statusStats as $sName => $sData) {
+            fputcsv($handle, [$sNo++, $sName, $sData['count'], $sData['revenue']]);
+        }
+        fputcsv($handle, ['', 'TOTAL STATUS', count($payments), $totalNominal]);
 
         rewind($handle);
         $csv = stream_get_contents($handle);
         fclose($handle);
 
         return response($csv, 200, [
-            'Content-Type' => 'text/csv',
+            'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }

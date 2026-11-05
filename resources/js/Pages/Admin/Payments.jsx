@@ -5,7 +5,7 @@ import {
     Box, Typography, Card, CardContent, Table, TableBody, TableCell, TableContainer,
     TableHead, TableRow, Chip, Button, Dialog, DialogTitle, DialogContent, DialogActions,
     IconButton, Avatar, Stack, Tooltip, useTheme, Tabs, Tab, TextField, InputAdornment,
-    Select, MenuItem, FormControl, InputLabel, Paper,
+    Select, MenuItem, FormControl, InputLabel, Paper, Menu, Divider,
 } from '@mui/material';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import CancelRoundedIcon from '@mui/icons-material/CancelRounded';
@@ -33,6 +33,9 @@ import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
 import InsightsRoundedIcon from '@mui/icons-material/InsightsRounded';
 import SpeedRoundedIcon from '@mui/icons-material/SpeedRounded';
+import TableChartRoundedIcon from '@mui/icons-material/TableChartRounded';
+import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded';
+import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 
 export default function AdminPayments({ payments = {}, stats = {}, analytics = {}, filters = {} }) {
     const theme = useTheme();
@@ -42,6 +45,22 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
     const [tabFilter, setTabFilter] = useState('all');
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
     const [categoryFilter, setCategoryFilter] = useState(filters.category || 'all');
+    const [exportMenuAnchor, setExportMenuAnchor] = useState(null);
+
+    const triggerExport = (format = 'xlsx') => {
+        const params = new URLSearchParams();
+        params.set('format', format);
+        if (categoryFilter && categoryFilter !== 'all') {
+            params.set('category', categoryFilter);
+        }
+        if (searchTerm) {
+            params.set('search', searchTerm);
+        }
+        if (tabFilter && tabFilter !== 'all') {
+            params.set('status', tabFilter);
+        }
+        window.location.href = `${route('admin.payments.export')}?${params.toString()}`;
+    };
 
     // Statistical Analytics Section States
     const [showAnalytics, setShowAnalytics] = useState(true);
@@ -470,11 +489,11 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
                             </Select>
                         </FormControl>
 
-                        {/* Berry Gradient Download CSV Button */}
+                        {/* Berry Gradient Export Excel & CSV Button with Pivot Menu */}
                         <Button
-                            component="a"
-                            href={route('admin.payments.export')}
+                            onClick={(e) => setExportMenuAnchor(e.currentTarget)}
                             startIcon={<DownloadRoundedIcon sx={{ fontSize: 18 }} />}
+                            endIcon={<KeyboardArrowDownRoundedIcon sx={{ fontSize: 18, ml: -0.5 }} />}
                             sx={{
                                 borderRadius: '12px',
                                 textTransform: 'none',
@@ -489,13 +508,72 @@ export default function AdminPayments({ payments = {}, stats = {}, analytics = {
                                 },
                                 transition: 'all 0.2s ease',
                                 boxShadow: '0 4px 14px rgba(13,122,106,0.25)',
-                                px: 2.75,
+                                px: 2.2,
                                 py: 1.1,
                                 whiteSpace: 'nowrap',
                             }}
                         >
-                            Download CSV
+                            Export Excel / CSV
                         </Button>
+                        <Menu
+                            anchorEl={exportMenuAnchor}
+                            open={Boolean(exportMenuAnchor)}
+                            onClose={() => setExportMenuAnchor(null)}
+                            PaperProps={{
+                                sx: {
+                                    borderRadius: '16px',
+                                    boxShadow: '0 12px 35px rgba(0,0,0,0.18)',
+                                    p: 1,
+                                    minWidth: 320,
+                                    bgcolor: isDark ? '#1e293b' : '#ffffff',
+                                }
+                            }}
+                        >
+                            <MenuItem
+                                onClick={() => {
+                                    setExportMenuAnchor(null);
+                                    triggerExport('xlsx');
+                                }}
+                                sx={{ 
+                                    py: 1.4, 
+                                    px: 2, 
+                                    borderRadius: '12px', 
+                                    gap: 1.5, 
+                                    bgcolor: isDark ? 'rgba(16,185,129,0.12)' : '#f0fdf4', 
+                                    '&:hover': { bgcolor: isDark ? 'rgba(16,185,129,0.2)' : '#dcfce7' } 
+                                }}
+                            >
+                                <TableChartRoundedIcon sx={{ color: '#059669', fontSize: 26 }} />
+                                <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 900, color: isDark ? '#34d399' : '#065f46', fontSize: '0.88rem' }}>
+                                        📊 Export Excel (.XLSX) Komplit &amp; Pivot
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: isDark ? '#a7f3d0' : '#047857', fontSize: '0.72rem', display: 'block', mt: 0.3 }}>
+                                        2 Sheet: Ringkasan Pivot Eksekutif &amp; Data Transaksi + Rumus SUM
+                                    </Typography>
+                                </Box>
+                            </MenuItem>
+
+                            <Divider sx={{ my: 0.8 }} />
+
+                            <MenuItem
+                                onClick={() => {
+                                    setExportMenuAnchor(null);
+                                    triggerExport('csv');
+                                }}
+                                sx={{ py: 1.2, px: 2, borderRadius: '12px', gap: 1.5, '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)' } }}
+                            >
+                                <DescriptionRoundedIcon sx={{ color: '#0284c7', fontSize: 24 }} />
+                                <Box>
+                                    <Typography variant="body2" sx={{ fontWeight: 800, color: c.textPrimary, fontSize: '0.85rem' }}>
+                                        📄 Export CSV (+ Rekap Pivot)
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: c.textMuted, fontSize: '0.72rem', display: 'block' }}>
+                                        Format CSV standar dengan tabel pivot kategori, bulanan, &amp; status
+                                    </Typography>
+                                </Box>
+                            </MenuItem>
+                        </Menu>
                     </Box>
                 </Box>
 
