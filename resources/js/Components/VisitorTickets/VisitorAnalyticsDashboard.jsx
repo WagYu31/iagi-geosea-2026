@@ -280,13 +280,16 @@ export default function VisitorAnalyticsDashboard({
     const [velocityFilterAnchor, setVelocityFilterAnchor] = useState(null);
     const [velocityFilter, setVelocityFilter] = useState('all'); // 'all' | 'lunas' | 'pending'
 
-    // 3. Projects Summary Filter (Top 5, Top 10, Corporate, University)
+    // 3. Gambar 2: Bi-Color Summary Filter (Default: Berdasarkan Kategori Registrasi!)
     const [summaryAnchor, setSummaryAnchor] = useState(null);
-    const [summaryFilter, setSummaryFilter] = useState('top5'); // 'top5' | 'top10' | 'corporate' | 'university'
+    const [biColorMode, setBiColorMode] = useState('categories'); // 'categories' (default!) | 'institutions'
+    const [categorySummaryFilter, setCategorySummaryFilter] = useState('top6'); // 'top6' | 'top10' | 'participant' | 'technical' | 'visitor' | 'roles' | 'all'
+    const [summaryFilter, setSummaryFilter] = useState('top5'); // 'top5' | 'top10' | 'corporate' | 'university' (for institutions mode)
 
-    // 4. Projects Overview (Categories)
+    // 4. Projects Overview (Categories Layout for Gambar 1)
     const [categoriesAnchor, setCategoriesAnchor] = useState(null);
     const [categoriesFilter, setCategoriesFilter] = useState('all'); // 'all' | 'paid' | 'free'
+    const [categoriesLayout, setCategoriesLayout] = useState('grid'); // 'grid' | 'list'
 
     // 5. Operational Tasks Tab
     const [tasksTab, setTasksTab] = useState('today'); // 'today' | 'week'
@@ -434,8 +437,83 @@ export default function VisitorAnalyticsDashboard({
         return filteredInstitutions.reduce((acc, i) => acc + Number(i.debt ?? i.debt_count ?? 0), 0);
     }, [filteredInstitutions]);
 
-    // ── 5. REAL DATA: CATEGORIES OVERVIEW (CONCENTRIC RINGS) ──
+    // ── 5. REAL DATA: ENRICHED REGISTRATION CATEGORIES (Bi-Color: Lunas vs Debt vs Pending) ──
     const rawCategories = analytics.categoryDistribution || [];
+
+    const enrichedCategories = useMemo(() => {
+        return rawCategories.map((c) => {
+            const total = Number(c.count || 0);
+            const meta = CATEGORY_META[c.visitor_type] || {};
+            const def = CATEGORY_LABELS[c.visitor_type] || {};
+            const label = def.label || meta.label || c.label || c.name || c.visitor_type;
+            const icon = def.icon || '🏷️';
+            const groupInfo = getCategoryGroup(c.visitor_type);
+            const color = def.color || meta.color || groupInfo.color;
+            const isFree = groupInfo.id === 'technical' || groupInfo.id === 'visitor' || groupInfo.id === 'roles';
+
+            const lunas = c.lunas !== undefined ? Number(c.lunas) : (isFree ? total : Math.round(total * (ticketSolvencyRate / 100)));
+            const debt = c.debt !== undefined ? Number(c.debt) : (isFree ? 0 : Math.max(0, total - lunas));
+            const pending = c.pending !== undefined ? Number(c.pending) : 0;
+            const checkedIn = c.checked_in !== undefined ? Number(c.checked_in) : 0;
+            const estRevenue = Number(c.est_revenue || 0);
+
+            return {
+                ...c,
+                id: c.visitor_type,
+                visitor_type: c.visitor_type,
+                label,
+                name: label,
+                icon,
+                color,
+                group: groupInfo.id,
+                groupTitle: groupInfo.shortTitle,
+                isFree,
+                count: total,
+                value: total,
+                lunas,
+                debt,
+                pending,
+                checkedIn,
+                est_revenue: estRevenue,
+                solvency_pct: total > 0 ? Math.round((lunas / total) * 100) : 0,
+            };
+        });
+    }, [rawCategories, CATEGORY_META, ticketSolvencyRate]);
+
+    // Categories Bi-Color Filter (Gambar 2: Berdasarkan Kategori Registrasi)
+    const filteredCategorySummary = useMemo(() => {
+        let list = [...enrichedCategories].filter(c => c.count > 0);
+        list.sort((a, b) => b.count - a.count);
+
+        if (categorySummaryFilter === 'top6') return list.slice(0, 6);
+        if (categorySummaryFilter === 'top10') return list.slice(0, 10);
+        if (categorySummaryFilter === 'participant') return list.filter(c => c.group === 'participant');
+        if (categorySummaryFilter === 'technical') return list.filter(c => c.group === 'technical');
+        if (categorySummaryFilter === 'visitor') return list.filter(c => c.group === 'visitor');
+        if (categorySummaryFilter === 'roles') return list.filter(c => c.group === 'roles');
+        return list; // 'all'
+    }, [enrichedCategories, categorySummaryFilter]);
+
+    const maxCatSummaryCount = useMemo(() => {
+        return Math.max(...(filteredCategorySummary.length ? filteredCategorySummary.map(c => c.count) : [1]), 1);
+    }, [filteredCategorySummary]);
+
+    const catSummaryTotalLunas = useMemo(() => {
+        return filteredCategorySummary.reduce((acc, c) => acc + c.lunas, 0);
+    }, [filteredCategorySummary]);
+
+    const catSummaryTotalDebt = useMemo(() => {
+        return filteredCategorySummary.reduce((acc, c) => acc + c.debt, 0);
+    }, [filteredCategorySummary]);
+
+    const topDebtCategoryList = useMemo(() => {
+        return [...enrichedCategories].filter(c => c.debt > 0).sort((a, b) => b.debt - a.debt);
+    }, [enrichedCategories]);
+
+    const topRevenueCategoryList = useMemo(() => {
+        return [...enrichedCategories].filter(c => c.est_revenue > 0).sort((a, b) => b.est_revenue - a.est_revenue);
+    }, [enrichedCategories]);
+
     const activeCategories = useMemo(() => {
         if (categoriesFilter === 'paid') {
             return rawCategories.filter((c) =>
@@ -590,7 +668,7 @@ export default function VisitorAnalyticsDashboard({
 
     // ── CATEGORIES PIE DATA (Individual ticket categories from Gambar 2) ──
     const categoriesPieData = useMemo(() => {
-        let list = rawCategories.filter((c) => Number(c.count || 0) > 0);
+        let list = enrichedCategories.filter((c) => c.count > 0);
 
         if (pieGroupFilter !== 'all') {
             const targetGroup = REGISTRATION_GROUPS.find((g) => g.id === pieGroupFilter);
@@ -605,28 +683,24 @@ export default function VisitorAnalyticsDashboard({
             ];
         }
 
-        return list.map((c) => {
-            const meta = CATEGORY_META[c.visitor_type] || {};
-            const def = CATEGORY_LABELS[c.visitor_type] || {};
-            const label = def.label || meta.label || c.label || c.visitor_type;
-            const icon = def.icon || '🏷️';
-            const color = def.color || meta.color || getCategoryGroup(c.visitor_type).color;
-            const groupInfo = getCategoryGroup(c.visitor_type);
-
-            return {
-                id: c.visitor_type,
-                value: Number(c.count || 0),
-                label: label,
-                fullLabel: `${icon} ${label}`,
-                visitor_type: c.visitor_type,
-                icon: icon,
-                color: color,
-                group: groupInfo.id,
-                groupTitle: groupInfo.shortTitle,
-                est_revenue: Number(c.est_revenue || 0),
-            };
-        });
-    }, [rawCategories, pieGroupFilter, CATEGORY_META]);
+        return list.map((c) => ({
+            id: c.visitor_type,
+            value: c.count,
+            count: c.count,
+            label: c.label,
+            fullLabel: `${c.icon} ${c.label}`,
+            visitor_type: c.visitor_type,
+            icon: c.icon,
+            color: c.color,
+            group: c.group,
+            groupTitle: c.groupTitle,
+            est_revenue: c.est_revenue,
+            lunas: c.lunas,
+            debt: c.debt,
+            pending: c.pending,
+            solvency_pct: c.solvency_pct,
+        }));
+    }, [enrichedCategories, pieGroupFilter]);
 
     const totalCategoriesCount = useMemo(() => {
         return categoriesPieData.reduce((sum, c) => sum + (c.id === 'empty' ? 0 : c.value), 0);
@@ -2450,29 +2524,63 @@ export default function VisitorAnalyticsDashboard({
                                         </Button>
                                     </Box>
 
-                                    {/* Sub-Filter Dropdown when in 'categories' mode */}
+                                    {/* Sub-Filter Dropdown & Layout Switcher when in 'categories' mode */}
                                     {pieMode === 'categories' && (
-                                        <FormControl size="small" sx={{ minWidth: 155 }}>
-                                            <Select
-                                                value={pieGroupFilter}
-                                                onChange={(e) => setPieGroupFilter(e.target.value)}
-                                                displayEmpty
-                                                sx={{
-                                                    height: 27,
-                                                    fontSize: '0.69rem',
-                                                    fontWeight: 700,
-                                                    borderRadius: '7px',
-                                                    bgcolor: isDark ? '#1e293b' : '#ffffff',
-                                                    '& .MuiSelect-select': { py: 0.4, px: 0.9 },
-                                                }}
-                                            >
-                                                <MenuItem value="all" sx={{ fontSize: '0.74rem', fontWeight: 800 }}>🌐 Semua Kategori (20+)</MenuItem>
-                                                <MenuItem value="participant" sx={{ fontSize: '0.74rem' }}>💼 1. Participant (Berbayar)</MenuItem>
-                                                <MenuItem value="technical" sx={{ fontSize: '0.74rem' }}>🔬 2. Technical (Presenter/Judge)</MenuItem>
-                                                <MenuItem value="visitor" sx={{ fontSize: '0.74rem' }}>🎟️ 3. Visitor (Visitor Pass)</MenuItem>
-                                                <MenuItem value="roles" sx={{ fontSize: '0.74rem' }}>🌟 4. Roles & Invitations</MenuItem>
-                                            </Select>
-                                        </FormControl>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                            <FormControl size="small" sx={{ minWidth: 155 }}>
+                                                <Select
+                                                    value={pieGroupFilter}
+                                                    onChange={(e) => setPieGroupFilter(e.target.value)}
+                                                    displayEmpty
+                                                    sx={{
+                                                        height: 27,
+                                                        fontSize: '0.69rem',
+                                                        fontWeight: 700,
+                                                        borderRadius: '7px',
+                                                        bgcolor: isDark ? '#1e293b' : '#ffffff',
+                                                        '& .MuiSelect-select': { py: 0.4, px: 0.9 },
+                                                    }}
+                                                >
+                                                    <MenuItem value="all" sx={{ fontSize: '0.74rem', fontWeight: 800 }}>🌐 Semua Kategori (20+)</MenuItem>
+                                                    <MenuItem value="participant" sx={{ fontSize: '0.74rem' }}>💼 1. Participant (Berbayar)</MenuItem>
+                                                    <MenuItem value="technical" sx={{ fontSize: '0.74rem' }}>🔬 2. Technical (Presenter/Judge)</MenuItem>
+                                                    <MenuItem value="visitor" sx={{ fontSize: '0.74rem' }}>🎟️ 3. Visitor (Visitor Pass)</MenuItem>
+                                                    <MenuItem value="roles" sx={{ fontSize: '0.74rem' }}>🌟 4. Roles & Invitations</MenuItem>
+                                                </Select>
+                                            </FormControl>
+
+                                            {/* Layout Switcher (Grid vs List) */}
+                                            <Box sx={{ display: 'inline-flex', p: '2px', bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff', borderRadius: '7px', border: `1px solid ${cardBorder}` }}>
+                                                <Tooltip title="Tampilan Grid 2 Kolom Rapi" arrow>
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => setCategoriesLayout('grid')}
+                                                        sx={{
+                                                            p: '2px 4px',
+                                                            borderRadius: '5px',
+                                                            bgcolor: categoriesLayout === 'grid' ? (isDark ? '#1e293b' : '#eff6ff') : 'transparent',
+                                                            color: categoriesLayout === 'grid' ? '#2563eb' : textMuted,
+                                                        }}
+                                                    >
+                                                        <TableChartRoundedIcon sx={{ fontSize: 14 }} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                                <Tooltip title="Tampilan List Ramping Nyaman Dibaca" arrow>
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={() => setCategoriesLayout('list')}
+                                                        sx={{
+                                                            p: '2px 4px',
+                                                            borderRadius: '5px',
+                                                            bgcolor: categoriesLayout === 'list' ? (isDark ? '#1e293b' : '#eff6ff') : 'transparent',
+                                                            color: categoriesLayout === 'list' ? '#2563eb' : textMuted,
+                                                        }}
+                                                    >
+                                                        <ViewListRoundedIcon sx={{ fontSize: 14 }} />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Box>
+                                        </Box>
                                     )}
 
                                     {/* Quick Active Filter Indicator */}
@@ -2629,69 +2737,214 @@ export default function VisitorAnalyticsDashboard({
                                         </Grid>
                                     )}
 
-                                    {/* ── MODE 3: INDIVIDUAL TICKET CATEGORIES GRID (Gambar 2 Detail) ── */}
+                                    {/* ── MODE 3: INDIVIDUAL TICKET CATEGORIES (Gambar 1 Refined & Polished) ── */}
                                     {pieMode === 'categories' && (
                                         <Box sx={{
                                             mt: 1,
-                                            maxHeight: 180,
+                                            maxHeight: 255,
                                             overflowY: 'auto',
                                             pr: 0.5,
                                             '&::-webkit-scrollbar': { width: '4px' },
                                             '&::-webkit-scrollbar-thumb': { bgcolor: isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)', borderRadius: '4px' }
                                         }}>
-                                            <Grid container spacing={1}>
-                                                {categoriesPieData.filter(item => item.id !== 'empty').map((item) => {
-                                                    const pct = activeTotalCount > 0 ? Math.round((item.value / activeTotalCount) * 100) : 0;
-                                                    const isCurrentlyFiltered = typeFilter && typeFilter.includes(item.visitor_type);
+                                            {categoriesLayout === 'grid' ? (
+                                                <Grid container spacing={1.2}>
+                                                    {categoriesPieData.filter(item => item.id !== 'empty').map((item) => {
+                                                        const pct = activeTotalCount > 0 ? Math.round((item.value / activeTotalCount) * 100) : 0;
+                                                        const isCurrentlyFiltered = typeFilter && typeFilter.includes(item.visitor_type);
 
-                                                    return (
-                                                        <Grid size={{ xs: 6 }} key={item.id}>
-                                                            <Tooltip title={`Klik untuk filter tabel ke ${item.label}`} arrow>
+                                                        return (
+                                                            <Grid size={{ xs: 6 }} key={item.id}>
+                                                                <Tooltip title={`Klik untuk filter tabel ke ${item.label}`} arrow>
+                                                                    <Box
+                                                                        onClick={() => onTypeFilterChange && onTypeFilterChange([item.visitor_type])}
+                                                                        sx={{
+                                                                            p: 1.2,
+                                                                            borderRadius: '11px',
+                                                                            bgcolor: isCurrentlyFiltered
+                                                                                ? (isDark ? 'rgba(37,99,235,0.12)' : '#f0f7ff')
+                                                                                : (isDark ? 'rgba(30,41,59,0.5)' : '#ffffff'),
+                                                                            border: isCurrentlyFiltered
+                                                                                ? '1.5px solid #2563eb'
+                                                                                : `1px solid ${cardBorder}`,
+                                                                            borderLeft: `4px solid ${item.color}`,
+                                                                            boxShadow: isCurrentlyFiltered
+                                                                                ? '0 0 0 2px rgba(37,99,235,0.15)'
+                                                                                : '0 1px 3px rgba(0,0,0,0.03)',
+                                                                            display: 'flex',
+                                                                            flexDirection: 'column',
+                                                                            justifyContent: 'space-between',
+                                                                            cursor: 'pointer',
+                                                                            transition: 'all 0.18s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                                            '&:hover': {
+                                                                                bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f8fafc',
+                                                                                transform: 'translateY(-2px)',
+                                                                                boxShadow: '0 6px 14px rgba(0,0,0,0.08)',
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        {/* Top Row: Icon + Title + Active Pill */}
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 0.8, mb: 0.8 }}>
+                                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7, minWidth: 0, flex: 1 }}>
+                                                                                <Box sx={{
+                                                                                    width: 22,
+                                                                                    height: 22,
+                                                                                    borderRadius: '6px',
+                                                                                    bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                                                    display: 'flex',
+                                                                                    alignItems: 'center',
+                                                                                    justifyContent: 'center',
+                                                                                    fontSize: '0.8rem',
+                                                                                    flexShrink: 0
+                                                                                }}>
+                                                                                    {item.icon}
+                                                                                </Box>
+                                                                                <Typography noWrap sx={{ fontSize: '0.77rem', fontWeight: 800, color: textPrimary, letterSpacing: '-0.01em' }}>
+                                                                                    {item.label}
+                                                                                </Typography>
+                                                                            </Box>
+                                                                            {isCurrentlyFiltered && (
+                                                                                <Chip
+                                                                                    size="small"
+                                                                                    label="✓ Aktif"
+                                                                                    sx={{
+                                                                                        height: 16,
+                                                                                        fontSize: '0.58rem',
+                                                                                        fontWeight: 800,
+                                                                                        bgcolor: '#dbeafe',
+                                                                                        color: '#2563eb',
+                                                                                        borderRadius: '4px',
+                                                                                        px: 0.2
+                                                                                    }}
+                                                                                />
+                                                                            )}
+                                                                        </Box>
+
+                                                                        {/* Middle Row: Metrics (Pax + Share Pct + Revenue) */}
+                                                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 0.5 }}>
+                                                                            <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.6 }}>
+                                                                                <Typography sx={{ fontSize: '0.92rem', fontWeight: 900, color: item.color, lineHeight: 1 }}>
+                                                                                    {item.value} <span style={{ fontSize: '0.68rem', fontWeight: 700, color: textMuted }}>Pax</span>
+                                                                                </Typography>
+                                                                                <Chip
+                                                                                    size="small"
+                                                                                    label={`${pct}%`}
+                                                                                    sx={{
+                                                                                        height: 18,
+                                                                                        fontSize: '0.64rem',
+                                                                                        fontWeight: 800,
+                                                                                        bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                                                        color: textSecondary,
+                                                                                        borderRadius: '4px',
+                                                                                    }}
+                                                                                />
+                                                                            </Box>
+                                                                            {item.est_revenue > 0 && (
+                                                                                <Chip
+                                                                                    size="small"
+                                                                                    label={formatShortCurrency(item.est_revenue)}
+                                                                                    sx={{
+                                                                                        height: 18,
+                                                                                        fontSize: '0.64rem',
+                                                                                        fontWeight: 800,
+                                                                                        bgcolor: '#ecfdf5',
+                                                                                        color: '#059669',
+                                                                                        border: '1px solid rgba(16,185,129,0.25)',
+                                                                                        borderRadius: '4px',
+                                                                                    }}
+                                                                                />
+                                                                            )}
+                                                                        </Box>
+
+                                                                        {/* Bottom Micro-Bar (Proportion Indicator) */}
+                                                                        <Box sx={{ width: '100%', height: 3.5, borderRadius: '2px', bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', mt: 0.8, overflow: 'hidden' }}>
+                                                                            <Box sx={{ width: `${Math.min(100, Math.max(pct, 4))}%`, height: '100%', bgcolor: item.color, borderRadius: '2px', transition: 'width 0.4s ease' }} />
+                                                                        </Box>
+                                                                    </Box>
+                                                                </Tooltip>
+                                                            </Grid>
+                                                        );
+                                                    })}
+                                                </Grid>
+                                            ) : (
+                                                /* Clean List View (Baris Ramping Nyaman Dibaca) */
+                                                <Stack spacing={1}>
+                                                    {categoriesPieData.filter(item => item.id !== 'empty').map((item, idx) => {
+                                                        const pct = activeTotalCount > 0 ? Math.round((item.value / activeTotalCount) * 100) : 0;
+                                                        const isCurrentlyFiltered = typeFilter && typeFilter.includes(item.visitor_type);
+
+                                                        return (
+                                                            <Tooltip key={item.id} title={`Klik untuk filter tabel ke ${item.label}`} arrow>
                                                                 <Box
                                                                     onClick={() => onTypeFilterChange && onTypeFilterChange([item.visitor_type])}
                                                                     sx={{
-                                                                        p: 1,
+                                                                        p: '8px 12px',
                                                                         borderRadius: '9px',
                                                                         bgcolor: isCurrentlyFiltered
-                                                                            ? (isDark ? 'rgba(59,130,246,0.2)' : '#dbeafe')
-                                                                            : (isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc'),
+                                                                            ? (isDark ? 'rgba(37,99,235,0.12)' : '#f0f7ff')
+                                                                            : (isDark ? 'rgba(30,41,59,0.5)' : '#ffffff'),
                                                                         border: isCurrentlyFiltered
-                                                                            ? '1.5px solid #3b82f6'
+                                                                            ? '1.5px solid #2563eb'
                                                                             : `1px solid ${cardBorder}`,
+                                                                        borderLeft: `4px solid ${item.color}`,
                                                                         display: 'flex',
                                                                         alignItems: 'center',
-                                                                        gap: 0.8,
+                                                                        justifyContent: 'space-between',
+                                                                        gap: 1.5,
                                                                         cursor: 'pointer',
                                                                         transition: 'all 0.15s ease',
                                                                         '&:hover': {
-                                                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
-                                                                            transform: 'translateY(-1px)',
-                                                                            boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+                                                                            bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f8fafc',
+                                                                            transform: 'translateX(2px)',
                                                                         }
                                                                     }}
                                                                 >
-                                                                    <Box sx={{ width: 9, height: 9, borderRadius: '50%', bgcolor: item.color, flexShrink: 0 }} />
-                                                                    <Box sx={{ minWidth: 0, flex: 1 }}>
-                                                                        <Typography noWrap sx={{ fontSize: '0.71rem', fontWeight: 800, color: textPrimary }}>
-                                                                            {item.icon} {item.label}
+                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0, flex: 1.2 }}>
+                                                                        <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: textMuted, width: 18 }}>
+                                                                            #{idx + 1}
                                                                         </Typography>
-                                                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                                            <Typography sx={{ fontSize: '0.78rem', fontWeight: 900, color: item.color }}>
-                                                                                {item.value} Pax <span style={{ fontSize: '0.62rem', color: textMuted }}>({pct}%)</span>
-                                                                            </Typography>
-                                                                            {item.est_revenue > 0 && (
-                                                                                <Typography sx={{ fontSize: '0.62rem', fontWeight: 700, color: '#10b981' }}>
-                                                                                    {formatShortCurrency(item.est_revenue)}
-                                                                                </Typography>
-                                                                            )}
+                                                                        <Box sx={{ width: 22, height: 22, borderRadius: '6px', bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', flexShrink: 0 }}>
+                                                                            {item.icon}
                                                                         </Box>
+                                                                        <Typography noWrap sx={{ fontSize: '0.78rem', fontWeight: 800, color: textPrimary }}>
+                                                                            {item.label}
+                                                                        </Typography>
+                                                                        {isCurrentlyFiltered && (
+                                                                            <Chip label="Aktif" size="small" sx={{ height: 16, fontSize: '0.58rem', fontWeight: 800, bgcolor: '#dbeafe', color: '#2563eb', borderRadius: '4px' }} />
+                                                                        )}
+                                                                    </Box>
+
+                                                                    {/* Mini Proportion Bar */}
+                                                                    <Box sx={{ width: 80, height: 5, borderRadius: '3px', bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9', overflow: 'hidden' }}>
+                                                                        <Box sx={{ width: `${Math.min(100, Math.max(pct, 4))}%`, height: '100%', bgcolor: item.color, borderRadius: '3px' }} />
+                                                                    </Box>
+
+                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                        <Typography sx={{ fontSize: '0.84rem', fontWeight: 900, color: item.color }}>
+                                                                            {item.value} Pax <span style={{ fontSize: '0.68rem', fontWeight: 600, color: textMuted }}>({pct}%)</span>
+                                                                        </Typography>
+                                                                        {item.est_revenue > 0 && (
+                                                                            <Chip
+                                                                                size="small"
+                                                                                label={formatShortCurrency(item.est_revenue)}
+                                                                                sx={{
+                                                                                    height: 18,
+                                                                                    fontSize: '0.64rem',
+                                                                                    fontWeight: 800,
+                                                                                    bgcolor: '#ecfdf5',
+                                                                                    color: '#059669',
+                                                                                    border: '1px solid rgba(16,185,129,0.25)',
+                                                                                    borderRadius: '4px',
+                                                                                }}
+                                                                            />
+                                                                        )}
                                                                     </Box>
                                                                 </Box>
                                                             </Tooltip>
-                                                        </Grid>
-                                                    );
-                                                })}
-                                            </Grid>
+                                                        );
+                                                    })}
+                                                </Stack>
+                                            )}
                                         </Box>
                                     )}
 
@@ -2875,50 +3128,107 @@ export default function VisitorAnalyticsDashboard({
                         </Card>
                     </Grid>
 
-                    {/* Right 7 Cols: Top 10 Delegations (Bi-Color Stacked Horizontal Bar: Green Lunas vs Orange Debt) */}
+                    {/* Right 7 Cols: Bi-Color Stacked Horizontal Bar: Berdasarkan Kategori Registrasi (Gambar 2 Request) */}
                     <Grid size={{ xs: 12, lg: 7 }}>
-                        <Card elevation={0} sx={{ ...diboldCardSx, minHeight: 450 }}>
+                        <Card elevation={0} sx={{ ...diboldCardSx, minHeight: 450, display: 'flex', flexDirection: 'column' }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1.5, mb: 2 }}>
                                 <Box>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <GroupsRoundedIcon sx={{ fontSize: 20, color: '#2563eb' }} />
+                                        {biColorMode === 'categories' ? (
+                                            <CategoryRoundedIcon sx={{ fontSize: 20, color: '#2563eb' }} />
+                                        ) : (
+                                            <GroupsRoundedIcon sx={{ fontSize: 20, color: '#2563eb' }} />
+                                        )}
                                         <Typography sx={{ fontSize: '0.98rem', fontWeight: 900, color: textPrimary, letterSpacing: '-0.01em' }}>
-                                            Top Delegasi Instansi & Status Pembayaran
+                                            {biColorMode === 'categories'
+                                                ? 'Status Pembayaran & Kehadiran per Kategori Registrasi'
+                                                : 'Top Delegasi Instansi & Status Pembayaran'}
                                         </Typography>
                                     </Box>
                                     <Typography sx={{ fontSize: '0.76rem', color: textSecondary, mt: 0.3 }}>
-                                        Visualisasi Bi-Color: <strong style={{ color: '#10b981' }}>Hijau (Lunas)</strong> vs <strong style={{ color: '#ea580c' }}>Oranye (Piutang Korporat)</strong>
+                                        Visualisasi Bi-Color: <strong style={{ color: '#10b981' }}>Hijau (Lunas / Free Pass)</strong> vs <strong style={{ color: '#ea580c' }}>Oranye (Piutang Korporat)</strong>
                                     </Typography>
                                 </Box>
 
-                                {/* Summary Filter Dropdown */}
-                                <Button
-                                    size="small"
-                                    onClick={(e) => setSummaryAnchor(e.currentTarget)}
-                                    endIcon={<KeyboardArrowDownRoundedIcon sx={{ fontSize: 16 }} />}
-                                    sx={{ ...diboldPillSx, fontWeight: 800 }}
-                                >
-                                    {summaryFilter === 'top10' ? 'Top 10 Instansi' : summaryFilter === 'corporate' ? 'Korporat / Migas' : summaryFilter === 'university' ? 'Universitas' : 'Top 5 Utama'}
-                                </Button>
-                                <Menu
-                                    anchorEl={summaryAnchor}
-                                    open={Boolean(summaryAnchor)}
-                                    onClose={() => setSummaryAnchor(null)}
-                                    {...diboldMenuProps}
-                                >
-                                    <MenuItem onClick={() => { setSummaryFilter('top5'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'top5')}>
-                                        Top 5 Utama
-                                    </MenuItem>
-                                    <MenuItem onClick={() => { setSummaryFilter('top10'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'top10')}>
-                                        Top 10 Terbanyak
-                                    </MenuItem>
-                                    <MenuItem onClick={() => { setSummaryFilter('corporate'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'corporate')}>
-                                        Korporat, BUMN & KKKS Migas
-                                    </MenuItem>
-                                    <MenuItem onClick={() => { setSummaryFilter('university'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'university')}>
-                                        Universitas & Akademisi
-                                    </MenuItem>
-                                </Menu>
+                                {/* Summary Filter Dropdown & Mode Switch */}
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Button
+                                        size="small"
+                                        onClick={(e) => setSummaryAnchor(e.currentTarget)}
+                                        endIcon={<KeyboardArrowDownRoundedIcon sx={{ fontSize: 16 }} />}
+                                        sx={{ ...diboldPillSx, fontWeight: 800 }}
+                                    >
+                                        {biColorMode === 'categories' ? (
+                                            categorySummaryFilter === 'top6' ? 'Top 6 Kategori' :
+                                            categorySummaryFilter === 'top10' ? 'Top 10 Kategori' :
+                                            categorySummaryFilter === 'participant' ? '1. Participant' :
+                                            categorySummaryFilter === 'technical' ? '2. Technical' :
+                                            categorySummaryFilter === 'visitor' ? '3. Visitor' :
+                                            categorySummaryFilter === 'roles' ? '4. Roles' : 'Semua Kategori (20+)'
+                                        ) : (
+                                            summaryFilter === 'top10' ? 'Top 10 Instansi' :
+                                            summaryFilter === 'corporate' ? 'Korporat / Migas' :
+                                            summaryFilter === 'university' ? 'Universitas' : 'Top 5 Utama'
+                                        )}
+                                    </Button>
+                                    <Menu
+                                        anchorEl={summaryAnchor}
+                                        open={Boolean(summaryAnchor)}
+                                        onClose={() => setSummaryAnchor(null)}
+                                        {...diboldMenuProps}
+                                    >
+                                        {biColorMode === 'categories' ? [
+                                            <ListSubheader key="hdr-cat" sx={{ fontSize: '0.68rem', fontWeight: 800, color: textMuted, lineHeight: '28px' }}>
+                                                FILTER KATEGORI REGISTRASI
+                                            </ListSubheader>,
+                                            <MenuItem key="top6" onClick={() => { setCategorySummaryFilter('top6'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(categorySummaryFilter === 'top6')}>
+                                                🏆 Top 6 Kategori Terbanyak
+                                            </MenuItem>,
+                                            <MenuItem key="top10" onClick={() => { setCategorySummaryFilter('top10'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(categorySummaryFilter === 'top10')}>
+                                                📊 Top 10 Kategori
+                                            </MenuItem>,
+                                            <MenuItem key="part" onClick={() => { setCategorySummaryFilter('participant'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(categorySummaryFilter === 'participant')}>
+                                                💼 1. Participant (Berbayar)
+                                            </MenuItem>,
+                                            <MenuItem key="tech" onClick={() => { setCategorySummaryFilter('technical'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(categorySummaryFilter === 'technical')}>
+                                                🔬 2. Technical (Presenter / Juri)
+                                            </MenuItem>,
+                                            <MenuItem key="vis" onClick={() => { setCategorySummaryFilter('visitor'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(categorySummaryFilter === 'visitor')}>
+                                                🎟️ 3. Visitor (Visitor Pass)
+                                            </MenuItem>,
+                                            <MenuItem key="rol" onClick={() => { setCategorySummaryFilter('roles'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(categorySummaryFilter === 'roles')}>
+                                                🌟 4. Roles & Invitations
+                                            </MenuItem>,
+                                            <MenuItem key="all" onClick={() => { setCategorySummaryFilter('all'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(categorySummaryFilter === 'all')}>
+                                                🌐 Semua Kategori (20+)
+                                            </MenuItem>,
+                                            <Divider key="div" />,
+                                            <MenuItem key="switch-inst" onClick={() => { setBiColorMode('institutions'); setSummaryAnchor(null); }} sx={{ fontSize: '0.74rem', color: '#2563eb', fontWeight: 800 }}>
+                                                🏢 Beralih ke Mode Instansi &rarr;
+                                            </MenuItem>
+                                        ] : [
+                                            <ListSubheader key="hdr-inst" sx={{ fontSize: '0.68rem', fontWeight: 800, color: textMuted, lineHeight: '28px' }}>
+                                                FILTER INSTANSI
+                                            </ListSubheader>,
+                                            <MenuItem key="top5" onClick={() => { setSummaryFilter('top5'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'top5')}>
+                                                Top 5 Utama
+                                            </MenuItem>,
+                                            <MenuItem key="top10" onClick={() => { setSummaryFilter('top10'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'top10')}>
+                                                Top 10 Terbanyak
+                                            </MenuItem>,
+                                            <MenuItem key="corp" onClick={() => { setSummaryFilter('corporate'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'corporate')}>
+                                                Korporat, BUMN & KKKS Migas
+                                            </MenuItem>,
+                                            <MenuItem key="univ" onClick={() => { setSummaryFilter('university'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(summaryFilter === 'university')}>
+                                                Universitas & Akademisi
+                                            </MenuItem>,
+                                            <Divider key="div2" />,
+                                            <MenuItem key="switch-cat" onClick={() => { setBiColorMode('categories'); setSummaryAnchor(null); }} sx={{ fontSize: '0.74rem', color: '#059669', fontWeight: 800 }}>
+                                                🏷️ Beralih ke Mode Kategori Registrasi &rarr;
+                                            </MenuItem>
+                                        ]}
+                                    </Menu>
+                                </Box>
                             </Box>
 
                             {/* Bi-Color Legend */}
@@ -2926,147 +3236,325 @@ export default function VisitorAnalyticsDashboard({
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7 }}>
                                     <Box sx={{ width: 10, height: 10, borderRadius: '3px', bgcolor: '#10b981' }} />
                                     <Typography sx={{ fontSize: '0.72rem', color: textSecondary, fontWeight: 700 }}>
-                                        Lunas ({listTotalLunas} Delegasi)
+                                        {biColorMode === 'categories'
+                                            ? `Lunas / Free Pass (${catSummaryTotalLunas} Pax)`
+                                            : `Lunas (${listTotalLunas} Delegasi)`}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7 }}>
                                     <Box sx={{ width: 10, height: 10, borderRadius: '3px', bgcolor: '#ea580c' }} />
                                     <Typography sx={{ fontSize: '0.72rem', color: textSecondary, fontWeight: 700 }}>
-                                        Piutang / Debt ({listTotalDebt} Delegasi)
+                                        {biColorMode === 'categories'
+                                            ? `Piutang / Debt (${catSummaryTotalDebt} Pax)`
+                                            : `Piutang / Debt (${listTotalDebt} Delegasi)`}
                                     </Typography>
                                 </Box>
                                 <Typography sx={{ ml: 'auto', fontSize: '0.72rem', color: textMuted }}>
-                                    Total {allInstitutions.length} Instansi Terdaftar
+                                    {biColorMode === 'categories'
+                                        ? `Total ${enrichedCategories.filter(c => c.count > 0).length} Kategori Terdaftar`
+                                        : `Total ${allInstitutions.length} Instansi Terdaftar`}
                                 </Typography>
                             </Box>
 
                             {/* Stacked Horizontal Bars List */}
-                            <Stack spacing={1.8}>
-                                {filteredInstitutions.map((inst, index) => {
-                                    const total = inst.count || 1;
-                                    const lunas = Number(inst.lunas ?? inst.lunas_count ?? 0);
-                                    const debt = Number(inst.debt ?? inst.debt_count ?? 0);
-                                    const pending = Number(inst.pending ?? inst.pending_count ?? 0);
-                                    const lunasPct = total > 0 ? Math.round((lunas / total) * 100) : 0;
-                                    const debtPct = total > 0 ? Math.round((debt / total) * 100) : 0;
-                                    const pendingPct = total > 0 ? Math.max(0, 100 - lunasPct - debtPct) : 0;
-                                    const barWidthPct = Math.round((total / maxInstCount) * 100);
+                            <Stack spacing={1.8} sx={{ flex: 1 }}>
+                                {biColorMode === 'categories' ? (
+                                    filteredCategorySummary.map((cat, index) => {
+                                        const total = cat.count || 1;
+                                        const lunas = cat.lunas;
+                                        const debt = cat.debt;
+                                        const pending = cat.pending;
+                                        const lunasPct = cat.solvency_pct;
+                                        const debtPct = total > 0 ? Math.round((debt / total) * 100) : 0;
+                                        const pendingPct = total > 0 ? Math.max(0, 100 - lunasPct - debtPct) : 0;
+                                        const barWidthPct = Math.round((total / maxCatSummaryCount) * 100);
 
-                                    return (
-                                        <Box key={inst.name} sx={{ width: '100%' }}>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, maxWidth: '65%' }}>
-                                                    <Typography sx={{ fontSize: '0.74rem', fontWeight: 800, color: textMuted }}>
-                                                        #{index + 1}
-                                                    </Typography>
-                                                    <Typography noWrap sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
-                                                        {inst.name}
-                                                    </Typography>
+                                        return (
+                                            <Box key={cat.id} sx={{ width: '100%' }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, maxWidth: '65%' }}>
+                                                        <Typography sx={{ fontSize: '0.74rem', fontWeight: 800, color: textMuted }}>
+                                                            #{index + 1}
+                                                        </Typography>
+                                                        <Typography noWrap sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
+                                                            {cat.icon} {cat.label}
+                                                        </Typography>
+                                                        <Chip
+                                                            size="small"
+                                                            label={cat.groupTitle}
+                                                            sx={{
+                                                                height: 18,
+                                                                fontSize: '0.62rem',
+                                                                fontWeight: 700,
+                                                                bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                                color: textSecondary,
+                                                                borderRadius: '4px',
+                                                            }}
+                                                        />
+                                                    </Box>
+                                                    <Stack direction="row" spacing={1} alignItems="center">
+                                                        {debt > 0 ? (
+                                                            <Chip
+                                                                label={`${lunas} Lunas • ${debt} Piutang`}
+                                                                size="small"
+                                                                sx={{
+                                                                    height: 20,
+                                                                    fontSize: '0.64rem',
+                                                                    fontWeight: 800,
+                                                                    bgcolor: isDark ? 'rgba(234,88,12,0.18)' : '#fff7ed',
+                                                                    color: '#ea580c',
+                                                                    borderRadius: '6px',
+                                                                }}
+                                                            />
+                                                        ) : pending > 0 ? (
+                                                            <Chip
+                                                                label={`${lunas} Lunas • ${pending} Pending`}
+                                                                size="small"
+                                                                sx={{
+                                                                    height: 20,
+                                                                    fontSize: '0.64rem',
+                                                                    fontWeight: 800,
+                                                                    bgcolor: isDark ? 'rgba(245,158,11,0.18)' : '#fffbeb',
+                                                                    color: '#d97706',
+                                                                    borderRadius: '6px',
+                                                                }}
+                                                            />
+                                                        ) : cat.isFree ? (
+                                                            <Chip
+                                                                label="100% Free Pass"
+                                                                size="small"
+                                                                sx={{
+                                                                    height: 20,
+                                                                    fontSize: '0.64rem',
+                                                                    fontWeight: 800,
+                                                                    bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
+                                                                    color: '#059669',
+                                                                    borderRadius: '6px',
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <Chip
+                                                                label={`${lunasPct}% Lunas`}
+                                                                size="small"
+                                                                sx={{
+                                                                    height: 20,
+                                                                    fontSize: '0.64rem',
+                                                                    fontWeight: 800,
+                                                                    bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
+                                                                    color: '#10b981',
+                                                                    borderRadius: '6px',
+                                                                }}
+                                                            />
+                                                        )}
+                                                        <Typography sx={{ fontSize: '0.76rem', fontWeight: 800, color: textPrimary, minWidth: '75px', textAlign: 'right' }}>
+                                                            {total} Delegasi
+                                                        </Typography>
+                                                    </Stack>
                                                 </Box>
-                                                <Stack direction="row" spacing={1} alignItems="center">
-                                                    {debt > 0 ? (
-                                                        <Chip
-                                                            label={`${lunas} Lunas • ${debt} Piutang`}
-                                                            size="small"
+
+                                                {/* Bi-Color Stacked Horizontal Bar Container */}
+                                                <Box sx={{ width: '100%', height: 12, bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0', borderRadius: '6px', overflow: 'hidden', display: 'flex' }}>
+                                                    {lunas > 0 && (
+                                                        <Box
                                                             sx={{
-                                                                height: 20,
-                                                                fontSize: '0.64rem',
-                                                                fontWeight: 800,
-                                                                bgcolor: isDark ? 'rgba(234,88,12,0.18)' : '#fff7ed',
-                                                                color: '#ea580c',
-                                                                borderRadius: '6px',
+                                                                width: `${(barWidthPct * lunas) / total}%`,
+                                                                height: '100%',
+                                                                bgcolor: '#10b981',
+                                                                transition: 'width 0.4s ease',
                                                             }}
-                                                        />
-                                                    ) : pending > 0 ? (
-                                                        <Chip
-                                                            label={`${lunas} Lunas • ${pending} Pending`}
-                                                            size="small"
-                                                            sx={{
-                                                                height: 20,
-                                                                fontSize: '0.64rem',
-                                                                fontWeight: 800,
-                                                                bgcolor: isDark ? 'rgba(245,158,11,0.18)' : '#fffbeb',
-                                                                color: '#d97706',
-                                                                borderRadius: '6px',
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <Chip
-                                                            label={`${lunasPct}% Lunas`}
-                                                            size="small"
-                                                            sx={{
-                                                                height: 20,
-                                                                fontSize: '0.64rem',
-                                                                fontWeight: 800,
-                                                                bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
-                                                                color: '#10b981',
-                                                                borderRadius: '6px',
-                                                            }}
+                                                            title={`Lunas: ${lunas} orang (${lunasPct}%)`}
                                                         />
                                                     )}
-                                                    <Typography sx={{ fontSize: '0.76rem', fontWeight: 800, color: textPrimary, minWidth: '70px', textAlign: 'right' }}>
-                                                        {total} Delegasi
-                                                    </Typography>
-                                                </Stack>
-                                            </Box>
+                                                    {debt > 0 && (
+                                                        <Box
+                                                            sx={{
+                                                                width: `${(barWidthPct * debt) / total}%`,
+                                                                height: '100%',
+                                                                bgcolor: '#ea580c',
+                                                                transition: 'width 0.4s ease',
+                                                            }}
+                                                            title={`Piutang / Debt: ${debt} orang (${debtPct}%)`}
+                                                        />
+                                                    )}
+                                                    {pending > 0 && (
+                                                        <Box
+                                                            sx={{
+                                                                width: `${(barWidthPct * pending) / total}%`,
+                                                                height: '100%',
+                                                                bgcolor: '#f59e0b',
+                                                                transition: 'width 0.4s ease',
+                                                            }}
+                                                            title={`Pending: ${pending} orang (${pendingPct}%)`}
+                                                        />
+                                                    )}
+                                                </Box>
 
-                                            {/* Bi-Color Stacked Horizontal Bar Container */}
-                                            <Box sx={{ width: '100%', height: 12, bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0', borderRadius: '6px', overflow: 'hidden', display: 'flex' }}>
-                                                {lunas > 0 && (
-                                                    <Box
-                                                        sx={{
-                                                            width: `${(barWidthPct * lunas) / total}%`,
-                                                            height: '100%',
-                                                            bgcolor: '#10b981',
-                                                            transition: 'width 0.4s ease',
-                                                        }}
-                                                        title={`Lunas: ${lunas} orang (${lunasPct}%)`}
-                                                    />
-                                                )}
-                                                {debt > 0 && (
-                                                    <Box
-                                                        sx={{
-                                                            width: `${(barWidthPct * debt) / total}%`,
-                                                            height: '100%',
-                                                            bgcolor: '#ea580c',
-                                                            transition: 'width 0.4s ease',
-                                                        }}
-                                                        title={`Piutang / Debt: ${debt} orang (${debtPct}%)`}
-                                                    />
-                                                )}
-                                                {pending > 0 && (
-                                                    <Box
-                                                        sx={{
-                                                            width: `${(barWidthPct * pending) / total}%`,
-                                                            height: '100%',
-                                                            bgcolor: '#f59e0b',
-                                                            transition: 'width 0.4s ease',
-                                                        }}
-                                                        title={`Pending: ${pending} orang (${pendingPct}%)`}
-                                                    />
+                                                {/* Subtitle / Revenue Tag */}
+                                                {cat.est_revenue > 0 && (
+                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.3, px: 0.2 }}>
+                                                        <Typography sx={{ fontSize: '0.64rem', color: textMuted }}>
+                                                            Realisasi Kas: <strong style={{ color: '#10b981' }}>{formatShortCurrency(cat.est_revenue)}</strong>
+                                                        </Typography>
+                                                        {cat.debt > 0 && (
+                                                            <Typography sx={{ fontSize: '0.64rem', color: '#ea580c', fontWeight: 700 }}>
+                                                                Piutang: {cat.debt} orang
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
                                                 )}
                                             </Box>
-                                        </Box>
-                                    );
-                                })}
+                                        );
+                                    })
+                                ) : (
+                                    /* Instansi mode fallback */
+                                    filteredInstitutions.map((inst, index) => {
+                                        const total = inst.count || 1;
+                                        const lunas = Number(inst.lunas ?? inst.lunas_count ?? 0);
+                                        const debt = Number(inst.debt ?? inst.debt_count ?? 0);
+                                        const pending = Number(inst.pending ?? inst.pending_count ?? 0);
+                                        const lunasPct = total > 0 ? Math.round((lunas / total) * 100) : 0;
+                                        const debtPct = total > 0 ? Math.round((debt / total) * 100) : 0;
+                                        const pendingPct = total > 0 ? Math.max(0, 100 - lunasPct - debtPct) : 0;
+                                        const barWidthPct = Math.round((total / maxInstCount) * 100);
+
+                                        return (
+                                            <Box key={inst.name} sx={{ width: '100%' }}>
+                                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, maxWidth: '65%' }}>
+                                                        <Typography sx={{ fontSize: '0.74rem', fontWeight: 800, color: textMuted }}>
+                                                            #{index + 1}
+                                                        </Typography>
+                                                        <Typography noWrap sx={{ fontSize: '0.82rem', fontWeight: 800, color: textPrimary }}>
+                                                            {inst.name}
+                                                        </Typography>
+                                                    </Box>
+                                                    <Stack direction="row" spacing={1} alignItems="center">
+                                                        {debt > 0 ? (
+                                                            <Chip
+                                                                label={`${lunas} Lunas • ${debt} Piutang`}
+                                                                size="small"
+                                                                sx={{
+                                                                    height: 20,
+                                                                    fontSize: '0.64rem',
+                                                                    fontWeight: 800,
+                                                                    bgcolor: isDark ? 'rgba(234,88,12,0.18)' : '#fff7ed',
+                                                                    color: '#ea580c',
+                                                                    borderRadius: '6px',
+                                                                }}
+                                                            />
+                                                        ) : pending > 0 ? (
+                                                            <Chip
+                                                                label={`${lunas} Lunas • ${pending} Pending`}
+                                                                size="small"
+                                                                sx={{
+                                                                    height: 20,
+                                                                    fontSize: '0.64rem',
+                                                                    fontWeight: 800,
+                                                                    bgcolor: isDark ? 'rgba(245,158,11,0.18)' : '#fffbeb',
+                                                                    color: '#d97706',
+                                                                    borderRadius: '6px',
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <Chip
+                                                                label={`${lunasPct}% Lunas`}
+                                                                size="small"
+                                                                sx={{
+                                                                    height: 20,
+                                                                    fontSize: '0.64rem',
+                                                                    fontWeight: 800,
+                                                                    bgcolor: isDark ? 'rgba(16,185,129,0.15)' : '#ecfdf5',
+                                                                    color: '#10b981',
+                                                                    borderRadius: '6px',
+                                                                }}
+                                                            />
+                                                        )}
+                                                        <Typography sx={{ fontSize: '0.76rem', fontWeight: 800, color: textPrimary, minWidth: '70px', textAlign: 'right' }}>
+                                                            {total} Delegasi
+                                                        </Typography>
+                                                    </Stack>
+                                                </Box>
+
+                                                {/* Bi-Color Stacked Horizontal Bar Container */}
+                                                <Box sx={{ width: '100%', height: 12, bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#e2e8f0', borderRadius: '6px', overflow: 'hidden', display: 'flex' }}>
+                                                    {lunas > 0 && (
+                                                        <Box
+                                                            sx={{
+                                                                width: `${(barWidthPct * lunas) / total}%`,
+                                                                height: '100%',
+                                                                bgcolor: '#10b981',
+                                                                transition: 'width 0.4s ease',
+                                                            }}
+                                                            title={`Lunas: ${lunas} orang (${lunasPct}%)`}
+                                                        />
+                                                    )}
+                                                    {debt > 0 && (
+                                                        <Box
+                                                            sx={{
+                                                                width: `${(barWidthPct * debt) / total}%`,
+                                                                height: '100%',
+                                                                bgcolor: '#ea580c',
+                                                                transition: 'width 0.4s ease',
+                                                            }}
+                                                            title={`Piutang / Debt: ${debt} orang (${debtPct}%)`}
+                                                        />
+                                                    )}
+                                                    {pending > 0 && (
+                                                        <Box
+                                                            sx={{
+                                                                width: `${(barWidthPct * pending) / total}%`,
+                                                                height: '100%',
+                                                                bgcolor: '#f59e0b',
+                                                                transition: 'width 0.4s ease',
+                                                            }}
+                                                            title={`Pending: ${pending} orang (${pendingPct}%)`}
+                                                        />
+                                                    )}
+                                                </Box>
+                                            </Box>
+                                        );
+                                    })
+                                )}
                             </Stack>
 
+                            {/* Footer Summary */}
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 3, pt: 1.5, borderTop: `1px solid ${cardBorder}` }}>
                                 <Typography sx={{ fontSize: '0.74rem', color: textSecondary }}>
-                                    {topDebtInstList.length > 0 ? (
-                                        <>
-                                            Instansi dengan piutang terbanyak:{' '}
-                                            <strong style={{ color: '#ea580c' }}>
-                                                {topDebtInstList.slice(0, 2).map((i) => `${i.name} (${Number(i.debt ?? i.debt_count)} delegasi)`).join(' & ')}
-                                            </strong>
-                                        </>
+                                    {biColorMode === 'categories' ? (
+                                        topRevenueCategoryList.length > 0 ? (
+                                            <>
+                                                Penerimaan kas tertinggi:{' '}
+                                                <strong style={{ color: '#10b981' }}>
+                                                    {topRevenueCategoryList.slice(0, 2).map(c => `${c.label} (${formatShortCurrency(c.est_revenue)})`).join(' & ')}
+                                                </strong>
+                                                {topDebtCategoryList.length > 0 && (
+                                                    <>
+                                                        {' '}• Piutang:{' '}
+                                                        <strong style={{ color: '#ea580c' }}>
+                                                            {topDebtCategoryList[0]?.label} ({topDebtCategoryList[0]?.debt} orang)
+                                                        </strong>
+                                                    </>
+                                                )}
+                                            </>
+                                        ) : (
+                                            'Seluruh kategori registrasi tervalidasi 100% lunas dan bebas piutang.'
+                                        )
                                     ) : (
-                                        <>
-                                            Status Delegasi:{' '}
-                                            <strong style={{ color: '#10b981' }}>
-                                                Seluruh delegasi dari instansi teratas sudah lunas (Tidak ada tunggakan piutang).
-                                            </strong>
-                                        </>
+                                        topDebtInstList.length > 0 ? (
+                                            <>
+                                                Instansi dengan piutang terbanyak:{' '}
+                                                <strong style={{ color: '#ea580c' }}>
+                                                    {topDebtInstList.slice(0, 2).map((i) => `${i.name} (${Number(i.debt ?? i.debt_count)} delegasi)`).join(' & ')}
+                                                </strong>
+                                            </>
+                                        ) : (
+                                            <>
+                                                Status Delegasi:{' '}
+                                                <strong style={{ color: '#10b981' }}>
+                                                    Seluruh delegasi dari instansi teratas sudah lunas (Tidak ada tunggakan piutang).
+                                                </strong>
+                                            </>
+                                        )
                                     )}
                                 </Typography>
                                 <Button

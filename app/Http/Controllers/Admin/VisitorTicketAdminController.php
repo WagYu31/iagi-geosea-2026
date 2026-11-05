@@ -777,12 +777,31 @@ class VisitorTicketAdminController extends Controller
                 ->groupBy('visitor_type')
                 ->orderByDesc('count')
                 ->get()
-                ->map(function ($c) {
+                ->map(function ($c) use ($allTicketsCollection) {
+                    $typeTickets = $allTicketsCollection->filter(fn($t) => $t->visitor_type === $c->visitor_type);
+                    $lunas = $typeTickets->filter(fn($t) => $t->status === 'active' && (!$t->payment || !$t->payment->is_debt))->count();
+                    $debt = $typeTickets->filter(fn($t) => $t->payment && (bool)$t->payment->is_debt)->count();
+                    $pending = $typeTickets->filter(fn($t) => $t->status === 'pending' && (!$t->payment || !$t->payment->is_debt))->count();
+                    $checkedIn = $typeTickets->where('checked_in', true)->count();
+                    $paidRevenue = (float) $typeTickets->filter(fn($t) => $t->status === 'active' && (!$t->payment || !$t->payment->is_debt))->sum('individual_price');
+                    $debtRevenue = (float) $typeTickets->filter(fn($t) => $t->payment && (bool)$t->payment->is_debt)->sum('individual_price');
+
                     return [
                         'visitor_type' => $c->visitor_type,
+                        'name' => VisitorTicket::getVisitorTypeLabelStatic($c->visitor_type),
                         'label' => VisitorTicket::getVisitorTypeLabelStatic($c->visitor_type),
                         'count' => (int) $c->count,
+                        'lunas' => $lunas,
+                        'lunas_count' => $lunas,
+                        'debt' => $debt,
+                        'debt_count' => $debt,
+                        'pending' => $pending,
+                        'pending_count' => $pending,
+                        'checked_in' => $checkedIn,
                         'est_revenue' => (float) ($c->est_revenue ?? 0),
+                        'paid_revenue' => $paidRevenue,
+                        'debt_revenue' => $debtRevenue,
+                        'solvency_pct' => $c->count > 0 ? round(($lunas / $c->count) * 100) : 0,
                     ];
                 }),
             'topInstitutions' => $topInstitutions,
