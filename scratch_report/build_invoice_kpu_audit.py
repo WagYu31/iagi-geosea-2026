@@ -57,7 +57,7 @@ html_content = f"""<!DOCTYPE html>
             min-height: 297mm;
             max-height: 297mm;
             margin: 0 auto;
-            padding: 12mm 16mm 10mm 16mm;
+            padding: 8mm 14mm 6mm 14mm;
             background: #ffffff;
             position: relative;
             box-sizing: border-box;
@@ -231,7 +231,7 @@ html_content = f"""<!DOCTYPE html>
             width: 110px;
         }}
         .item-table td {{
-            padding: 10px 10px;
+            padding: 7px 10px;
             border-bottom: 1px solid #e2e8f0;
             vertical-align: top;
         }}
@@ -454,9 +454,9 @@ html_content = f"""<!DOCTYPE html>
             text-transform: uppercase;
         }}
         .signature-img {{
-            height: 52px;
+            height: 44px;
             width: auto;
-            margin: 4px 0 2px 0;
+            margin: 2px 0 1px 0;
             filter: contrast(1.1);
         }}
         .sign-name {{
@@ -624,7 +624,7 @@ html_content = f"""<!DOCTYPE html>
                         <tr>
                             <td class="label">Metode Bayar</td>
                             <td>:</td>
-                            <td class="val">Bank Transfer (Mandiri / BCA)</td>
+                            <td class="val">Bank BCA &bull; 1790203476 (a/n Dhini Febrasari)</td>
                         </tr>
                     </table>
                 </div>
@@ -693,22 +693,22 @@ html_content = f"""<!DOCTYPE html>
                 </h4>
                 <table class="bank-table">
                     <tr>
-                        <td style="width:28%; color:#64748b;">Bank Utama</td>
+                        <td style="width:28%; color:#64748b;">Bank Tujuan</td>
                         <td style="width:3%;">:</td>
-                        <td style="font-weight:800; color:#0f172a;">Bank Mandiri</td>
+                        <td style="font-weight:800; color:#0f172a;">Bank BCA (Bank Central Asia)</td>
                     </tr>
                     <tr>
                         <td style="color:#64748b;">Nomor Rekening</td>
                         <td>:</td>
-                        <td class="bank-acc-no">1030099991461</td>
+                        <td class="bank-acc-no">1790203476</td>
                     </tr>
                     <tr>
                         <td style="color:#64748b;">Atas Nama (A/N)</td>
                         <td>:</td>
-                        <td style="font-weight:800; color:#0f172a;">Martin Saputra</td>
+                        <td style="font-weight:800; color:#0f172a;">Dhini Febrasari</td>
                     </tr>
                     <tr>
-                        <td style="color:#64748b;">Berita Acara</td>
+                        <td style="color:#64748b;">Berita Transfer</td>
                         <td>:</td>
                         <td style="font-weight:700; color:#d97706; font-family:'JetBrains Mono',monospace;">INV AUDIT PEMILU IAGI 2026</td>
                     </tr>
@@ -717,8 +717,8 @@ html_content = f"""<!DOCTYPE html>
 
             <div class="payment-reminder">
                 <strong>Catatan Tagihan & Konfirmasi:</strong>
-                Invoice ini diterbitkan resmi oleh Lead Cyber Security Auditor atas jasa audit aplikasi Pemilu IAGI 2026 (sesuai kwitansi fisik terlampir per 5 November 2026).<br>
-                Mohon bukti transfer dikirimkan via WhatsApp ke Auditor atau diarsipkan pada berkas pertanggungjawaban pleno KPKU IAGI 2026.
+                Invoice ini diterbitkan resmi oleh Auditor atas jasa audit aplikasi Pemilu IAGI 2026 (sesuai kwitansi fisik terlampir per 5 November 2026).<br>
+                Mohon pembayaran ditransfer ke rekening <strong>BCA 1790203476 a/n Dhini Febrasari</strong>, lalu bukti setor dikonfirmasikan via WhatsApp atau diarsipkan pada berkas pertanggungjawaban pleno KPKU IAGI 2026.
             </div>
         </div>
     </div>
@@ -827,3 +827,4 @@ if res.returncode == 0 and os.path.exists(root_pdf):
     print(f"🎉 PDF juga tersedia di web: {pemilu_pdf}")
 else:
     print(f"Gagal mencetak PDF via Chrome: {res.stderr}")
+
