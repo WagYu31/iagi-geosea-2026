@@ -16,6 +16,9 @@ import {
     TableContainer,
     TableHead,
     TableRow,
+    TextField,
+    Tooltip,
+    Collapse,
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -24,6 +27,10 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import TuneIcon from '@mui/icons-material/Tune';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import EditCalendarIcon from '@mui/icons-material/CalendarMonth';
 
 const CATEGORY_MAP = {
     // Roles & Invitations
@@ -165,12 +172,123 @@ export default function Receipt({
     const totalAmount = Math.max(0, effectiveSubtotal - discountAmount) + uniqueCode;
     const amountInWords = totalAmount > 0 ? (numberToWordsEn(totalAmount).trim() + ' Rupiah') : 'Zero Rupiah';
 
-    const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
-    const pDate = new Date(payment.created_at || Date.now());
-    const romanMonth = romanMonths[pDate.getMonth()] || 'IX';
+    const ROMAN_MONTHS = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+    const MONTH_NAMES = [
+        { num: 1, roman: 'I', labelEn: 'January', labelId: 'Januari' },
+        { num: 2, roman: 'II', labelEn: 'February', labelId: 'Februari' },
+        { num: 3, roman: 'III', labelEn: 'March', labelId: 'Maret' },
+        { num: 4, roman: 'IV', labelEn: 'April', labelId: 'April' },
+        { num: 5, roman: 'V', labelEn: 'May', labelId: 'Mei' },
+        { num: 6, roman: 'VI', labelEn: 'June', labelId: 'Juni' },
+        { num: 7, roman: 'VII', labelEn: 'July', labelId: 'Juli' },
+        { num: 8, roman: 'VIII', labelEn: 'August', labelId: 'Agustus' },
+        { num: 9, roman: 'IX', labelEn: 'September', labelId: 'September' },
+        { num: 10, roman: 'X', labelEn: 'October', labelId: 'Oktober' },
+        { num: 11, roman: 'XI', labelEn: 'November', labelId: 'November' },
+        { num: 12, roman: 'XII', labelEn: 'December', labelId: 'Desember' },
+    ];
+
+    const pDate = React.useMemo(() => new Date(payment.created_at || Date.now()), [payment.created_at]);
     const pYear = pDate.getFullYear() || 2026;
     const pNum = String(payment.id || 1).padStart(3, '0');
-    const receiptNumber = payment.receipt_no || `Receipt No. ${pNum}/PIT-IAGI/PY-R/${romanMonth}/${pYear}`;
+    const defaultRomanMonth = ROMAN_MONTHS[pDate.getMonth()] || 'IX';
+    const defaultBaseReceiptNo = payment.receipt_no || `Receipt No. ${pNum}/PIT-IAGI/PY-R/${defaultRomanMonth}/${pYear}`;
+
+    // Extract Roman month from existing receipt number if available
+    const detectedRomanMatch = defaultBaseReceiptNo.match(/\/([IVXLCDM]+)\/(\d{4})/i);
+    const initialRoman = detectedRomanMatch ? detectedRomanMatch[1].toUpperCase() : defaultRomanMonth;
+    const initialMonthIdx = ROMAN_MONTHS.indexOf(initialRoman) !== -1 ? ROMAN_MONTHS.indexOf(initialRoman) : pDate.getMonth();
+
+    // Local customization state (purely for print / PDF, does NOT touch database)
+    const [showCustomToolbar, setShowCustomToolbar] = React.useState(true);
+    const [customMonthIdx, setCustomMonthIdx] = React.useState(null);
+    const [customDateVal, setCustomDateVal] = React.useState('');
+    const [customReceiptNo, setCustomReceiptNo] = React.useState('');
+    const [customDateText, setCustomDateText] = React.useState('');
+
+    const activeMonthIdx = customMonthIdx !== null 
+        ? customMonthIdx 
+        : (customDateVal ? new Date(customDateVal).getMonth() : initialMonthIdx);
+
+    const activeRoman = ROMAN_MONTHS[activeMonthIdx] || defaultRomanMonth;
+
+    const effectiveDateFormatted = React.useMemo(() => {
+        if (customDateText) return customDateText;
+        if (customDateVal) {
+            const d = new Date(customDateVal);
+            if (!isNaN(d.getTime())) {
+                return d.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+            }
+        }
+        if (customMonthIdx !== null) {
+            const y = pDate.getFullYear();
+            const maxDays = new Date(y, customMonthIdx + 1, 0).getDate();
+            const d = Math.min(pDate.getDate(), maxDays);
+            const adjustedDate = new Date(y, customMonthIdx, d);
+            return adjustedDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+        return pDate.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' });
+    }, [customDateText, customDateVal, customMonthIdx, pDate]);
+
+    const effectiveReceiptNumber = React.useMemo(() => {
+        if (customReceiptNo.trim()) {
+            return customReceiptNo.trim();
+        }
+        if (customMonthIdx !== null || customDateVal) {
+            if (/\/([IVXLCDM]+)\/(\d{4})/i.test(defaultBaseReceiptNo)) {
+                return defaultBaseReceiptNo.replace(/\/([IVXLCDM]+)\/(\d{4})/i, `/${activeRoman}/$2`);
+            }
+        }
+        return defaultBaseReceiptNo;
+    }, [customReceiptNo, customMonthIdx, customDateVal, defaultBaseReceiptNo, activeRoman]);
+
+    const cleanReceiptNumber = effectiveReceiptNumber.replace(/^Receipt No\.\s*/i, '');
+    const headerReceiptNumber = effectiveReceiptNumber.startsWith('Receipt No.')
+        ? effectiveReceiptNumber
+        : `Receipt No. ${effectiveReceiptNumber}`;
+
+    const isCustomized = customMonthIdx !== null || Boolean(customDateVal) || Boolean(customReceiptNo) || Boolean(customDateText);
+
+    const handleSelectMonth = (monthIdx) => {
+        setCustomMonthIdx(monthIdx);
+        const y = pDate.getFullYear();
+        const maxDays = new Date(y, monthIdx + 1, 0).getDate();
+        const d = Math.min(pDate.getDate(), maxDays);
+        const newDate = new Date(y, monthIdx, d);
+        const isoDate = `${newDate.getFullYear()}-${String(newDate.getMonth() + 1).padStart(2, '0')}-${String(newDate.getDate()).padStart(2, '0')}`;
+        setCustomDateVal(isoDate);
+        setCustomDateText('');
+
+        const targetRoman = ROMAN_MONTHS[monthIdx];
+        const sourceReceipt = customReceiptNo.trim() || defaultBaseReceiptNo;
+        if (/\/([IVXLCDM]+)\/(\d{4})/i.test(sourceReceipt)) {
+            setCustomReceiptNo(sourceReceipt.replace(/\/([IVXLCDM]+)\/(\d{4})/i, `/${targetRoman}/$2`));
+        }
+    };
+
+    const handleDateChange = (dateIso) => {
+        setCustomDateVal(dateIso);
+        setCustomDateText('');
+        if (dateIso) {
+            const d = new Date(dateIso);
+            if (!isNaN(d.getTime())) {
+                const mIdx = d.getMonth();
+                setCustomMonthIdx(mIdx);
+                const targetRoman = ROMAN_MONTHS[mIdx];
+                const sourceReceipt = customReceiptNo.trim() || defaultBaseReceiptNo;
+                if (/\/([IVXLCDM]+)\/(\d{4})/i.test(sourceReceipt)) {
+                    setCustomReceiptNo(sourceReceipt.replace(/\/([IVXLCDM]+)\/(\d{4})/i, `/${targetRoman}/$2`));
+                }
+            }
+        }
+    };
+
+    const handleResetCustom = () => {
+        setCustomMonthIdx(null);
+        setCustomDateVal('');
+        setCustomReceiptNo('');
+        setCustomDateText('');
+    };
 
     const bankLines = React.useMemo(() => {
         if (!bankInfo || typeof bankInfo !== 'string') {
@@ -218,7 +336,7 @@ export default function Receipt({
                 },
             }}
         >
-            <Head title={`${receiptNumber} - ${payment.payment_code || 'Official Receipt'}`}>
+            <Head title={`${headerReceiptNumber} - ${payment.payment_code || 'Official Receipt'}`}>
                 <style>{`
                     @page {
                         size: A4 portrait;
@@ -235,6 +353,12 @@ export default function Receipt({
                         }
                         .no-print {
                             display: none !important;
+                        }
+                        [contenteditable="true"] {
+                            outline: none !important;
+                            border: none !important;
+                            box-shadow: none !important;
+                            background: transparent !important;
                         }
                         .receipt-paper-box {
                             border: 1.5px solid #cbd5e1 !important;
@@ -261,9 +385,11 @@ export default function Receipt({
                     className="no-print"
                     sx={{
                         display: 'flex',
+                        flexWrap: 'wrap',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        mb: 3,
+                        gap: 1.5,
+                        mb: 2,
                         '@media print': { display: 'none !important' },
                     }}
                 >
@@ -286,25 +412,198 @@ export default function Receipt({
                         Back to Payment Status
                     </Button>
 
-                    <Button
-                        variant="contained"
-                        startIcon={<PrintIcon />}
-                        onClick={handlePrint}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Button
+                            variant={showCustomToolbar ? 'contained' : 'outlined'}
+                            startIcon={<TuneIcon />}
+                            onClick={() => setShowCustomToolbar(prev => !prev)}
+                            sx={{
+                                bgcolor: showCustomToolbar ? '#0f766e' : '#ffffff',
+                                color: showCustomToolbar ? '#ffffff' : '#094d42',
+                                borderColor: '#0f766e',
+                                fontWeight: 700,
+                                borderRadius: '10px',
+                                textTransform: 'none',
+                                px: 2,
+                                py: 0.8,
+                                '&:hover': {
+                                    bgcolor: showCustomToolbar ? '#0d5d57' : '#f0fdf4',
+                                    borderColor: '#094d42',
+                                },
+                            }}
+                        >
+                            {showCustomToolbar ? 'Tutup Panel Cetak' : '🎛️ Kustomisasi Cetak (Bulan / Tanggal)'}
+                            {isCustomized && (
+                                <Chip
+                                    label="Aktif"
+                                    size="small"
+                                    sx={{
+                                        ml: 1,
+                                        height: 20,
+                                        fontSize: '0.65rem',
+                                        fontWeight: 900,
+                                        bgcolor: showCustomToolbar ? '#fef08a' : '#22c55e',
+                                        color: showCustomToolbar ? '#854d0e' : '#ffffff',
+                                    }}
+                                />
+                            )}
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            startIcon={<PrintIcon />}
+                            onClick={handlePrint}
+                            sx={{
+                                bgcolor: '#094d42',
+                                color: '#ffffff',
+                                fontWeight: 800,
+                                borderRadius: '10px',
+                                textTransform: 'none',
+                                px: 3,
+                                py: 1,
+                                boxShadow: '0 4px 12px rgba(9, 77, 66, 0.3)',
+                                '&:hover': { bgcolor: '#063830' },
+                            }}
+                        >
+                            Print / Download PDF
+                        </Button>
+                    </Box>
+                </Box>
+
+                {/* CUSTOMIZATION TOOLBAR PANEL (Hidden when printing) */}
+                <Collapse in={showCustomToolbar} className="no-print">
+                    <Paper
+                        elevation={0}
                         sx={{
-                            bgcolor: '#094d42',
-                            color: '#ffffff',
-                            fontWeight: 800,
-                            borderRadius: '10px',
-                            textTransform: 'none',
-                            px: 3,
-                            py: 1,
-                            boxShadow: '0 4px 12px rgba(9, 77, 66, 0.3)',
-                            '&:hover': { bgcolor: '#063830' },
+                            mb: 3,
+                            p: { xs: 2, sm: 2.5 },
+                            borderRadius: '16px',
+                            bgcolor: '#ffffff',
+                            border: '1.5px solid #14b8a6',
+                            boxShadow: '0 10px 25px -5px rgba(20, 184, 166, 0.15)',
                         }}
                     >
-                        Print / Download PDF
-                    </Button>
-                </Box>
+                        {/* Header of Toolbar */}
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <TuneIcon sx={{ color: '#0f766e', fontSize: 24 }} />
+                                <Box>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#0f172a', lineHeight: 1.2 }}>
+                                        Kustomisasi Cetak Nota / Receipt
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: '#059669', fontWeight: 600 }}>
+                                        ✓ Data di database web tetap asli & aman. Perubahan di panel ini hanya berlaku saat mencetak atau mengunduh PDF.
+                                    </Typography>
+                                </Box>
+                            </Box>
+
+                            {isCustomized && (
+                                <Button
+                                    size="small"
+                                    startIcon={<RestartAltIcon />}
+                                    onClick={handleResetCustom}
+                                    sx={{
+                                        color: '#dc2626',
+                                        borderColor: '#fca5a5',
+                                        fontWeight: 700,
+                                        textTransform: 'none',
+                                        borderRadius: '8px',
+                                        fontSize: '0.78rem',
+                                        '&:hover': { bgcolor: '#fef2f2', borderColor: '#ef4444' },
+                                    }}
+                                    variant="outlined"
+                                >
+                                    Reset ke Data Asli
+                                </Button>
+                            )}
+                        </Box>
+
+                        {/* Quick Month Switcher */}
+                        <Box sx={{ mb: 2 }}>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', mb: 0.8 }}>
+                                1. Pilih Bulan Nota Cepat (Ubah Angka Romawi /X/ jadi /XI/ dsb secara otomatis):
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.8 }}>
+                                {MONTH_NAMES.map((m, idx) => {
+                                    const isSelected = activeMonthIdx === idx;
+                                    return (
+                                        <Button
+                                            key={m.num}
+                                            size="small"
+                                            variant={isSelected ? 'contained' : 'outlined'}
+                                            onClick={() => handleSelectMonth(idx)}
+                                            sx={{
+                                                py: 0.5,
+                                                px: 1.2,
+                                                minWidth: 62,
+                                                borderRadius: '8px',
+                                                textTransform: 'none',
+                                                fontSize: '0.75rem',
+                                                fontWeight: isSelected ? 800 : 600,
+                                                bgcolor: isSelected ? '#094d42 !important' : '#f8fafc',
+                                                color: isSelected ? '#ffffff !important' : '#334155',
+                                                borderColor: isSelected ? '#094d42' : '#cbd5e1',
+                                                '&:hover': {
+                                                    bgcolor: isSelected ? '#063830' : '#e2e8f0',
+                                                    borderColor: '#094d42',
+                                                },
+                                            }}
+                                        >
+                                            <strong>{m.roman}</strong> &bull; {m.labelId.substring(0, 3)}
+                                        </Button>
+                                    );
+                                })}
+                            </Box>
+                        </Box>
+
+                        {/* Detailed Controls: Date & Receipt No */}
+                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2, pt: 1.5, borderTop: '1px solid #f1f5f9' }}>
+                            <Box>
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 0.5 }}>
+                                    2. Tanggal Transaksi (Date Created):
+                                </Typography>
+                                <TextField
+                                    type="date"
+                                    size="small"
+                                    fullWidth
+                                    value={customDateVal || (pDate.toISOString().split('T')[0])}
+                                    onChange={(e) => handleDateChange(e.target.value)}
+                                    sx={{
+                                        bgcolor: '#f8fafc',
+                                        borderRadius: '8px',
+                                        '& input': { fontSize: '0.82rem', py: 0.9 },
+                                    }}
+                                />
+                            </Box>
+
+                            <Box>
+                                <Typography variant="caption" sx={{ fontWeight: 800, color: '#334155', display: 'block', mb: 0.5 }}>
+                                    3. Nomor Receipt (Bisa diedit bebas jika perlu):
+                                </Typography>
+                                <TextField
+                                    size="small"
+                                    fullWidth
+                                    value={effectiveReceiptNumber}
+                                    onChange={(e) => setCustomReceiptNo(e.target.value)}
+                                    placeholder="Contoh: Receipt No. 085/PIT-IAGI/PY-R/XI/2026"
+                                    sx={{
+                                        bgcolor: '#f8fafc',
+                                        borderRadius: '8px',
+                                        '& input': { fontSize: '0.82rem', py: 0.9, fontFamily: 'monospace', fontWeight: 700 },
+                                    }}
+                                />
+                            </Box>
+                        </Box>
+
+                        {/* Inline Tip */}
+                        <Box sx={{ mt: 1.5, display: 'flex', alignItems: 'center', gap: 0.8, bgcolor: '#f0fdf4', p: 1, borderRadius: '8px', border: '1px solid #bbf7d0' }}>
+                            <InfoOutlinedIcon sx={{ fontSize: 18, color: '#16a34a' }} />
+                            <Typography variant="caption" sx={{ color: '#15803d', fontSize: '0.73rem', lineHeight: 1.3 }}>
+                                <strong>Tip Praktis:</strong> Anda juga bisa langsung <em>mengklik teks Receipt No atau Tanggal</em> pada lembar tanda terima di bawah untuk mengetik perubahannya secara instan sebelum mencetak.
+                            </Typography>
+                        </Box>
+                    </Paper>
+                </Collapse>
 
                 {/* OFFICIAL INVOICE & RECEIPT DOCUMENT */}
                 <Paper
@@ -367,24 +666,44 @@ export default function Receipt({
                                 <Typography variant="h5" sx={{ fontWeight: 900, color: '#094d42', letterSpacing: '-0.02em', mb: 0.3, fontSize: { xs: '1.2rem', sm: '1.4rem' } }}>
                                     OFFICIAL RECEIPT
                                 </Typography>
-                                <Typography
-                                    variant="subtitle2"
-                                    sx={{
-                                        fontWeight: 800,
-                                        color: '#094d42',
-                                        fontFamily: 'monospace',
-                                        fontSize: '0.78rem',
-                                        mb: 0.8,
-                                        bgcolor: '#f0fdf4',
-                                        border: '1px solid #bbf7d0',
-                                        px: 1,
-                                        py: 0.2,
-                                        borderRadius: '6px',
-                                        display: 'inline-block',
-                                    }}
-                                >
-                                    {receiptNumber}
-                                </Typography>
+                                <Tooltip title="Klik untuk edit teks nomor receipt langsung sebelum mencetak" arrow placement="top">
+                                    <Typography
+                                        variant="subtitle2"
+                                        contentEditable
+                                        suppressContentEditableWarning
+                                        onBlur={(e) => {
+                                            const text = e.currentTarget.textContent?.trim();
+                                            if (text) {
+                                                setCustomReceiptNo(text);
+                                            }
+                                        }}
+                                        sx={{
+                                            fontWeight: 800,
+                                            color: '#094d42',
+                                            fontFamily: 'monospace',
+                                            fontSize: '0.78rem',
+                                            mb: 0.8,
+                                            bgcolor: isCustomized ? '#ecfdf5' : '#f0fdf4',
+                                            border: isCustomized ? '1.5px dashed #059669' : '1px solid #bbf7d0',
+                                            px: 1,
+                                            py: 0.2,
+                                            borderRadius: '6px',
+                                            display: 'inline-block',
+                                            cursor: 'text',
+                                            transition: 'all 0.2s ease',
+                                            '&:hover': {
+                                                borderColor: '#059669',
+                                                bgcolor: '#dcfce7',
+                                            },
+                                            '@media print': {
+                                                border: '1px solid #bbf7d0 !important',
+                                                bgcolor: '#f0fdf4 !important',
+                                            },
+                                        }}
+                                    >
+                                        {headerReceiptNumber}
+                                    </Typography>
+                                </Tooltip>
                                 
                                 <div>
                                     <Chip
@@ -428,9 +747,56 @@ export default function Receipt({
                                     Transaction Details:
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: '#475569', fontSize: '0.78rem', lineHeight: 1.5 }}>
-                                    <strong>Receipt No:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#094d42' }}>{receiptNumber.replace(/^Receipt No\.\s*/i, '')}</span><br />
+                                    <strong>Receipt No:</strong>{' '}
+                                    <Tooltip title="Klik untuk edit langsung nomor receipt" arrow>
+                                        <span
+                                            contentEditable
+                                            suppressContentEditableWarning
+                                            onBlur={(e) => {
+                                                const text = e.currentTarget.textContent?.trim();
+                                                if (text) {
+                                                    setCustomReceiptNo(text);
+                                                }
+                                            }}
+                                            style={{
+                                                fontFamily: 'monospace',
+                                                fontWeight: 800,
+                                                color: '#094d42',
+                                                cursor: 'text',
+                                                padding: '1px 4px',
+                                                borderRadius: '4px',
+                                                border: isCustomized ? '1px dashed #059669' : '1px solid transparent',
+                                                backgroundColor: isCustomized ? '#ecfdf5' : 'transparent',
+                                            }}
+                                        >
+                                            {cleanReceiptNumber}
+                                        </span>
+                                    </Tooltip>
+                                    <br />
                                     <strong>Payment Code:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#0f172a' }}>{payment.payment_code}</span><br />
-                                    <strong>Date Created:</strong> {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}<br />
+                                    <strong>Date Created:</strong>{' '}
+                                    <Tooltip title="Klik untuk edit langsung teks tanggal" arrow>
+                                        <span
+                                            contentEditable
+                                            suppressContentEditableWarning
+                                            onBlur={(e) => {
+                                                const text = e.currentTarget.textContent?.trim();
+                                                if (text) {
+                                                    setCustomDateText(text);
+                                                }
+                                            }}
+                                            style={{
+                                                cursor: 'text',
+                                                padding: '1px 4px',
+                                                borderRadius: '4px',
+                                                border: isCustomized ? '1px dashed #059669' : '1px solid transparent',
+                                                backgroundColor: isCustomized ? '#ecfdf5' : 'transparent',
+                                            }}
+                                        >
+                                            {effectiveDateFormatted}
+                                        </span>
+                                    </Tooltip>
+                                    <br />
                                     <strong>Method:</strong> {payment.payment_method === 'cash_onsite' ? 'Onsite Cash (Cash / EDC)' : 'Mandiri Bank Transfer'}<br />
                                     <strong>Status:</strong> {isApproved ? `Verified (${payment.verified_at ? new Date(payment.verified_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Verified'})` : 'Awaiting Treasury Confirmation'}
                                 </Typography>
@@ -752,7 +1118,7 @@ export default function Receipt({
                         {/* Secretariat Stamp Area */}
                         <Box sx={{ textAlign: 'center', minWidth: { xs: 200, sm: 240 }, '@media print': { minWidth: '220px !important' } }}>
                             <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 600, fontSize: '0.72rem', display: 'block', mb: 0.3 }}>
-                                {new Date(payment.created_at || Date.now()).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                {effectiveDateFormatted}
                             </Typography>
                             <Typography variant="caption" sx={{ fontWeight: 800, color: '#094d42', display: 'block', fontSize: '0.74rem' }}>
                                 Organizing Committee 55ᵀᴴ PIT IAGI-GEOSEA XIX 2026
