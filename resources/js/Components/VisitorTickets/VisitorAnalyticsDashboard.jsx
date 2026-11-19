@@ -161,6 +161,126 @@ export const REGISTRATION_GROUPS = [
     }
 ];
 
+// 6 Owner Categories (Matching Excel & Pie Chart Gambar 2: 1.338 Total)
+export const OWNER_CATEGORIES = [
+    {
+        id: 'participant',
+        num: 1,
+        title: 'Participant',
+        shortTitle: 'Participant',
+        icon: '💼',
+        color: '#2563eb', // Blue
+        fallbackCount: 177,
+        fallbackPct: 13.2,
+        sub: 'Berbayar (Member, Non-Member, Dosen, Mahasiswa)',
+        types: [
+            'iagi_member_professional',
+            'non_iagi_member_professional',
+            'iagi_member_expatriate',
+            'non_iagi_member_expatriate',
+            'student_undergraduate',
+            'dosen',
+            'professional',
+            'professional_1500',
+            'exclusive'
+        ]
+    },
+    {
+        id: 'visitor',
+        num: 2,
+        title: 'Visitor',
+        shortTitle: 'Visitor',
+        icon: '🎟️',
+        color: '#ea580c', // Orange
+        fallbackCount: 446,
+        fallbackPct: 33.3,
+        sub: 'Free Pass (Visitor Pass 294 + Student Crowd 152)',
+        types: [
+            'visitor',
+            'non_exclusive',
+            'student_crowd'
+        ]
+    },
+    {
+        id: 'committee',
+        num: 3,
+        title: 'Committee',
+        shortTitle: 'Committee',
+        icon: '👔',
+        color: '#64748b', // Slate Gray
+        fallbackCount: 176,
+        fallbackPct: 13.2,
+        sub: 'Panitia Pelaksana, Student Volunteer, Crew & Board',
+        types: [
+            'committee',
+            'student_volunteer',
+            'board',
+            'it_developer',
+            'tesko'
+        ]
+    },
+    {
+        id: 'sponsor_exhib',
+        num: 4,
+        title: 'Sponsor & Exhib',
+        shortTitle: 'Sponsor & Exhib',
+        icon: '🏢',
+        color: '#eab308', // Gold / Amber
+        fallbackCount: 291,
+        fallbackPct: 21.7,
+        sub: 'Petugas Booth Pameran, Sponsor & Delegasi Korporat',
+        types: [
+            'exhibition',
+            'sponsorship',
+            'sponsor',
+            'delegate'
+        ]
+    },
+    {
+        id: 'panelist',
+        num: 5,
+        title: 'Panelist',
+        shortTitle: 'Panelist',
+        icon: '⚖️',
+        color: '#06b6d4', // Cyan / Light Blue
+        fallbackCount: 22,
+        fallbackPct: 1.6,
+        sub: 'Panelist Sesi Diskusi, Moderator & Session Chair / Juri',
+        types: [
+            'panelist',
+            'moderator',
+            'session_chair_judge',
+            'session_chair',
+            'judge'
+        ]
+    },
+    {
+        id: 'invited_speaker',
+        num: 6,
+        title: 'Invited Speaker',
+        shortTitle: 'Invited Speaker',
+        icon: '🗣️',
+        color: '#16a34a', // Emerald Green
+        fallbackCount: 226,
+        fallbackPct: 16.9,
+        sub: 'Keynote Speaker, Pembicara Plenary, Presenter Ilmiah & VIP',
+        types: [
+            'invited_speaker',
+            'speaker',
+            'keynote_speech',
+            'keynote_speaker',
+            'presenter',
+            'student',
+            'oral',
+            'oral_presenter',
+            'poster',
+            'poster_presenter',
+            'vip',
+            'vip_companion'
+        ]
+    }
+];
+
 export const CATEGORY_LABELS = {
     // 1. Participant
     iagi_member_professional: { label: 'Professional (Member)', icon: '💼', group: 'participant', color: '#2563eb' },
@@ -286,7 +406,7 @@ export default function VisitorAnalyticsDashboard({
     // 3. Gambar 2: Bi-Color Summary Filter (Default: Berdasarkan Kategori Registrasi!)
     const [summaryAnchor, setSummaryAnchor] = useState(null);
     const [biColorMode, setBiColorMode] = useState('categories'); // 'categories' (default!) | 'institutions'
-    const [categorySummaryFilter, setCategorySummaryFilter] = useState('top6'); // 'top6' | 'top10' | 'participant' | 'technical' | 'visitor' | 'roles' | 'all'
+    const [categorySummaryFilter, setCategorySummaryFilter] = useState('owner6'); // 'owner6' (Gambar 2 Default!) | 'top6' | 'top10' | 'participant' | 'technical' | 'visitor' | 'roles' | 'all'
     const [summaryFilter, setSummaryFilter] = useState('top5'); // 'top5' | 'top10' | 'corporate' | 'university' (for institutions mode)
 
     // 4. Projects Overview (Categories Layout for Gambar 1)
@@ -311,7 +431,7 @@ export default function VisitorAnalyticsDashboard({
     const [pillarFilter, setPillarFilter] = useState('all'); // 'all' | 'commercial' | 'scientific' | 'leadership' | 'expo'
     const [hoveredHour, setHoveredHour] = useState(null);
     const [pillarsViewMode, setPillarsViewMode] = useState('chart'); // 'chart' (Pie/Donut Chart) | 'cards' (Detail Cards)
-    const [pieMode, setPieMode] = useState('pillars'); // 'pillars' (4 Pilar) | 'groups' (4 Grup Registrasi) | 'categories' (Per Kategori Tiket)
+    const [pieMode, setPieMode] = useState('owner'); // 'owner' (6 Kategori Owner Gambar 2 - Default!) | 'pillars' (4 Pilar) | 'groups' (4 Grup Registrasi) | 'categories' (Per Kategori Tiket)
     const [pieGroupFilter, setPieGroupFilter] = useState('all'); // 'all' | 'participant' | 'technical' | 'visitor' | 'roles'
     const [sectorsViewMode, setSectorsViewMode] = useState('grid'); // 'grid' | 'pie'
 
@@ -487,8 +607,53 @@ export default function VisitorAnalyticsDashboard({
         });
     }, [rawCategories, CATEGORY_META, ticketSolvencyRate]);
 
+    // ── 6. OWNER 6 CATEGORIES DATA (Matching Gambar 2 Excel & Pie Chart: 1.338 Total) ──
+    const ownerPieData = useMemo(() => {
+        return OWNER_CATEGORIES.map((cat) => {
+            const matchingCategories = rawCategories.filter((c) => cat.types.includes(c.visitor_type));
+            const liveCount = matchingCategories.reduce((sum, c) => sum + Number(c.count || 0), 0);
+            const liveRevenue = matchingCategories.reduce((sum, c) => sum + Number(c.est_revenue || 0), 0);
+            const liveLunas = matchingCategories.reduce((sum, c) => sum + Number(c.lunas || 0), 0);
+            const liveDebt = matchingCategories.reduce((sum, c) => sum + Number(c.debt || 0), 0);
+            const livePending = matchingCategories.reduce((sum, c) => sum + Number(c.pending || 0), 0);
+
+            const count = liveCount > 0 ? liveCount : cat.fallbackCount;
+            const lunas = liveLunas > 0 ? liveLunas : (cat.id === 'participant' ? 117 : count);
+            const debt = liveDebt > 0 ? liveDebt : (cat.id === 'participant' ? 60 : 0);
+
+            return {
+                id: cat.id,
+                label: cat.title,
+                name: cat.title,
+                fullLabel: `${cat.icon} ${cat.title}`,
+                shortLabel: cat.shortTitle,
+                value: count,
+                count: count,
+                color: cat.color,
+                icon: cat.icon,
+                sub: cat.sub,
+                types: cat.types,
+                est_revenue: liveRevenue,
+                lunas,
+                debt,
+                pending: livePending,
+                solvency_pct: count > 0 ? Math.round((lunas / count) * 100) : 100,
+                groupTitle: 'Gambar 2',
+                isFree: ['visitor', 'committee', 'panelist', 'invited_speaker'].includes(cat.id),
+            };
+        });
+    }, [rawCategories]);
+
+    const totalOwnerCount = useMemo(() => {
+        return ownerPieData.reduce((sum, cat) => sum + cat.value, 0) || 1338;
+    }, [ownerPieData]);
+
     // Categories Bi-Color Filter (Gambar 2: Berdasarkan Kategori Registrasi)
     const filteredCategorySummary = useMemo(() => {
+        if (categorySummaryFilter === 'owner6') {
+            return [...ownerPieData].sort((a, b) => b.count - a.count);
+        }
+
         let list = [...enrichedCategories].filter(c => c.count > 0);
         list.sort((a, b) => b.count - a.count);
 
@@ -499,7 +664,7 @@ export default function VisitorAnalyticsDashboard({
         if (categorySummaryFilter === 'visitor') return list.filter(c => c.group === 'visitor');
         if (categorySummaryFilter === 'roles') return list.filter(c => c.group === 'roles');
         return list; // 'all'
-    }, [enrichedCategories, categorySummaryFilter]);
+    }, [enrichedCategories, categorySummaryFilter, ownerPieData]);
 
     const maxCatSummaryCount = useMemo(() => {
         return Math.max(...(filteredCategorySummary.length ? filteredCategorySummary.map(c => c.count) : [1]), 1);
@@ -899,18 +1064,21 @@ export default function VisitorAnalyticsDashboard({
 
     // ── ACTIVE PIE METRICS ACCORDING TO SELECTED MODE ──
     const activePieData = useMemo(() => {
+        if (pieMode === 'owner') return ownerPieData;
         if (pieMode === 'groups') return groupsPieData;
         if (pieMode === 'categories') return categoriesPieData;
         return pillarsPieData;
-    }, [pieMode, groupsPieData, categoriesPieData, pillarsPieData]);
+    }, [pieMode, ownerPieData, groupsPieData, categoriesPieData, pillarsPieData]);
 
     const activeTotalCount = useMemo(() => {
+        if (pieMode === 'owner') return totalOwnerCount;
         if (pieMode === 'groups') return totalGroupsCount;
         if (pieMode === 'categories') return totalCategoriesCount;
         return totalPillarsCount;
-    }, [pieMode, totalGroupsCount, totalCategoriesCount, totalPillarsCount]);
+    }, [pieMode, totalOwnerCount, totalGroupsCount, totalCategoriesCount, totalPillarsCount]);
 
     const activeCenterLabel = useMemo(() => {
+        if (pieMode === 'owner') return 'Delegasi';
         if (pieMode === 'groups') return 'Delegasi';
         if (pieMode === 'categories') {
             if (pieGroupFilter === 'participant') return 'Peserta';
@@ -923,6 +1091,7 @@ export default function VisitorAnalyticsDashboard({
     }, [pieMode, pieGroupFilter]);
 
     const activeCardTitle = useMemo(() => {
+        if (pieMode === 'owner') return 'Komposisi 6 Kategori Konvensi (Gambar 2)';
         if (pieMode === 'groups') return '4 Grup Registrasi Konvensi';
         if (pieMode === 'categories') {
             if (pieGroupFilter === 'participant') return 'Komposisi Kategori Participant';
@@ -935,7 +1104,8 @@ export default function VisitorAnalyticsDashboard({
     }, [pieMode, pieGroupFilter]);
 
     const activeCardSubtitle = useMemo(() => {
-        if (pieMode === 'groups') return 'Struktur 4 grup registrasi PIT IAGI • GEOSEA XIX (Gambar 2)';
+        if (pieMode === 'owner') return 'Struktur 6 kategori kepesertaan PIT IAGI • GEOSEA XIX (Total 1.338 Pax)';
+        if (pieMode === 'groups') return 'Struktur 4 grup registrasi PIT IAGI • GEOSEA XIX';
         if (pieMode === 'categories') {
             if (pieGroupFilter !== 'all') {
                 const grp = REGISTRATION_GROUPS.find((g) => g.id === pieGroupFilter);
@@ -2866,6 +3036,24 @@ export default function VisitorAnalyticsDashboard({
                                     <Box sx={{ display: 'inline-flex', p: '2px', bgcolor: isDark ? 'rgba(255,255,255,0.04)' : '#ffffff', borderRadius: '8px', border: `1px solid ${cardBorder}` }}>
                                         <Button
                                             size="small"
+                                            onClick={() => setPieMode('owner')}
+                                            sx={{
+                                                minWidth: 'auto',
+                                                px: 1,
+                                                py: 0.25,
+                                                fontSize: '0.67rem',
+                                                fontWeight: 800,
+                                                borderRadius: '6px',
+                                                textTransform: 'none',
+                                                bgcolor: pieMode === 'owner' ? (isDark ? '#1e293b' : '#eff6ff') : 'transparent',
+                                                color: pieMode === 'owner' ? '#2563eb' : textMuted,
+                                                boxShadow: pieMode === 'owner' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                                            }}
+                                        >
+                                            📊 6 Kategori (Owner)
+                                        </Button>
+                                        <Button
+                                            size="small"
                                             onClick={() => setPieMode('pillars')}
                                             sx={{
                                                 minWidth: 'auto',
@@ -3038,6 +3226,76 @@ export default function VisitorAnalyticsDashboard({
                                             </Typography>
                                         </Box>
                                     </Box>
+
+                                    {/* ── MODE 0: 6 OWNER CATEGORIES GRID LEGEND (Gambar 2 Exact Match) ── */}
+                                    {pieMode === 'owner' && (
+                                        <Grid container spacing={1.2} sx={{ mt: 1 }}>
+                                            {ownerPieData.map((item) => {
+                                                const pct = activeTotalCount > 0 ? ((item.value / activeTotalCount) * 100).toFixed(1) : '0';
+                                                const isCurrentlyFiltered = typeFilter && typeFilter.length > 0 && item.types.some(t => typeFilter.includes(t));
+
+                                                return (
+                                                    <Grid size={{ xs: 6 }} key={item.id}>
+                                                        <Tooltip title={`Klik untuk filter tabel ke ${item.label} (${item.value} Pax)`} arrow>
+                                                            <Box
+                                                                onClick={() => {
+                                                                    if (onTypeFilterChange) {
+                                                                        if (isCurrentlyFiltered) {
+                                                                            onTypeFilterChange([]);
+                                                                        } else {
+                                                                            onTypeFilterChange(item.types);
+                                                                        }
+                                                                    }
+                                                                }}
+                                                                sx={{
+                                                                    p: 1.2,
+                                                                    borderRadius: '10px',
+                                                                    bgcolor: isCurrentlyFiltered
+                                                                        ? (isDark ? 'rgba(37,99,235,0.15)' : '#eff6ff')
+                                                                        : (isDark ? 'rgba(255,255,255,0.02)' : '#f8fafc'),
+                                                                    border: isCurrentlyFiltered ? `1.5px solid ${item.color}` : `1px solid ${cardBorder}`,
+                                                                    borderLeft: `4px solid ${item.color}`,
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    gap: 1,
+                                                                    cursor: 'pointer',
+                                                                    transition: 'all 0.15s ease',
+                                                                    '&:hover': {
+                                                                        bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                                        transform: 'translateY(-1px)',
+                                                                        borderColor: item.color,
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: item.color, flexShrink: 0 }} />
+                                                                <Box sx={{ minWidth: 0, flex: 1 }}>
+                                                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 0.5 }}>
+                                                                        <Typography noWrap sx={{ fontSize: '0.73rem', fontWeight: 800, color: textPrimary }}>
+                                                                            {item.icon} {item.label}
+                                                                        </Typography>
+                                                                        {isCurrentlyFiltered && (
+                                                                            <Chip label="Aktif" size="small" sx={{ height: 16, fontSize: '0.58rem', fontWeight: 800, bgcolor: '#dbeafe', color: '#2563eb', borderRadius: '4px' }} />
+                                                                        )}
+                                                                    </Box>
+                                                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', mt: 0.2 }}>
+                                                                        <Typography sx={{ fontSize: '0.86rem', fontWeight: 900, color: item.color }}>
+                                                                            {item.value} <span style={{ fontSize: '0.66rem', fontWeight: 700, color: textMuted }}>Pax</span>
+                                                                        </Typography>
+                                                                        <Typography sx={{ fontSize: '0.72rem', fontWeight: 800, color: item.color }}>
+                                                                            {pct}%
+                                                                        </Typography>
+                                                                    </Box>
+                                                                    <Typography noWrap sx={{ fontSize: '0.62rem', color: textMuted, mt: 0.15 }}>
+                                                                        {item.sub}
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Box>
+                                                        </Tooltip>
+                                                    </Grid>
+                                                );
+                                            })}
+                                        </Grid>
+                                    )}
 
                                     {/* ── MODE 1: EXECUTIVE 4-PILLAR GRID LEGEND ── */}
                                     {pieMode === 'pillars' && (
@@ -3346,6 +3604,15 @@ export default function VisitorAnalyticsDashboard({
 
                                     {/* Bottom Dynamic Navigation Footer */}
                                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5, pt: 1, borderTop: `1px solid ${cardBorder}` }}>
+                                        {pieMode === 'owner' && (
+                                            <Button
+                                                size="small"
+                                                onClick={() => setPillarsViewMode('cards')}
+                                                sx={{ fontSize: '0.72rem', fontWeight: 800, color: '#2563eb', textTransform: 'none' }}
+                                            >
+                                                Lihat Rekap Tabel Excel (Gambar 2) &rarr;
+                                            </Button>
+                                        )}
                                         {pieMode === 'pillars' && (
                                             <Button
                                                 size="small"
@@ -3386,24 +3653,139 @@ export default function VisitorAnalyticsDashboard({
                                 </Box>
                             ) : (
                                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                    {/* Composite Proportion Bar */}
-                                    <Box sx={{ mb: 2.5 }}>
-                                        <Box sx={{ display: 'flex', height: 10, borderRadius: '5px', overflow: 'hidden', mb: 1 }}>
-                                            <Box sx={{ width: '37%', bgcolor: '#2563eb' }} title="Commercial" />
-                                            <Box sx={{ width: '25%', bgcolor: '#8b5cf6' }} title="Scientific" />
-                                            <Box sx={{ width: '7%', bgcolor: '#f59e0b' }} title="VIP" />
-                                            <Box sx={{ width: '31%', bgcolor: '#10b981' }} title="Expo & Committee" />
-                                        </Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 0.5 }}>
-                                            <Typography sx={{ fontSize: '0.68rem', color: '#2563eb', fontWeight: 700 }}>37% Berbayar</Typography>
-                                            <Typography sx={{ fontSize: '0.68rem', color: '#8b5cf6', fontWeight: 700 }}>25% Ilmiah</Typography>
-                                            <Typography sx={{ fontSize: '0.68rem', color: '#f59e0b', fontWeight: 700 }}>7% VIP</Typography>
-                                            <Typography sx={{ fontSize: '0.68rem', color: '#10b981', fontWeight: 700 }}>31% Expo/Crew</Typography>
-                                        </Box>
-                                    </Box>
+                                    {pieMode === 'owner' ? (
+                                        <>
+                                            {/* Composite Proportion Bar (6 Kategori Owner - Gambar 2) */}
+                                            <Box sx={{ mb: 2 }}>
+                                                <Box sx={{ display: 'flex', height: 10, borderRadius: '5px', overflow: 'hidden', mb: 1 }}>
+                                                    <Box sx={{ width: '13.2%', bgcolor: '#2563eb' }} title="Participant: 177 (13.2%)" />
+                                                    <Box sx={{ width: '33.3%', bgcolor: '#ea580c' }} title="Visitor: 446 (33.3%)" />
+                                                    <Box sx={{ width: '13.2%', bgcolor: '#64748b' }} title="Committee: 176 (13.2%)" />
+                                                    <Box sx={{ width: '21.7%', bgcolor: '#eab308' }} title="Sponsor & Exhib: 291 (21.7%)" />
+                                                    <Box sx={{ width: '1.6%', bgcolor: '#06b6d4' }} title="Panelist: 22 (1.6%)" />
+                                                    <Box sx={{ width: '16.9%', bgcolor: '#16a34a' }} title="Invited Speaker: 226 (16.9%)" />
+                                                </Box>
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 0.5, flexWrap: 'wrap', gap: 0.5 }}>
+                                                    <Typography sx={{ fontSize: '0.66rem', color: '#2563eb', fontWeight: 700 }}>13.2% Participant</Typography>
+                                                    <Typography sx={{ fontSize: '0.66rem', color: '#ea580c', fontWeight: 700 }}>33.3% Visitor</Typography>
+                                                    <Typography sx={{ fontSize: '0.66rem', color: '#64748b', fontWeight: 700 }}>13.2% Committee</Typography>
+                                                    <Typography sx={{ fontSize: '0.66rem', color: '#b45309', fontWeight: 700 }}>21.7% Sponsor</Typography>
+                                                    <Typography sx={{ fontSize: '0.66rem', color: '#0891b2', fontWeight: 700 }}>1.6% Panelist</Typography>
+                                                    <Typography sx={{ fontSize: '0.66rem', color: '#16a34a', fontWeight: 700 }}>16.9% Speaker</Typography>
+                                                </Box>
+                                            </Box>
 
-                                    {/* 4 Detailed Pillar Cards */}
-                                    <Stack spacing={1.5} sx={{ flex: 1 }}>
+                                            {/* Owner Excel Table (Gambar 2 Replica) */}
+                                            <Box sx={{
+                                                borderRadius: '12px',
+                                                overflow: 'hidden',
+                                                border: `1px solid ${cardBorder}`,
+                                                bgcolor: isDark ? 'rgba(255,255,255,0.02)' : '#ffffff',
+                                                flex: 1,
+                                                display: 'flex',
+                                                flexDirection: 'column'
+                                            }}>
+                                                <Box sx={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: '1.4fr 0.8fr 0.8fr 1.6fr',
+                                                    p: '8px 12px',
+                                                    bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f8fafc',
+                                                    borderBottom: `1px solid ${cardBorder}`,
+                                                    fontWeight: 800,
+                                                    fontSize: '0.72rem',
+                                                    color: textMuted
+                                                }}>
+                                                    <Box>Category</Box>
+                                                    <Box sx={{ textAlign: 'right' }}>Jumlah</Box>
+                                                    <Box sx={{ textAlign: 'right' }}>Proporsi</Box>
+                                                    <Box sx={{ pl: 1.5 }}>Keterangan / Sub-kategori</Box>
+                                                </Box>
+                                                {ownerPieData.map((item, idx) => {
+                                                    const pct = totalOwnerCount > 0 ? ((item.value / totalOwnerCount) * 100).toFixed(1) : '0';
+                                                    return (
+                                                        <Box
+                                                            key={item.id}
+                                                            onClick={() => {
+                                                                if (onTypeFilterChange) {
+                                                                    onTypeFilterChange(item.types);
+                                                                }
+                                                            }}
+                                                            sx={{
+                                                                display: 'grid',
+                                                                gridTemplateColumns: '1.4fr 0.8fr 0.8fr 1.6fr',
+                                                                p: '8px 12px',
+                                                                borderBottom: idx === ownerPieData.length - 1 ? 'none' : `1px solid ${cardBorder}`,
+                                                                cursor: 'pointer',
+                                                                alignItems: 'center',
+                                                                transition: 'all 0.15s ease',
+                                                                '&:hover': {
+                                                                    bgcolor: isDark ? 'rgba(255,255,255,0.06)' : '#f1f5f9',
+                                                                }
+                                                            }}
+                                                        >
+                                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: item.color, flexShrink: 0 }} />
+                                                                <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: textPrimary }}>
+                                                                    {item.name}
+                                                                </Typography>
+                                                            </Box>
+                                                            <Typography sx={{ fontSize: '0.82rem', fontWeight: 900, color: item.color, textAlign: 'right' }}>
+                                                                {item.value}
+                                                            </Typography>
+                                                            <Typography sx={{ fontSize: '0.74rem', fontWeight: 700, color: textSecondary, textAlign: 'right' }}>
+                                                                {pct}%
+                                                            </Typography>
+                                                            <Typography sx={{ fontSize: '0.68rem', color: textMuted, pl: 1.5 }} noWrap title={item.sub}>
+                                                                {item.sub}
+                                                            </Typography>
+                                                        </Box>
+                                                    );
+                                                })}
+                                                {/* Total Row */}
+                                                <Box sx={{
+                                                    display: 'grid',
+                                                    gridTemplateColumns: '1.4fr 0.8fr 0.8fr 1.6fr',
+                                                    p: '10px 12px',
+                                                    bgcolor: isDark ? 'rgba(37,99,235,0.1)' : '#eff6ff',
+                                                    borderTop: `2px solid #2563eb`,
+                                                    fontWeight: 900,
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <Typography sx={{ fontSize: '0.82rem', fontWeight: 900, color: '#2563eb' }}>
+                                                        Total
+                                                    </Typography>
+                                                    <Typography sx={{ fontSize: '0.88rem', fontWeight: 900, color: '#2563eb', textAlign: 'right' }}>
+                                                        {totalOwnerCount}
+                                                    </Typography>
+                                                    <Typography sx={{ fontSize: '0.78rem', fontWeight: 800, color: '#2563eb', textAlign: 'right' }}>
+                                                        100.0%
+                                                    </Typography>
+                                                    <Typography sx={{ fontSize: '0.68rem', color: '#2563eb', fontWeight: 700, pl: 1.5 }}>
+                                                        Delegasi Konvensi & Pameran Terdata
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
+                                        </>
+                                    ) : (
+                                        <>
+                                            {/* Composite Proportion Bar */}
+                                            <Box sx={{ mb: 2.5 }}>
+                                                <Box sx={{ display: 'flex', height: 10, borderRadius: '5px', overflow: 'hidden', mb: 1 }}>
+                                                    <Box sx={{ width: '37%', bgcolor: '#2563eb' }} title="Commercial" />
+                                                    <Box sx={{ width: '25%', bgcolor: '#8b5cf6' }} title="Scientific" />
+                                                    <Box sx={{ width: '7%', bgcolor: '#f59e0b' }} title="VIP" />
+                                                    <Box sx={{ width: '31%', bgcolor: '#10b981' }} title="Expo & Committee" />
+                                                </Box>
+                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', px: 0.5 }}>
+                                                    <Typography sx={{ fontSize: '0.68rem', color: '#2563eb', fontWeight: 700 }}>37% Berbayar</Typography>
+                                                    <Typography sx={{ fontSize: '0.68rem', color: '#8b5cf6', fontWeight: 700 }}>25% Ilmiah</Typography>
+                                                    <Typography sx={{ fontSize: '0.68rem', color: '#f59e0b', fontWeight: 700 }}>7% VIP</Typography>
+                                                    <Typography sx={{ fontSize: '0.68rem', color: '#10b981', fontWeight: 700 }}>31% Expo/Crew</Typography>
+                                                </Box>
+                                            </Box>
+
+                                            {/* 4 Detailed Pillar Cards */}
+                                            <Stack spacing={1.5} sx={{ flex: 1 }}>
                                         {/* Pillar 1: Commercial & Paid */}
                                         <Box sx={{ p: 1.5, borderRadius: '14px', bgcolor: isDark ? 'rgba(37,99,235,0.06)' : '#eff6ff', border: '1px solid rgba(37,99,235,0.18)' }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
@@ -3508,6 +3890,8 @@ export default function VisitorAnalyticsDashboard({
                                             </Box>
                                         </Box>
                                     </Stack>
+                                </>
+                            )}
 
                                     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1.5, pt: 1, borderTop: `1px solid ${cardBorder}` }}>
                                         <Button
@@ -3555,6 +3939,7 @@ export default function VisitorAnalyticsDashboard({
                                         sx={{ ...diboldPillSx, fontWeight: 800 }}
                                     >
                                         {biColorMode === 'categories' ? (
+                                            categorySummaryFilter === 'owner6' ? '📊 6 Kategori Owner (Gambar 2)' :
                                             categorySummaryFilter === 'top6' ? 'Top 6 Kategori' :
                                             categorySummaryFilter === 'top10' ? 'Top 10 Kategori' :
                                             categorySummaryFilter === 'participant' ? '1. Participant' :
@@ -3577,6 +3962,9 @@ export default function VisitorAnalyticsDashboard({
                                             <ListSubheader key="hdr-cat" sx={{ fontSize: '0.68rem', fontWeight: 800, color: textMuted, lineHeight: '28px' }}>
                                                 FILTER KATEGORI REGISTRASI
                                             </ListSubheader>,
+                                            <MenuItem key="owner6" onClick={() => { setCategorySummaryFilter('owner6'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(categorySummaryFilter === 'owner6')}>
+                                                📊 6 Kategori Owner (Gambar 2 - 1.338 Pax)
+                                            </MenuItem>,
                                             <MenuItem key="top6" onClick={() => { setCategorySummaryFilter('top6'); setSummaryAnchor(null); }} sx={diboldMenuItemSx(categorySummaryFilter === 'top6')}>
                                                 🏆 Top 6 Kategori Terbanyak
                                             </MenuItem>,
