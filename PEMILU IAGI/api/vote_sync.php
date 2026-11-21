@@ -3672,11 +3672,14 @@ if ($action === 'get_reminder_status') {
 
     $registry = getUnvotedVoterRegistry();
     $now = time();
-    $diffSec = strtotime('2026-11-03 23:59:00') - $now;
-    $daysLeft = max(1, (int)ceil($diffSec / 86400));
+    $deadlineTs = strtotime('2026-11-03 23:59:00');
+    $diffSec = $deadlineTs - $now;
+    $isClosed = ($now > $deadlineTs);
+    $daysLeft = $diffSec > 0 ? (int)ceil($diffSec / 86400) : 0;
 
     echo json_encode([
         'success' => true,
+        'election_closed' => $isClosed,
         'days_left' => $daysLeft,
         'deadline_wib' => '2026-11-03 23:59:00',
         'total_dpt' => $registry['total_dpt'] ?? 2143,
@@ -3765,6 +3768,17 @@ if ($action === 'send_whatsapp_token' || $action === 'send_whatsapp_fonnte') {
 }
 
 if ($action === 'trigger_reminder_batch') {
+    $now = time();
+    $deadlineTs = strtotime('2026-11-03 23:59:00');
+    if ($now > $deadlineTs) {
+        echo json_encode([
+            'success' => false,
+            'election_closed' => true,
+            'error' => 'Pemilu Ketua Umum IAGI 2026 telah resmi berakhir pada 03 November 2026 23:59 WIB. Bilik suara telah ditutup dan pengiriman pengingat dinonaktifkan.'
+        ]);
+        exit;
+    }
+
     $isCli = (php_sapi_name() === 'cli');
     $rawPost = @file_get_contents('php://input');
     $body = @json_decode($rawPost, true) ?: $_POST;

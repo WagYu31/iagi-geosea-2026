@@ -48,12 +48,40 @@ if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'OPTIONS
 define('CRON_SECRET_KEY', 'kpku_reminder_cron_secure_2026_wagyua');
 define('DEADLINE_WIB', '2026-11-03 23:59:00');
 
+// =========================================================================
+// SAKLAR PERMANEN: PEMILU TELAH BERAKHIR RESMI (CIRCUIT BREAKER)
+// =========================================================================
+define('ELECTION_IS_CLOSED', true);     // Pemilu sudah selesai resmi 03 Nov 2026
+define('ENABLE_CRON_REMINDER', false);  // Matikan permanen seluruh pengiriman email otomatis
+
 // Proteksi Keamanan: Hanya izinkan eksekusi via CLI (cPanel Cron Job)
 // atau panggilan internal dari vote_sync.php (IN_VOTE_SYNC).
 // Akses publik/eksternal langsung dari browser diblokir 403 Forbidden!
 $isCli = (php_sapi_name() === 'cli');
 $isInternal = defined('IN_VOTE_SYNC');
 $secretKey = $_GET['key'] ?? ($_POST['key'] ?? '');
+
+// Pemeriksaan Batas Waktu & Saklar Pengingat:
+$now = time();
+$deadlineTs = strtotime(DEADLINE_WIB);
+$isExpired = ($now > $deadlineTs) || (defined('ELECTION_IS_CLOSED') && ELECTION_IS_CLOSED) || (defined('ENABLE_CRON_REMINDER') && !ENABLE_CRON_REMINDER);
+
+if ($isExpired) {
+    if ($isCli) {
+        echo "[CRON DINONAKTIFKAN] Pemilu Ketua Umum IAGI 2026 telah resmi berakhir pada " . DEADLINE_WIB . " WIB.\n";
+        echo "[CRON DINONAKTIFKAN] Bilik suara telah ditutup. Seluruh pengiriman email pengingat otomatis dihentikan permanen.\n";
+        echo "[PANDUAN] Silakan hapus baris cron pengingat ini di cPanel (Cron Jobs).\n";
+        exit(0);
+    } elseif (!$isInternal) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => false,
+            'election_closed' => true,
+            'message' => 'Pemilu Ketua Umum IAGI 2026 telah resmi berakhir pada ' . DEADLINE_WIB . ' WIB. Seluruh pengingat email otomatis dinonaktifkan permanen.'
+        ]);
+        exit;
+    }
+}
 
 if (!$isCli && !$isInternal && $secretKey !== CRON_SECRET_KEY) {
     http_response_code(403);
@@ -581,6 +609,18 @@ function getUnvotedVoterRegistry() {
 // CORE RUNNER: Eksekusi Batch Pengingat
 // -------------------------------------------------------------
 function executeReminderBatch($batchSize = 50, $dryRun = false, $force = false) {
+    $now = time();
+    $deadlineTs = strtotime(DEADLINE_WIB);
+
+    // Safety guard permanen: Jangan kirim email jika pemilu sudah selesai
+    if ($now > $deadlineTs || (defined('ELECTION_IS_CLOSED') && ELECTION_IS_CLOSED) || (defined('ENABLE_CRON_REMINDER') && !ENABLE_CRON_REMINDER)) {
+        return [
+            'success' => false,
+            'election_closed' => true,
+            'message' => 'Pemilu Ketua Umum IAGI 2026 telah resmi berakhir pada ' . DEADLINE_WIB . ' WIB. Seluruh pengiriman email pengingat otomatis telah dihentikan secara permanen.'
+        ];
+    }
+
     $dataDir = resolveSecureDataDir();
     $historyFile = $dataDir . '/reminder_history.json';
     $logsFile = $dataDir . '/reminder_logs.json';
@@ -591,12 +631,17 @@ function executeReminderBatch($batchSize = 50, $dryRun = false, $force = false) 
     }
 
     $history = readJsonFile($historyFile, []);
-    $now = time();
     $throttleThreshold = 20 * 3600; // 20 jam agar tepat 1 kali sehari per pemilih
 
     // Hitung sisa hari
-    $deadlineTs = strtotime(DEADLINE_WIB);
     $diffSec = $deadlineTs - $now;
+    if ($diffSec < 0) {
+        return [
+            'success' => false,
+            'election_closed' => true,
+            'message' => 'Bilik suara telah ditutup. Tidak ada email yang dikirim.'
+        ];
+    }
     $daysLeft = max(1, (int)ceil($diffSec / 86400));
 
     $subject = ($daysLeft <= 1)
